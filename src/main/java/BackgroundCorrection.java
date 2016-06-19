@@ -5,6 +5,7 @@
  * 
  * 
  * V 1.0 2016-06-18 Kristoffer Bernhem, kristoffer.bernhem@gmail.com
+ * 
  */
 
 class BackgroundCorrection {
@@ -18,6 +19,8 @@ class BackgroundCorrection {
 	 *  and TestArray being a 3 dimensional array. Return is a in time running median filtered signal.
 	 *  Alternatively with if another way of organizing the data is available, the median calculations can be accessed through:
 	 *  vector = BackgroundCorrection.runningMedian(double[] Vector, int W); W is the filter window in one direction.
+	 *  
+	 *  
 	 */
 
 	public static double[][][] medianFiltering(double[][][] IMstack,int W){
