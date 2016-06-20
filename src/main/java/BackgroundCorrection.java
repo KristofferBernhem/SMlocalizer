@@ -5,7 +5,6 @@
  * 
  * 
  * V 1.0 2016-06-18 Kristoffer Bernhem, kristoffer.bernhem@gmail.com
- * 
  */
 
 class BackgroundCorrection {
