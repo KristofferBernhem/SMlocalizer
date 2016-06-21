@@ -2,7 +2,7 @@
 * 2D elliptical gaussian function, based on code by Yoshiyuki Arai (https://github.com/arayoshipta/TwoDGaussainProblemExample).
 * Uses Apache Commons Math3 for optimization through Levenberg-Marquardt.
 * 
-* v0.1.0 Kristoffer Bernhem
+* v1.0.0 Kristoffer Bernhem
 */
 import java.util.Arrays;
 import java.util.List;
@@ -23,12 +23,35 @@ public class TwoDRotGaussFcn {
 	 * V[6] = theta.
 	 * 
 	 * Function
+	 * xprime = (x - x0)*cos(theta) - (y - y0)*sin(theta)
+	 * yprime = (x - x0)*sin(theta) + (y - y0)*cos(theta)
+	 * f(x,y) = Amp*exp(-[xrpime^2/2*sigma_x^2 + yprime^2/2*sigma_x^2]) + Background
+	 * Jacobian
+	 * df/dV(0) = exp(-[xrpime^2/2*sigma_x^2 + yprime^2/2*sigma_x^2])
+	 * df/dV(1) = f(x,y)*[(xprime*cos(theta)/sigma_x^2)*(yprime*sin(theta)/sigma_y^2)]
+	 * df/dV(2) = f(x,y)*[(-xprime*sin(theta)/sigma_x^2)*(yprime*cos(theta)/sigma_y^2)]
+	 * df/dV(3) = f(x,y)*xprime^2/sigma_x^3
+	 * df/dV(4) = f(x,y)*yprime^2/sigma_y^3
+	 * df/dV(5) = 1;
+	 * df/dV(6) = -f(x,y)*[(-xprime/sigma_x^2 *( (x-x0)*sin(theta) + (y-y0)*cos(theta) ) + 
+	 * 				yprime/sigma_y^2 * ( (x-x0)*cos(theta) - (y-y0)*sin(theta) ) ] 
+	 * 
+	 * 
+	 * OLD:
+	 * Function
 	 * a = cos^2(theta)/2*sigmaX^2 + sin^2(theta)/2*sigmaY^2
 	 * b = -sin(2*theta)/4*sigmaX^2 + sin(2*theta)/4*sigmaY^2
 	 * c = sin^2(theta)/2*sigmaX^2 + cos^2(theta)/2*sigmaY^2
 	 * f(x,y) = Amp*exp[-{a(x-x0)^2 - 2b(x-x0)(y-y0) + c(y-y0)^2}]
 	 * 
 	 * Jacobian: 
+	 * df(dV(0)) =  exp[-{a(x-x0)^2 - 2b(x-x0)(y-y0) + c(y-y0)^2}]
+	 * df(dV(1)) = Amp*exp[-{a(x-x0)^2 - 2b(x-x0)(y-y0) + c(y-y0)^2}]*(-{a(x-x0)^2 - 2b(x-x0)(y-y0)})
+	 * df(dV(2)) = Amp*exp[-{a(x-x0)^2 - 2b(x-x0)(y-y0) + c(y-y0)^2}]*(-{c(y-y0)^2 - 2b(x-x0)(y-y0)})
+	 * df(dV(3)) = 
+	 * df(dV(4)) = 
+	 * df(dV(5)) = 1;
+	 * df(dV(6)) = 
 	 */
 	
 	int width; // Width of input data.
@@ -48,8 +71,17 @@ public class TwoDRotGaussFcn {
 			public double[] value(double[] V)
 						throws IllegalArgumentException {
 				double[] eval = new double[size];
-				double SigmaX2 = V[3]*V[3];
-				double SigmaY2 = V[4]*V[4];
+				double SigmaX2 = 2*V[3]*V[3];
+				double SigmaY2 = 2*V[4]*V[4];
+				for (int i = 0; i < eval.length; i++){
+					int xi = i % width;
+					int yi = i / width;				
+					double xprime = (xi - V[1])*cos(V[6]) - (yi - V[2])*sin(V[6]);
+					double yprime = (xi - V[1])*sin(V[6]) + (yi - V[2])*cos(V[6]);
+					eval[i] = V[0]*Math.exp(-(xprime*xprime/SigmaX2 + yprime*yprime/SigmaY2)) + V[5];
+				}
+				/*
+				 OLD VERSION
 				double a = (Math.cos(V[6])*Math.cos(V[6])/(2*SigmaX2)) + (Math.sin(V[6])*Math.sin(V[6])/(2*SigmaY2));
 				double b = (-Math.sin(2*V[6])/(4*SigmaX)) + (Math.sin(2*V[6])/(4*SigmaY));
 				double c = (Math.sin(V[6])*Math.cos(V[6])/(2*SigmaX2)) + (Math.cos(V[6])*Math.sin(V[6])/(2*SigmaY2));
@@ -61,13 +93,21 @@ public class TwoDRotGaussFcn {
 					double B = 2*b*(xi - V[1])(yi - V[2]);
 					double C = c*(yi - V[2])*(yi - V[2]);
 					eval[i] = Amp*Math.exp(-(A-B+C))+V[5];
-				}
+				} */
 				return eval;
 			}
 		}
 	}
 	/*
 	 * Return Jacobian of function.
+	 * df/dV(0) = exp(-[xrpime^2/2*sigma_x^2 + yprime^2/2*sigma_x^2])
+	 * df/dV(1) = f(x,y)*[(xprime*cos(theta)/sigma_x^2)*(yprime*sin(theta)/sigma_y^2)]
+	 * df/dV(2) = f(x,y)*[(-xprime*sin(theta)/sigma_x^2)*(yprime*cos(theta)/sigma_y^2)]
+	 * df/dV(3) = f(x,y)*xprime^2/sigma_x^3
+	 * df/dV(4) = f(x,y)*yprime^2/sigma_y^3
+	 * df/dV(5) = 1;
+	 * df/dV(6) = -f(x,y)*[(-xprime/sigma_x^2 *( (x-x0)*sin(theta) + (y-y0)*cos(theta) ) + 
+	 * 				yprime/sigma_y^2 * ( (x-x0)*cos(theta) - (y-y0)*sin(theta) ) ] 
 	 */
     public MultivariateMatrixFunction retMMF() {
     	return new MultivariateMatrixFunction() {
@@ -77,9 +117,32 @@ public class TwoDRotGaussFcn {
 					throws IllegalArgumentException {
 				return jacobian(point);
 			}
-			
-			private double[][] jacobian(double[] v) {
+
+			private double[][] jacobian(double[] V) {
 				double[][] jacobian = new double[size][7];
+				double SigmaX2 = V[3]*V[3]; // sigma_x^2
+				double SigmaY2 = V[4]*V[4]; // sigma_y^2
+				double SigmaX3 = SigmaX2*V[3]; // sigma_x^3
+				double SigmaY3 = SigmaY3*V[4]; // sigma_y^3
+				for (int i = 0; i < jacobian.length; i++){
+					int xi = i % width;
+					int yi = i / width;				
+					double xprime = (xi - V[1])*Math.cos(V[6]) - (yi - V[2])*Math.sin(V[6]);
+					double yprime = (xi - V[1])*Math.sin(V[6]) + (yi - V[2])*Math.cos(V[6]);
+					jacobian[i][0] = Math.exp(-(xprime*xprime/SigmaX2 + yprime*yprime/SigmaY2));
+					jacobian[i][1] = V[0]*jacobian[i][0]*((xprime*cos(V[6]/SigmaX2)) + (yprime*sin(V[6])/SigmaY2));
+					jacobian[i][2] = V[0]*jacobian[i][0]*((yprime*cos(V[6]/SigmaY2)) - (xprime*sin(V[6])/SigmaX2));
+					jacobian[i][3] = V[0]*jacobian[i][0]*xprime*xprime/(SigmaX3);
+					jacobian[i][4] = V[0]*jacobian[i][0]*yprime*yprime/(SigmaY3);
+					jacobian[i][5] = 1;
+					jacobian[i][6] = -V[0]*jacobian[i][0]*
+							((-xprime/SigmaX2)*((xi-V[1])*Math.sin(V[6])) + (yi - V[2])*Math.cos(V[6]))
+							(yprime/SigmaY2)*((xi-V[1])*Math.cos(V[6])) - (yi - V[2])*Math.sin(V[6])));
+				}
+				
+				
+				/*
+					OLD VERSION
 				double SigmaX2 = V[3]*V[3];
 				double SigmaY2 = V[4]*V[4];
 				double SqrtSigma = Math.sqrt(2*Math.PI*SigmaX2*SigmaY2);
@@ -101,7 +164,7 @@ public class TwoDRotGaussFcn {
 		            jacobian[i][5] = 1;															//df(x,y)/dv5
 		            jacobian[i][6] = 0; 														//df(x,y)/dv6
 				}
-				
+				*/
 				return jacobian
 			}
 			
