@@ -41,7 +41,7 @@ public class Gauss2Dfcn {
 	int width; // Width of input data.
 	int size; // size of input data.
 
-	public Gauss2Dfcn (int width, int size){
+	public Gauss2D (int width, int size){
 		this.width = width;
 		this.size = size;			
 	}
