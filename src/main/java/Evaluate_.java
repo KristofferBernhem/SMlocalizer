@@ -1,5 +1,9 @@
+package sm_localizer;
+
 import java.io.File;
 import java.util.ArrayList;
+
+import org.scijava.plugin.Plugin;
 
 import ij.IJ;
 
@@ -18,7 +22,7 @@ import net.imagej.ImageJ;
 //@Plugin(menuPath = "Plugins>Examples>Dataset", type = null)
 
 
-public class Evaluate implements PlugIn {
+public class Evaluate_ implements PlugIn {
 
 	public static void main(final String... args) throws Exception {
 		// create the ImageJ application context with all available services
@@ -40,7 +44,7 @@ public class Evaluate implements PlugIn {
 		//float value = ip.getf(0, 0);
 		//System.out.println(width + "x" + height + "x" + nFrames );
 
-		Class<?> clazz = Evaluate.class;
+		Class<?> clazz = Evaluate_.class;
 		String url = clazz.getResource("/" + clazz.getName().replace('.', '/') + ".class").toString();
 		String pluginsDir = url.substring("file:".length(), url.length() - clazz.getName().length() - ".class".length());
 		System.setProperty("plugins.dir", pluginsDir);
@@ -48,9 +52,9 @@ public class Evaluate implements PlugIn {
 		
 	}
 
-	@Override
-	public void run(String arg0) {
-		double SN = 0.05; 		// Future user input, signal to noise.
+	//@Override
+	public void run(String arg0) {				
+		double SN = 0.05; 	// Future user input, signal to noise.
 		int Distance = 5; 	// Future user input, minimum distance between center pixels in events to be included.
 		int W = 50; 		// Window width for median filtering, user input.
 		
@@ -115,65 +119,29 @@ public class Evaluate implements PlugIn {
 		ImagePlus LocalizeImage = WindowManager.getCurrentImage();  // Aquire the selected image.
 
 		ImageStack LocalizeStack = LocalizeImage.getStack(); 		// This should be a stack.
+		ArrayList<Particle> Results = new ArrayList<Particle>();
 		for (int Frame = 0; Frame < LocalizeStack.getSize();Frame++){
 			ImageProcessor ImProc = LocalizeStack.getProcessor(Frame+1); 
-			double Noise = 0;
-			ArrayList<int[]> Results = LocalizeEvents(ImProc,SN,Noise,Distance);
+			double Noise = 0;			
+			Results.addAll(LocalizeEvents(ImProc,SN,Noise,Distance,W,Frame+1)); // Add fitted data.
 		}
 		
 		
 		/*
-		Count = 0;
-		//int Count = 0;
-		double[] NoiseVector = new double[nFrames];
-		for (int i = width*height*nFrames; i < width*height*nFrames + nFrames; i++){			
-			NoiseVector[Count] = Corrected[i];
-			Count++;
-		}
-/*		if (nFrames > 2*W+1){ // Check that the user loaded a correct image stack. 		
-			dataArray = BackgroundCorrection.medianFiltering(dataArray, W); // Median filtered background.
-		}  
-		double Noise = 1000; /*
-		int Found = 0;
-		for (int Frame = 0; Frame < nFrames; Frame ++){
-			double[][] dataSlice = new double[width][height];
-			for (int col = 0; col < width; col++){
-				for (int row = 0; row < height; row++){
-					 dataSlice[col][row] = dataArray[col][row][Frame];
-				}
-			}
-			ArrayList<int[]> Result = LocalMaxima.FindMaxima(dataSlice, SN, NoiseVector[Frame], Distance);
-			
-			// Add localization here.
-			
-			Found += Result.size();
-		}
-		*/
+		 * Drift corrections. IO: ArrayList<Particle>  Corrected = DriftCorrect.AutoCorrect(Results, Bin)
+		 */
+		
+		
 		long stop = System.nanoTime();
 		//System.out.println(Found + " events in " + (stop-start)/1000000 + "ms");
 		
 		//System.exit(0);
 	}
 
-	public static ArrayList<int[]> LocalizeEvents(ImageProcessor IP, double SN, double Noise, int Distance){
-		float[][] DataArray = IP.getFloatArray();
-		
-		ArrayList<int[]> Results = LocalMaxima.FindMaxima(DataArray, SN, Noise, Distance); // Get possibly relevant center coordinates.
-		/*
-		 * Go through Results and do gaussian fitting to each. Create object Event:
-		 * .x
-		 * .y
-		 * .sx
-		 * .sy
-		 * .photons
-		 * .chi^2
-		 * .precision x
-		 * .precision y
-		 */
-		
-		Particle Event = new Particle();
-		//ArrayList<Particle> Res = new ArrayList<Particle>();
-		
+	public static ArrayList<Particle> LocalizeEvents(ImageProcessor IP, double SN, double Noise, int Distance, int Window, int Frame){
+		float[][] DataArray = IP.getFloatArray();		
+		ArrayList<int[]> Center = LocalMaxima.FindMaxima(DataArray, SN, Noise, Distance); // Get possibly relevant center coordinates.
+		ArrayList<Particle> Results = ParticleFitter.Fitter(IP, Center, Window, Frame);			
 		return Results;
 					
 	}
