@@ -4,7 +4,7 @@ import java.util.ArrayList;
  * 
  */
 public class LocalMaxima {
-	public static ArrayList<int[]> FindMaxima(double[][] Array, double SN, double Noise){
+	public static ArrayList<int[]> FindMaxima(float[][] Array, double SN, double Noise,int Distance){
 		ArrayList<int[]> Results = new ArrayList<int[]>();
 		//int[] XY = {5,3}; //Example of how results are organized.		
 		//Results.add(XY);
@@ -37,18 +37,16 @@ public class LocalMaxima {
 
 			}
 		}
-		//System.out.println(Results.size());
-		Results = Neighbours(Results,5);
 		
-		// Clean out Results based on strongest 
-
+		Results = cleanList(Results,Distance);	
+		
 		return Results;
 	}
 
 	/*
 	 * identify overlaps.
 	 */
-	public static ArrayList<int[]> Neighbours(ArrayList<int[]> Array, int Dist){
+	public static ArrayList<int[]> cleanList(ArrayList<int[]> Array, int Dist){
 		int[] Start = {0,0};
 		int[] Compare = {0,0}; 
 		ArrayList<int[]> Ignore = new ArrayList<int[]>();
@@ -75,7 +73,6 @@ public class LocalMaxima {
 			
 			
 		}
-//		return Ignore;
 		return Array; 
 	}
 }
