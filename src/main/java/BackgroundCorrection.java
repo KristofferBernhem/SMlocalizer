@@ -1,4 +1,5 @@
 
+
 /* This class contains all relevant algorithms for background corrections.
  * Call through TestArray = backgroundFiltering.medianFiltering(TestArray,W); with W being filter window in one direction
  * and TestArray being a 3 dimensional array. 
@@ -8,7 +9,7 @@
  */
 
 class BackgroundCorrection {
-	
+
 	/* Main function for background filtering using the time median based method described in:
 	 * The fidelity of stochastic single-molecule super-resolution reconstructions critically depends upon robust background estimation
 	 *	E. Hoogendoorn, K. C. Crosby, D. Leyton-Puig, R. M.P. Breedijk, K. Jalink, T. W.J. Gadella & M. Postma
@@ -37,9 +38,9 @@ class BackgroundCorrection {
 			}
 			MeanFrame[z] = Sum/(rows*cols);		
 		}
-		
+
 		double[] timeVector = new double[frames]; 
-		
+		double[] NoiseVector = new double[frames];
 		for (int x = 0; x < rows; x ++){
 			for (int y = 0; y < cols; y ++){
 				for (int z = 0; z < frames; z ++){ // Loop over all frames, normalize IMstack.
@@ -49,17 +50,87 @@ class BackgroundCorrection {
 				timeVector = runningMedian(timeVector, W); // Calculate time median for this xy position.
 				for (int z = 0; z < frames; z ++){ // Loop over all frames,
 					IMstack[x][y][z] -= MeanFrame[z]*timeVector[z]; // Correct each pixel based on normalized time median.
+					NoiseVector[z] += timeVector[z];
 				}
 			}	
 		}
+		int Pixels = rows*cols;
+		for (int z = 0; z < frames; z++){
+			NoiseVector[z]  = NoiseVector[z]/Pixels;
+		}
 		return IMstack;
 	}
+
+	public static double[] medianFiltering2(double[][][] IMstack,int W){
+
+		int rows = IMstack.length; // Get input size in x.
+		int cols = IMstack[0].length; // Get input size in y.
+		int frames = IMstack[0][0].length; // Get input size in z.
+		double[] MeanFrame = new double[frames]; // Will include frame mean value.
+		for (int z = 0; z < frames; z ++){ // Loop over all frames, calculate frame median.
+			double Sum = 0;
+			for (int x = 0; x < rows; x ++){
+				for (int y = 0; y < cols; y ++){
+					Sum += IMstack[x][y][z] + 1e-20; // Add small number to avoid division by 0.
+				}
+			}
+			MeanFrame[z] = Sum/(rows*cols);
+		}
+
+		double[] timeVector = new double[frames]; 
+		double[] NoiseVector = new double[frames];
+		for (int x = 0; x < rows; x ++){
+			for (int y = 0; y < cols; y ++){
+
+				for (int z = 0; z < frames; z ++){ // Loop over all frames, normalize IMstack.
+					timeVector[z] = IMstack[x][y][z]/MeanFrame[z]; // Normalized values
+				}			
+				// This call could be parallelized over x and y on GPU for speedup, completely disconnected
+				double[] timeVectorMedian = runningMedian(timeVector, W); // Calculate time median for this xy position.
+							
+				for (int z = 0; z < frames; z ++){ // Loop over all frames,
+					IMstack[x][y][z] -= MeanFrame[z]*timeVectorMedian[z]; // Correct each pixel based on normalized time median.
+					NoiseVector[z] += timeVectorMedian[z]; // Add up all pixelvalues
+				}
+				
+
+			}	
+		}
+		int Pixels = rows*cols;
+		for (int z = 0; z < frames; z++){			
+			NoiseVector[z]  = MeanFrame[z]*NoiseVector[z]/Pixels;						
+		}
+		// Combine output into one array
+		double[] OutputArray = new double[Pixels*frames+frames]; // All IMstack data followed by NoiseVector
+		int x = 0;
+		int y = 0;
+		int z = 0;
+		for (int i = 0; i < Pixels*frames;i++){
+			OutputArray[i] = IMstack[x][y][z];
+			x++;
+			if (x == rows){
+				x = 0; // Reset
+				y++;				
+			}
+			if (y == cols){
+				y = 0;
+				z++;
+			}
+		}
+		int Count = 0;
+		for (int i = Pixels*frames; i < Pixels*frames + frames; i++){
+			OutputArray[i] =  NoiseVector[Count];
+			Count++;			
+		}
+		return OutputArray;
+	}
+
 	public static double[] runningMedian(double[] Vector, int W){
 		// Preallocate variables.
 		double[] medianVector = new double[Vector.length]; // Output vector.
 		double[] V = new double[W+1];  // Vector for calculating running median.
-		double[] V2 = new double[2*W];  // Swap vector for removal of entries from V.
-		int idx = 0; 					// Preallocate, used for finding index of V which should be removed.		
+//		double[] V2 = new double[2*W];  // Swap vector for removal of entries from V.
+//		int idx = 0; 					// Preallocate, used for finding index of V which should be removed.		
 		for(int i = 0; i <= W; i++){ // Transfer first 2xW+1 entries.
 			V[i] = Vector[i];
 		}
@@ -77,12 +148,15 @@ class BackgroundCorrection {
 			}		
 			V = sortInsert(V,Vector[i+W+1]); // Add new entry.
 
-		}		
-
+		}				
+		
+		// Something wrong, returns 0
 		for(int i = W; i < Vector.length-W-1; i++){ // Main loop, middle section.			
-			medianVector[i] = V[W]; // Pull out median value.
-
+			medianVector[i] = V[W]; // Pull out median value.			
 			//V2 = removeEntry(V,TestVector[i-W]);  // Alternative to code below.
+			V = removeEntry(V,Vector[i-W]);
+			V = sortInsert(V,Vector[i+W+1]);
+			/*
 			idx =  indexOfIntArray(V, Vector[i-W]);
 			if (idx == 0){
 				System.arraycopy(V, 1, V2, 0, V2.length);
@@ -97,7 +171,7 @@ class BackgroundCorrection {
 				System.arraycopy(V, idx, V2, idx-1, V2.length-idx-1);				
 			} 		
 			// Code to replace removeEntry ends here.
-			V = sortInsert(V2,Vector[i+W+1]);	
+			V = sortInsert(V2,Vector[i+W+1]);	*/
 		}
 
 		for (int i = Vector.length-W-1; i < Vector.length; i++){ // Last section, without access to data on right.			
