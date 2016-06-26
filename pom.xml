@@ -5,7 +5,7 @@
 	<artifactId>SMlocalizer</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>SM localizer</name>
-	<description>Singel molecule microscopy localizer</description>
+	<description>Single molecule microscopy localizer</description>
 	<organization>
 		<name>KTH Royal Institute of Technology</name>
 	</organization>
@@ -23,6 +23,12 @@
 			</roles>
 		</developer>
 	</developers>
+	<parent>
+		<groupId>net.imagej</groupId>
+		<artifactId>pom-imagej</artifactId>
+		<version>15.7.1</version>
+	</parent>
+	
 	<repositories>
 		<repository>
 			<id>imagej.releases</id>
@@ -41,38 +47,27 @@
 		<dependency>
 			<groupId>net.imagej</groupId>
 			<artifactId>imagej</artifactId>
-			<version>2.0.0-rc-50-SNAPSHOT</version>
-		</dependency>
+			</dependency>
 		<dependency>
 			<groupId>ome</groupId>
 			<artifactId>formats-api</artifactId>
-			<version>5.1.8</version>
-		</dependency>
-		<dependency>
-			<groupId>io.scif</groupId>
-			<artifactId>scifio-bf-compat</artifactId>
-			<version>2.0.0</version>
-		</dependency>
+			</dependency>
+
+					<dependency>
+			<groupId>net.imagej</groupId>
+			<artifactId>imagej-plugins-commands</artifactId>
+			</dependency>
 		<dependency>
 			<groupId>io.scif</groupId>
 			<artifactId>jai_imageio</artifactId>
 			<version>1.0.1</version>
 		</dependency>
-		<dependency>
-			<groupId>net.imagej</groupId>
-			<artifactId>imagej-plugins-commands</artifactId>
-			<version>0.5.2</version>
-		</dependency>
+
 		<dependency>
 			<groupId>net.imglib2</groupId>
 			<artifactId>imglib2-ij</artifactId>
-			<version>2.0.0-beta-31</version>
-		</dependency>
-		<dependency>
-			<groupId>org.scijava</groupId>
-			<artifactId>scijava-plugins-commands</artifactId>
-			<version>0.2.2</version>
-		</dependency>
+			</dependency>
+
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
@@ -101,7 +96,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.5</version>
 				<configuration>
 					<!-- Configures the created archive -->
 					<archive>
@@ -126,7 +120,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.5.1</version>
 				<configuration>
 					<!-- Configures the used assembly descriptor -->
 					<descriptors>
@@ -142,5 +135,5 @@
 	</build>
 
 
-
+	
 </project>
