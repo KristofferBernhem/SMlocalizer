@@ -1,3 +1,5 @@
+package sm_localizer;
+
 
 
 /* This class contains all relevant algorithms for background corrections.

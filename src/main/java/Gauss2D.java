@@ -1,3 +1,5 @@
+package sm_localizer;
+
 /*
  * 2D elliptical gaussian function, based on code by Yoshiyuki Arai.
  * Uses Apache Commons Math3 for optimization through Levenberg-Marquardt.
@@ -9,7 +11,7 @@
 import org.apache.commons.math3.analysis.MultivariateMatrixFunction;
 import org.apache.commons.math3.analysis.MultivariateVectorFunction;
 
-public class Gauss2Dfcn {
+public class Gauss2D {
 
 	/* 
 	 * Input:
@@ -51,7 +53,7 @@ public class Gauss2Dfcn {
 	 */
 	public MultivariateVectorFunction retMVF (){
 		return new MultivariateVectorFunction() {
-			@Override 
+			//@Override 
 			public double[] value(double[] V)
 					throws IllegalArgumentException {
 				double[] eval = new double[size];
@@ -75,7 +77,7 @@ public class Gauss2Dfcn {
 	public MultivariateMatrixFunction retMMF() {
 		return new MultivariateMatrixFunction() {
 
-			@Override
+		//	@Override
 			public double[][] value(double[] point)
 					throws IllegalArgumentException {
 				return jacobian(point);
@@ -108,7 +110,3 @@ public class Gauss2Dfcn {
 	}
 
 }
-
-
-
-

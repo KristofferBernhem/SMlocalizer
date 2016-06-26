@@ -14,6 +14,7 @@ import ij.process.ImageProcessor;
 
 public class ParticleFitter {
 	public static ArrayList<Particle> Fitter(ImageProcessor IP, ArrayList<int[]> Center, int Window, int Frame){
+		int Offcenter = Math.round((Window-1)/2) +1;								// How far from 0 the center pixel is. Used to modify output to match the underlying image.
 		ArrayList<Particle> Results = new ArrayList<Particle>(); 					// Create output arraylist.
 		for (int Event = 0; Event < Center.size(); Event++){ 						// Pull out data based on each entry into Center.
 			double[] dataFit = new double[Window*Window];							// Container for data to be fitted.
@@ -51,16 +52,16 @@ public class ParticleFitter {
 				double ChiSquare = (photons-ExpectedValue)*(photons-ExpectedValue)/ExpectedValue;
 
 				
-				Results.add( new Particle(					// Add results to output list.
-						optimalValues[1], 					// Fitted x coordinate.
-						optimalValues[2], 					// Fitted y coordinate.
-						Frame, 								// frame that the particle was identified.
-						optimalValues[3], 					// fitted sigma in x direction.
-						optimalValues[4], 					// fitted sigma in y direction.
-						optimalValues[3]/Math.sqrt(photons),// precision of fit for x coordinate.
-						optimalValues[3]/Math.sqrt(photons),// precision of fit for y coordinate.
-						ChiSquare, 							// Goodness of fit.
-						photons));							// Photon count based on gaussian fit.
+				Results.add( new Particle(						// Add results to output list.
+						optimalValues[1] + Coord[0] - Offcenter,// Fitted x coordinate.
+						optimalValues[2] + Coord[1] - Offcenter,// Fitted y coordinate.
+						Frame, 									// frame that the particle was identified.
+						optimalValues[3], 						// fitted sigma in x direction.
+						optimalValues[4], 						// fitted sigma in y direction.
+						optimalValues[3]/Math.sqrt(photons),	// precision of fit for x coordinate.
+						optimalValues[3]/Math.sqrt(photons),	// precision of fit for y coordinate.
+						ChiSquare, 								// Goodness of fit.
+						photons));								// Photon count based on gaussian fit.
 			}
 
 			catch (Exception e) {

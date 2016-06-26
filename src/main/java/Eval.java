@@ -1,3 +1,5 @@
+package sm_localizer;
+
 import org.apache.commons.math3.fitting.leastsquares.LeastSquaresBuilder;
 import org.apache.commons.math3.fitting.leastsquares.LeastSquaresOptimizer;
 import org.apache.commons.math3.fitting.leastsquares.LeastSquaresOptimizer.Optimum;
@@ -10,7 +12,7 @@ import org.apache.commons.math3.fitting.leastsquares.LevenbergMarquardtOptimizer
  * @author araiyoshiyuki
  * @date 08/01/2015
  */
-public class TwoDGaussProblem {
+public class Eval {
 	
 	private double[] data;
 	private double[] newStart;
@@ -24,7 +26,7 @@ public class TwoDGaussProblem {
 	 * @param data_width	data width
 	 * @param optim_param	[0]:maxEvaluation, [1]:maxIteration
 	 */
-	public TwoDGaussProblem(double[] data, double[] newStart, int data_width, int[] optim_param) {
+	public Eval(double[] data, double[] newStart, int data_width, int[] optim_param) {
 		this.data = data;
 		this.newStart = newStart;
 		this.data_width = data_width;
@@ -37,7 +39,7 @@ public class TwoDGaussProblem {
 	 */
 	private void buildlsb() {
 		//construct two-dimensional Gaussian function
-		TwoDGaussianFunction tdgf = new Gauss2D(this.data_width,this.data.length);
+		Gauss2D tdgf = new Gauss2D(this.data_width,this.data.length);
 		
 		//prepare construction of LeastSquresProblem by builder
 		LeastSquaresBuilder lsb = new LeastSquaresBuilder();
@@ -88,7 +90,7 @@ public class TwoDGaussProblem {
 				0
 		};
 		
-		TwoDGaussProblem tdgp = new TwoDGaussProblem(inputdata, newStart, 6, new int[] {1000,100});
+		Eval tdgp = new Eval(inputdata, newStart, 6, new int[] {1000,100});
 		
 		try{
 			//do LevenbergMarquardt optimization and get optimized parameters

@@ -1,3 +1,5 @@
+package sm_localizer;
+
 import java.util.ArrayList;
 
 /*
