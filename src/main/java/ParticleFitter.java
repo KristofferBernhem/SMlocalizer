@@ -1,4 +1,3 @@
-package sm_localizer;
 
 import java.util.ArrayList;
 
@@ -13,33 +12,34 @@ import ij.process.ImageProcessor;
  */
 
 public class ParticleFitter {
-	public static ArrayList<Particle> Fitter(ImageProcessor IP, ArrayList<int[]> Center, int Window, int Frame){
+	
+	public static ArrayList<Particle> Fitter(float[][] InpArray, ArrayList<int[]> Center, int Window, int Frame,int pixelSize){
 		int Offcenter = Math.round((Window-1)/2) +1;								// How far from 0 the center pixel is. Used to modify output to match the underlying image.
 		ArrayList<Particle> Results = new ArrayList<Particle>(); 					// Create output arraylist.
+		int CenterArray = Window*(Window-1)/2 + (Window-1)/2;
 		for (int Event = 0; Event < Center.size(); Event++){ 						// Pull out data based on each entry into Center.
 			double[] dataFit = new double[Window*Window];							// Container for data to be fitted.
 			int[] Coord = Center.get(Event);										// X and Y coordiantes for center pixels to be fitted.
 			int count = 0;	
-			double ExpectedValue = 0; 												// Total value wihtin the region, to be compared to calculated gaussian.
-			for (int i = Coord[0]-(Window-1)/2; i< Coord[0] + (Window-1)/2; i++){ 	// Get all pixels for the region.
-				for (int j = Coord[1]-(Window-1)/2; j< Coord[1] + (Window-1)/2; j++){
-					dataFit[count] = IP.getPixel(i, j);								// Pull out data.
+			double ExpectedValue = 0; 												// Total value within the region, to be compared to calculated gaussian.
+			for (int i = Coord[0]-(Window-1)/2; i< Coord[0] + (Window-1)/2 + 1; i++){ 	// Get all pixels for the region.
+				for (int j = Coord[1]-(Window-1)/2; j< Coord[1] + (Window-1)/2 + 1; j++){					
+					dataFit[count] = InpArray[i][j];								// Pull out data.					
 					ExpectedValue += dataFit[count];								// Add data to total.
 					count++;
 				}
 			}
-
+			
 			/*
 			 * Fit pulled out data.
-			 */
-
+			 */			
 			double[] startParameters = {
-					dataFit[IP.getPixel(Coord[0],Coord[1])], 	// Amplitude.
-					(Window-1)/2 + 1,							// X center.
-					(Window-1)/2 + 1,							// Y center.
+					dataFit[CenterArray], 						// Amplitude.
+					(Window-1)/2,							// X center.
+					(Window-1)/2,							// Y center.
 					Window/4.0,									// Sigma x.
 					Window/4.0,									// Sigma y.
-					0,											// Offset..
+					0,											// Offset.
 					0											// Theta, angle in radians away from y axis.
 			};
 			Eval tdgp = new Eval(dataFit, startParameters, Window, new int[] {1000,100}); // Create fit object.
@@ -48,24 +48,87 @@ public class ParticleFitter {
 				//do LevenbergMarquardt optimization and get optimized parameters
 				Optimum opt = tdgp.fit2dGauss();
 				final double[] optimalValues = opt.getPoint().toArray();
+				optimalValues[3] = Math.abs(optimalValues[3]);
+				optimalValues[4] = Math.abs(optimalValues[4]);
 				double photons = Evaluate(optimalValues,dataFit.length,Window);
 				double ChiSquare = (photons-ExpectedValue)*(photons-ExpectedValue)/ExpectedValue;
-
 				
-				Results.add( new Particle(						// Add results to output list.
-						optimalValues[1] + Coord[0] - Offcenter,// Fitted x coordinate.
-						optimalValues[2] + Coord[1] - Offcenter,// Fitted y coordinate.
-						Frame, 									// frame that the particle was identified.
-						optimalValues[3], 						// fitted sigma in x direction.
-						optimalValues[4], 						// fitted sigma in y direction.
-						optimalValues[3]/Math.sqrt(photons),	// precision of fit for x coordinate.
-						optimalValues[3]/Math.sqrt(photons),	// precision of fit for y coordinate.
-						ChiSquare, 								// Goodness of fit.
-						photons));								// Photon count based on gaussian fit.
+				Results.add( new Particle(									// Add results to output list.
+						pixelSize*(optimalValues[1] + Coord[0] - Offcenter),// Fitted x coordinate.
+						pixelSize*(optimalValues[2] + Coord[1] - Offcenter),// Fitted y coordinate.
+						Frame, 												// frame that the particle was identified.
+						pixelSize*(optimalValues[3]), 						// fitted sigma in x direction.
+					    pixelSize*(optimalValues[4]), 						// fitted sigma in y direction.
+					    pixelSize*(optimalValues[3]/Math.sqrt(photons)),	// precision of fit for x coordinate.
+					    pixelSize*(optimalValues[3]/Math.sqrt(photons)),	// precision of fit for y coordinate.
+						ChiSquare, 											// Goodness of fit.
+						photons));											// Photon count based on gaussian fit.
 			}
 
 			catch (Exception e) {
-				System.out.println(e.toString());
+			//	System.out.println(e.toString());
+			}
+
+		}
+
+		return Results;
+	}
+	
+	public static ArrayList<Particle> Fitter(ImageProcessor IP, ArrayList<int[]> Center, int Window, int Frame,int pixelSize){
+		int Offcenter = Math.round((Window-1)/2) +1;								// How far from 0 the center pixel is. Used to modify output to match the underlying image.
+		ArrayList<Particle> Results = new ArrayList<Particle>(); 					// Create output arraylist.
+		int CenterArray = Window*(Window-1)/2 + (Window-1)/2;
+		for (int Event = 0; Event < Center.size(); Event++){ 						// Pull out data based on each entry into Center.
+			double[] dataFit = new double[Window*Window];							// Container for data to be fitted.
+			int[] Coord = Center.get(Event);										// X and Y coordiantes for center pixels to be fitted.
+			int count = 0;	
+			double ExpectedValue = 0; 												// Total value within the region, to be compared to calculated gaussian.
+			for (int i = Coord[0]-(Window-1)/2; i< Coord[0] + (Window-1)/2 + 1; i++){ 	// Get all pixels for the region.
+				for (int j = Coord[1]-(Window-1)/2; j< Coord[1] + (Window-1)/2 + 1; j++){
+					dataFit[count] = IP.getf(i, j);	
+					// Pull out data.				
+					ExpectedValue += dataFit[count];								// Add data to total.
+					count++;
+				}
+			}
+			
+			/*
+			 * Fit pulled out data.
+			 */			
+			double[] startParameters = {
+					dataFit[CenterArray], 						// Amplitude.
+					(Window-1)/2,							// X center.
+					(Window-1)/2,							// Y center.
+					Window/4.0,									// Sigma x.
+					Window/4.0,									// Sigma y.
+					0,											// Offset.
+					0											// Theta, angle in radians away from y axis.
+			};
+			Eval tdgp = new Eval(dataFit, startParameters, Window, new int[] {1000,100}); // Create fit object.
+
+			try{
+				//do LevenbergMarquardt optimization and get optimized parameters
+				Optimum opt = tdgp.fit2dGauss();
+				final double[] optimalValues = opt.getPoint().toArray();
+				optimalValues[3] = Math.abs(optimalValues[3]);
+				optimalValues[4] = Math.abs(optimalValues[4]);
+				double photons = Evaluate(optimalValues,dataFit.length,Window);
+				double ChiSquare = (photons-ExpectedValue)*(photons-ExpectedValue)/ExpectedValue;
+				
+				Results.add( new Particle(									// Add results to output list.
+						pixelSize*(optimalValues[1] + Coord[0] - Offcenter),// Fitted x coordinate.
+						pixelSize*(optimalValues[2] + Coord[1] - Offcenter),// Fitted y coordinate.
+						Frame, 												// frame that the particle was identified.
+						pixelSize*(optimalValues[3]), 						// fitted sigma in x direction.
+					    pixelSize*(optimalValues[4]), 						// fitted sigma in y direction.
+					    pixelSize*(optimalValues[3]/Math.sqrt(photons)),	// precision of fit for x coordinate.
+					    pixelSize*(optimalValues[3]/Math.sqrt(photons)),	// precision of fit for y coordinate.
+						ChiSquare, 											// Goodness of fit.
+						photons));											// Photon count based on gaussian fit.
+			}
+
+			catch (Exception e) {
+				//System.out.println(e.toString());
 			}
 
 		}

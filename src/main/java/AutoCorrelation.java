@@ -1,10 +1,8 @@
-package sm_localizer;
-
 import java.util.ArrayList;
 
 
 public class AutoCorrelation {
-	public static double[] getLambda(ArrayList<Particle> First, ArrayList<Particle> Second, int[] stepSize,int[] lb, int[] ub){
+	public static double[] getLambda(ArrayList<Particle> First, ArrayList<Particle> Second, int[] stepSize,int[] lb, int[] ub){		
 		double[][] tempData = new double[First.size()][2];
 		for (int i = 0; i < First.size(); i++){
 			Particle tempParticle = First.get(i);
@@ -12,8 +10,8 @@ public class AutoCorrelation {
 			tempData[i][1] = tempParticle.y;
 		}
 		double[][]Dataset1 = tempData;	
-		double[][] tempData2 = new double[First.size()][2];
-		for (int i = 0; i < First.size(); i++){
+		double[][] tempData2 = new double[Second.size()][2];
+		for (int i = 0; i < Second.size(); i++){
 			Particle tempParticle = Second.get(i);
 			tempData2[i][0] = tempParticle.x;
 			tempData2[i][1] = tempParticle.y;

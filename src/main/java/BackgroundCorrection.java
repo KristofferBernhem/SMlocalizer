@@ -1,6 +1,6 @@
-package sm_localizer;
-
-
+import ij.ImagePlus;
+import ij.ImageStack;
+import ij.process.ImageProcessor;
 
 /* This class contains all relevant algorithms for background corrections.
  * Call through TestArray = backgroundFiltering.medianFiltering(TestArray,W); with W being filter window in one direction
@@ -25,42 +25,43 @@ class BackgroundCorrection {
 	 *  
 	 */
 
-	public static double[][][] medianFiltering(double[][][] IMstack,int W){
-
-		int rows = IMstack.length; // Get input size in x.
-		int cols = IMstack[0].length; // Get input size in y.
-		int frames = IMstack[0][0].length; // Get input size in z.
-		double[] MeanFrame = new double[frames]; // Will include frame mean value.
-		for (int z = 0; z < frames; z ++){ // Loop over all frames, calculate frame median.
-			double Sum = 0;
-			for (int x = 0; x < rows; x ++){
-				for (int y = 0; y < cols; y ++){
-					Sum += IMstack[x][y][z] + 1e-20; // Add small number to avoid division by 0.
+	public static ImageStack medianFiltering(ImageStack stack,int W){
+		int nframes = stack.getSize();					// Number of timepoints.
+		int rows = stack.getWidth(); 					// Width of each frame.
+		int columns = stack.getHeight(); 				// Height of each frame.
+		int pixelCount = rows*columns; 					// Pixels per frame.
+		double[] MeanFrame = new double[nframes]; 		// Will include frame mean value.
+		ImageProcessor IP = stack.getProcessor(1);		// get image processor for the stack.
+		for (int Frame = 1; Frame < nframes+1; Frame++){			
+			IP = stack.getProcessor(Frame); 			// Update processor to next slice.
+			int[][] frameArray = IP.getIntArray();      // Get frame.
+			for (int i = 0; i < rows; i++){ 			// Sum frame intensity.
+				for (int j = 0; j < columns; j++){
+					MeanFrame[Frame-1] += frameArray[i][j];
 				}
-			}
-			MeanFrame[z] = Sum/(rows*cols);		
+			}			
+			MeanFrame[Frame-1] /= pixelCount;			// Normalize frame intensity by pixelcount (get mean value).
 		}
-
-		double[] timeVector = new double[frames]; 
-		double[] NoiseVector = new double[frames];
-		for (int x = 0; x < rows; x ++){
-			for (int y = 0; y < cols; y ++){
-				for (int z = 0; z < frames; z ++){ // Loop over all frames, normalize IMstack.
-					timeVector[z] = IMstack[x][y][z]/MeanFrame[z]; // Normalized values
+		
+		ImageStack CorrectedStack = stack.duplicate(); 	// Make a copy of the input stack, user might want to keep the orignal.
+		double[] voxels = new double[nframes];			// Hold values for each timepoint for a given xy set.
+		double[] timeVector = new double[nframes]; 		// Hold values for each timepoint for a given xy set.
+		// Calculate median
+		for (int i = 0; i < rows; i++){
+			for (int j = 0; j < columns; j++){
+				for (int k = 0; k < voxels.length; k++){
+					voxels[k] = stack.getVoxel(i, j, k);
+					timeVector[k] = voxels[k]/MeanFrame[k]; // Normalize voxels;
 				}
-				// This call could be parallelized over x and y on GPU for speedup, completely disconnected
 				timeVector = runningMedian(timeVector, W); // Calculate time median for this xy position.
-				for (int z = 0; z < frames; z ++){ // Loop over all frames,
-					IMstack[x][y][z] -= MeanFrame[z]*timeVector[z]; // Correct each pixel based on normalized time median.
-					NoiseVector[z] += timeVector[z];
-				}
-			}	
+				for (int k = 0; k < voxels.length; k++){
+					CorrectedStack.setVoxel(i, j, k, ((float)(voxels[k] - timeVector[k]*MeanFrame[k]))); // Update the duplicate stack with corrected values.
+				}			
+			}
 		}
-		int Pixels = rows*cols;
-		for (int z = 0; z < frames; z++){
-			NoiseVector[z]  = NoiseVector[z]/Pixels;
-		}
-		return IMstack;
+		
+	
+		return CorrectedStack;
 	}
 
 	public static double[] medianFiltering2(double[][][] IMstack,int W){

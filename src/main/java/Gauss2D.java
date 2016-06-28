@@ -1,5 +1,3 @@
-package sm_localizer;
-
 /*
  * 2D elliptical gaussian function, based on code by Yoshiyuki Arai.
  * Uses Apache Commons Math3 for optimization through Levenberg-Marquardt.
