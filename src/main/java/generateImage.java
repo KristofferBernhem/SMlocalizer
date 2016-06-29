@@ -1,5 +1,3 @@
-
-
 import java.util.ArrayList;
 import ij.ImagePlus;
 import ij.process.ByteProcessor;
@@ -28,7 +26,7 @@ public class generateImage {
 		Image.show(); 														// Make visible
 		
 		
-	}
+	}	
 	public static int getIdx(double x, double y, int width, int height){
 		int Idx = (int) ( ((y+1)*height) - (width-(x+1)));		
 		return Idx;
