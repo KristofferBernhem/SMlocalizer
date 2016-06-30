@@ -10,14 +10,19 @@ public class TableIO {
 		for (int i = 0; i < tab.size();i++ ){
 			double x = tab.getValue("x0", i);
 			double y = tab.getValue("y0", i);
+			double z = tab.getValue("z0", i);
 			double frame = tab.getValue("frame", i);
+			double channel = tab.getValue("channel", i);
 			double sigma_x = tab.getValue("sigma_x", i);
 			double sigma_y = tab.getValue("sigma_y", i);
+			double sigma_z = tab.getValue("sigma_z", i);
 			double precision_x = tab.getValue("precision_x", i);
 			double precision_y = tab.getValue("precision_y", i);
+			double precision_z = tab.getValue("precision_z", i);
 			double chi_square = tab.getValue("chi_square", i);
 			double photons = tab.getValue("photons", i);
-			Results.add(new Particle(x,y,frame,sigma_x,sigma_y,precision_x,precision_y,chi_square,photons));			
+			int include = (int) tab.getValue("include", i);
+			Results.add(new Particle(x,y,z,frame,channel,sigma_x,sigma_y,sigma_z,precision_x,precision_y,precision_z,chi_square,photons,include));			
 		}		
 		return Results;
 		
@@ -30,13 +35,18 @@ public class TableIO {
 			tab.incrementCounter();
 			tab.addValue("x0", Results.get(i).x);
 			tab.addValue("y0", Results.get(i).y);
+			tab.addValue("z0", Results.get(i).z);
 			tab.addValue("frame", Results.get(i).frame);
+			tab.addValue("channel", Results.get(i).channel);
 			tab.addValue("sigma_x", Results.get(i).sigma_x);
 			tab.addValue("sigma_y", Results.get(i).sigma_y);
+			tab.addValue("sigma_z", Results.get(i).sigma_z);
 			tab.addValue("precision_x", Results.get(i).precision_x);
 			tab.addValue("precision_y", Results.get(i).precision_y);
+			tab.addValue("precision_z", Results.get(i).precision_z);
 			tab.addValue("chi_square", Results.get(i).chi_square);
 			tab.addValue("photons", Results.get(i).photons);
+			tab.addValue("include", Results.get(i).include);
 		}
 		tab.show("Results");
 	}

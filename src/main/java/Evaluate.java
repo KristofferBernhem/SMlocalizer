@@ -1,24 +1,25 @@
-import java.awt.Color;
+//import java.awt.Color;
 
 import java.io.File;
-import java.util.ArrayList;
+//import java.util.ArrayList;
 
 import ij.IJ;
 
 //import org.scijava.plugin.Plugin;
-
+/*
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.WindowManager;
-import ij.gui.Plot;
+import ij.gui.Plot;*/
 import ij.plugin.PlugIn;
-import ij.process.ImageProcessor;
+//import ij.process.ImageProcessor;
 import net.imagej.Dataset;
 import net.imagej.ImageJ;
 
-/** Loads and displays a dataset using the ImageJ API. */
-//@Plugin(menuPath = "Plugins>Examples>Dataset", type = null)
-
+/*
+ * GUI should take these function calls with the listed pull out of user input.
+ * Batch: Find out how to close windows, use the File file = ij.ui().chooseFile(null, "open"); several times to get the list of files (if not multiselect works. Close windows between calls.
+ */
 
 public class Evaluate implements PlugIn {
 
@@ -28,19 +29,13 @@ public class Evaluate implements PlugIn {
 
 		// ask the user for a file to open
 		final File file = ij.ui().chooseFile(null, "open");
-
 		// load the dataset
 		final Dataset dataset = ij.scifio().datasetIO().open(file.getPath());
 
 		// display the dataset
 		ij.ui().show(dataset);
 		ij.ui().showUI();
-
-
-		// Find local extreme. 
-
-		//float value = ip.getf(0, 0);
-		//System.out.println(width + "x" + height + "x" + nFrames );
+		
 
 		Class<?> clazz = Evaluate.class;
 		String url = clazz.getResource("/" + clazz.getName().replace('.', '/') + ".class").toString();
@@ -51,90 +46,85 @@ public class Evaluate implements PlugIn {
 
 
 	public void run(String arg0) { // Currently runs all sub algorithms, once plugin is done this will generate GUI to get user input and use button press to run sub algorithms.
+
+		/*
+		 * User input for filter background:
+		 */
+		int Window 	= 101;
+		int W 		= (Window-1)/2;
 		
-/*
-		long startFilter = System.nanoTime();
-		int W 			= 50; 	// Window width for median filtering, user input.
-		FilterRaw(W); 			// Filter selected image based on user input.
-		long stopFilter  = System.nanoTime();
-
-		System.out.println("Corrections calculations took: " + (stopFilter-startFilter)/1000000 + " ms");
-
-		double SN 					= 1;							// Future user input, signal to noise.
-		int Distance 				= 7; 							// Future user input, minimum distance between center pixels in events to be included.
-		int[] stepSize 				= {5,5};						// Stepsize in nm, user input.
-		int gWindow 				= 7;							// Window width for gaussian fit.
-		double Noise 				= 1000;			
+		filterBackground.run(W); // Need to find out how multi channel images are organized for multi channel functions.
+		
+		
+		/*
+		 * User input for localization:
+		 */
+		
+		int gWindow = 5;
+		double SN = 2; 
+		int Distance = 7;
+		double Noise = 1000;
 		int inputPixelSize = 100;
-		long startLocalize  = System.nanoTime();
 		
-		Localize(SN,Distance, gWindow,inputPixelSize, Noise);	// Locate all particles.
-		long stopLocalize  = System.nanoTime();
-		System.out.println("Localiziation calculations took: " + (stopLocalize-startLocalize)/1000000 + " ms");
+		localizeAndFit.run(SN, Distance, gWindow, Noise, inputPixelSize); // 2D. Need to find out how multi channel images are organized for multi channel functions.
 	
-
-		double[] lb 				= {-250,						// Allowed lower range of x drift in nm, user input.
-				-250,						// Allowed lower range of y drift in nm, user input.
-				0,						// Allowed lower range of sigma_x in nm, user input.
-				0,						// Allowed lower range of sigma_y in nm, user input.
-				0,						// Allowed lower range of precision_x in nm, user input.
-				0,						// Allowed lower range of precision_y in nm, user input.
-				0,						// Allowed lower range of chi_square, user input.
-				100							// Allowed lower range of photon count, user input.
-		};  				
-		double[] ub 				= {250,						// Allowed upper range of x drift in nm, user input.
-				250,						// Allowed upper range of y drift in nm, user input.
-				300,						// Allowed upper range of sigma_x in nm, user input.
-				300,						// Allowed upper range of sigma_y in nm, user input.
-				300,						// Allowed upper range of precision_x in nm, user input.
-				300,						// Allowed upper range of precision_y in nm, user input.
-				1.0,						// Allowed upper range of chi_square, user input.
-				500000000					// Allowed upper range of photon count, user input.
-		};  							
-		double binFrac				= 0.02;							// Fraction of total frames in each bin for drift corrrection. User input.
-		int nParticles 				= 1000;							// Maximal number of particles to use for drift correction in each step, user input.
-		int minNrParticles 			= 500;
-
-		long startDrift  = System.nanoTime();
 		
-		driftCorrect(minNrParticles ,stepSize, lb,  ub, binFrac, nParticles);
-		long stopDrift  = System.nanoTime();
-		System.out.println("Driftcorrect calculations took: " + (stopDrift-startDrift)/1000000 + " ms");
-		int DesiredPixelSize = 5;
-		ImagePlus FiltIm = WindowManager.getCurrentImage();  // Aquire the selected image.				
-		ArrayList<Particle> correctedResults = TableIO.Load();
-		generateImage.create("test2",correctedResults, FiltIm.getWidth()*inputPixelSize, FiltIm.getHeight()*inputPixelSize, DesiredPixelSize);		
+		/*
+		 * User input for drift correction:
+		 */
+		
 
-		double epsilon  = 10;
-		int minPts 		= 3; 
-		long startCluster  = System.nanoTime();
-		List<Cluster<DoublePoint>> ClustersFound = DBClust.Ident(epsilon, minPts);
-		long stopCluster  = System.nanoTime();
-		System.out.println("Cluster calculations took: " + (stopCluster-startCluster)/1000000 + " ms");
-		for(Cluster<DoublePoint> c: ClustersFound){ // how to get access to all clusters.
-			System.out.println((c.getPoints().get(0)) +" "+  c.getPoints().size());	        
-		}   
-				*/	
+		int[] lb 				= {-250,						// Allowed lower range of x drift in nm, user input.
+									   -250,							// Allowed lower range of y drift in nm, user input.
+									   0							// Allowed lower range of z drift in nm, user input.
+		};  				
+		int[] ub 				= {250,						// Allowed upper range of x drift in nm, user input.
+									   250,						// Allowed upper range of y drift in nm, user input.
+									   0						// Allowed upper range of z drift in nm, user input.
+		};  							
+		double BinFrac				= 0.02;							// Fraction of total frames in each bin for drift corrrection. User input.
+		int nParticles 				= 1000;							// Maximal number of particles to use for drift correction in each step, user input.
+		int minParticles 			= 500;
+		int[] stepSize 				= {5,5,5};						// Stepsize in nm, user input.
+		double Channels = 1;
+		boolean AlignCh = false; // User input.
+		cleanParticleList.run();
+		correctDrift.run(lb, ub, BinFrac, nParticles, minParticles, stepSize,Channels,AlignCh); // 3D version now requires doublechecking. Also handles multi channel data.
+		
+		/*
+		 * User input for cluster analysis
+		 */
+		double epsilon = 10;
+		int minConnectingPoints = 5;
+		DBClust.Ident(epsilon, minConnectingPoints); // Unsure if it handles 3D points, need to check. Not yet multi channel.
+		
+		/*
+		 * User input for render results
+		 */
+		inputPixelSize 		= 100;
+		int DesiredPixelSize 	= 5;
+		renderImage.run(inputPixelSize,DesiredPixelSize); // Not 3D yet, how to implement? Need to find out how multi channel images are organized for multi channel functions.
+
 	}
 	
 
 	/*
 	 * FilterRaw does background corrections on selected image and creates a new imagestack of the same dimensions as output.
 	 */
-	public static void FilterRaw(int W){
+/*	public static void FilterRaw(int W){
 		ImagePlus image 	= WindowManager.getCurrentImage();  	// Aquire the selected image.		
 		ImageStack stack 	= image.getStack(); 					// This should be a stack
 		ImageStack CorrectedStack 	= BackgroundCorrection.medianFiltering(stack, W); 	// Median filtered background with noise level.		
 		String Imtitle 			= "BackgroundCorrected_" + image.getTitle(); 		// Get the results stack new name.		
 		ImagePlus FilteredImage =  new ImagePlus(Imtitle,CorrectedStack);					// Create new image from the result stack.
 		FilteredImage.show(); 														// Make visible, ends FilterRaw*/
-	} // end FilterRaw.
+//	} // end FilterRaw.
 
 
 	/*
 	 * Localize takes the currenly active imagestack and localizes particles based on user input settings. Returns an arraylist of non drift corrected particles.
 	 */
-	public static void Localize(double SN, int Distance, int W,int pixelSize, double Noise){
+/*	public static void Localize(double SN, int Distance, int W,int pixelSize, double Noise){
 		ImagePlus LocalizeImage = WindowManager.getCurrentImage();  // Acquire the selected image.
 		ImageStack LocalizeStack = LocalizeImage.getStack(); 		// This should be a stack.
 		ArrayList<Particle> Results = new ArrayList<Particle>();
@@ -150,7 +140,7 @@ public class Evaluate implements PlugIn {
 	/*
 	 * Correct for drift by maximizing the correlation function between bins of datapoints. return corrected arraylist of particles and plots the drift calculated.
 	 */
-	public static void driftCorrect(int minNrParticles, int[] stepSize, double[] lb, double[] ub,double BinFrac, int nParticles){
+/*	public static void driftCorrect(int minNrParticles, int[] stepSize, double[] lb, double[] ub,double BinFrac, int nParticles){
 		ArrayList<Particle> locatedParticles = TableIO.Load(); // Get current table data.
 		System.out.println("driftCorrect: " + locatedParticles.size());
 		ArrayList<Particle> correctedResults = new ArrayList<Particle>(); // Output arraylist, will contain all particles that fit user input requirements after drift correction. 
@@ -286,7 +276,7 @@ public class Evaluate implements PlugIn {
 	/*
 	 * Interpolate between two values for n number of total entries in the new vector.
 	 */
-	public static double[] interp(double X1, double X2, int n){
+/*	public static double[] interp(double X1, double X2, int n){
 		double[] extendedX 	= new double[n]; 
 		extendedX[0] 		= X1;
 		extendedX[n-1] 		= X2;
@@ -302,7 +292,7 @@ public class Evaluate implements PlugIn {
 	/*
 	 * Localize all events in the frame represented by ImageProcessor IP. Starts by finding regions of interest and follows by doing gaussian fitting of the regions.
 	 */
-	public static ArrayList<Particle> LocalizeEvents(ImageProcessor IP, double SN, double Noise, int Distance, int Window, int Frame,int pixelSize){
+/*	public static ArrayList<Particle> LocalizeEvents(ImageProcessor IP, double SN, double Noise, int Distance, int Window, int Frame,int pixelSize){
 		float[][] DataArray 		= IP.getFloatArray();												// Array representing the frame.
 		ArrayList<int[]> Center 	= LocalMaxima.FindMaxima(DataArray, Window, SN, Noise, Distance); 	// Get possibly relevant center coordinates.	
 		ArrayList<Particle> Results = ParticleFitter.Fitter(IP, Center, Window, Frame, pixelSize);		// Fit all found centers to gaussian.
@@ -312,7 +302,7 @@ public class Evaluate implements PlugIn {
 	/*
 	 * Supporting plot functions
 	 */
-	static void plot(double[] values) {
+/*	static void plot(double[] values) {
 		double[] x = new double[values.length];
 		for (int i = 0; i < x.length; i++)
 			x[i] = i;
@@ -342,5 +332,5 @@ public class Evaluate implements PlugIn {
 		plot.addLegend("X: green" + "\n" + "Y: red");
 		plot.show();
 	}
-
+*/
 }

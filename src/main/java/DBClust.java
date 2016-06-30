@@ -13,9 +13,11 @@ public class DBClust {
 
 		for (int i = 0; i < InpParticle.size(); i++){
 			double[] p = new double[2];
-			p[0] = InpParticle.get(i).x;
-			p[1] = InpParticle.get(i).y;
-			points.add(new DoublePoint(p));
+			if (InpParticle.get(i).include == 1){
+				p[0] = InpParticle.get(i).x;
+				p[1] = InpParticle.get(i).y;
+				points.add(new DoublePoint(p));
+			}
 		}
 		DBSCANClusterer<DoublePoint> DB = new DBSCANClusterer<DoublePoint>(eps, minPts);
 		return DB.cluster(points); 

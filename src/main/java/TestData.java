@@ -19,14 +19,18 @@ public class TestData {
 				newDataset.add( new Particle(
 						X[count]  + 50* r.nextDouble() + 0.1*width, // x.
 						Y[count]  + 50* r.nextDouble() + 0.1*height, // y.
+						0,
 						frame,						// frame.
+						1,
 						100*(1 + r.nextDouble()),			// sigma x.
 						100*(1 + r.nextDouble()),     	// sigma y.
+						0,
 						1 + 5*(10*r.nextDouble()), 	// precision x.
 						1 + 5*(10*r.nextDouble()), 	// precision y
+						0,
 						0.1 + 0.1*r.nextDouble(),  	// chi square.
-						100 + 500*r.nextDouble()	// photons.			 						
-						));
+						100 + 500*r.nextDouble(),	// photons.			 						
+						1));
 				count++;
 				if (count == total){
 					count = 0; //Reset.
