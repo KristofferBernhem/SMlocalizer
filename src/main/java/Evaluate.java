@@ -1,9 +1,7 @@
 import java.awt.Color;
-import java.util.List;
+
 import java.io.File;
 import java.util.ArrayList;
-import org.apache.commons.math3.ml.clustering.Cluster;
-import org.apache.commons.math3.ml.clustering.DoublePoint;
 
 import ij.IJ;
 
@@ -14,7 +12,6 @@ import ij.ImageStack;
 import ij.WindowManager;
 import ij.gui.Plot;
 import ij.plugin.PlugIn;
-import ij.plugin.filter.Analyzer;
 import ij.process.ImageProcessor;
 import net.imagej.Dataset;
 import net.imagej.ImageJ;
@@ -23,7 +20,7 @@ import net.imagej.ImageJ;
 //@Plugin(menuPath = "Plugins>Examples>Dataset", type = null)
 
 
-public class Evaluate_ implements PlugIn {
+public class Evaluate implements PlugIn {
 
 	public static void main(final String... args) throws Exception {
 		// create the ImageJ application context with all available services
@@ -45,7 +42,7 @@ public class Evaluate_ implements PlugIn {
 		//float value = ip.getf(0, 0);
 		//System.out.println(width + "x" + height + "x" + nFrames );
 
-		Class<?> clazz = Evaluate_.class;
+		Class<?> clazz = Evaluate.class;
 		String url = clazz.getResource("/" + clazz.getName().replace('.', '/') + ".class").toString();
 		String pluginsDir = url.substring("file:".length(), url.length() - clazz.getName().length() - ".class".length());
 		System.setProperty("plugins.dir", pluginsDir);
@@ -55,18 +52,14 @@ public class Evaluate_ implements PlugIn {
 
 	public void run(String arg0) { // Currently runs all sub algorithms, once plugin is done this will generate GUI to get user input and use button press to run sub algorithms.
 		
-		/*
-		 * Filter raw image.
-		 */
+/*
 		long startFilter = System.nanoTime();
 		int W 			= 50; 	// Window width for median filtering, user input.
 		FilterRaw(W); 			// Filter selected image based on user input.
 		long stopFilter  = System.nanoTime();
 
 		System.out.println("Corrections calculations took: " + (stopFilter-startFilter)/1000000 + " ms");
-		/*
-		 * Locate all events.
-		 */
+
 		double SN 					= 1;							// Future user input, signal to noise.
 		int Distance 				= 7; 							// Future user input, minimum distance between center pixels in events to be included.
 		int[] stepSize 				= {5,5};						// Stepsize in nm, user input.
@@ -78,9 +71,7 @@ public class Evaluate_ implements PlugIn {
 		Localize(SN,Distance, gWindow,inputPixelSize, Noise);	// Locate all particles.
 		long stopLocalize  = System.nanoTime();
 		System.out.println("Localiziation calculations took: " + (stopLocalize-startLocalize)/1000000 + " ms");
-		/*
-		 * Filter out events based on user input quality settings and drift correct them.
-		 */
+	
 
 		double[] lb 				= {-250,						// Allowed lower range of x drift in nm, user input.
 				-250,						// Allowed lower range of y drift in nm, user input.
@@ -123,7 +114,7 @@ public class Evaluate_ implements PlugIn {
 		for(Cluster<DoublePoint> c: ClustersFound){ // how to get access to all clusters.
 			System.out.println((c.getPoints().get(0)) +" "+  c.getPoints().size());	        
 		}   
-					
+				*/	
 	}
 	
 
