@@ -19,9 +19,9 @@ public class SMLocalizer_ implements PlugIn {
 	}
 
 
-	public void run(String arg0) { // Currently runs all sub algorithms, once plugin is done this will generate GUI to get user input and use button press to run sub algorithms.
+	public void run(String arg0) {
 		String args[] = null;
-		SMLocalizerGUI.main(args);;
+		SMLocalizerGUI.main(args); //call GUI.
 	}
 
 }
