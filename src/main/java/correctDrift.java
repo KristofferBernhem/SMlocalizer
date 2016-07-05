@@ -255,16 +255,17 @@ public class correctDrift {
 		double[] x = new double[values.length];
 		for (int i = 0; i < x.length; i++)
 			x[i] = x_axis[i];
-		Plot plot = new Plot("Plot window", "x", "values", x, values);
+		Plot plot = new Plot("Plot window", "frame", "drift [nm]", x, values);
+		
 		plot.setColor(Color.GREEN);
-		plot.draw();
+		
 		plot.addPoints(x, values, Plot.LINE);
 
 		plot.setColor(Color.RED);
-		plot.draw();
+		
 		plot.addPoints(x, values2, Plot.LINE);
 
-		plot.addLegend("X: green" + "\n" + "Y: red");
+		plot.addLegend("X \n Y");
 		plot.show();
 	}
 
