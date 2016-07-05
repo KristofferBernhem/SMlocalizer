@@ -19,6 +19,6 @@ public class renderImage {
 			}
 		}
 	}		
-	generateImage.create("test2",correctedResults, Width, Height, PixelRatio);		
+	generateImage.create("RenderedResults",correctedResults, Width, Height, PixelRatio);		
 	}
 }

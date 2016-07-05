@@ -54,12 +54,13 @@ class BackgroundCorrection {
 				}
 				timeVector = runningMedian(timeVector, W); // Calculate time median for this xy position.
 				for (int k = 0; k < voxels.length; k++){
-					CorrectedStack.setVoxel(i, j, k, ((float)(voxels[k] - timeVector[k]*MeanFrame[k]))); // Update the duplicate stack with corrected values.
+					float data = ((float)(voxels[k] - timeVector[k]*MeanFrame[k]));
+					if (data<0)
+						data = 0;					
+					CorrectedStack.setVoxel(i, j, k, data); // Update the duplicate stack with corrected values.
 				}			
 			}
 		}
-		
-	
 		return CorrectedStack;
 	}
 

@@ -25,15 +25,15 @@ public class Particle {
 	public Particle(double x, double y, double z, double frame, double channel, double sigma_x, double sigma_y, double sigma_z, double precision_x, double precision_y, double precision_z, double chi_square,double photons, int include){
 		this.x 				= x; 			// Fitted x coordinate.
 		this.y 				= y;			// Fitted y coordinate.
-		this.z				= 0; 			// Fitted z coordinate.
+		this.z				= z; 			// Fitted z coordinate.
 		this.frame			= frame; 		// frame that the particle was identified.
-		this.channel 		= 0; 			// Channel id.
+		this.channel 		= channel; 			// Channel id.
 		this.sigma_x 		= sigma_x; 		// fitted sigma in x direction.
 		this.sigma_y 		= sigma_y; 		// fitted sigma in y direction.
-		this.sigma_z 		= 0; 			// fitted sigma in z direction.
+		this.sigma_z 		= sigma_z; 			// fitted sigma in z direction.
 		this.precision_x 	= precision_x; 	// precision of fit for x coordinate.
 		this.precision_y 	= precision_y; 	// precision of fit for y coordinate.
-		this.precision_z 	= 0; 			// precision of fit for z coordinate.
+		this.precision_z 	= precision_z; 			// precision of fit for z coordinate.
 		this.chi_square 	= chi_square; 	// Goodness of fit.
 		this.photons 		= photons; 		// Total photon count for this particle.
 		this.include		= include; 		// If this particle should be included in analysis and plotted.

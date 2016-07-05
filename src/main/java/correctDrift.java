@@ -4,10 +4,15 @@ import ij.gui.Plot;
 
 
 public class correctDrift {
-	public static void run(int[] lb, int[] ub, double BinFrac, int nParticles, int minParticles, int[] stepSize, double Channels, boolean AlignCh){
-		ArrayList<Particle> locatedParticles = TableIO.Load(); // Get current table data.
-		System.out.println("driftCorrect: " + locatedParticles.size());
-		ArrayList<Particle> correctedResults = new ArrayList<Particle>(); // Output arraylist, will contain all particles that fit user input requirements after drift correction. 				
+	public static void run(int[] lb, int[] ub, double BinFrac, int nParticles, int minParticles, int[] stepSize){
+		ArrayList<Particle> locatedParticles = TableIO.Load(); // Get current table data.		
+		ArrayList<Particle> correctedResults = new ArrayList<Particle>(); // Output arraylist, will contain all particles that fit user input requirements after drift correction.
+		double Channels = 1;
+		for (int i = 0; i < correctedResults.size(); i ++){
+			if (correctedResults.get(i).channel>Channels){
+				Channels = correctedResults.get(i).channel;
+			}
+		}
 		for(double Ch = 1; Ch <= Channels; Ch++){
 			int idx 			= locatedParticles.size() - 1;
 
@@ -17,22 +22,22 @@ public class correctDrift {
 			ArrayList<Particle> filteredResults =  new ArrayList<Particle>(); // output arraylist.
 			int[] timeIndex = new int[(int) (Math.round(1.0/BinFrac)+1)];
 			double[] timeIndexDouble = new double[(int) (Math.round(1.0/BinFrac)+1)];
-			int count = 0;		
-
+			int count = 0;					
 			// Check which particles are within user set parameters.
 			for (int i = 0; i < locatedParticles.size(); i++){
 				if (locatedParticles.get(i).include == 1 &&
 						locatedParticles.get(i).channel == Ch){
-					filteredResults.add(locatedParticles.get(i)); 	// Add particles that match user set parameters.					
-
-					if (filteredResults.get(filteredResults.size()-1).frame > frameBin*count){	// First time data from a new bin is added, register index.
+					filteredResults.add(locatedParticles.get(i)); 	// Add particles that match user set parameters.										
+					if (filteredResults.get(filteredResults.size()-1).frame > frameBin*count){	// First time data from a new bin is added, register index.						
 						timeIndex[count] = filteredResults.size() - 1; // Get the index for the first entry with the new bin.
 						timeIndexDouble[count] = filteredResults.get(filteredResults.size()-1).frame;
 						count++;
 					}
 				}
 			}
-
+			if (count == 0){
+				return;
+			}
 			timeIndex[timeIndex.length-1] =  filteredResults.size(); 									// Final entry.
 			timeIndexDouble[timeIndex.length-1] = filteredResults.get(filteredResults.size()-1).frame; 	// Final entry.
 			double[] lambdax = new double[(int) Math.round(1.0/BinFrac)];								// Holds drift estimate between all bins in x.
@@ -139,55 +144,63 @@ public class correctDrift {
 				plot(lx,ly,timeV);
 
 			}// Channel loop ends.
-		}
-		
-		
-		if(Channels > 1 && // Align channels.
-						AlignCh == true){ 
-			for (double Ch = 2; Ch < Channels; Ch++){
-				ArrayList<Particle> Data1 	= new ArrayList<Particle>(); 		// Target particles.			
-				int addedFrames1 			= 0;								// Number of particles added to the bin.
-				int index = 0;
-				while (addedFrames1 < nParticles && index < correctedResults.size()){
-					if (correctedResults.get(index).channel == Ch-1 &&
-							correctedResults.get(index).include == 1){
-						Data1.add(correctedResults.get(index));
-						index++;
-						addedFrames1++;
-					}
-				}
-
-				ArrayList<Particle> Data2 	= new ArrayList<Particle>(); 		// Change these particles so that the correlation function is maximized.
-				int addedFrames2 			= 0;								// Number of particles added to the bin.
-				index = 0;
-				while (addedFrames2 < nParticles && index < correctedResults.size()){
-					if (correctedResults.get(index).channel == Ch &&
-							correctedResults.get(index).include == 1){
-						Data2.add(correctedResults.get(index));
-						index++;
-						addedFrames2++;
-					}
-				}
-				int[] roughStepsize  	= {stepSize[0]*5,stepSize[1]*5,stepSize[2]*5}; // increase stepSize for a first round of optimization. 
-				double[] roughlambda	= AutoCorrelation.getLambda(Data1,Data2,roughStepsize,lb,ub); // Get rough estimate of lambda, drift.			
-				int[] fineLb 			= {(int) (roughlambda[0] - stepSize[0]),(int) (roughlambda[1] - stepSize[1]),(int) (roughlambda[2] - stepSize[2])}; 	// Narrow lower boundry.
-				int[] fineUb 			= {(int) (roughlambda[0] + stepSize[0]),(int) (roughlambda[1] + stepSize[1]),(int) (roughlambda[2] + stepSize[2])}; 	// Narrow upper boundry.
-				double[] lambdaCh 		= AutoCorrelation.getLambda(Data1,Data2,stepSize ,fineLb ,fineUb); 				// Get drift.
-
-				for(int i = 0; i < correctedResults.size(); i++){
-					if (correctedResults.get(i).channel == Ch){
-						correctedResults.get(i).x = correctedResults.get(i).x - lambdaCh[0];
-						correctedResults.get(i).y = correctedResults.get(i).y - lambdaCh[1];
-						correctedResults.get(i).z = correctedResults.get(i).z - lambdaCh[2];
-					}
-				}
-
-			}
-			TableIO.Store(correctedResults);
-			System.out.println("Channels aligned.");
-		}
-		
+		}				
 		System.out.println("No drift correction possible, not enough particles in each bin.");
+	}
+	
+	
+public static void ChannelAlign(int[] lb, int[] ub, int nParticles, int minParticles, int[] stepSize){
+		ArrayList<Particle> locatedParticles = TableIO.Load(); // Get current table data.
+		System.out.println("driftCorrect: " + locatedParticles.size());
+		ArrayList<Particle> correctedResults = new ArrayList<Particle>(); // Output arraylist, will contain all particles that fit user input requirements after drift correction.
+		double Channels = 1;
+		for (int i = 0; i < correctedResults.size(); i ++){
+			if (correctedResults.get(i).channel>Channels){
+				Channels = correctedResults.get(i).channel;
+			}
+		}
+	
+		for (double Ch = 2; Ch < Channels; Ch++){
+			ArrayList<Particle> Data1 	= new ArrayList<Particle>(); 		// Target particles.			
+			int addedFrames1 			= 0;								// Number of particles added to the bin.
+			int index = 0;
+			while (addedFrames1 < nParticles && index < correctedResults.size()){
+				if (correctedResults.get(index).channel == Ch-1 &&
+						correctedResults.get(index).include == 1){
+					Data1.add(correctedResults.get(index));
+					index++;
+					addedFrames1++;
+				}
+			}
+
+			ArrayList<Particle> Data2 	= new ArrayList<Particle>(); 		// Change these particles so that the correlation function is maximized.
+			int addedFrames2 			= 0;								// Number of particles added to the bin.
+			index = 0;
+			while (addedFrames2 < nParticles && index < correctedResults.size()){
+				if (correctedResults.get(index).channel == Ch &&
+						correctedResults.get(index).include == 1){
+					Data2.add(correctedResults.get(index));
+					index++;
+					addedFrames2++;
+				}
+			}
+			int[] roughStepsize  	= {stepSize[0]*5,stepSize[1]*5,stepSize[2]*5}; // increase stepSize for a first round of optimization. 
+			double[] roughlambda	= AutoCorrelation.getLambda(Data1,Data2,roughStepsize,lb,ub); // Get rough estimate of lambda, drift.			
+			int[] fineLb 			= {(int) (roughlambda[0] - stepSize[0]),(int) (roughlambda[1] - stepSize[1]),(int) (roughlambda[2] - stepSize[2])}; 	// Narrow lower boundry.
+			int[] fineUb 			= {(int) (roughlambda[0] + stepSize[0]),(int) (roughlambda[1] + stepSize[1]),(int) (roughlambda[2] + stepSize[2])}; 	// Narrow upper boundry.
+			double[] lambdaCh 		= AutoCorrelation.getLambda(Data1,Data2,stepSize ,fineLb ,fineUb); 				// Get drift.
+
+			for(int i = 0; i < correctedResults.size(); i++){
+				if (correctedResults.get(i).channel == Ch){
+					correctedResults.get(i).x = correctedResults.get(i).x - lambdaCh[0];
+					correctedResults.get(i).y = correctedResults.get(i).y - lambdaCh[1];
+					correctedResults.get(i).z = correctedResults.get(i).z - lambdaCh[2];
+				}
+			}
+
+		}
+		TableIO.Store(correctedResults);
+		System.out.println("Channels aligned.");
 	}
 
 	public static double[] interp(double X1, double X2, int n){
