@@ -2,10 +2,6 @@ import ij.ImageStack;
 import ij.process.ImageProcessor;
 
 /* This class contains all relevant algorithms for background corrections.
- * Call through TestArray = backgroundFiltering.medianFiltering(TestArray,W); with W being filter window in one direction
- * and TestArray being a 3 dimensional array. 
- * 
- * 
  * V 1.0 2016-06-18 Kristoffer Bernhem, kristoffer.bernhem@gmail.com
  */
 

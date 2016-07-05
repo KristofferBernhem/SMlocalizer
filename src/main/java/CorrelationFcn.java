@@ -21,6 +21,7 @@ public class CorrelationFcn {
 	public MultivariateVectorFunction retMVF (){
 		return new MultivariateVectorFunction() {
 			//@Override 
+			@Override
 			public double[] value(double[] lamda ){
 			//		throws IllegalArgumentException {
 			
@@ -54,6 +55,7 @@ public class CorrelationFcn {
 		return new MultivariateMatrixFunction() {
 
 		//	@Override
+			@Override
 			public double[][] value(double[] point)
 					throws IllegalArgumentException {
 				System.out.println("her");

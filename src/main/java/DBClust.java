@@ -54,8 +54,8 @@ public class DBClust {
 			}
 			ClustIdx++;
 		}  
-		Width = (int) Math.round(Width/pixelSize);
-		Height = (int) Math.round(Height/pixelSize);
+		Width = Math.round(Width/pixelSize);
+		Height = Math.round(Height/pixelSize);
 		ByteProcessor IP  = new ByteProcessor(Width,Height);			
 		for (int x = 0; x < Width; x++){
 			for (int y = 0; y < Height; y++){

@@ -19,6 +19,7 @@ public class SMLocalizer_ implements PlugIn {
 	}
 
 
+	@Override
 	public void run(String arg0) {
 		String args[] = null;
 		SMLocalizerGUI.main(args); //call GUI.

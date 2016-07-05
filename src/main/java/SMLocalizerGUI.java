@@ -1,3 +1,5 @@
+import javax.swing.SwingConstants;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -117,7 +119,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         pixelSizeLabel.setText("Input pixel size [nm]:");
 
         pixelSize.setFont(new java.awt.Font("Times New Roman", 0, 11)); // NOI18N
-        pixelSize.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        pixelSize.setHorizontalAlignment(SwingConstants.CENTER);
         pixelSize.setText("100");
         pixelSize.setMargin(new java.awt.Insets(0, 2, 0, 2));
 
@@ -126,7 +128,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         outpPixelSize.setToolTipText("Pixel size of rendered output image.");
 
         desiredPixelSize.setFont(new java.awt.Font("Times New Roman", 0, 11)); // NOI18N
-        desiredPixelSize.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        desiredPixelSize.setHorizontalAlignment(SwingConstants.CENTER);
         desiredPixelSize.setText("5");
         desiredPixelSize.setMargin(new java.awt.Insets(0, 2, 0, 2));
 
@@ -135,7 +137,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         medianWindowLabel.setToolTipText("Used for time median background filtering. Odd number frames, including center frame and window-1 forward and backwards in time. ");
 
         medianWindow.setFont(new java.awt.Font("Times New Roman", 0, 11)); // NOI18N
-        medianWindow.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        medianWindow.setHorizontalAlignment(SwingConstants.CENTER);
         medianWindow.setText("101");
         medianWindow.setToolTipText("Uneven number");
         medianWindow.setMargin(new java.awt.Insets(0, 2, 0, 2));
@@ -147,7 +149,8 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         gWindow.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "3x3", "5x5", "7x7" }));
         gWindow.setSelectedIndex(1);
         gWindow.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 gWindowActionPerformed(evt);
             }
         });
@@ -157,7 +160,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         positivePixelsLabel.setToolTipText("Number of pixels within the ROI, including the center, that needs to be stronger then background.");
 
         positivePixels.setFont(new java.awt.Font("Times New Roman", 0, 11)); // NOI18N
-        positivePixels.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        positivePixels.setHorizontalAlignment(SwingConstants.CENTER);
         positivePixels.setText("9");
         positivePixels.setMargin(new java.awt.Insets(0, 2, 0, 2));
 
@@ -166,17 +169,17 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         MinSignal_Label.setToolTipText("Pixel signal intensity to be extracted for gaussian fit");
 
         MinSignal.setFont(new java.awt.Font("Times New Roman", 0, 11)); // NOI18N
-        MinSignal.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        MinSignal.setHorizontalAlignment(SwingConstants.CENTER);
         MinSignal.setText("2000");
         MinSignal.setMargin(new java.awt.Insets(0, 2, 0, 2));
 
         Chi_low.setFont(new java.awt.Font("Times New Roman", 0, 11)); // NOI18N
-        Chi_low.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        Chi_low.setHorizontalAlignment(SwingConstants.CENTER);
         Chi_low.setText("0.0");
         Chi_low.setMargin(new java.awt.Insets(0, 2, 0, 2));
 
         Chi_high.setFont(new java.awt.Font("Times New Roman", 0, 11)); // NOI18N
-        Chi_high.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        Chi_high.setHorizontalAlignment(SwingConstants.CENTER);
         Chi_high.setText("1.0");
         Chi_high.setMargin(new java.awt.Insets(0, 2, 0, 2));
 
@@ -189,12 +192,12 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         zDriftLabel.setToolTipText("Max z drift to be considered ok for each time bin during drift corrections.");
 
         xyDrift.setFont(new java.awt.Font("Times New Roman", 0, 11)); // NOI18N
-        xyDrift.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        xyDrift.setHorizontalAlignment(SwingConstants.CENTER);
         xyDrift.setText("250");
         xyDrift.setMargin(new java.awt.Insets(0, 2, 0, 2));
 
         zDrift.setFont(new java.awt.Font("Times New Roman", 0, 11)); // NOI18N
-        zDrift.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        zDrift.setHorizontalAlignment(SwingConstants.CENTER);
         zDrift.setText("0");
         zDrift.setMargin(new java.awt.Insets(0, 2, 0, 2));
 
@@ -202,7 +205,8 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         Process.setText("Process");
         Process.setToolTipText("Process selected timeseries of data.");
         Process.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ProcessActionPerformed(evt);
             }
         });
@@ -211,7 +215,8 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         correctBackground.setText("Correct background");
         correctBackground.setToolTipText("Correct background in selected imagestack.");
         correctBackground.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 correctBackgroundActionPerformed(evt);
             }
         });
@@ -220,7 +225,8 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         localize.setText("Localize particles");
         localize.setToolTipText("Localize particles using gaussian fit for the selected background corrected imagestack.");
         localize.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 localizeActionPerformed(evt);
             }
         });
@@ -229,7 +235,8 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         driftCorrect.setText("Drift correct");
         driftCorrect.setToolTipText("Correct for drift between time bins from the selected results table. Will update the table with new coordinate values.");
         driftCorrect.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 driftCorrectActionPerformed(evt);
             }
         });
@@ -238,7 +245,8 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         ClusterAnalysis.setText("Cluster analysis");
         ClusterAnalysis.setToolTipText("Perform density based cluster analysis with current values. Generates new particle table with center of clusters and renders image.");
         ClusterAnalysis.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ClusterAnalysisActionPerformed(evt);
             }
         });
@@ -247,7 +255,8 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         BatchP.setText("Batch process");
         BatchP.setToolTipText("Load multiple imagestacks in sequence and process each and save resulting table and rendered image for each. Will use the current settings.");
         BatchP.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BatchPActionPerformed(evt);
             }
         });
@@ -256,7 +265,8 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         render.setText("Render image");
         render.setToolTipText("Render a image based on selected table of results.");
         render.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 renderActionPerformed(evt);
             }
         });
@@ -265,7 +275,8 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         cleanTable.setText("Clean results table");
         cleanTable.setToolTipText("Remove particles not corresponding to the current range of parameters.");
         cleanTable.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cleanTableActionPerformed(evt);
             }
         });
@@ -275,27 +286,28 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         MinPartDistLabel.setToolTipText("Minimum distance between particles to be included.");
 
         lowPhotonCount.setFont(new java.awt.Font("Times New Roman", 0, 11)); // NOI18N
-        lowPhotonCount.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        lowPhotonCount.setHorizontalAlignment(SwingConstants.CENTER);
         lowPhotonCount.setText("100");
         lowPhotonCount.setMargin(new java.awt.Insets(0, 2, 0, 2));
         lowPhotonCount.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 lowPhotonCountActionPerformed(evt);
             }
         });
 
         highPhotonCount.setFont(new java.awt.Font("Times New Roman", 0, 11)); // NOI18N
-        highPhotonCount.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        highPhotonCount.setHorizontalAlignment(SwingConstants.CENTER);
         highPhotonCount.setText("5000");
         highPhotonCount.setMargin(new java.awt.Insets(0, 2, 0, 2));
 
         lowSigma.setFont(new java.awt.Font("Times New Roman", 0, 11)); // NOI18N
-        lowSigma.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        lowSigma.setHorizontalAlignment(SwingConstants.CENTER);
         lowSigma.setText("10");
         lowSigma.setMargin(new java.awt.Insets(0, 2, 0, 2));
 
         highSigma.setFont(new java.awt.Font("Times New Roman", 0, 11)); // NOI18N
-        highSigma.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        highSigma.setHorizontalAlignment(SwingConstants.CENTER);
         highSigma.setText("300");
         highSigma.setMargin(new java.awt.Insets(0, 2, 0, 2));
 
@@ -303,22 +315,22 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         headerSelect.setText("Included particle range");
 
         lowSigmaZ.setFont(new java.awt.Font("Times New Roman", 0, 11)); // NOI18N
-        lowSigmaZ.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        lowSigmaZ.setHorizontalAlignment(SwingConstants.CENTER);
         lowSigmaZ.setText("0");
         lowSigmaZ.setMargin(new java.awt.Insets(0, 2, 0, 2));
 
         highSigmaZ.setFont(new java.awt.Font("Times New Roman", 0, 11)); // NOI18N
-        highSigmaZ.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        highSigmaZ.setHorizontalAlignment(SwingConstants.CENTER);
         highSigmaZ.setText("300");
         highSigmaZ.setMargin(new java.awt.Insets(0, 2, 0, 2));
 
         lowPrecisionXY.setFont(new java.awt.Font("Times New Roman", 0, 11)); // NOI18N
-        lowPrecisionXY.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        lowPrecisionXY.setHorizontalAlignment(SwingConstants.CENTER);
         lowPrecisionXY.setText("5");
         lowPrecisionXY.setMargin(new java.awt.Insets(0, 2, 0, 2));
 
         highPrecisionXY.setFont(new java.awt.Font("Times New Roman", 0, 11)); // NOI18N
-        highPrecisionXY.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        highPrecisionXY.setHorizontalAlignment(SwingConstants.CENTER);
         highPrecisionXY.setText("50");
         highPrecisionXY.setMargin(new java.awt.Insets(0, 2, 0, 2));
 
@@ -329,22 +341,24 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         driftLabel.setText("Drift correction settings");
 
         lowDriftBinCount.setFont(new java.awt.Font("Times New Roman", 0, 11)); // NOI18N
-        lowDriftBinCount.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        lowDriftBinCount.setHorizontalAlignment(SwingConstants.CENTER);
         lowDriftBinCount.setText("100");
         lowDriftBinCount.setMargin(new java.awt.Insets(0, 2, 0, 2));
         lowDriftBinCount.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 lowDriftBinCountActionPerformed(evt);
             }
         });
 
         highDriftBinCount.setFont(new java.awt.Font("Times New Roman", 0, 11)); // NOI18N
-        highDriftBinCount.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        highDriftBinCount.setHorizontalAlignment(SwingConstants.CENTER);
         highDriftBinCount.setText("1000");
         highDriftBinCount.setMargin(new java.awt.Insets(0, 2, 0, 2));
         highDriftBinCount.setPreferredSize(new java.awt.Dimension(40, 15));
         highDriftBinCount.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 highDriftBinCountActionPerformed(evt);
             }
         });
@@ -354,12 +368,12 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         stepSizeLabe.setToolTipText("Step size for drift correction. Smaller step size results in slower calculation times.");
 
         stepsizeXY.setFont(new java.awt.Font("Times New Roman", 0, 11)); // NOI18N
-        stepsizeXY.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        stepsizeXY.setHorizontalAlignment(SwingConstants.CENTER);
         stepsizeXY.setText("5");
         stepsizeXY.setMargin(new java.awt.Insets(0, 2, 0, 2));
 
         stepsizeZ.setFont(new java.awt.Font("Times New Roman", 0, 11)); // NOI18N
-        stepsizeZ.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        stepsizeZ.setHorizontalAlignment(SwingConstants.CENTER);
         stepsizeZ.setText("5");
         stepsizeZ.setMargin(new java.awt.Insets(0, 2, 0, 2));
 
@@ -367,11 +381,12 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         epsilonLabel.setText("Search radius [nm]");
 
         epsilon.setFont(new java.awt.Font("Times New Roman", 0, 11)); // NOI18N
-        epsilon.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        epsilon.setHorizontalAlignment(SwingConstants.CENTER);
         epsilon.setText("10");
         epsilon.setMargin(new java.awt.Insets(0, 2, 0, 2));
         epsilon.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 epsilonActionPerformed(evt);
             }
         });
@@ -381,7 +396,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         MinPtsLabel.setToolTipText("Minimum and maximum number of particles to include in a bin. Increasing max will result in increase in processing time.");
 
         minPts.setFont(new java.awt.Font("Times New Roman", 0, 11)); // NOI18N
-        minPts.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        minPts.setHorizontalAlignment(SwingConstants.CENTER);
         minPts.setText("5");
         minPts.setMargin(new java.awt.Insets(0, 2, 0, 2));
 
@@ -394,11 +409,12 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         binCountLabel.setToolTipText("Number of bins to split the data in time.");
 
         binCount.setFont(new java.awt.Font("Times New Roman", 0, 11)); // NOI18N
-        binCount.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        binCount.setHorizontalAlignment(SwingConstants.CENTER);
         binCount.setText("50");
         binCount.setMargin(new java.awt.Insets(0, 2, 0, 2));
         binCount.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 binCountActionPerformed(evt);
             }
         });
@@ -411,7 +427,8 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         inclPhotonCount.setText("Photon count");
         inclPhotonCount.setToolTipText("Calculated particle photon count");
         inclPhotonCount.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 inclPhotonCountActionPerformed(evt);
             }
         });
@@ -436,7 +453,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         inclXYprecision.setToolTipText("Precision of localization in x-y.");
 
         minParticleDistance.setFont(new java.awt.Font("Times New Roman", 0, 11)); // NOI18N
-        minParticleDistance.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        minParticleDistance.setHorizontalAlignment(SwingConstants.CENTER);
         minParticleDistance.setText("7");
         minParticleDistance.setMargin(new java.awt.Insets(0, 2, 0, 2));
 
@@ -445,12 +462,12 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         inclZprecision.setToolTipText("Precicion of fit in z.");
 
         lowZprecision.setFont(new java.awt.Font("Times New Roman", 0, 11)); // NOI18N
-        lowZprecision.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        lowZprecision.setHorizontalAlignment(SwingConstants.CENTER);
         lowZprecision.setText("0");
         lowZprecision.setMargin(new java.awt.Insets(0, 2, 0, 2));
 
         highZprecision.setFont(new java.awt.Font("Times New Roman", 0, 11)); // NOI18N
-        highZprecision.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        highZprecision.setHorizontalAlignment(SwingConstants.CENTER);
         highZprecision.setText("50");
         highZprecision.setMargin(new java.awt.Insets(0, 2, 0, 2));
 
@@ -458,7 +475,8 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         PlotDistr.setText("Plot distributions");
         PlotDistr.setToolTipText("Plot parameter distribution of particles in selected results table.");
         PlotDistr.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 PlotDistrActionPerformed(evt);
             }
         });
@@ -479,7 +497,8 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         AlignChannels.setText("Align channels");
         AlignChannels.setToolTipText("Align all channels.");
         AlignChannels.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 AlignChannelsActionPerformed(evt);
             }
         });
@@ -494,26 +513,28 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         MinPtsLabel_ChAlign.setToolTipText("Minimum and maximum number of particles to include in a bin. Increasing max will result in increase in processing time.");
 
         lowChAlignBinCount.setFont(new java.awt.Font("Times New Roman", 0, 11)); // NOI18N
-        lowChAlignBinCount.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        lowChAlignBinCount.setHorizontalAlignment(SwingConstants.CENTER);
         lowChAlignBinCount.setText("100");
         lowChAlignBinCount.setMargin(new java.awt.Insets(0, 2, 0, 2));
         lowChAlignBinCount.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 lowChAlignBinCountActionPerformed(evt);
             }
         });
 
         stepsizeZchAlign.setFont(new java.awt.Font("Times New Roman", 0, 11)); // NOI18N
-        stepsizeZchAlign.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        stepsizeZchAlign.setHorizontalAlignment(SwingConstants.CENTER);
         stepsizeZchAlign.setText("5");
         stepsizeZchAlign.setMargin(new java.awt.Insets(0, 2, 0, 2));
 
         stepsizeXYchAlign.setFont(new java.awt.Font("Times New Roman", 0, 11)); // NOI18N
-        stepsizeXYchAlign.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        stepsizeXYchAlign.setHorizontalAlignment(SwingConstants.CENTER);
         stepsizeXYchAlign.setText("5");
         stepsizeXYchAlign.setMargin(new java.awt.Insets(0, 2, 0, 2));
         stepsizeXYchAlign.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 stepsizeXYchAlignActionPerformed(evt);
             }
         });
@@ -529,11 +550,12 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         maxLabel3.setText("High");
 
         highChAlignBinCount.setFont(new java.awt.Font("Times New Roman", 0, 11)); // NOI18N
-        highChAlignBinCount.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        highChAlignBinCount.setHorizontalAlignment(SwingConstants.CENTER);
         highChAlignBinCount.setText("2000");
         highChAlignBinCount.setMargin(new java.awt.Insets(0, 2, 0, 2));
         highChAlignBinCount.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 highChAlignBinCountActionPerformed(evt);
             }
         });
@@ -1810,6 +1832,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 
 		/* Create and display the form */
 		java.awt.EventQueue.invokeLater(new Runnable() {
+			@Override
 			public void run() {
 				new SMLocalizerGUI().setVisible(true);
 			}

@@ -52,6 +52,7 @@ public class Gauss2D {
 	public MultivariateVectorFunction retMVF (){
 		return new MultivariateVectorFunction() {
 			//@Override 
+			@Override
 			public double[] value(double[] V)
 					throws IllegalArgumentException {
 				double[] eval = new double[size];
@@ -76,6 +77,7 @@ public class Gauss2D {
 		return new MultivariateMatrixFunction() {
 
 		//	@Override
+			@Override
 			public double[][] value(double[] point)
 					throws IllegalArgumentException {
 				return jacobian(point);

@@ -11,7 +11,7 @@ public class AutoCorrelation {
 			tempData[i][2] = tempParticle.z;
 		}
 		double[][]Dataset1 = tempData;	
-		double[][] tempData2 = new double[Second.size()][2];
+		double[][] tempData2 = new double[Second.size()][3];
 		for (int i = 0; i < Second.size(); i++){
 			Particle tempParticle = Second.get(i);
 			tempData2[i][0] = tempParticle.x;
