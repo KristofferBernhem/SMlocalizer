@@ -1,5 +1,21 @@
-import java.util.ArrayList;
+/* Copyright 2016 Kristoffer Bernhem.
+ * This file is part of SMLocalizer.
+ *
+ *  SMLocalizer is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  SMLocalizer is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with SMLocalizer.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
+import java.util.ArrayList;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.WindowManager;
@@ -17,16 +33,7 @@ public class localizeAndFit {
 		ArrayList<Particle> Results = new ArrayList<Particle>();
 		for (double Ch = 1; Ch <= Channels; Ch++){
 			for (int Frame = 0; Frame < LocalizeStack.getSize();Frame++){
-				ImageProcessor ImProc = LocalizeStack.getProcessor(Frame+1);
-			/*	double[] Noise = new double[ImProc.getWidth()*ImProc.getHeight()];
-				int count = 0;
-				for (int i = 0; i < ImProc.getWidth(); i++){
-					for (int j = 0; j < ImProc.getHeight(); j++){
-						Noise[count] = ImProc.getPixel(i, j);
-						count++;
-					}					
-				}
-				BackgroundCorrection.quickSort(Noise, 0, Noise.length-1);*/
+				ImageProcessor ImProc = LocalizeStack.getProcessor(Frame+1);		
 				Results.addAll(LocalizeEvents(ImProc,MinLevel,sqDistance,gWindow,Frame+1, Ch, inputPixelSize, minPosPixels)); // Add fitted data.
 			}					
 		}
