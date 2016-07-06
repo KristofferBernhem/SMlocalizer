@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>KTH_CellPhysics</groupId>
 	<artifactId>SMlocalizer</artifactId>
-	<version>1.1.1</version>
+	<version>1.1.2</version>
 	<name>SM localizer</name>
 	<description>Single molecule microscopy localizer</description>
 	<organization>
@@ -20,6 +20,15 @@
 				<role>debugger</role>				
 				<role>support</role>
 				<role>maintainer</role>
+			</roles>
+		</developer>
+		<developer>			
+			<name>Hjalmar Brismar</name>
+			<url>https://www.cellphysics.kth.se</url>
+			<roles>				
+				<role>instigator</role>
+				<role>developer</role>
+				<role>debugger</role>				
 			</roles>
 		</developer>
 	</developers>
