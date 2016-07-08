@@ -93,12 +93,25 @@ public class correctDrift {
 							addedFrames2++;
 						}
 					}
-
-					int[] roughStepsize  	= {stepSize[0]*5,stepSize[1]*5,stepSize[2]*5}; // increase stepSize for a first round of optimization. 
+//					int[] newLb = {(int) (lb[0] +lambdax[i-1]), (int) (lb[1] +lambday[i-1]),(int) (lb[2] +lambdaz[i-1]) };
+	//				int[] newUb = {(int) (ub[0] +lambdax[i-1]), (int) (ub[1] +lambday[i-1]),(int) (ub[2] +lambdaz[i-1]) };
+					int[] roughStepsize  	= {stepSize[0]*5,stepSize[1]*5,stepSize[2]*5}; // increase stepSize for a first round of optimization.
+		//			double[] roughlambda	= AutoCorrelation.getLambda(Data1,Data2,roughStepsize,newLb,newUb); // Get rough estimate of lambda, drift.
 					double[] roughlambda	= AutoCorrelation.getLambda(Data1,Data2,roughStepsize,lb,ub); // Get rough estimate of lambda, drift.			
 					int[] fineLb 			= {(int) (roughlambda[0] - stepSize[0]),(int) (roughlambda[1] - stepSize[1]),(int) (roughlambda[2] - stepSize[2])}; 	// Narrow lower boundry.
 					int[] fineUb 			= {(int) (roughlambda[0] + stepSize[0]),(int) (roughlambda[1] + stepSize[1]),(int) (roughlambda[2] + stepSize[2])}; 	// Narrow upper boundry.
+					for(int j = 0; j < lb.length;j++){
+						if(lb[j] == 0){
+							fineLb[j] = 0;
+						}					
+						if (ub[j] == 0){
+							fineUb[j] = 0;
+						}
+					}
 					double[] tempLamda 		= AutoCorrelation.getLambda(Data1,Data2,stepSize ,fineLb ,fineUb); 				// Get drift.
+//					lambdax[i] 				= tempLamda[0];
+//					lambday[i] 				= tempLamda[1];
+//					lambdaz[i] 				= tempLamda[2];
 					lambdax[i] 				= tempLamda[0] + lambdax[i-1];
 					lambday[i] 				= tempLamda[1] + lambday[i-1];
 					lambdaz[i] 				= tempLamda[2] + lambdaz[i-1];
@@ -126,7 +139,7 @@ public class correctDrift {
 						countz--;
 					}
 				}
-				int[] timeV = new int[lambda.length];
+				double[] timeV = new double[lambda.length];
 				for (int i = 0; i < timeV.length;i++){
 					timeV[i] = i;
 				}		
@@ -150,7 +163,14 @@ public class correctDrift {
 						tempPart.x = locatedParticles.get(index).x - lambda[(int) tempPart.frame-1][0];
 						tempPart.y = locatedParticles.get(index).y - lambda[(int) tempPart.frame-1][1];
 						tempPart.z = locatedParticles.get(index).z - lambda[(int) tempPart.frame-1][2];
-						correctedResults.add(tempPart);
+						if(tempPart.x >= 0){
+							if(tempPart.y >= 0){
+								if(tempPart.z >= 0){
+									correctedResults.add(tempPart);
+								}
+							}
+						}
+						
 					}
 
 				}
@@ -163,10 +183,16 @@ public class correctDrift {
 					lz[i]	= lambda[i][2];
 				}
 				plot(lx,ly,timeV);
-
-			}// Channel loop ends.
-		}				
-		System.out.println("No drift correction possible, not enough particles in each bin.");
+				
+			}else
+				System.out.println("No drift correction possible, not enough particles in each bin.");
+			
+		}// Channel loop ends.	
+		
+		if (correctedResults.size()== locatedParticles.size()){
+			TableIO.Store(correctedResults);
+			System.out.println("Drift corrections made");
+		}
 	}
 
 
@@ -221,7 +247,16 @@ public class correctDrift {
 			int[] roughStepsize  	= {stepSize[0]*5,stepSize[1]*5,stepSize[2]*5}; // increase stepSize for a first round of optimization. 
 			double[] roughlambda	= AutoCorrelation.getLambda(Data1,Data2,roughStepsize,lb,ub); // Get rough estimate of lambda, drift.			
 			int[] fineLb 			= {(int) (roughlambda[0] - stepSize[0]),(int) (roughlambda[1] - stepSize[1]),(int) (roughlambda[2] - stepSize[2])}; 	// Narrow lower boundry.
+			
 			int[] fineUb 			= {(int) (roughlambda[0] + stepSize[0]),(int) (roughlambda[1] + stepSize[1]),(int) (roughlambda[2] + stepSize[2])}; 	// Narrow upper boundry.
+			for(int i = 0; i < lb.length;i++){
+				if(lb[i] == 0){
+					fineLb[i] = 0;
+				}					
+				if (ub[i] == 0){
+					fineUb[i] = 0;
+				}
+			}
 			double[] lambdaCh 		= AutoCorrelation.getLambda(Data1,Data2,stepSize ,fineLb ,fineUb); 				// Get drift.
 
 			for(int i = 0; i < locatedParticles.size(); i++){
@@ -230,8 +265,14 @@ public class correctDrift {
 					locatedParticles.get(i).y = locatedParticles.get(i).y - lambdaCh[1];
 					locatedParticles.get(i).z = locatedParticles.get(i).z - lambdaCh[2];
 				}
-			}
-
+			}		
+		}		
+		for (int i = locatedParticles.size()-1; i >=0; i--){
+			if(locatedParticles.get(i).x < 0 ||
+					locatedParticles.get(i).y < 0 ||
+					locatedParticles.get(i).z < 0){
+				locatedParticles.remove(i);
+			}		
 		}
 		TableIO.Store(locatedParticles);
 		System.out.println("Channels aligned.");
@@ -267,22 +308,14 @@ public class correctDrift {
 		Plot plot = new Plot("Plot window", "x", "values", x, values);
 		plot.show();
 	}
-	static void plot(double[] values, double[] values2,int[] x_axis) {
-		double[] x = new double[values.length];
-		for (int i = 0; i < x.length; i++)
-			x[i] = x_axis[i];
-		Plot plot = new Plot("Plot window", "frame", "drift [nm]", x, values);
-		
-		plot.setColor(Color.GREEN);
-		
-		plot.addPoints(x, values, Plot.LINE);
-
-		plot.setColor(Color.RED);
-		
-		plot.addPoints(x, values2, Plot.LINE);
-
-		plot.addLegend("X \n Y");
-		plot.show();
+	static void plot(double[] values, double[] values2,double[] x_axis) {
+		Plot newPlot = new Plot("Drift corrections","frame","drift [nm]");
+		newPlot.setColor(Color.GREEN);
+		newPlot.addPoints(x_axis,values, Plot.LINE);
+		newPlot.setColor(Color.RED);
+		newPlot.addPoints(x_axis,values2, Plot.LINE);
+		newPlot.addLegend("X \n Y");
+		newPlot.show();		
 	}
 
 }

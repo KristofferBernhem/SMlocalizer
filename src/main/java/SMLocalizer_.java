@@ -30,7 +30,8 @@ public class SMLocalizer_ implements PlugIn {
 		Class<?> clazz = SMLocalizer_.class;
 		String url = clazz.getResource("/" + clazz.getName().replace('.', '/') + ".class").toString();
 		String pluginsDir = url.substring("file:".length(), url.length() - clazz.getName().length() - ".class".length());
-		System.setProperty("plugins.dir", pluginsDir);
+		System.setProperty("plugins.dir", pluginsDir);		
+		
 		IJ.runPlugIn(clazz.getName(), "");
 	}
 

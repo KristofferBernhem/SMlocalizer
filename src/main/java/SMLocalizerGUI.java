@@ -1178,9 +1178,6 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			DesiredPixelSize = 5;                 							// Default value.
 			desiredPixelSize.setText(String.valueOf(DesiredPixelSize)); 		// Update.
 		}  
-		
-
-
 		renderImage.run(inputPixelSize,DesiredPixelSize); // Not 3D yet, how to implement? Need to find out how multi channel images are organized for multi channel functions.
 
 	}                                      

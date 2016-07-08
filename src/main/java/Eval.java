@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with SMLocalizer.  If not, see <http://www.gnu.org/licenses/>.
  */
+import org.apache.commons.math3.fitting.leastsquares.GaussNewtonOptimizer;
 import org.apache.commons.math3.fitting.leastsquares.LeastSquaresBuilder;
 import org.apache.commons.math3.fitting.leastsquares.LeastSquaresOptimizer;
 import org.apache.commons.math3.fitting.leastsquares.LeastSquaresOptimizer.Optimum;
@@ -79,28 +80,27 @@ public class Eval {
 	public Optimum fit2dGauss() {
 		LevenbergMarquardtOptimizer lmo = new LevenbergMarquardtOptimizer();
 		LeastSquaresOptimizer.Optimum lsoo = lmo.optimize(lsp);
-
 		return lsoo;	
 	}
 
 	public static void main(String[] args) {						
         //entry the data (5x5)
 		double[] inputdata = {
-				0  ,12 ,25 ,12 ,0  ,
+				0.1  ,12 ,25 ,12 ,0.1  ,
 				12 ,89 ,153,89 ,12 ,
 				25 ,153,255,153,25 ,
 				12 ,89 ,153,89 ,12 ,
-				0  ,12 ,25 ,12 ,0  ,
+				0.1  ,12 ,25 ,12 ,5  ,
 		};		
 		
 		//set initial parameters
 		double[] newStart = {
 				255,
+				2.5,
+				2.5,
 				1,
 				1,
-				1,
-				1,
-				1,
+				0,
 				0
 		};
 		

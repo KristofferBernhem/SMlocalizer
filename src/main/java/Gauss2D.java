@@ -67,33 +67,36 @@ public class Gauss2D {
 	 * Return function evaluation.
 	 */
 	public MultivariateVectorFunction retMVF (){
-		return new MultivariateVectorFunction() {
-			//@Override 
+		return new MultivariateVectorFunction() {	
 			@Override
 			public double[] value(double[] V)
 					throws IllegalArgumentException {
 				double[] eval = new double[size];
 				double SigmaX2 = 2*V[3]*V[3];
 				double SigmaY2 = 2*V[4]*V[4];
+				
+//				double x0 = V[1]*Math.cos(V[5]) - V[2]*Math.sin(V[5]);
+//				double y0 = V[1]*Math.sin(V[5]) - V[2]*Math.cos(V[5]);
 				for (int i = 0; i < eval.length; i++){
 					int xi = i % width;
 					int yi = i / width;				
 					double xprime = (xi - V[1])*Math.cos(V[6]) - (yi - V[2])*Math.sin(V[6]);
 					double yprime = (xi - V[1])*Math.sin(V[6]) + (yi - V[2])*Math.cos(V[6]);
-					eval[i] = V[0]*Math.exp(-(xprime*xprime/SigmaX2 + yprime*yprime/SigmaY2)) + V[5];
-				}
-			
-		
+					eval[i] = V[0]*Math.exp(-(xprime*xprime/SigmaX2 + yprime*yprime/SigmaY2))+ V[5];
+		        	
+
+
+				}			
 				return eval;
 
 			}
 		};
 	}
-	
+
 	public MultivariateMatrixFunction retMMF() {
 		return new MultivariateMatrixFunction() {
 
-		//	@Override
+			//	@Override
 			@Override
 			public double[][] value(double[] point)
 					throws IllegalArgumentException {
@@ -101,14 +104,16 @@ public class Gauss2D {
 			}
 
 			private double[][] jacobian(double[] V) {
-				double[][] jacobian = new double[size][7];
+				double[][] jacobian = new double[size][7];				
 				double SigmaX2 = V[3]*V[3]; 	// sigma_x^2
 				double SigmaY2 = V[4]*V[4]; 	// sigma_y^2
 				double SigmaX3 = SigmaX2*V[3]; 	// sigma_x^3
 				double SigmaY3 = SigmaY2*V[4]; 	// sigma_y^3
+			//	double x0 = V[1]*Math.cos(V[6]) - V[2]*Math.sin(V[6]);
+//				double y0 = V[1]*Math.sin(V[6]) - V[2]*Math.cos(V[6]);
 				for (int i = 0; i < jacobian.length; i++){
 					int xi = i % width;
-					int yi = i / width;				
+					int yi = i / width;
 					double xprime = (xi - V[1])*Math.cos(V[6]) - (yi - V[2])*Math.sin(V[6]);
 					double yprime = (xi - V[1])*Math.sin(V[6]) + (yi - V[2])*Math.cos(V[6]);
 					jacobian[i][0] = Math.exp(-(xprime*xprime/SigmaX2 + yprime*yprime/SigmaY2));
@@ -120,6 +125,7 @@ public class Gauss2D {
 					jacobian[i][6] = -V[0]*jacobian[i][0]*
 							(((-xprime/SigmaX2)*((xi-V[1])*Math.sin(V[6])) + (yi - V[2])*Math.cos(V[6])) + 
 									(yprime/SigmaY2)*((xi-V[1])*Math.cos(V[6])) - (yi - V[2])*Math.sin(V[6]));
+		      
 				}
 				return jacobian;
 			}

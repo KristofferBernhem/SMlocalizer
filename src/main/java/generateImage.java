@@ -34,8 +34,8 @@ public class generateImage {
 		for (int i = 0; i < ParticleList.size(); i++){
 			if (ParticleList.get(i).include == 1){
 				int x = (int) Math.round(ParticleList.get(i).x/pixelSize);
-				int y = (int) Math.round(ParticleList.get(i).y/pixelSize);		
-				IP.putPixel(x, y, 1);
+				int y = (int) Math.round(ParticleList.get(i).y/pixelSize);				
+				IP.putPixel(x, y, (IP.get(x, y) + 1));
 			}
 		}		
 		ImagePlus Image = new ImagePlus(Imtitle,IP);
@@ -49,3 +49,4 @@ public class generateImage {
 		return Idx;
 	}
 }
+
