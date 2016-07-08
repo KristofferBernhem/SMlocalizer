@@ -1,3 +1,5 @@
+import net.imagej.ImageJ;
+
 /* Copyright 2016 Kristoffer Bernhem.
  * This file is part of SMLocalizer.
  *
@@ -101,7 +103,8 @@ public class Gauss2Dfit {
 				70, 260, 810, 260, 70,
 				40, 160, 260, 160, 40,
 				10,  40,  70,  40, 10};*/
-
+		
+		
 		double[] inputdata = {
 				0  ,12 ,25 ,12 ,0  ,
 				12 ,89 ,153,89 ,12 ,
@@ -288,7 +291,7 @@ public class Gauss2Dfit {
 
 		chisquare = Eval(P);
 		long stop = System.nanoTime();
-/*		System.out.println("P[0]: " + P[0] +"\n"+ 
+	System.out.println("P[0]: " + P[0] +"\n"+ 
 				"P[1]: " + P[1] +"\n"+
 				"P[2]: " + P[2] +"\n"+
 				"P[3]: " + P[3] +"\n"+
@@ -296,7 +299,7 @@ public class Gauss2Dfit {
 				"P[5]: " + P[5] +"\n"+
 				"P[6]: " + P[6] +"\n" + 
 				"in " + (lastIt + iterations) + " iterations" + "\n" + 
-				"in " + (stop-start)/1000000.0 + " ms");*/
+				"in " + (stop-start)/1000000.0 + " ms");
 /*		double sum=0;
 		for(int i = 0; i< inputdata.length; i++){
 			sum += inputdata[i];
