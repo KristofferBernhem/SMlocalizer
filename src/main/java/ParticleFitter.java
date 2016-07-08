@@ -17,11 +17,8 @@
 
 import java.util.ArrayList;
 
-import org.apache.commons.math3.fitting.leastsquares.LeastSquaresBuilder;
 import org.apache.commons.math3.fitting.leastsquares.LeastSquaresOptimizer.Optimum;
-import org.apache.commons.math3.fitting.leastsquares.LeastSquaresProblem;
 
-import ij.ImagePlus;
 import ij.process.ImageProcessor;
 
 
@@ -64,8 +61,12 @@ public class ParticleFitter {
 					0,											// Offset.
 					0											// Theta, angle in radians away from y axis.
 			};
+			
+			Gauss2Dfit gfit = new Gauss2Dfit(dataFit,Window);
+			Results.add(gfit.optimize(Frame, (int) Channel, Coord, pixelSize));
+			/*
 			Eval tdgp = new Eval(dataFit, startParameters, Window, new int[] {10000,100}); // Create fit object.
-
+			
 			try{
 				//do LevenbergMarquardt optimization and get optimized parameters
 				Optimum opt = tdgp.fit2dGauss();
@@ -95,7 +96,7 @@ public class ParticleFitter {
 			catch (Exception e) {
 				//	System.out.println(e.toString());
 			}
-
+*/
 		}
 
 		return Results;
@@ -136,6 +137,10 @@ public class ParticleFitter {
 					0,											// Offset.
 					0											// Theta, angle in radians away from y axis.
 			};
+			Gauss2Dfit gfit = new Gauss2Dfit(dataFit,Window);
+			Results.add(gfit.optimize(Frame, (int) Channel, Coord, pixelSize));
+			/*
+			
 			Eval tdgp = new Eval(dataFit, startParameters, Window, new int[] {1000,1000}); // Create fit object.
 
 			try{									
@@ -173,7 +178,7 @@ public class ParticleFitter {
 			}
 			catch (Exception e) {
 				//System.out.println(e.toString());
-			}
+			}*/
 
 		}
 

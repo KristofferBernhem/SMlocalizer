@@ -1,3 +1,20 @@
+/* Copyright 2016 Kristoffer Bernhem.
+ * This file is part of SMLocalizer.
+ *
+ *  SMLocalizer is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  SMLocalizer is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with SMLocalizer.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 public class Gauss2Dfit {
 	double[] inputdata;
 	int width;
@@ -25,19 +42,19 @@ public class Gauss2Dfit {
 		double ThetaB = -Math.sin(2*P[5])/(4*P[3]*P[3]) + Math.sin(2*P[5])/(4*P[4]*P[4]); 
 		double ThetaC = Math.sin(P[5])*Math.sin(P[5])/(2*P[3]*P[3]) + Math.cos(P[5])*Math.cos(P[5])/(2*P[4]*P[4]);
 
-		//		double SigmaX2 = 2*P[3]*P[3];
-		//		double SigmaY2 = 2*P[4]*P[4];
+				double SigmaX2 = 2*P[3]*P[3];
+				double SigmaY2 = 2*P[4]*P[4];
 		for (int i = 0; i < size; i++){
 			int xi = i % width;
 			int yi = i / width;	
-			double residual = P[0]*Math.exp(-(ThetaA*(xi - P[1])*(xi - P[1]) - 
+			/*double residual = P[0]*Math.exp(-(ThetaA*(xi - P[1])*(xi - P[1]) - 
 					2*ThetaB*(xi - P[1])*(yi - P[2]) +
 					ThetaC*(yi - P[2])*(yi - P[2])
-					)) + P[6] - inputdata[i];
+					)) + P[6] - inputdata[i];*/
 
-			//			double xprime = (xi - P[1])*Math.cos(P[5]) - (yi - P[2])*Math.sin(P[5]);
-			//			double yprime = (xi - P[1])*Math.sin(P[5]) + (yi - P[2])*Math.cos(P[5]);
-			//	double residual = P[0]*Math.exp(-(xprime*xprime/SigmaX2 + yprime*yprime/SigmaY2)) + P[6] - inputdata[i];
+						double xprime = (xi - P[1])*Math.cos(P[5]) - (yi - P[2])*Math.sin(P[5]);
+						double yprime = (xi - P[1])*Math.sin(P[5]) + (yi - P[2])*Math.cos(P[5]);
+				double residual = P[0]*Math.exp(-(xprime*xprime/SigmaX2 + yprime*yprime/SigmaY2)) + P[6] - inputdata[i];
 			ChiSquare += residual*residual/(inputdata[i]+1); // handle case where inputdata[i] == 0;
 		}
 
@@ -96,13 +113,14 @@ public class Gauss2Dfit {
 		int channel 		= 1;		// include in optimize call.
 		int[] center 		= {3,3};	// include in optimize call.	
 		int inpwidth 		= 5;
+		int pixelSize 		= 100;
 		Gauss2Dfit fit 		= new Gauss2Dfit(inputdata, inpwidth);		
-		Particle Localized 	= fit.optimize(frame,channel, center);		
+		Particle Localized 	= fit.optimize(frame,channel, center, pixelSize);		
 	}
 	
 	
 	
-	public Particle optimize(int frame, int channel, int[] center){	
+	public Particle optimize(int frame, int channel, int[] center, int pixelSize){	
 		double z0 = 0;
 		double sigma_z = 0;			
 		
@@ -144,7 +162,7 @@ public class Gauss2Dfit {
 		int iterations	 		= 0;					// Loopcounter	
 		int completeCirc 		= 0;					// Keeps track of complete loops over all parameters. 
 		int currentP 			= 0; 					// Which parameter from parameterOrder to currently modify.
-		int[] Porder 	= {3,4,1,2,5,6,0};  			// sigma, x-y, theta, offset,amp
+		int[] Porder 			= {3,4,1,2,5,6,0};  	// sigma, x-y, theta, offset,amp
 		double Order 			= 1; 					// +/- 1, direction of change to parameter.
 		double lastRoundChi 	= Eval(P);				// Keep track if improvements are being made, start with startparameters resulting value.
 		double chisquare 		= lastRoundChi; 		// Input;
@@ -270,7 +288,7 @@ public class Gauss2Dfit {
 
 		chisquare = Eval(P);
 		long stop = System.nanoTime();
-		System.out.println("P[0]: " + P[0] +"\n"+ 
+/*		System.out.println("P[0]: " + P[0] +"\n"+ 
 				"P[1]: " + P[1] +"\n"+
 				"P[2]: " + P[2] +"\n"+
 				"P[3]: " + P[3] +"\n"+
@@ -278,23 +296,23 @@ public class Gauss2Dfit {
 				"P[5]: " + P[5] +"\n"+
 				"P[6]: " + P[6] +"\n" + 
 				"in " + (lastIt + iterations) + " iterations" + "\n" + 
-				"in " + (stop-start)/1000000.0 + " ms");
-		double sum=0;
+				"in " + (stop-start)/1000000.0 + " ms");*/
+/*		double sum=0;
 		for(int i = 0; i< inputdata.length; i++){
 			sum += inputdata[i];
-		}
+		}*/
 		//	System.out.println(sum + " vs " + Eval(startparameters)/sum);
 		Particle Localized 	= new Particle();
 		Localized.include 	= 1;
 		Localized.channel 	= channel;
 		Localized.frame   	= frame;
-		Localized.chi_square = chisquare/sum;
-		Localized.x			= (P[1] + center[0] - Math.round((width-1)/2));
-		Localized.y			= (P[2] + center[1] - Math.round((width-1)/2));
-		Localized.z			= z0;
-		Localized.sigma_x	= P[3];
-		Localized.sigma_y	= P[4];
-		Localized.sigma_z	= sigma_z;
+		Localized.chi_square = chisquare;
+		Localized.x			= pixelSize*(P[1] + center[0] - Math.round((width-1)/2));
+		Localized.y			= pixelSize*(P[2] + center[1] - Math.round((width-1)/2));
+		Localized.z			= pixelSize*z0;
+		Localized.sigma_x	= pixelSize*P[3];
+		Localized.sigma_y	= pixelSize*P[4];
+		Localized.sigma_z	= pixelSize*sigma_z;
 		Localized.photons	= Eval_photons(P);
 		Localized.precision_x = Localized.sigma_x/Localized.photons;
 		Localized.precision_y = Localized.sigma_y/Localized.photons;
