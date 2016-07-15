@@ -1,5 +1,3 @@
-import net.imagej.ImageJ;
-
 /* Copyright 2016 Kristoffer Bernhem.
  * This file is part of SMLocalizer.
  *
@@ -44,19 +42,19 @@ public class Gauss2Dfit {
 		double ThetaB = -Math.sin(2*P[5])/(4*P[3]*P[3]) + Math.sin(2*P[5])/(4*P[4]*P[4]); 
 		double ThetaC = Math.sin(P[5])*Math.sin(P[5])/(2*P[3]*P[3]) + Math.cos(P[5])*Math.cos(P[5])/(2*P[4]*P[4]);
 
-				double SigmaX2 = 2*P[3]*P[3];
-				double SigmaY2 = 2*P[4]*P[4];
+//				double SigmaX2 = 2*P[3]*P[3];
+//				double SigmaY2 = 2*P[4]*P[4];
 		for (int i = 0; i < size; i++){
 			int xi = i % width;
 			int yi = i / width;	
-			/*double residual = P[0]*Math.exp(-(ThetaA*(xi - P[1])*(xi - P[1]) - 
+			double residual = P[0]*Math.exp(-(ThetaA*(xi - P[1])*(xi - P[1]) - 
 					2*ThetaB*(xi - P[1])*(yi - P[2]) +
 					ThetaC*(yi - P[2])*(yi - P[2])
-					)) + P[6] - inputdata[i];*/
+					)) + P[6] - inputdata[i];
 
-						double xprime = (xi - P[1])*Math.cos(P[5]) - (yi - P[2])*Math.sin(P[5]);
-						double yprime = (xi - P[1])*Math.sin(P[5]) + (yi - P[2])*Math.cos(P[5]);
-				double residual = P[0]*Math.exp(-(xprime*xprime/SigmaX2 + yprime*yprime/SigmaY2)) + P[6] - inputdata[i];
+			//			double xprime = (xi - P[1])*Math.cos(P[5]) - (yi - P[2])*Math.sin(P[5]);
+				//		double yprime = (xi - P[1])*Math.sin(P[5]) + (yi - P[2])*Math.cos(P[5]);
+				//double residual = P[0]*Math.exp(-(xprime*xprime/SigmaX2 + yprime*yprime/SigmaY2)) + P[6] - inputdata[i];
 			ChiSquare += residual*residual/(inputdata[i]+1); // handle case where inputdata[i] == 0;
 		}
 
@@ -105,7 +103,7 @@ public class Gauss2Dfit {
 				10,  40,  70,  40, 10};*/
 		
 		
-		double[] inputdata = {
+		/*double[] inputdata = {
 				0  ,12 ,25 ,12 ,0  ,
 				12 ,89 ,153,89 ,12 ,
 				25 ,153,255,153,25 ,
@@ -118,7 +116,7 @@ public class Gauss2Dfit {
 		int inpwidth 		= 5;
 		int pixelSize 		= 100;
 		Gauss2Dfit fit 		= new Gauss2Dfit(inputdata, inpwidth);		
-		Particle Localized 	= fit.optimize(frame,channel, center, pixelSize);		
+		Particle Localized 	= fit.optimize(frame,channel, center, pixelSize);		*/
 	}
 	
 	
@@ -153,7 +151,7 @@ public class Gauss2Dfit {
 				P[0]
 		};
 
-		long start = System.nanoTime();
+//		long start = System.nanoTime();
 		double[] stepfraction = new double[7];
 		stepfraction[0] = (ub[0] - lb[0])/20;			// Amplitude.
 		stepfraction[1] = (ub[1] - lb[1])/20;			// x.
@@ -221,7 +219,7 @@ public class Gauss2Dfit {
 			}			
 			iterations++;																					// Update loop counter.
 		} // End loop
-		int lastIt = iterations - 1;
+	//	int lastIt = iterations - 1;
 		iterations 		= 0; 																				// Reset.
 		currentP 		= 0; 																				// Reset.
 		Order	 		= 1; 																				// Reset.
@@ -290,7 +288,7 @@ public class Gauss2Dfit {
 
 
 		chisquare = Eval(P);
-		long stop = System.nanoTime();
+/*		long stop = System.nanoTime();
 	System.out.println("P[0]: " + P[0] +"\n"+ 
 				"P[1]: " + P[1] +"\n"+
 				"P[2]: " + P[2] +"\n"+
@@ -305,25 +303,23 @@ public class Gauss2Dfit {
 			sum += inputdata[i];
 		}*/
 		//	System.out.println(sum + " vs " + Eval(startparameters)/sum);
-		Particle Localized 	= new Particle();
-		Localized.include 	= 1;
-		Localized.channel 	= channel;
-		Localized.frame   	= frame;
-		Localized.chi_square = chisquare;
-		Localized.x			= pixelSize*(P[1] + center[0] - Math.round((width-1)/2));
-		Localized.y			= pixelSize*(P[2] + center[1] - Math.round((width-1)/2));
-		Localized.z			= pixelSize*z0;
-		Localized.sigma_x	= pixelSize*P[3];
-		Localized.sigma_y	= pixelSize*P[4];
-		Localized.sigma_z	= pixelSize*sigma_z;
-		Localized.photons	= Eval_photons(P);
-		Localized.precision_x = Localized.sigma_x/Localized.photons;
-		Localized.precision_y = Localized.sigma_y/Localized.photons;
-		Localized.precision_z = Localized.sigma_z/Localized.photons;
-
-		
-		
-		return Localized;
-	}
+		Particle Localized 		= new Particle(); // Create new Particle and include fit parameters.
+		Localized.include 		= 1;
+		Localized.channel 		= channel;
+		Localized.frame   		= frame;
+		Localized.chi_square 	= chisquare;
+		Localized.x				= pixelSize*(P[1] + center[0] - Math.round((width-1)/2));
+		Localized.y				= pixelSize*(P[2] + center[1] - Math.round((width-1)/2));
+		Localized.z				= pixelSize*z0;
+		Localized.sigma_x		= pixelSize*P[3];
+		Localized.sigma_y		= pixelSize*P[4];
+		Localized.sigma_z		= pixelSize*sigma_z;
+		Localized.photons		= Eval_photons(P);
+		Localized.precision_x 	= Localized.sigma_x/Localized.photons;
+		Localized.precision_y 	= Localized.sigma_y/Localized.photons;
+		Localized.precision_z 	= Localized.sigma_z/Localized.photons;
+			
+		return Localized; // Return fit.
+	} // optimize.
 
 }
