@@ -16,8 +16,11 @@
  */
 import java.util.ArrayList;
 
+/*
+ * 
+ */
 
-public class AutoCorrelation {
+public class NearestNeighbourDrift {
 	public static double[] getLambda(ArrayList<Particle> First, ArrayList<Particle> Second, int[] stepSize,int[] lb, int[] ub){		
 		double[][] tempData = new double[First.size()][3];
 		for (int i = 0; i < First.size(); i++){

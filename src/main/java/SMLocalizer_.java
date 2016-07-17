@@ -25,14 +25,14 @@ public class SMLocalizer_ implements PlugIn {
 
 	public static void main(final String... args) throws Exception {
 		// create the ImageJ application context with all available services
+
 		final ImageJ ij = new ImageJ();
 		ij.ui().showUI();
-		createTestDataSet.stack(64, 64, 1000, 500, 3); // get dataset.
+		createTestDataSet.stack(64, 64, 1000, 1, 1); // get dataset.
 		Class<?> clazz = SMLocalizer_.class;
 		String url = clazz.getResource("/" + clazz.getName().replace('.', '/') + ".class").toString();
 		String pluginsDir = url.substring("file:".length(), url.length() - clazz.getName().length() - ".class".length());
-		System.setProperty("plugins.dir", pluginsDir);		
-		
+		System.setProperty("plugins.dir", pluginsDir);				
 		IJ.runPlugIn(clazz.getName(), "");
 	}
 

@@ -93,11 +93,8 @@ public class correctDrift {
 							addedFrames2++;
 						}
 					}
-//					int[] newLb = {(int) (lb[0] +lambdax[i-1]), (int) (lb[1] +lambday[i-1]),(int) (lb[2] +lambdaz[i-1]) };
-	//				int[] newUb = {(int) (ub[0] +lambdax[i-1]), (int) (ub[1] +lambday[i-1]),(int) (ub[2] +lambdaz[i-1]) };
 					int[] roughStepsize  	= {stepSize[0]*5,stepSize[1]*5,stepSize[2]*5}; // increase stepSize for a first round of optimization.
-		//			double[] roughlambda	= AutoCorrelation.getLambda(Data1,Data2,roughStepsize,newLb,newUb); // Get rough estimate of lambda, drift.
-					double[] roughlambda	= AutoCorrelation.getLambda(Data1,Data2,roughStepsize,lb,ub); // Get rough estimate of lambda, drift.			
+					double[] roughlambda	= NearestNeighbourDrift.getLambda(Data1,Data2,roughStepsize,lb,ub); // Get rough estimate of lambda, drift.			
 					int[] fineLb 			= {(int) (roughlambda[0] - stepSize[0]),(int) (roughlambda[1] - stepSize[1]),(int) (roughlambda[2] - stepSize[2])}; 	// Narrow lower boundry.
 					int[] fineUb 			= {(int) (roughlambda[0] + stepSize[0]),(int) (roughlambda[1] + stepSize[1]),(int) (roughlambda[2] + stepSize[2])}; 	// Narrow upper boundry.
 					for(int j = 0; j < lb.length;j++){
@@ -108,10 +105,7 @@ public class correctDrift {
 							fineUb[j] = 0;
 						}
 					}
-					double[] tempLamda 		= AutoCorrelation.getLambda(Data1,Data2,stepSize ,fineLb ,fineUb); 				// Get drift.
-//					lambdax[i] 				= tempLamda[0];
-//					lambday[i] 				= tempLamda[1];
-//					lambdaz[i] 				= tempLamda[2];
+					double[] tempLamda 		= NearestNeighbourDrift.getLambda(Data1,Data2,stepSize ,fineLb ,fineUb); 				// Get drift.
 					lambdax[i] 				= tempLamda[0] + lambdax[i-1];
 					lambday[i] 				= tempLamda[1] + lambday[i-1];
 					lambdaz[i] 				= tempLamda[2] + lambdaz[i-1];
@@ -143,9 +137,9 @@ public class correctDrift {
 				for (int i = 0; i < timeV.length;i++){
 					timeV[i] = i;
 				}		
-				//int index = 0;			
+							
 				for (int index = 0; index < locatedParticles.size(); index++ ){
-					//while(locatedParticles.get(index).channel == Ch){
+					
 					if(locatedParticles.get(index).channel == Ch){
 						Particle tempPart 	= new Particle();
 						tempPart.frame	 	= locatedParticles.get(index).frame;
@@ -245,7 +239,7 @@ public class correctDrift {
 
 
 			int[] roughStepsize  	= {stepSize[0]*5,stepSize[1]*5,stepSize[2]*5}; // increase stepSize for a first round of optimization. 
-			double[] roughlambda	= AutoCorrelation.getLambda(Data1,Data2,roughStepsize,lb,ub); // Get rough estimate of lambda, drift.			
+			double[] roughlambda	= NearestNeighbourDrift.getLambda(Data1,Data2,roughStepsize,lb,ub); // Get rough estimate of lambda, drift.			
 			int[] fineLb 			= {(int) (roughlambda[0] - stepSize[0]),(int) (roughlambda[1] - stepSize[1]),(int) (roughlambda[2] - stepSize[2])}; 	// Narrow lower boundry.
 			
 			int[] fineUb 			= {(int) (roughlambda[0] + stepSize[0]),(int) (roughlambda[1] + stepSize[1]),(int) (roughlambda[2] + stepSize[2])}; 	// Narrow upper boundry.
@@ -257,7 +251,7 @@ public class correctDrift {
 					fineUb[i] = 0;
 				}
 			}
-			double[] lambdaCh 		= AutoCorrelation.getLambda(Data1,Data2,stepSize ,fineLb ,fineUb); 				// Get drift.
+			double[] lambdaCh 		= NearestNeighbourDrift.getLambda(Data1,Data2,stepSize ,fineLb ,fineUb); 				// Get drift.
 
 			for(int i = 0; i < locatedParticles.size(); i++){
 				if (locatedParticles.get(i).channel == Ch){

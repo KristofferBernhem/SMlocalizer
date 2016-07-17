@@ -17,6 +17,7 @@
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.WindowManager;
+import ij.measure.Calibration;
 
 
 /*
@@ -30,6 +31,9 @@ public class filterBackground {
 		ImageStack CorrectedStack 	= BackgroundCorrection.medianFiltering(stack, W); 	// Median filtered background with noise level.		
 		String Imtitle 				= "BackgroundCorrected_" + image.getTitle(); 		// Get the results stack new name.		
 		ImagePlus FilteredImage 	=  new ImagePlus(Imtitle,CorrectedStack);			// Create new image from the result stack.
+		
+		Calibration cal = image.getCalibration();										// Get original image calibration.
+		FilteredImage.setCalibration(cal);												// Update corrected image calibration data.
 		FilteredImage.show(); 															// Output.
 	}
 }

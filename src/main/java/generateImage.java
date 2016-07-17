@@ -16,6 +16,7 @@
  */
 import java.util.ArrayList;
 import ij.ImagePlus;
+import ij.measure.Calibration;
 import ij.process.ByteProcessor;
 
 public class generateImage {
@@ -40,9 +41,13 @@ public class generateImage {
 		}		
 		ImagePlus Image = new ImagePlus(Imtitle,IP);
 		Image.setImage(Image);
-		Image.show(); 														// Make visible
-		
-		
+		Calibration cal = new Calibration(Image);
+		cal.pixelHeight = pixelSize;
+		cal.pixelWidth 	= pixelSize;
+		cal.setXUnit("nm");
+		cal.setYUnit("nm");
+		Image.setCalibration(cal);
+		Image.show(); 														// Make visible	
 	}	
 	public static int getIdx(double x, double y, int width, int height){
 		int Idx = (int) ( ((y+1)*height) - (width-(x+1)));		

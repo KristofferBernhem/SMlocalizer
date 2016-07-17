@@ -18,28 +18,47 @@
 import java.util.ArrayList;
 import java.util.Random;
 
+import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
-import ij.process.ByteProcessor;
+import ij.measure.Calibration;
+import ij.process.ShortProcessor;
 
 public class createTestDataSet {
 	public static void stack(int width, int height, int frames, int particleCount, int particlePerFrame){
 		ImageStack Stack = new ImageStack(width, height);
 		ArrayList<Particle> ParticleList = new ArrayList<Particle>();
-		double[] xCoord = correctDrift.interp(500, (double) (width-5)*100, (width-10)*100);
-		double[] yCoord = correctDrift.interp(500, (double) (height-5)*100, (height-10)*100);
-
+	//	double[] xCoord = correctDrift.interp(500, (double) (width-5)*100, (width-10)*100);
+//		double[] yCoord = correctDrift.interp(500, (double) (height-5)*100, (height-10)*100);
+//		double[] xCoord = correctDrift.interp(200, (double) (width-2)*100, (width - 4)*100);		
+	//	double[] xCoord = correctDrift.interp(Math.round(width/2)*100-100, Math.round(width/2)*100+100, (width - 4)*100);
+	//	double[] yCoord = correctDrift.interp(Math.round(height/2)*100, Math.round(height/2)*100, xCoord.length);
+		double[] xCoord = {3200,3200,3200,3200};
+		double[] yCoord = xCoord;
+		//System.out.println("y: " + yCoord[0] + " to " + yCoord[yCoord.length-1]);
 		Random r = new Random();
 		for (int i = 0; i < particleCount; i++){  // Create particles.
 			Particle nextParticle = new Particle();
 			nextParticle.x = xCoord[(int) Math.round(r.nextDouble()*xCoord.length)];
 			nextParticle.y = yCoord[(int) Math.round(r.nextDouble()*yCoord.length)];
-			nextParticle.sigma_x = 100 + r.nextDouble()*150;
-			nextParticle.sigma_y = 100 + r.nextDouble()*150;
-			ParticleList.add(nextParticle);
+			nextParticle.sigma_x = 150 + r.nextDouble()*100;
+			nextParticle.sigma_y = 150 + r.nextDouble()*100;
+			ParticleList.add(nextParticle);			
+		//	System.out.println("x: " + nextParticle.x + " y: " + nextParticle.y + " sigma: " + nextParticle.sigma_x + " sigma: " + nextParticle.sigma_y);
 		}
+		int Channels = 2;
+		int Slizes = 1;
+		int nFrames = frames/Channels;
+		int bitDepth = 16;
+		ImagePlus imStack = ij.IJ.createHyperStack("Teststack",
+				width,
+				height,
+				Channels,
+				Slizes,
+				nFrames,
+				bitDepth);
 		for (int Frame = 1; Frame <= frames; Frame++){
-			ByteProcessor IP  = new ByteProcessor(width,height);
+			ShortProcessor IP  = new ShortProcessor(width,height);					
 			for (int x = 0; x < width; x++){
 				for (int y = 0; y < height; y++){
 					IP.set(x, y, 0);
@@ -50,15 +69,43 @@ public class createTestDataSet {
 				if (index == particleCount){
 					index--;
 				}
-				Particle currParticle = ParticleList.get(index);				
+				Particle currParticle = ParticleList.get(index);
+				/*
+				 * Alternate, generate detailed image, downsample afterwards.
+				 */
+				int winWidth = 701;
 				double[] P = new double[7];				
-				P[0] = 100 + r.nextDouble()*100;
+				P[0] = r.nextDouble()*5;
+				P[1] = (winWidth-1)/2;// add drift.
+				P[2] = (winWidth-1)/2;// add drift.
+				P[3] = currParticle.sigma_x;
+				P[4] = currParticle.sigma_y;
+				P[5] = Math.PI*r.nextDouble()/10;
+				P[6] = r.nextDouble();
+				int[] data = GaussBlur(P,winWidth,winWidth*winWidth);
+				
+				for (int j = 0; j < data.length; j++) {
+					int x = j % winWidth;
+					int y = j / winWidth;			
+					x += currParticle.x - P[1];
+					y += currParticle.y - P[2];
+					x = (int) Math.round(x/100) + 2*((Frame-1) % 2);
+					y = (int) Math.round(y/100) + 2*((Frame-1) % 2);
+					IP.set(x,y,(IP.get(x,y) + data[j]));					
+				}
+				
+				/*
+				 * works, yields symetry.
+				 */
+				
+		/*		double[] P = new double[7];				
+				P[0] = 1000 + r.nextDouble()*60000;
 				P[1] = 3; // add drift.
 				P[2] = 3; // add drift.
 				P[3] = currParticle.sigma_x/100;
 				P[4] = currParticle.sigma_y/100;
 				P[5] = Math.PI*r.nextDouble()/2;
-				P[6] =0;
+				P[6] = 0;
 				int[] data = GaussBlur(P,7,49);
 				for (int j = 0; j < data.length; j++){
 					int x = j % 7;
@@ -66,15 +113,31 @@ public class createTestDataSet {
 					x += (int) currParticle.x/100 - 3;
 					y += (int) currParticle.y/100 - 3;
 					IP.set(x,y, (IP.get(x,y) + data[j]));
-				}
+				}*/
 
 			}
 			Stack.addSlice(IP);
-
+			
+			imStack.setPosition(1+(Frame-1) % 2, 1, (1+(Frame-1)/2));		
+			imStack.setProcessor(IP);
+			//System.out.println("channel:_" + (1+(Frame-1) % 2) + " frame; " + (1+(Frame-1)/2));
 		}
-		System.out.println(Stack.getSize());
-		ImagePlus image = new ImagePlus("",Stack);
-		
+
+		Calibration cal = new Calibration(imStack);
+		cal.pixelHeight = 100;
+		cal.pixelWidth 	= 100;
+		cal.setXUnit("nm");
+		cal.setYUnit("nm");
+		imStack.setCalibration(cal);
+		imStack.show();
+
+		ImagePlus image = new ImagePlus("",Stack);	
+		cal = new Calibration(image);
+		cal.pixelHeight = 100;
+		cal.pixelWidth 	= 100;
+		cal.setXUnit("nm");
+		cal.setYUnit("nm");
+		image.setCalibration(cal);
 		image.show();
 	}
 	public static int[] GaussBlur(double[] P, int width, int size){

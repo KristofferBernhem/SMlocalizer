@@ -18,6 +18,7 @@
 import java.util.ArrayList;
 
 //import org.apache.commons.math3.fitting.leastsquares.LeastSquaresOptimizer.Optimum;
+//import org.apache.commons.math3.fitting.leastsquares.LeastSquaresOptimizer.Optimum;
 
 import ij.process.ImageProcessor;
 
@@ -30,29 +31,29 @@ import ij.process.ImageProcessor;
 public class ParticleFitter {
 
 	public static ArrayList<Particle> Fitter(float[][] InpArray, ArrayList<int[]> Center, int Window, int Frame, double Channel, int pixelSize){				
-//		double z0 			= 0; 													// Fitter does not support 3D fitting at this time.
-//		double sigma_z  	= 0;													// Fitter does not support 3D fitting at this time.
-//		double precision_z 	= 0;													// Fitter does not support 3D fitting at this time.
-//		int Offcenter = Math.round((Window-1)/2) +1;								// How far from 0 the center pixel is. Used to modify output to match the underlying image.
+		//		double z0 			= 0; 													// Fitter does not support 3D fitting at this time.
+		//		double sigma_z  	= 0;													// Fitter does not support 3D fitting at this time.
+		//		double precision_z 	= 0;													// Fitter does not support 3D fitting at this time.
+		//		int Offcenter = Math.round((Window-1)/2) +1;								// How far from 0 the center pixel is. Used to modify output to match the underlying image.
 		ArrayList<Particle> Results = new ArrayList<Particle>(); 					// Create output arraylist.
-	//	int CenterArray = Window*(Window-1)/2 + (Window-1)/2;				
+		//	int CenterArray = Window*(Window-1)/2 + (Window-1)/2;				
 		for (int Event = 0; Event < Center.size(); Event++){ 						// Pull out data based on each entry into Center.
-			double[] dataFit = new double[Window*Window];							// Container for data to be fitted.
+			int[] dataFit = new int[Window*Window];							// Container for data to be fitted.
 			int[] Coord = Center.get(Event);										// X and Y coordiantes for center pixels to be fitted.			
-		//	int count = 0;	
-//			double ExpectedValue = 0; 												// Total value within the region, to be compared to calculated gaussian.
-/*
+			int count = 0;	
+			//			double ExpectedValue = 0; 												// Total value within the region, to be compared to calculated gaussian.
+
 			for (int i = Coord[0]-(Window-1)/2; i< Coord[0] + (Window-1)/2 + 1; i++){ 	// Get all pixels for the region.
 				for (int j = Coord[1]-(Window-1)/2; j< Coord[1] + (Window-1)/2 + 1; j++){					
-					dataFit[count] = InpArray[i][j];								// Pull out data.					
-					ExpectedValue += dataFit[count];								// Add data to total.
+					dataFit[count] = (int) InpArray[i][j];								// Pull out data.					
+					//		ExpectedValue += dataFit[count];								// Add data to total.
 					count++;
 				}
 			}
-			/*
-			 * Fit pulled out data.
-			 */			
-/*			double[] startParameters = {
+
+			// Fit pulled out data.
+
+			/*			double[] startParameters = {
 					dataFit[CenterArray], 						// Amplitude.
 					(Window-1)/2,								// X center.
 					(Window-1)/2,								// Y center.
@@ -61,12 +62,12 @@ public class ParticleFitter {
 					0,											// Offset.
 					0											// Theta, angle in radians away from y axis.
 			};*/
-			
+
 			Gauss2Dfit gfit = new Gauss2Dfit(dataFit,Window);
 			Results.add(gfit.optimize(Frame, (int) Channel, Coord, pixelSize));
 			/*
 			Eval tdgp = new Eval(dataFit, startParameters, Window, new int[] {10000,100}); // Create fit object.
-			
+
 			try{
 				//do LevenbergMarquardt optimization and get optimized parameters
 				Optimum opt = tdgp.fit2dGauss();
@@ -96,7 +97,7 @@ public class ParticleFitter {
 			catch (Exception e) {
 				//	System.out.println(e.toString());
 			}
-*/
+			 */
 		}
 
 		return Results;
@@ -104,31 +105,32 @@ public class ParticleFitter {
 
 	public static ArrayList<Particle> Fitter(ImageProcessor IP, ArrayList<int[]> Center, int Window, int Frame, double Channel, int pixelSize){
 		// Temp input until fitting sorted.			
-//		double z0 			= 0; 													// Fitter does not support 3D fitting at this time.
-//		double sigma_z  	= 0;													// Fitter does not support 3D fitting at this time.
-//		double precision_z 	= 0;													// Fitter does not support 3D fitting at this time.
-//		int Offcenter 		= Math.round((Window-1)/2);								// How far from 0 the center pixel is. Used to modify output to match the underlying image.
+		/*		double z0 			= 0; 													// Fitter does not support 3D fitting at this time.
+		double sigma_z  	= 0;													// Fitter does not support 3D fitting at this time.
+		double precision_z 	= 0;													// Fitter does not support 3D fitting at this time.
+		int Offcenter 		= Math.round((Window-1)/2);								// How far from 0 the center pixel is. Used to modify output to match the underlying image.
+		 */
 		ArrayList<Particle> Results = new ArrayList<Particle>(); 					// Create output arraylist.
-		//int CenterArray = Window*(Window-1)/2 + (Window-1)/2;
+		//		int CenterArray = Window*(Window-1)/2 + (Window-1)/2;
 		for (int Event = 0; Event < Center.size(); Event++){ 						// Pull out data based on each entry into Center.
-			double[] dataFit = new double[Window*Window];							// Container for data to be fitted.
+			int[] dataFit = new int[Window*Window];							// Container for data to be fitted.
 			int[] Coord = Center.get(Event);										// X and Y coordinates for center pixels to be fitted.
-	//		int count = 0;	
-	//		double ExpectedValue = 0; 												// Total value within the region, to be compared to calculated gaussian.
-		/*	for (int i = Coord[0]-(Window-1)/2; i<= Coord[0] + (Window-1)/2; i++){ 	// Get all pixels for the region.
+			int count = 0;	
+			//	double ExpectedValue = 0; 												// Total value within the region, to be compared to calculated gaussian.
+			for (int i = Coord[0]-(Window-1)/2; i<= Coord[0] + (Window-1)/2; i++){ 	// Get all pixels for the region.
 				for (int j = Coord[1]-(Window-1)/2; j<= Coord[1] + (Window-1)/2; j++){
-					dataFit[count] = IP.getf(i, j);	
+					dataFit[count] = (int) IP.getf(i, j);	
 					// Pull out data.				
-					ExpectedValue += dataFit[count];								// Add data to total.
+					//				ExpectedValue += dataFit[count];								// Add data to total.
 					count++;
 				}
-			}*/
+			}
 
 
 			/*
 			 * Fit pulled out data.
 			 */			
-			/*double[] startParameters = {
+			/*		double[] startParameters = {
 					dataFit[CenterArray], 						// Amplitude.
 					(Window-1)/2+1,								// X center.
 					(Window-1)/2+1,								// Y center.
@@ -139,8 +141,8 @@ public class ParticleFitter {
 			};*/
 			Gauss2Dfit gfit = new Gauss2Dfit(dataFit,Window);
 			Results.add(gfit.optimize(Frame, (int) Channel, Coord, pixelSize));
-			/*
-			
+
+			/*		
 			Eval tdgp = new Eval(dataFit, startParameters, Window, new int[] {1000,1000}); // Create fit object.
 
 			try{									
@@ -153,7 +155,7 @@ public class ParticleFitter {
 				optimalValues[3] = Math.abs(optimalValues[3]);
 				optimalValues[4] = Math.abs(optimalValues[4]);
 				optimalValues[6] = Math.abs(optimalValues[6]);
-				
+
 				double photons = Evaluate(optimalValues,dataFit.length,Window);
 				double ChiSquare = (photons-ExpectedValue)*(photons-ExpectedValue)/ExpectedValue;
 				if (optimalValues[1] > 0 && optimalValues[1] < Window && // If nothing strange happened with the fitting.
@@ -184,6 +186,19 @@ public class ParticleFitter {
 
 		return Results;
 	}
+
+	public static Particle Fitter(fitParameters fitThese){
+		Gauss2Dfit gfit = new Gauss2Dfit(
+				fitThese.data,
+				fitThese.windowWidth);
+		Particle Results = gfit.optimize(
+				fitThese.frame, 
+				fitThese.channel, 
+				fitThese.Center, 
+				fitThese.pixelsize);
+		return Results;
+	}
+
 	public static double Evaluate(double[] Parameters, int nPixels, int width) // Evaluate gaussian based on input values.
 			throws IllegalArgumentException {
 		double eval = 0;
