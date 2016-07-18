@@ -33,7 +33,7 @@ public class createTestDataSet {
 //		double[] xCoord = correctDrift.interp(200, (double) (width-2)*100, (width - 4)*100);		
 	//	double[] xCoord = correctDrift.interp(Math.round(width/2)*100-100, Math.round(width/2)*100+100, (width - 4)*100);
 	//	double[] yCoord = correctDrift.interp(Math.round(height/2)*100, Math.round(height/2)*100, xCoord.length);
-		double[] xCoord = {3200,3200,3200,3200};
+		double[] xCoord = {3125,3125,3125,3125};
 		double[] yCoord = xCoord;
 		//System.out.println("y: " + yCoord[0] + " to " + yCoord[yCoord.length-1]);
 		Random r = new Random();
@@ -73,7 +73,7 @@ public class createTestDataSet {
 				/*
 				 * Alternate, generate detailed image, downsample afterwards.
 				 */
-				int winWidth = 701;
+				int winWidth = 700;
 				double[] P = new double[7];				
 				P[0] = r.nextDouble()*5;
 				P[1] = (winWidth-1)/2;// add drift.
@@ -89,8 +89,10 @@ public class createTestDataSet {
 					int y = j / winWidth;			
 					x += currParticle.x - P[1];
 					y += currParticle.y - P[2];
-					x = (int) Math.round(x/100) + 2*((Frame-1) % 2);
-					y = (int) Math.round(y/100) + 2*((Frame-1) % 2);
+		//			x = (int) Math.round(x/100) + 2*((Frame-1) % 2);
+		//			y = (int) Math.round(y/100) + 2*((Frame-1) % 2);
+					x = (int) Math.round(x/100);
+					y = (int) Math.round(y/100);
 					IP.set(x,y,(IP.get(x,y) + data[j]));					
 				}
 				
@@ -98,7 +100,7 @@ public class createTestDataSet {
 				 * works, yields symetry.
 				 */
 				
-		/*		double[] P = new double[7];				
+	/*			double[] P = new double[7];				
 				P[0] = 1000 + r.nextDouble()*60000;
 				P[1] = 3; // add drift.
 				P[2] = 3; // add drift.
@@ -116,8 +118,7 @@ public class createTestDataSet {
 				}*/
 
 			}
-			Stack.addSlice(IP);
-			
+			Stack.addSlice(IP);			
 			imStack.setPosition(1+(Frame-1) % 2, 1, (1+(Frame-1)/2));		
 			imStack.setProcessor(IP);
 			//System.out.println("channel:_" + (1+(Frame-1) % 2) + " frame; " + (1+(Frame-1)/2));

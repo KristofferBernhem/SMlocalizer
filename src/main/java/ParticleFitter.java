@@ -64,7 +64,7 @@ public class ParticleFitter {
 			};*/
 
 			Gauss2Dfit gfit = new Gauss2Dfit(dataFit,Window);
-			Results.add(gfit.optimize(Frame, (int) Channel, Coord, pixelSize));
+			Results.add(gfit.optimizeRsquare(Frame, (int) Channel, Coord, pixelSize));
 			/*
 			Eval tdgp = new Eval(dataFit, startParameters, Window, new int[] {10000,100}); // Create fit object.
 
@@ -140,7 +140,7 @@ public class ParticleFitter {
 					0											// Theta, angle in radians away from y axis.
 			};*/
 			Gauss2Dfit gfit = new Gauss2Dfit(dataFit,Window);
-			Results.add(gfit.optimize(Frame, (int) Channel, Coord, pixelSize));
+			Results.add(gfit.optimizeRsquare(Frame, (int) Channel, Coord, pixelSize));
 
 			/*		
 			Eval tdgp = new Eval(dataFit, startParameters, Window, new int[] {1000,1000}); // Create fit object.
@@ -191,7 +191,7 @@ public class ParticleFitter {
 		Gauss2Dfit gfit = new Gauss2Dfit(
 				fitThese.data,
 				fitThese.windowWidth);
-		Particle Results = gfit.optimize(
+		Particle Results = gfit.optimizeRsquare(
 				fitThese.frame, 
 				fitThese.channel, 
 				fitThese.Center, 

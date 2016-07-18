@@ -66,7 +66,7 @@ public class parameterDistribution{
 			double[] tempPrecisionX = new double[ParticleList.size()];
 			double[] tempPrecisionY = new double[ParticleList.size()];
 			double[] tempPrecisionZ = new double[ParticleList.size()];
-			double[] tempCbiSquare = new double[ParticleList.size()];
+			double[] tempR_square = new double[ParticleList.size()];
 			double[] tempPhotons = new double[ParticleList.size()];
 			int count = 0;
 			for (int i = 0; i < ParticleList.size(); i++){
@@ -77,7 +77,7 @@ public class parameterDistribution{
 					tempPrecisionX[i] 	= ParticleList.get(i).precision_x;
 					tempPrecisionY[i] 	= ParticleList.get(i).precision_y;
 					tempPrecisionZ[i] 	= ParticleList.get(i).precision_z;
-					tempCbiSquare[i] 	= ParticleList.get(i).chi_square;
+					tempR_square[i] 	= ParticleList.get(i).r_square;
 					tempPhotons[i] 		= ParticleList.get(i).photons;
 					count++;
 				}
@@ -89,7 +89,7 @@ public class parameterDistribution{
 			double[] PrecisionX = new double[count];
 			double[] PrecisionY = new double[count];
 			double[] PrecisionZ = new double[count];
-			double[] CbiSquare = new double[count];
+			double[] R_square = new double[count];
 			double[] Photons = new double[count];
 			for(int i = 0; i < count; i++){
 				SigmaX[i] 		= tempSigmaX[i];
@@ -98,7 +98,7 @@ public class parameterDistribution{
 				PrecisionX[i] 	= tempPrecisionX[i];
 				PrecisionY[i] 	= tempPrecisionY[i];
 				PrecisionZ[i] 	= tempPrecisionZ[i];
-				CbiSquare[i] 	= tempCbiSquare[i];
+				R_square[i] 	= tempR_square[i];
 				Photons[i] 		= tempPhotons[i];
 			}
 			
@@ -108,14 +108,14 @@ public class parameterDistribution{
 			BackgroundCorrection.quickSort(PrecisionX, 0, PrecisionX.length-1);
 			BackgroundCorrection.quickSort(PrecisionY, 0, PrecisionY.length-1);
 			BackgroundCorrection.quickSort(PrecisionZ, 0, PrecisionZ.length-1);
-			BackgroundCorrection.quickSort(CbiSquare, 0, CbiSquare.length-1);
+			BackgroundCorrection.quickSort(R_square, 0, R_square.length-1);
 			BackgroundCorrection.quickSort(Photons, 0, Photons.length-1);
-			double SigmaMin = SigmaX[0]/1.1;
-			double SigmaMax = SigmaX[SigmaX.length-1]*1.1;
+			double SigmaMin = SigmaX[0];
+			double SigmaMax = SigmaX[SigmaX.length-1];
 			if (SigmaY[0]/1.1 < SigmaMin)
-				SigmaMin = SigmaY[0]/1.1;
-			if (SigmaY[SigmaY.length-1]*1.1 > SigmaMax)
-				SigmaMax = SigmaY[SigmaY.length-1]*1.1;
+				SigmaMin = SigmaY[0];
+			if (SigmaY[SigmaY.length-1] > SigmaMax)
+				SigmaMax = SigmaY[SigmaY.length-1];
 
 			double[] x_axis = correctDrift.interp(SigmaMin, SigmaMax, nBins);
 			double[] binnedDataX = binData(SigmaX,nBins,x_axis);
@@ -123,37 +123,37 @@ public class parameterDistribution{
 			String[] headerSigma = {("Channel " + Ch +" sigma"), "sigma [nm]", "count"};
 			plot(headerSigma,"Sigma_x \n Sigma_y",binnedDataX,binnedDataY,x_axis);
 			
-			double SigmaZmin = SigmaZ[0]/1.1;
-			double SigmaZmax = SigmaZ[SigmaZ.length-1]*1.1;
+			double SigmaZmin = SigmaZ[0];
+			double SigmaZmax = SigmaZ[SigmaZ.length-1];
 			x_axis = correctDrift.interp(SigmaZmin, SigmaZmax, nBins);
 			String[] headerSigmaZ = {("Channel " + Ch +" sigma z"), "sigma z [nm]", "count"};
 			plot(headerSigmaZ,"Sigma_z",binData(SigmaZ,nBins,x_axis),correctDrift.interp(SigmaZmin, SigmaZmax, nBins));			
 
-			double PrecisionMin = PrecisionX[0]/1.1;
-			double PrecisionMax = PrecisionX[PrecisionX.length-1]*1.1;
+			double PrecisionMin = PrecisionX[0];
+			double PrecisionMax = PrecisionX[PrecisionX.length-1];
 			if (PrecisionY[0]/1.1 < PrecisionMin)
-				PrecisionMin = PrecisionY[0]/1.1;
-			if (PrecisionY[PrecisionY.length-1]*1.1 > PrecisionMax)
-				PrecisionMax = PrecisionY[PrecisionY.length-1]*1.1;
+				PrecisionMin = PrecisionY[0];
+			if (PrecisionY[PrecisionY.length-1] > PrecisionMax)
+				PrecisionMax = PrecisionY[PrecisionY.length-1];
 
 			x_axis = correctDrift.interp(PrecisionMin, PrecisionMax, nBins);
 			String[] headerPrecision = {("Channel " + Ch +" Precision"), "precision [nm]", "count"};
 			plot(headerPrecision,"Precision_x \n Precision_y",binData(PrecisionX,nBins,x_axis),binData(PrecisionY,nBins,x_axis),correctDrift.interp(PrecisionMin, PrecisionMax, nBins));		
 			
-			double PrecisionZmin = PrecisionZ[0]/1.1;
-			double PrecisionZmax = PrecisionZ[PrecisionZ.length-1]*1.1;
+			double PrecisionZmin = PrecisionZ[0];
+			double PrecisionZmax = PrecisionZ[PrecisionZ.length-1];
 			x_axis = correctDrift.interp(PrecisionZmin, PrecisionZmax, nBins);
 			String[] headerPrecisionZ = {("Channel " + Ch +" Chi^2"), "Chi^2", "count"};
 			plot(headerPrecisionZ,"Precision_z",binData(PrecisionZ,nBins,x_axis),correctDrift.interp(PrecisionZmin, PrecisionZmax, nBins));			
 
-			double ChiSquareMin = CbiSquare[0]/1.1;
-			double ChiSquareMax = CbiSquare[CbiSquare.length-1]*1.1;
-			x_axis = correctDrift.interp(ChiSquareMin, ChiSquareMax, nBins);
-			String[] headerChiSquare = {("Channel " + Ch +" Chi^2"), "Chi^2", "count"};
-			plot(headerChiSquare,"Chi^2",binData(CbiSquare,nBins,x_axis),correctDrift.interp(ChiSquareMin, ChiSquareMax, nBins));			
+			double rSquareMin = R_square[0];
+			double rSquareMax = R_square[R_square.length-1];
+			x_axis = correctDrift.interp(rSquareMin, rSquareMax, nBins);
+			String[] headerChiSquare = {("Channel " + Ch +" R^2"), "R^2", "count"};
+			plot(headerChiSquare,"R^2",binData(R_square,nBins,x_axis),correctDrift.interp(rSquareMin, rSquareMax, nBins));			
 
-			double PhotonsMin = Photons[0]/1.1;
-			double PhotonsMax = Photons[Photons.length-1]*1.1;
+			double PhotonsMin = Photons[0];
+			double PhotonsMax = Photons[Photons.length-1];
 			x_axis = correctDrift.interp(PhotonsMin, PhotonsMax, nBins);
 			String[] headerSPhotons = {("Channel " + Ch +" 	aPhotons"), "photons", "count"};
 			plot(headerSPhotons,"Photons",binData(Photons,nBins,x_axis),correctDrift.interp(PhotonsMin, PhotonsMax, nBins));

@@ -97,7 +97,7 @@ public class DBClust {
 				tab.addValue("precision_x", InpParticle.get(i).precision_x);
 				tab.addValue("precision_y", InpParticle.get(i).precision_y);
 				tab.addValue("precision_z", InpParticle.get(i).precision_z);
-				tab.addValue("chi_square", InpParticle.get(i).chi_square);
+				tab.addValue("r_square", InpParticle.get(i).r_square);
 				tab.addValue("photons", InpParticle.get(i).photons);
 				if (IndexList[i] == 0){
 					tab.addValue("include", 0);

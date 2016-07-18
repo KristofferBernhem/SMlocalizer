@@ -169,7 +169,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 
         Chi_low.setFont(new java.awt.Font("Times New Roman", 0, 11)); // NOI18N
         Chi_low.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        Chi_low.setText("0.0");
+        Chi_low.setText("0.9");
         Chi_low.setMargin(new java.awt.Insets(0, 2, 0, 2));
 
         Chi_high.setFont(new java.awt.Font("Times New Roman", 0, 11)); // NOI18N
@@ -414,8 +414,8 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 
         inclChiSquare.setFont(new java.awt.Font("Times New Roman", 0, 11)); // NOI18N
         inclChiSquare.setSelected(true);
-        inclChiSquare.setText("Chi^2 range:");
-        inclChiSquare.setToolTipText("pearson's chi square test. Value of 0 represents perfect fit.");
+        inclChiSquare.setText("R^2 range:");
+        inclChiSquare.setToolTipText("R^2 goodness of fit. Perfect fit = 1.0.");
 
         inclXYprecision.setFont(new java.awt.Font("Times New Roman", 0, 11)); // NOI18N
         inclXYprecision.setSelected(true);
@@ -1090,7 +1090,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		try {
 			ChiSquareLow = Double.parseDouble(Chi_low.getText());        		
 		} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.
-			ChiSquareLow = 0.0;                 								// Default value.
+			ChiSquareLow = 0.9;                 								// Default value.
 			Chi_low.setText(String.valueOf(ChiSquareLow)); 						// Update.
 		}  
 		double ChiSquareHigh;        
@@ -1146,7 +1146,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 				PrecisionLow,								// Allowed lower range of precision_x in nm, user input.
 				PrecisionLow,								// Allowed lower range of precision_y in nm, user input.
 				PrecisionLowZ,								// Allowed lower range of precision_z in nm, user input.
-				ChiSquareLow,								// Allowed lower range of chi_square, user input.
+				ChiSquareLow,								// Allowed lower range of r_square, user input.
 				photonLow								// Allowed lower range of photon count, user input.
 		};  				
 		double[] ub = {
@@ -1156,7 +1156,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 				PrecisionHigh,						// Allowed upper range of precision_x in nm, user input.
 				PrecisionHigh,						// Allowed upper range of precision_y in nm, user input.
 				PrecisionHighZ,						// Allowed upper range of precision_z in nm, user input.
-				ChiSquareHigh,						// Allowed upper range of chi_square, user input.
+				ChiSquareHigh,						// Allowed upper range of r_square, user input.
 				photonHigh					// Allowed upper range of photon count, user input.
 		};
 
@@ -1240,7 +1240,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		try {
 			ChiSquareLow = Double.parseDouble(Chi_low.getText());        		
 		} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.
-			ChiSquareLow = 0.0;                 								// Default value.
+			ChiSquareLow = 0.9;                 								// Default value.
 			Chi_low.setText(String.valueOf(ChiSquareLow)); 						// Update.
 		}  
 		double ChiSquareHigh;        
@@ -1296,7 +1296,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 				PrecisionLow,								// Allowed lower range of precision_x in nm, user input.
 				PrecisionLow,								// Allowed lower range of precision_y in nm, user input.
 				PrecisionLowZ,								// Allowed lower range of precision_z in nm, user input.
-				ChiSquareLow,								// Allowed lower range of chi_square, user input.
+				ChiSquareLow,								// Allowed lower range of r_square, user input.
 				photonLow								// Allowed lower range of photon count, user input.
 		};  				
 		double[] ub = {
@@ -1306,7 +1306,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 				PrecisionHigh,						// Allowed upper range of precision_x in nm, user input.
 				PrecisionHigh,						// Allowed upper range of precision_y in nm, user input.
 				PrecisionHighZ,						// Allowed upper range of precision_z in nm, user input.
-				ChiSquareHigh,						// Allowed upper range of chi_square, user input.
+				ChiSquareHigh,						// Allowed upper range of r_square, user input.
 				photonHigh					// Allowed upper range of photon count, user input.
 		};
 
@@ -1368,13 +1368,12 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			zDrift.setText(String.valueOf(DriftZ)); 		// Update.
 		}
 
-		int[] lowBoundry = {-DriftXY,-DriftXY,-DriftZ};
-		int[] upperBoundry = {DriftXY,DriftXY,DriftZ};
+		int[] boundry = {DriftXY,DriftXY,DriftZ};
 
 		double BinFrac				= 1.0/BinCount;							// Fraction of total frames in each bin for drift corrrection. User input.
 		int[] stepSize 				= {StepXY,StepXY,StepZ};						// Stepsize in nm, user input.
 
-		correctDrift.run(lowBoundry, upperBoundry, BinFrac, nParticles, minParticles, stepSize); // 3D version now requires doublechecking. Also handles multi channel data.
+		correctDrift.run(boundry, BinFrac, nParticles, minParticles, stepSize); // 3D version now requires doublechecking. Also handles multi channel data.
 
 	}                                            
 
@@ -1434,7 +1433,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		try {
 			ChiSquareLow = Double.parseDouble(Chi_low.getText());        		
 		} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.
-			ChiSquareLow = 0.0;                 								// Default value.
+			ChiSquareLow = 0.9;                 								// Default value.
 			Chi_low.setText(String.valueOf(ChiSquareLow)); 						// Update.
 		}  
 		double ChiSquareHigh;        
@@ -1490,7 +1489,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 				PrecisionLow,								// Allowed lower range of precision_x in nm, user input.
 				PrecisionLow,								// Allowed lower range of precision_y in nm, user input.
 				PrecisionLowZ,								// Allowed lower range of precision_z in nm, user input.
-				ChiSquareLow,								// Allowed lower range of chi_square, user input.
+				ChiSquareLow,								// Allowed lower range of r_square, user input.
 				photonLow								// Allowed lower range of photon count, user input.
 		};  				
 		double[] ub = {
@@ -1500,7 +1499,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 				PrecisionHigh,						// Allowed upper range of precision_x in nm, user input.
 				PrecisionHigh,						// Allowed upper range of precision_y in nm, user input.
 				PrecisionHighZ,						// Allowed upper range of precision_z in nm, user input.
-				ChiSquareHigh,						// Allowed upper range of chi_square, user input.
+				ChiSquareHigh,						// Allowed upper range of r_square, user input.
 				photonHigh					// Allowed upper range of photon count, user input.
 		};
 
@@ -1561,11 +1560,10 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			zDrift.setText(String.valueOf(DriftZ)); 		// Update.
 		}
 
-		int[] lowBoundry 	= {-DriftXY,-DriftXY,-DriftZ};
-		int[] upperBoundry 	= {DriftXY,DriftXY,DriftZ};        
+		int[] boundry 		= {DriftXY,DriftXY,DriftZ};        
 		int[] stepSize 		= {StepXY,StepXY,StepZ};						// Stepsize in nm, user input.
 
-		correctDrift.ChannelAlign(lowBoundry, upperBoundry, nParticles, minParticles, stepSize);      
+		correctDrift.ChannelAlign(boundry, nParticles, minParticles, stepSize);      
 	}                                             
 
 	/*
@@ -1642,7 +1640,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		try {
 			ChiSquareLow = Double.parseDouble(Chi_low.getText());        		
 		} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.
-			ChiSquareLow = 0.0;                 								// Default value.
+			ChiSquareLow = 0.9;                 								// Default value.
 			Chi_low.setText(String.valueOf(ChiSquareLow)); 						// Update.
 		}  
 		double ChiSquareHigh;        
@@ -1698,7 +1696,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 				PrecisionLow,								// Allowed lower range of precision_x in nm, user input.
 				PrecisionLow,								// Allowed lower range of precision_y in nm, user input.
 				PrecisionLowZ,								// Allowed lower range of precision_z in nm, user input.
-				ChiSquareLow,								// Allowed lower range of chi_square, user input.
+				ChiSquareLow,								// Allowed lower range of r_square, user input.
 				photonLow								// Allowed lower range of photon count, user input.
 		};  				
 		double[] ub = {
@@ -1708,7 +1706,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 				PrecisionHigh,						// Allowed upper range of precision_x in nm, user input.
 				PrecisionHigh,						// Allowed upper range of precision_y in nm, user input.
 				PrecisionHighZ,						// Allowed upper range of precision_z in nm, user input.
-				ChiSquareHigh,						// Allowed upper range of chi_square, user input.
+				ChiSquareHigh,						// Allowed upper range of r_square, user input.
 				photonHigh					// Allowed upper range of photon count, user input.
 		};
 
@@ -1774,7 +1772,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		try {
 			ChiSquareLow = Double.parseDouble(Chi_low.getText());        		
 		} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.
-			ChiSquareLow = 0.0;                 								// Default value.
+			ChiSquareLow = 0.9;                 								// Default value.
 			Chi_low.setText(String.valueOf(ChiSquareLow)); 						// Update.
 		}  
 		double ChiSquareHigh;        
@@ -1830,7 +1828,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 				PrecisionLow,								// Allowed lower range of precision_x in nm, user input.
 				PrecisionLow,								// Allowed lower range of precision_y in nm, user input.
 				PrecisionLowZ,								// Allowed lower range of precision_z in nm, user input.
-				ChiSquareLow,								// Allowed lower range of chi_square, user input.
+				ChiSquareLow,								// Allowed lower range of r_square, user input.
 				photonLow								// Allowed lower range of photon count, user input.
 		};  				
 		double[] ub = {
@@ -1840,7 +1838,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 				PrecisionHigh,						// Allowed upper range of precision_x in nm, user input.
 				PrecisionHigh,						// Allowed upper range of precision_y in nm, user input.
 				PrecisionHighZ,						// Allowed upper range of precision_z in nm, user input.
-				ChiSquareHigh,						// Allowed upper range of chi_square, user input.
+				ChiSquareHigh,						// Allowed upper range of r_square, user input.
 				photonHigh					// Allowed upper range of photon count, user input.
 		};
 

@@ -77,8 +77,8 @@ public class cleanParticleList {
 					Remove++;
 			}
 			if (Include[4]){
-				if(Results.get(i).chi_square >= lb[6] &&			
-						Results.get(i).chi_square <= ub[6]){
+				if(Results.get(i).r_square >= lb[6] &&			
+						Results.get(i).r_square <= ub[6]){
 
 				}else
 					Remove++;

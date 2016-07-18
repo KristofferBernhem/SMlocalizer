@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import ij.plugin.filter.Analyzer;
 
 public class TableIO {
-	double x, y, frame, sigma_x, sigma_y, precision_x, precision_y, chi_square,photons;
+	double x, y, frame, sigma_x, sigma_y, precision_x, precision_y, r_square,photons;
 	public static ArrayList<Particle> Load(){ // Load data from table.
 		ArrayList<Particle> Results = new ArrayList<Particle>();	
 		ij.measure.ResultsTable tab = Analyzer.getResultsTable();		
@@ -35,10 +35,10 @@ public class TableIO {
 			double precision_x = tab.getValue("precision_x", i);
 			double precision_y = tab.getValue("precision_y", i);
 			double precision_z = tab.getValue("precision_z", i);
-			double chi_square = tab.getValue("chi_square", i);
+			double r_square = tab.getValue("r_square", i);
 			double photons = tab.getValue("photons", i);
 			int include = (int) tab.getValue("include", i);
-			Results.add(new Particle(x,y,z,frame,channel,sigma_x,sigma_y,sigma_z,precision_x,precision_y,precision_z,chi_square,photons,include));			
+			Results.add(new Particle(x,y,z,frame,channel,sigma_x,sigma_y,sigma_z,precision_x,precision_y,precision_z,r_square,photons,include));			
 		}		
 		return Results;
 		
@@ -60,7 +60,7 @@ public class TableIO {
 			tab.addValue("precision_x", Results.get(i).precision_x);
 			tab.addValue("precision_y", Results.get(i).precision_y);
 			tab.addValue("precision_z", Results.get(i).precision_z);
-			tab.addValue("chi_square", Results.get(i).chi_square);
+			tab.addValue("r_square", Results.get(i).r_square);
 			tab.addValue("photons", Results.get(i).photons);
 			tab.addValue("include", Results.get(i).include);
 		}

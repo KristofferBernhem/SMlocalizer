@@ -15,6 +15,11 @@
  *  along with SMLocalizer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+ * v1.0 2016-07-18 Kristoffer Bernhem. Calculates correlation between two groups of Particles and 
+ * by shifting the second group tries to maximize the correlation to approximate shift between the 
+ * two groups.
+ */
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -24,39 +29,44 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class AutoCorr {
-	ArrayList<Particle> Alpha,Beta;
-	int[] stepSize;
-	int[] maxShift;
+	ArrayList<Particle> 
+		referenceParticle,		// Reference, check the other list against this one.
+		shiftParticle;			// Shift this one to maximize correlation between the two lists.
+	int[] stepSize;				// x, y and z step size in shift calculations. 
+	int[] maxShift;				// Maximal shift to calculate.
 
 	AutoCorr(ArrayList<Particle> Alpha, ArrayList<Particle> Beta, int[] stepSize, int[] maxShift){
-		this.Alpha = Alpha;
-		this.Beta = Beta;
-		this.stepSize = stepSize;
-		this.maxShift = maxShift;
+		this.referenceParticle 	= Alpha;
+		this.shiftParticle 		= Beta;
+		this.stepSize 			= stepSize;
+		this.maxShift 			= maxShift;
 	}
 
-	public double Correlation(int[] shift){
+	public double Correlation(int[] shift){  // Calculate correlation for the current shift (x, y and z).
 		double Corr = 0;
 
-		int maxDistance = 25*25;  // max distance in any 1 dimension.
-		for(int index = 0; index < Alpha.size(); index++){			
-			for (int index2 = 0; index2 < Beta.size(); index2++){
-				double xDist = (Alpha.get(index).x - Beta.get(index2).x - shift[0]);
-				xDist *= xDist;
-				if(xDist<maxDistance){
-					double yDist = (Alpha.get(index).y - Beta.get(index2).y - shift[1]); 
-					yDist *= yDist;
-					if(yDist<maxDistance){
-						double zDist = (Alpha.get(index).z - Beta.get(index2).z - shift[2]);
-						zDist *= zDist;
-						if(zDist<maxDistance){						
-							double Distance = xDist+
-									yDist+
-									zDist;
-							if (Distance == 0){
+		int maxDistance = 50;  														// max distance in any 1 dimension.
+		for(int referenceIndex = 0; referenceIndex < referenceParticle.size(); referenceIndex++){				// Loop over all referenceParticles.								
+			for (int shiftIndex = 0; shiftIndex < shiftParticle.size(); shiftIndex++){			// For each referenceParticle, find the shiftParticles that are close.
+				double xDist = (referenceParticle.get(referenceIndex).x - 					// Distance in x dimension after shift.
+						shiftParticle.get(shiftIndex).x - 
+						shift[0]);
+				if(xDist<maxDistance){												// If distance is small enough, check y.
+					double yDist = (referenceParticle.get(referenceIndex).y - 				// Distance in y dimension after shift. 
+							shiftParticle.get(shiftIndex).y - 
+							shift[1]); 
+					if(yDist<maxDistance){											// If distance is small enough, check z.
+						double zDist = (referenceParticle.get(referenceIndex).z -  			// Distance in z dimension after shift.
+								shiftParticle.get(shiftIndex).z - 
+								shift[2]);
+						if(zDist<maxDistance){										// If distance is small enough, calculate square distance.														
+							double Distance = xDist*xDist+
+									yDist*yDist+
+									zDist*zDist;
+							if (Distance == 0){										// Avoid assigning infinity as value.
 								Corr += 1.5;
 							}else{
-								Corr += 1/Distance;								
+								Corr += 1/Distance;									// Score of how close the particles were.
 							}							
 						}	
 					}
@@ -71,108 +81,113 @@ public class AutoCorr {
  * Runs on all cores and scales linearly with number of cores for computation time.
  */
 	public int[] optimize(){
-		int[] shift 					= {0,0,0};										// Output.
-		int processors 					= Runtime.getRuntime().availableProcessors();	// Number of processor cores on this system.
-		ExecutorService exec 			= Executors.newFixedThreadPool(processors);		// Set up parallel computing using all cores.
-		List<Callable<double[]>> tasks 	= new ArrayList<Callable<double[]>>();			// Preallocate.
-
-		for (int shiftX = - maxShift[0]; shiftX < maxShift[0]; shiftX += 3 * stepSize[0]){
-			for (int shiftY = - maxShift[1]; shiftY < maxShift[1]; shiftY += 3 *stepSize[1]){
-				for (int shiftZ = - maxShift[2]; shiftZ < maxShift[2]; shiftZ += 3 * stepSize[2]){
-					final int[] shiftEval = {shiftX,shiftY,shiftZ};				
-					Callable<double[]> c = new Callable<double[]>() {					// Computation to be done.
+		int[] shift 					= {0,0,0};													// Output, initialize.
+		int processors 					= Runtime.getRuntime().availableProcessors();				// Number of processor cores on this system.
+		ExecutorService exec 			= Executors.newFixedThreadPool(processors);					// Set up parallel computing using all cores.
+		List<Callable<double[]>> tasks 	= new ArrayList<Callable<double[]>>();						// Preallocate.
+		
+		
+		/*
+		 * Coarse round, find approximation of shift. Computation split this way to speed up performance. 
+		 */
+		
+		for (int shiftX = - maxShift[0]; shiftX < maxShift[0]; shiftX += 3 * stepSize[0]){  		// Loop over all possible x coordinates in 3xstepsize steps
+			for (int shiftY = - maxShift[1]; shiftY < maxShift[1]; shiftY += 3 *stepSize[1]){		// Loop over all possible y coordinates in 3xstepsize steps
+				for (int shiftZ = - maxShift[2]; shiftZ < maxShift[2]; shiftZ += 3 * stepSize[2]){	// Loop over all possible z coordinates in 3xstepsize steps
+					final int[] shiftEval = {shiftX,shiftY,shiftZ};									// Summarize evaluation parameters.
+					Callable<double[]> c = new Callable<double[]>() {								// Computation to be done.
 						@Override
-						public double[] call() throws Exception {						
-							double[] Correlation = {
+						public double[] call() throws Exception {									
+							double[] Correlation = {												// Results vector, containing correlation and the shifts generating that correlation score.
 									Correlation(shiftEval),
 									shiftEval[0],
 									shiftEval[1],
 									shiftEval[2]};						
-							return Correlation;						// Actual call for each parallel process.
+							return Correlation;														// Actual call for each parallel process.
 						}
 					};
-					tasks.add(c);														// Que this task.
+					tasks.add(c);																	// Que this task.
 				}
 			}
-
 		}
 		try {
-			List<Future<double[]>> parallelCompute = exec.invokeAll(tasks);				// Execute computation.
+			List<Future<double[]>> parallelCompute = exec.invokeAll(tasks);							// Execute computation.
 			double[] Corr;
 			double maxCorr = 0;
 
-			for (int i = 1; i < parallelCompute.size(); i++){							// Loop over and transfer results.
+			for (int i = 1; i < parallelCompute.size(); i++){										// Loop over and transfer results.
 				try {
 					Corr = parallelCompute.get(i).get();
-					if (Corr[0] > maxCorr){
-						maxCorr = Corr[0];
-						shift[0] = (int) Corr[1];
-						shift[1] = (int) Corr[2];
-						shift[2] = (int) Corr[3];
+					if (Corr[0] > maxCorr){															// If a higher correlation score has been found.
+						maxCorr = Corr[0];															// Update best value.
+						shift[0] = (int) Corr[1];													// Update best guess at x shift.
+						shift[1] = (int) Corr[2];													// Update best guess at y shift.
+						shift[2] = (int) Corr[3];													// Update best guess at z shift.
 
 					}
 				} catch (ExecutionException e) {
 					e.printStackTrace();
 				}
 			}
-			//results.get(1).get().channel
 		} catch (InterruptedException e) {
-
 			e.printStackTrace();
 		}
+	
+		/*
+		 * Second round, smaller stepsize this time round.
+		 */
+		
 
-		List<Callable<double[]>> tasksSmall 	= new ArrayList<Callable<double[]>>();			// Preallocate.
+		List<Callable<double[]>> tasksSmall = new ArrayList<Callable<double[]>>();				// Preallocate.
 
-		for (int shiftX = shift[0]-3 * stepSize[0]; shiftX < shift[0]+3 * stepSize[0]; shiftX += stepSize[0]){
-			for (int shiftY = shift[1]-3 * stepSize[0]; shiftY <  shift[1]+3 * stepSize[1]; shiftY += stepSize[1]){
-				for (int shiftZ = shift[2]-3 * stepSize[0]; shiftZ <  shift[2]+3 * stepSize[2]; shiftZ += stepSize[2]){
-					final int[] shiftEval = {shiftX,shiftY,shiftZ};				
-					Callable<double[]> c = new Callable<double[]>() {					// Computation to be done.
+		for (int shiftX = shift[0]-3 * stepSize[0]; shiftX < shift[0]+3 * stepSize[0]; shiftX += stepSize[0]){			// Loop over all x values surrounding the optimal shift value from coarse round.
+			for (int shiftY = shift[1]-3 * stepSize[0]; shiftY <  shift[1]+3 * stepSize[1]; shiftY += stepSize[1]){		// Loop over all y values surrounding the optimal shift value from coarse round.	
+				for (int shiftZ = shift[2]-3 * stepSize[0]; shiftZ <  shift[2]+3 * stepSize[2]; shiftZ += stepSize[2]){	// Loop over all z values surrounding the optimal shift value from coarse round.
+					final int[] shiftEval = {shiftX,shiftY,shiftZ};														// Summarize evaluation parameters.
+					Callable<double[]> c = new Callable<double[]>() {													// Computation to be done.
 						@Override
-						public double[] call() throws Exception {						
-							double[] Correlation = {
+						public double[] call() throws Exception {									
+							double[] Correlation = {																	// Results vector, containing correlation and the shifts generating that correlation score.
 									Correlation(shiftEval),
 									shiftEval[0],
 									shiftEval[1],
 									shiftEval[2]};						
-							return Correlation;						// Actual call for each parallel process.
+							return Correlation;																			// Actual call for each parallel process.
 						}
 					};
-					tasksSmall.add(c);														// Que this task.
+					tasksSmall.add(c);																					// Que this task.
 				}
 			}
-
 		}
+		
 		try {
-			List<Future<double[]>> parallelComputeSmall = exec.invokeAll(tasksSmall);				// Execute computation.
+			List<Future<double[]>> parallelComputeSmall = exec.invokeAll(tasksSmall);		// Execute computation.
 			double[] Corr;
 			double maxCorr = 0;
 
 			for (int i = 1; i < parallelComputeSmall.size(); i++){							// Loop over and transfer results.
 				try {
 					Corr = parallelComputeSmall.get(i).get();
-					if (Corr[0] > maxCorr){
-						maxCorr = Corr[0];
-						shift[0] = (int) Corr[1];
-						shift[1] = (int) Corr[2];
-						shift[2] = (int) Corr[3];
-
+					if (Corr[0] > maxCorr){													// If a higher correlation score has been found.
+						maxCorr = Corr[0];													// Update best value.
+						shift[0] = (int) Corr[1];											// Update best guess at x shift.
+						shift[1] = (int) Corr[2];											// Update best guess at y shift.
+						shift[2] = (int) Corr[3];											// Update best guess at z shift.
 					}
 				} catch (ExecutionException e) {
 					e.printStackTrace();
 				}
 			}
-			//results.get(1).get().channel
 		} catch (InterruptedException e) {
 
 			e.printStackTrace();
 		}
 		finally {
-			exec.shutdown();
+			exec.shutdown();	// Shut down connection to cores.
 		}	
 
 		return shift; // Return optimal shift.
-	}
+	} // Optimize.
 
 	/* 
 	 * function  tests.
@@ -194,8 +209,8 @@ public class AutoCorr {
 		}
 
 
-		int[] stepSize = {5,5,5}; // shift will be rounded to these numbers.
-		int[] maxShift = {250,250,250};
+		int[] stepSize = {5,5,5}; 		// shift will be rounded to these numbers.
+		int[] maxShift = {250,250,250};	// maximal shift (+/-).
 		long start = System.nanoTime();
 		AutoCorr AC = new AutoCorr(A,B,stepSize,maxShift);
 

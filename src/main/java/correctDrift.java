@@ -20,7 +20,8 @@ import ij.gui.Plot;
 
 
 public class correctDrift {
-	public static void run(int[] lb, int[] ub, double BinFrac, int nParticles, int minParticles, int[] stepSize){
+//	public static void run(int[] lb, int[] ub, double BinFrac, int nParticles, int minParticles, int[] stepSize){
+	public static void run(int[] boundry, double BinFrac, int nParticles, int minParticles, int[] stepSize){
 		ArrayList<Particle> locatedParticles = TableIO.Load(); // Get current table data.		
 		ArrayList<Particle> correctedResults = new ArrayList<Particle>(); // Output arraylist, will contain all particles that fit user input requirements after drift correction.
 		if (locatedParticles.size() == 0){
@@ -128,7 +129,7 @@ public class correctDrift {
 					
 					//autoCorr2D CorrCalc	 	= new autoCorr2D(Data1, Data2, Math.round(width/stepSize[0]),Math.round(height/stepSize[1]), Math.round(depth/stepSize[2])+1, stepSize); // Setup calculations.
 					//int[] tempLamda			= CorrCalc.optimizeParallel(ub);				// optimize.
-					AutoCorr DriftCalc 		= new AutoCorr(Data1, Data2, stepSize, ub);
+					AutoCorr DriftCalc 		= new AutoCorr(Data1, Data2, stepSize, boundry);
 					int[] tempLamda 		= DriftCalc.optimize();
 					lambdax[i] 				= tempLamda[0] + lambdax[i-1];
 					lambday[i] 				= tempLamda[1] + lambday[i-1];
@@ -167,7 +168,7 @@ public class correctDrift {
 					if(locatedParticles.get(index).channel == Ch){
 						Particle tempPart 	= new Particle();
 						tempPart.frame	 	= locatedParticles.get(index).frame;
-						tempPart.chi_square = locatedParticles.get(index).chi_square;
+						tempPart.r_square 	= locatedParticles.get(index).r_square;
 						tempPart.photons 	= locatedParticles.get(index).photons;
 						tempPart.include 	= locatedParticles.get(index).include;
 						tempPart.precision_x= locatedParticles.get(index).precision_x;
@@ -214,7 +215,8 @@ public class correctDrift {
 	}
 
 
-	public static void ChannelAlign(int[] lb, int[] ub, int nParticles, int minParticles, int[] stepSize){
+	//public static void ChannelAlign(int[] lb, int[] ub, int nParticles, int minParticles, int[] stepSize){
+	public static void ChannelAlign(int[] boundry, int nParticles, int minParticles, int[] stepSize){
 		ArrayList<Particle> locatedParticles = TableIO.Load(); // Get current table data.
 		if (locatedParticles.size() == 0){ // If no particles.
 			return;
@@ -260,7 +262,7 @@ public class correctDrift {
 			if(addedFrames2 < minParticles){
 				return;
 			}
-
+			/*
 
 			int[] roughStepsize  	= {stepSize[0]*5,stepSize[1]*5,stepSize[2]*5}; // increase stepSize for a first round of optimization. 
 			double[] roughlambda	= NearestNeighbourDrift.getLambda(Data1,Data2,roughStepsize,lb,ub); // Get rough estimate of lambda, drift.			
@@ -276,7 +278,12 @@ public class correctDrift {
 				}
 			}
 			double[] lambdaCh 		= NearestNeighbourDrift.getLambda(Data1,Data2,stepSize ,fineLb ,fineUb); 				// Get drift.
-
+			*/
+			/*
+			 * New autocorrelation version.
+			 */
+			AutoCorr DriftCalc 		= new AutoCorr(Data1, Data2, stepSize, boundry);
+			int[] lambdaCh 		= DriftCalc.optimize();
 			for(int i = 0; i < locatedParticles.size(); i++){
 				if (locatedParticles.get(i).channel == Ch){
 					locatedParticles.get(i).x = locatedParticles.get(i).x - lambdaCh[0];
