@@ -18,7 +18,7 @@
 import java.util.ArrayList;
 import java.util.Random;
 
-import ij.IJ;
+//import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.measure.Calibration;

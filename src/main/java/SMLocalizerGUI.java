@@ -978,7 +978,8 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		try {
 			Window = Integer.parseInt(medianWindow.getText()); // Try to convert value to string.
 			int W = (Window-1)/2; // window in one direction.		
-			filterBackground.run(W); // Need to find out how multi channel images are organized for multi channel functions.
+			//filterBackground.run(W); // Need to find out how multi channel images are organized for multi channel functions.
+			BackgroundCorrection.medianFiltering(W);
 		} catch (NumberFormatException e) { // If user wrote non numerical test into the field.
 			Window = 101;                 // Default value.
 			medianWindow.setText(String.valueOf(Window)); // Update.
