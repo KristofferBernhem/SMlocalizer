@@ -126,8 +126,10 @@ public class correctDrift {
 					 * Autocorrelation method.
 					 */
 					
-					autoCorr2D CorrCalc	 	= new autoCorr2D(Data1, Data2, Math.round(width/stepSize[0]),Math.round(height/stepSize[1]), Math.round(depth/stepSize[2])+1, stepSize); // Setup calculations.
-					int[] tempLamda			= CorrCalc.optimizeParallel(ub);				// optimize.
+					//autoCorr2D CorrCalc	 	= new autoCorr2D(Data1, Data2, Math.round(width/stepSize[0]),Math.round(height/stepSize[1]), Math.round(depth/stepSize[2])+1, stepSize); // Setup calculations.
+					//int[] tempLamda			= CorrCalc.optimizeParallel(ub);				// optimize.
+					AutoCorr DriftCalc 		= new AutoCorr(Data1, Data2, stepSize, ub);
+					int[] tempLamda 		= DriftCalc.optimize();
 					lambdax[i] 				= tempLamda[0] + lambdax[i-1];
 					lambday[i] 				= tempLamda[1] + lambday[i-1];
 					lambdaz[i] 				= tempLamda[2] + lambdaz[i-1];
