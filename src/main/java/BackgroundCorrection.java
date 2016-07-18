@@ -29,8 +29,8 @@ import ij.WindowManager;
 import ij.process.ImageProcessor;
 import ij.process.ImageStatistics;
 
-/* This class contains all relevant algorithms for background corrections.
- * V 1.0 2016-06-18 Kristoffer Bernhem, kristoffer.bernhem@gmail.com
+/* This class contains all relevant algorithms for background corrections. Handles 2D and 3D stacks with single slice per frame.
+ * V 2.0 2016-07-18 Kristoffer Bernhem, kristoffer.bernhem@gmail.com
  */
 
 class BackgroundCorrection {
@@ -38,14 +38,7 @@ class BackgroundCorrection {
 	/* Main function for background filtering using the time median based method described in:
 	 * The fidelity of stochastic single-molecule super-resolution reconstructions critically depends upon robust background estimation
 	 *	E. Hoogendoorn, K. C. Crosby, D. Leyton-Puig, R. M.P. Breedijk, K. Jalink, T. W.J. Gadella & M. Postma
-	 *	Scientific Reports 4, Article number: 3854 (2014)
-	 *  Call through TestArray = BackgroundCorrection.medianFiltering(double TestArray[][][], int W); 
-	 *  with W being filter window in one direction
-	 *  and TestArray being a 3 dimensional array. Return is a in time running median filtered signal.
-	 *  Alternatively with if another way of organizing the data is available, the median calculations can be accessed through:
-	 *  vector = BackgroundCorrection.runningMedian(double[] Vector, int W); W is the filter window in one direction.
-	 *  
-	 *  
+	 *	Scientific Reports 4, Article number: 3854 (2014)	
 	 */
 
 	public static void medianFiltering(final int W){
@@ -181,11 +174,10 @@ class BackgroundCorrection {
 			 * display results
 			 */
 		}else{ // if multichannel.
-			int nChannels = image.getNChannels();
-			int nFrames = image.getNFrames();
-			int rows = image.getWidth();
-			int columns = image.getHeight();
-//			int pixelCount = rows*columns; 					// Pixels per frame.
+			int nChannels 	= image.getNChannels();
+			int nFrames 	= image.getNFrames();
+			int rows 		= image.getWidth();
+			int columns 	= image.getHeight();
 			ImagePlus CorrectedImage = image.duplicate(); 	// Generate copy to modify.
 			for (int Ch = 1; Ch <= nChannels; Ch++){ // Loop over all channels.
 				double[] MeanFrame = new double[nFrames]; 		// Will include frame mean value.

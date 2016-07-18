@@ -27,9 +27,21 @@ public class correctDrift {
 			return;
 		}
 		double Channels = 1;
+		int width = 0;
+		int height = 0;
+		int depth = 0;
 		for (int i = 0; i < correctedResults.size(); i ++){
 			if (correctedResults.get(i).channel>Channels){
 				Channels = correctedResults.get(i).channel;
+			}
+			if(correctedResults.get(i).x > width){
+				width = (int) Math.round(correctedResults.get(i).x);
+			}
+			if(correctedResults.get(i).y > height){
+				height = (int) Math.round(correctedResults.get(i).y);
+			}
+			if(correctedResults.get(i).z > depth){
+				depth = (int) Math.round(correctedResults.get(i).z);
 			}
 		}
 		for(double Ch = 1; Ch <= Channels; Ch++){
@@ -93,6 +105,7 @@ public class correctDrift {
 							addedFrames2++;
 						}
 					}
+					/* OLD version, nearest neighbour calc
 					int[] roughStepsize  	= {stepSize[0]*5,stepSize[1]*5,stepSize[2]*5}; // increase stepSize for a first round of optimization.
 					double[] roughlambda	= NearestNeighbourDrift.getLambda(Data1,Data2,roughStepsize,lb,ub); // Get rough estimate of lambda, drift.			
 					int[] fineLb 			= {(int) (roughlambda[0] - stepSize[0]),(int) (roughlambda[1] - stepSize[1]),(int) (roughlambda[2] - stepSize[2])}; 	// Narrow lower boundry.
@@ -105,7 +118,16 @@ public class correctDrift {
 							fineUb[j] = 0;
 						}
 					}
+					
 					double[] tempLamda 		= NearestNeighbourDrift.getLambda(Data1,Data2,stepSize ,fineLb ,fineUb); 				// Get drift.
+					*/
+					
+					/*
+					 * Autocorrelation method.
+					 */
+					
+					autoCorr2D CorrCalc	 	= new autoCorr2D(Data1, Data2, Math.round(width/stepSize[0]),Math.round(height/stepSize[1]), Math.round(depth/stepSize[2])+1, stepSize); // Setup calculations.
+					int[] tempLamda			= CorrCalc.optimizeParallel(ub);				// optimize.
 					lambdax[i] 				= tempLamda[0] + lambdax[i-1];
 					lambday[i] 				= tempLamda[1] + lambday[i-1];
 					lambdaz[i] 				= tempLamda[2] + lambdaz[i-1];
