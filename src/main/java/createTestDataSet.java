@@ -22,6 +22,7 @@ import java.util.Random;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.measure.Calibration;
+import ij.plugin.filter.Analyzer;
 import ij.process.ShortProcessor;
 
 public class createTestDataSet {
@@ -141,6 +142,53 @@ public class createTestDataSet {
 		image.setCalibration(cal);
 		image.show();
 	}
+	public static void ParticleList(int width, int height, int frames, int particleCount, double[] drift)
+	{
+		ArrayList<Particle> ParticleList = new ArrayList<Particle>();
+		Random r = new Random();
+		double[] coord = {1000,2000,3000,4000,5000};		
+		int count = 0;
+		for (int i = 0; i < particleCount; i++)
+		{
+			Particle P = new Particle();
+			//P.x = width * r.nextDouble();
+			//P.y = height * r.nextDouble();
+			P.x = coord[count] + 20*r.nextDouble();
+			P.y = coord[count] + 20*r.nextDouble();
+			count++;
+			if (count == 5)
+				count = 0;
+			ParticleList.add(P);		
+		}
+		int i = 0;
+		ij.measure.ResultsTable tab = Analyzer.getResultsTable();
+		tab.reset();		
+		for (int Frame = 1; Frame <= frames; Frame++)
+		{
+			
+			if (i == particleCount)
+				i = 0;
+			tab.incrementCounter();
+			
+			tab.addValue("x0", ParticleList.get(i).x + drift[0]*Frame); // add drift
+			tab.addValue("y0", ParticleList.get(i).y + drift[1]*Frame); // add drift
+			tab.addValue("z0", ParticleList.get(i).z);
+			tab.addValue("frame", Frame);
+			tab.addValue("channel", 1);
+			tab.addValue("sigma_x", ParticleList.get(i).sigma_x);
+			tab.addValue("sigma_y", ParticleList.get(i).sigma_y);
+			tab.addValue("sigma_z", ParticleList.get(i).sigma_z);
+			tab.addValue("precision_x", ParticleList.get(i).precision_x);
+			tab.addValue("precision_y", ParticleList.get(i).precision_y);
+			tab.addValue("precision_z", ParticleList.get(i).precision_z);
+			tab.addValue("r_square", 1);
+			tab.addValue("photons", ParticleList.get(i).photons);
+			tab.addValue("include", 1);
+			i++;
+		}
+		tab.show("Results");
+	}
+	
 	public static int[] GaussBlur(double[] P, int width, int size){
 		int[] eval = new int[size];
 		double ThetaA = Math.cos(P[5])*Math.cos(P[5])/(2*P[3]*P[3]) + Math.sin(P[5])*Math.sin(P[5])/(2*P[4]*P[4]); 

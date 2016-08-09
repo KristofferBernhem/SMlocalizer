@@ -45,24 +45,27 @@ public class AutoCorr {
 	public double Correlation(int[] shift){  // Calculate correlation for the current shift (x, y and z).
 		double Corr = 0;
 
-		int maxDistance = 50;  														// max distance in any 1 dimension.
+		int maxDistance = 150*150;  														// max distance in any 1 dimension.
 		for(int referenceIndex = 0; referenceIndex < referenceParticle.size(); referenceIndex++){				// Loop over all referenceParticles.								
 			for (int shiftIndex = 0; shiftIndex < shiftParticle.size(); shiftIndex++){			// For each referenceParticle, find the shiftParticles that are close.
 				double xDist = (referenceParticle.get(referenceIndex).x - 					// Distance in x dimension after shift.
 						shiftParticle.get(shiftIndex).x - 
 						shift[0]);
+				xDist *= xDist;
 				if(xDist<maxDistance){												// If distance is small enough, check y.
 					double yDist = (referenceParticle.get(referenceIndex).y - 				// Distance in y dimension after shift. 
 							shiftParticle.get(shiftIndex).y - 
 							shift[1]); 
+					yDist *= yDist;
 					if(yDist<maxDistance){											// If distance is small enough, check z.
 						double zDist = (referenceParticle.get(referenceIndex).z -  			// Distance in z dimension after shift.
 								shiftParticle.get(shiftIndex).z - 
 								shift[2]);
+						zDist *= zDist;
 						if(zDist<maxDistance){										// If distance is small enough, calculate square distance.														
-							double Distance = xDist*xDist+
-									yDist*yDist+
-									zDist*zDist;
+							double Distance = xDist+
+									yDist+
+									zDist;
 							if (Distance == 0){										// Avoid assigning infinity as value.
 								Corr += 1.5;
 							}else{

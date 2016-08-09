@@ -28,7 +28,9 @@ public class SMLocalizer_ implements PlugIn {
 
 		final ImageJ ij = new ImageJ();
 		ij.ui().showUI();
-		createTestDataSet.stack(64, 64, 1000, 1, 1); // get dataset.
+		//createTestDataSet.stack(64, 64, 1000, 1, 1); // get dataset.
+		double[] drift = {0.01,0.01};
+		createTestDataSet.ParticleList(6400, 6400, 10000, 500, drift);
 		Class<?> clazz = SMLocalizer_.class;
 		String url = clazz.getResource("/" + clazz.getName().replace('.', '/') + ".class").toString();
 		String pluginsDir = url.substring("file:".length(), url.length() - clazz.getName().length() - ".class".length());
