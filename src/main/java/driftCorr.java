@@ -75,7 +75,7 @@ public class driftCorr {
 			Particle P2 = new Particle();
 			P2.x = P.x - 2*i*drift;
 			P2.y = P.y - i*drift;
-			P2.z = P.z - i*drift;
+			P2.z = P.z - 3*i*drift;
 			
 			A.add(P2);
 			Particle P3 = new Particle();
