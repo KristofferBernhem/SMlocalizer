@@ -1,5 +1,10 @@
 import java.util.ArrayList;
 
+import ij.ImagePlus;
+import ij.measure.Calibration;
+import ij.process.ByteProcessor;
+import net.imagej.ImageJ;
+
 public class driftCorr {
 	ArrayList<Particle> 
 	referenceParticle,		// Reference, check the other list against this one.
@@ -64,14 +69,16 @@ public class driftCorr {
 	}
 	
 	public static void main(String[] args){
+		final ImageJ ij = new ImageJ();
+		ij.ui().showUI();
 		Particle P = new Particle();
 		P.x = 100;
 		P.y = 100;
 		P.z = 50;		
 		ArrayList<Particle> A = new ArrayList<Particle>();
 		ArrayList<Particle> B = new ArrayList<Particle>();
-		double drift = 0.1;
-		for (double i = 0; i < 500; i++){
+		double drift = 0.01;
+		for (double i = 0; i < 200; i++){
 			Particle P2 = new Particle();
 			P2.x = P.x - 2*i*drift;
 			P2.y = P.y - i*drift;
@@ -94,8 +101,55 @@ public class driftCorr {
 		int[] maxShift = {250*250,250*250,250*250};	// maximal shift (+/-).
 		long start = System.nanoTime();
 		driftCorr AC = new driftCorr(A,B,maxShift);
+		int width = 200;
+		int height = 200;
+
+		ByteProcessor IP  = new ByteProcessor(width,height);			
+		for (int x = 0; x < width; x++){
+			for (int y = 0; y < height; y++){
+				IP.putPixel(x, y, 0); // Set all data points to 0 as start.
+			}
+			
+		}
+	
+		for (int i = 0; i < 200; i++){
+
+				int x = (int) Math.round(A.get(i).x);
+				int y = (int) Math.round(A.get(i).y);				
+				IP.putPixel(x, y, (IP.get(x, y) + 1));
+				x = (int) Math.round(B.get(i).x);
+				y = (int) Math.round(B.get(i).y);				
+				IP.putPixel(x, y, (IP.get(x, y) + 1));
+
+		}		
+		ImagePlus Image = new ImagePlus("Start",IP);
+		Image.setImage(Image);
+		Image.show(); 						
 
 		double shift[] = AC.optimize();
+		
+		ByteProcessor IP2  = new ByteProcessor(width,height);			
+		for (int x = 0; x < width; x++){
+			for (int y = 0; y < height; y++){
+				IP2.putPixel(x, y, 0); // Set all data points to 0 as start.
+			}
+			
+		}
+	
+		for (int i = 0; i < 200; i++){
+
+				int x = (int) Math.round(A.get(i).x);
+				int y = (int) Math.round(A.get(i).y);				
+				IP2.putPixel(x, y, (IP2.get(x, y) + 1));
+				x = (int) Math.round(B.get(i).x + shift[0]);
+				y = (int) Math.round(B.get(i).y + shift[1]);				
+				IP2.putPixel(x, y, (IP2.get(x, y) + 1));
+
+		}		
+		ImagePlus Image2 = new ImagePlus("Corrected",IP2);
+		Image2.setImage(Image2);
+		Image2.show(); 	
+		
 		long stop = System.nanoTime();
 		long elapsed = (stop-start)/1000000;
 		System.out.println(shift[0]+  "x" +shift[1]+"x"+shift[2] + " in " + elapsed + " ms");
