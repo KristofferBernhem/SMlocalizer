@@ -393,7 +393,7 @@ public class Gauss2Dfit {
 		Localized.precision_x 	= Localized.sigma_x/Localized.photons;
 		Localized.precision_y 	= Localized.sigma_y/Localized.photons;
 		Localized.precision_z 	= Localized.sigma_z/Localized.photons;
-		System.out.println(rSquare);
+		//System.out.println(rSquare);
 		return Localized; // Return fit.
 	} // optimize.
 	

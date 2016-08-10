@@ -28,6 +28,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import net.imagej.ImageJ;
+
 public class AutoCorr {
 	ArrayList<Particle> 
 		referenceParticle,		// Reference, check the other list against this one.
@@ -45,7 +47,7 @@ public class AutoCorr {
 	public double Correlation(int[] shift){  // Calculate correlation for the current shift (x, y and z).
 		double Corr = 0;
 
-		int maxDistance = 150*150;  														// max distance in any 1 dimension.
+		int maxDistance = 250*250;  														// max distance in any 1 dimension.
 		for(int referenceIndex = 0; referenceIndex < referenceParticle.size(); referenceIndex++){				// Loop over all referenceParticles.								
 			for (int shiftIndex = 0; shiftIndex < shiftParticle.size(); shiftIndex++){			// For each referenceParticle, find the shiftParticles that are close.
 				double xDist = (referenceParticle.get(referenceIndex).x - 					// Distance in x dimension after shift.
@@ -196,19 +198,33 @@ public class AutoCorr {
 	 * function  tests.
 	 */
 	public static void main(String[] args){
+		final ImageJ ij = new ImageJ();
+		ij.ui().showUI();
 		Particle P = new Particle();
 		P.x = 100;
 		P.y = 100;
-		P.z = 50;
-		Particle P2 = new Particle();
-		P2.x = 120;
-		P2.y = 115;
-		P2.z = 42;
+		P.z = 50;		
 		ArrayList<Particle> A = new ArrayList<Particle>();
 		ArrayList<Particle> B = new ArrayList<Particle>();
-		for (int i = 0; i < 500; i++){
-			A.add(P);
-			B.add(P2);
+		double drift = 0.01;
+		for (double i = 0; i < 200; i++){
+			Particle P2 = new Particle();
+			P2.x = P.x - 2*i*drift;
+			P2.y = P.y - i*drift;
+			P2.z = P.z - 3*i*drift;
+			
+			A.add(P2);
+			Particle P3 = new Particle();
+			P3.x = P.x + i*drift;
+			P3.y = P.y + i*drift;
+			P3.z = P.z + i*drift;
+								
+			if (i == 499)
+			{
+				System.out.println("A:" + P2.x);
+				System.out.println("B:" + P3.x);
+			}
+			B.add(P3);
 		}
 
 

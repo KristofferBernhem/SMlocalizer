@@ -131,9 +131,13 @@ public class correctDrift {
 					//int[] tempLamda			= CorrCalc.optimizeParallel(ub);				// optimize.
 					AutoCorr DriftCalc 		= new AutoCorr(Data1, Data2, stepSize, boundry);
 					int[] tempLamda 		= DriftCalc.optimize();
+					
+					//driftCorr DriftCalc 	= new driftCorr(Data1, Data2, boundry);
+					//double[] tempLamda 		= DriftCalc.optimize();
 					lambdax[i] 				= tempLamda[0] + lambdax[i-1];
 					lambday[i] 				= tempLamda[1] + lambday[i-1];
 					lambdaz[i] 				= tempLamda[2] + lambdaz[i-1];
+					//System.out.println(lambdax[i] + " " + lambday[i]);
 				}
 
 
