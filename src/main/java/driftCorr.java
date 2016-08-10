@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 
 import ij.ImagePlus;
-import ij.measure.Calibration;
 import ij.process.ByteProcessor;
 import net.imagej.ImageJ;
 
