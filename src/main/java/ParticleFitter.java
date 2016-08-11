@@ -62,9 +62,9 @@ public class ParticleFitter {
 					0,											// Offset.
 					0											// Theta, angle in radians away from y axis.
 			};*/
-
+			
 			Gauss2Dfit gfit = new Gauss2Dfit(dataFit,Window);
-			Results.add(gfit.optimizeRsquare(Frame, (int) Channel, Coord, pixelSize));
+			Results.add(gfit.optimizeAdatpive(Frame, (int) Channel, Coord, pixelSize));
 			/*
 			Eval tdgp = new Eval(dataFit, startParameters, Window, new int[] {10000,100}); // Create fit object.
 

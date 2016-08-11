@@ -49,9 +49,12 @@ public class parameterDistribution{
 
 
 	public static void run() {
+		
+		
+		
 		int nBins = 100;
 		ArrayList<Particle> ParticleList = TableIO.Load(); // Get data.
-
+		
 
 		int Channel = 1;
 		for (int i = 0; i < ParticleList.size(); i++){
