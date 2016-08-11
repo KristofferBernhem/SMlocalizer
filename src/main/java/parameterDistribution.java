@@ -16,8 +16,9 @@
  */
 import java.awt.Color;
 import java.util.ArrayList;
-import ij.gui.Plot;
 
+
+import ij.gui.Plot;
 
 public class parameterDistribution{
 
@@ -52,7 +53,7 @@ public class parameterDistribution{
 		
 		
 		
-		int nBins = 100;
+		int nBins = 50;
 		ArrayList<Particle> ParticleList = TableIO.Load(); // Get data.
 		
 
@@ -72,6 +73,7 @@ public class parameterDistribution{
 			double[] tempR_square = new double[ParticleList.size()];
 			double[] tempPhotons = new double[ParticleList.size()];
 			int count = 0;
+
 			for (int i = 0; i < ParticleList.size(); i++){
 				if(ParticleList.get(i).channel == Ch){
 					tempSigmaX[i] 		= ParticleList.get(i).sigma_x;
@@ -83,6 +85,7 @@ public class parameterDistribution{
 					tempR_square[i] 	= ParticleList.get(i).r_square;
 					tempPhotons[i] 		= ParticleList.get(i).photons;
 					count++;
+	
 				}
 			}
 			
@@ -105,6 +108,7 @@ public class parameterDistribution{
 				Photons[i] 		= tempPhotons[i];
 			}
 			
+
 			BackgroundCorrection.quickSort(SigmaX, 0, SigmaX.length-1);
 			BackgroundCorrection.quickSort(SigmaY, 0, SigmaY.length-1);
 			BackgroundCorrection.quickSort(SigmaZ, 0, SigmaZ.length-1);
@@ -160,6 +164,8 @@ public class parameterDistribution{
 			x_axis = correctDrift.interp(PhotonsMin, PhotonsMax, nBins);
 			String[] headerSPhotons = {("Channel " + Ch +" 	aPhotons"), "photons", "count"};
 			plot(headerSPhotons,"Photons",binData(Photons,nBins,x_axis),correctDrift.interp(PhotonsMin, PhotonsMax, nBins));
+			
+	
 		} // End loop over channels.
 	}
 

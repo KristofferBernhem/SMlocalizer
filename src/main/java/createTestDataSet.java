@@ -181,7 +181,7 @@ public class createTestDataSet {
 			tab.addValue("precision_x", ParticleList.get(i).precision_x);
 			tab.addValue("precision_y", ParticleList.get(i).precision_y);
 			tab.addValue("precision_z", ParticleList.get(i).precision_z);
-			tab.addValue("r_square", 1);
+			tab.addValue("r_square", r.nextDouble());
 			tab.addValue("photons", ParticleList.get(i).photons);
 			tab.addValue("include", 1);
 			i++;

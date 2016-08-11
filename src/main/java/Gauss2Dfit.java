@@ -426,13 +426,13 @@ public class Gauss2Dfit {
 
 		// steps is the most critical for processing time. Final step is 1/25th of these values. 
 		double[] stepSize = {
-				P[0]*.125,         // amplitude, make final step 0.5% of max signal.
-				0.25,           // x step, final step = 1 nm.
-				0.25,           // y step, final step = 1 nm.
-				0.5,            // sigma x step, final step = 2 nm.
-				0.5,            // sigma y step, final step = 2 nm.
-				0.19625,        // theta step, final step = 0.00785 radians. Start value == 25% of bounds.
-				P[0]*.0125};            // offset, make final step 0.05% of signal.
+				 		 P[0]*.125,        // amplitude, make final step 0.5% of max signal.
+				0.25*100/pixelSize,        // x step, final step = 0.2 nm.
+				0.25*100/pixelSize,        // y step, final step = 0.2 nm.
+				 0.5*100/pixelSize,        // sigma x step, final step = 0.4 nm.
+				 0.5*100/pixelSize,        // sigma y step, final step = 0.4 nm.
+						   0.19625,        // theta step, final step = 0.00785 radians. Start value == 25% of bounds.
+						P[0]*.0125};       // offset, make final step 0.05% of signal.
 		
         ///////////////////////////////////////////////////////////////////
         //////////////////// intitate variables. //////////////////////////
@@ -468,7 +468,7 @@ public class Gauss2Dfit {
 		int xyIndex         = 0;		
 		
 		///////////////////////////////////////////////////////////////////
-		/////// optimze x, y, sigma x, sigma y and theta in parallel. /////
+		/////// optimize x, y, sigma x, sigma y and theta in parallel. /////
 		///////////////////////////////////////////////////////////////////
 
 		while (optimize) 
@@ -581,7 +581,7 @@ public class Gauss2Dfit {
 			loopcounter++;
 			if (inputRsquare == Rsquare) // if no improvement was made.
 			{
-				if (xStep != stepSize[1] / 25) // if stepsize has not been decreased twice already.
+				if (xStep != stepSize[1] / 125) // if stepsize has not been decreased twice already.
 				{
 					xStep           = xStep         / 5;
 					yStep           = yStep         / 5;
@@ -606,7 +606,7 @@ public class Gauss2Dfit {
 		ThetaC      = Math.sin(P[5]) * Math.sin(P[5]) / (2 * P[3] * P[3]) + Math.cos(P[5]) * Math.cos(P[5]) / (2 * P[4] * P[4]);
 		optimize    = true; // reset.
 		loopcounter = 0; // reset.
-		while (optimize) // optimze amplitude and offset.
+		while (optimize) // optimize amplitude and offset.
 		{
 			inputRsquare = Rsquare; // before loop.
 			for (double amp = P[0] - ampStep; amp <= P[0] + ampStep; amp = amp + ampStep)
@@ -672,8 +672,8 @@ public class Gauss2Dfit {
 		Localized.channel 		= channel;
 		Localized.frame   		= frame;
 		Localized.r_square 		= 1-Rsquare;
-		Localized.x				= pixelSize*(P[1] + center[0] - Math.round((width-1)/2));
-		Localized.y				= pixelSize*(P[2] + center[1] - Math.round((width-1)/2));
+		Localized.x				= pixelSize*(P[1] + center[0] - Math.round((width)/2));
+		Localized.y				= pixelSize*(P[2] + center[1] - Math.round((width)/2));
 		Localized.z				= pixelSize*z0;
 		Localized.sigma_x		= pixelSize*P[3];
 		Localized.sigma_y		= pixelSize*P[4];
