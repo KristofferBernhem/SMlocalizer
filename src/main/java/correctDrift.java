@@ -22,6 +22,7 @@ import ij.gui.Plot;
 public class correctDrift {
 //	public static void run(int[] lb, int[] ub, double BinFrac, int nParticles, int minParticles, int[] stepSize){
 	public static void run(int[] boundry, double BinFrac, int nParticles, int minParticles, int[] stepSize){
+		int[] maxDistance = {2500,2500,2500}; // everything beyond 50 nm apart after shift will not affect outcome.
 		ArrayList<Particle> locatedParticles = TableIO.Load(); // Get current table data.		
 		ArrayList<Particle> correctedResults = new ArrayList<Particle>(); // Output arraylist, will contain all particles that fit user input requirements after drift correction.
 		if (locatedParticles.size() == 0){
@@ -129,7 +130,7 @@ public class correctDrift {
 					
 					//autoCorr2D CorrCalc	 	= new autoCorr2D(Data1, Data2, Math.round(width/stepSize[0]),Math.round(height/stepSize[1]), Math.round(depth/stepSize[2])+1, stepSize); // Setup calculations.
 					//int[] tempLamda			= CorrCalc.optimizeParallel(ub);				// optimize.
-					AutoCorr DriftCalc 		= new AutoCorr(Data1, Data2, stepSize, boundry);
+					AutoCorr DriftCalc 		= new AutoCorr(Data1, Data2, stepSize, boundry, maxDistance);
 					int[] tempLamda 		= DriftCalc.optimize();
 					
 					//driftCorr DriftCalc 	= new driftCorr(Data1, Data2, boundry);
@@ -162,6 +163,8 @@ public class correctDrift {
 						countz--;
 					}
 				}
+				
+				System.out.println(lambda[lambda.length-1][0]);
 				double[] timeV = new double[lambda.length];
 				for (int i = 0; i < timeV.length;i++){
 					timeV[i] = i;
@@ -210,17 +213,14 @@ public class correctDrift {
 			}else
 				System.out.println("No drift correction possible, not enough particles in each bin.");
 			
-		}// Channel loop ends.	
-		
-		if (correctedResults.size()== locatedParticles.size()){
-			TableIO.Store(correctedResults);
-			System.out.println("Drift corrections made");
-		}
+		} // Channel loop ends.	
+		TableIO.Store(correctedResults);
 	}
 
 
 	//public static void ChannelAlign(int[] lb, int[] ub, int nParticles, int minParticles, int[] stepSize){
 	public static void ChannelAlign(int[] boundry, int nParticles, int minParticles, int[] stepSize){
+		int[] maxDistance = {2500,2500,2500}; // everything beyond 50 nm apart after shift will not affect outcome.
 		ArrayList<Particle> locatedParticles = TableIO.Load(); // Get current table data.
 		if (locatedParticles.size() == 0){ // If no particles.
 			return;
@@ -286,7 +286,7 @@ public class correctDrift {
 			/*
 			 * New autocorrelation version.
 			 */
-			AutoCorr DriftCalc 		= new AutoCorr(Data1, Data2, stepSize, boundry);
+			AutoCorr DriftCalc 		= new AutoCorr(Data1, Data2, stepSize, boundry, maxDistance);
 			int[] lambdaCh 		= DriftCalc.optimize();
 			for(int i = 0; i < locatedParticles.size(); i++){
 				if (locatedParticles.get(i).channel == Ch){

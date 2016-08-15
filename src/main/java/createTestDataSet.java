@@ -153,8 +153,8 @@ public class createTestDataSet {
 			Particle P = new Particle();
 			//P.x = width * r.nextDouble();
 			//P.y = height * r.nextDouble();
-			P.x = coord[count] + 20*r.nextDouble();
-			P.y = coord[count] + 20*r.nextDouble();
+			P.x = coord[0];// + 20*r.nextDouble();
+			P.y = coord[0];// + 20*r.nextDouble();
 			count++;
 			if (count == 5)
 				count = 0;
