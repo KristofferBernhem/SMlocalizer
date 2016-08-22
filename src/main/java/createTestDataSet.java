@@ -92,8 +92,8 @@ public class createTestDataSet {
 					y += currParticle.y - P[2];
 		//			x = (int) Math.round(x/100) + 2*((Frame-1) % 2);
 		//			y = (int) Math.round(y/100) + 2*((Frame-1) % 2);
-					x = (int) Math.round(x/100);
-					y = (int) Math.round(y/100);
+					x = Math.round(x/100);
+					y = Math.round(y/100);
 					IP.set(x,y,(IP.get(x,y) + data[j]));					
 				}
 				

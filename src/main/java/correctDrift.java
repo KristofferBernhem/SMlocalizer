@@ -21,7 +21,7 @@ import ij.gui.Plot;
 
 public class correctDrift {
 //	public static void run(int[] lb, int[] ub, double BinFrac, int nParticles, int minParticles, int[] stepSize){
-	public static void run(int[] boundry, double BinFrac, int nParticles, int minParticles, int[] stepSize){
+	public static void run(int[] boundry, double BinFrac, int nParticles, int minParticles, int[] stepSize, boolean GPU){
 		int[] maxDistance = {2500,2500,2500}; // everything beyond 50 nm apart after shift will not affect outcome.
 		ArrayList<Particle> locatedParticles = TableIO.Load(); // Get current table data.		
 		ArrayList<Particle> correctedResults = new ArrayList<Particle>(); // Output arraylist, will contain all particles that fit user input requirements after drift correction.
@@ -107,40 +107,18 @@ public class correctDrift {
 							addedFrames2++;
 						}
 					}
-					/* OLD version, nearest neighbour calc
-					int[] roughStepsize  	= {stepSize[0]*5,stepSize[1]*5,stepSize[2]*5}; // increase stepSize for a first round of optimization.
-					double[] roughlambda	= NearestNeighbourDrift.getLambda(Data1,Data2,roughStepsize,lb,ub); // Get rough estimate of lambda, drift.			
-					int[] fineLb 			= {(int) (roughlambda[0] - stepSize[0]),(int) (roughlambda[1] - stepSize[1]),(int) (roughlambda[2] - stepSize[2])}; 	// Narrow lower boundry.
-					int[] fineUb 			= {(int) (roughlambda[0] + stepSize[0]),(int) (roughlambda[1] + stepSize[1]),(int) (roughlambda[2] + stepSize[2])}; 	// Narrow upper boundry.
-					for(int j = 0; j < lb.length;j++){
-						if(lb[j] == 0){
-							fineLb[j] = 0;
-						}					
-						if (ub[j] == 0){
-							fineUb[j] = 0;
-						}
+					int[] tempLamda = {0,0,0};
+					if(GPU){
+						// TODO: run ptx code here.
+					}else{
+						AutoCorr DriftCalc 	= new AutoCorr(Data1, Data2, stepSize, boundry, maxDistance);
+						tempLamda 			= DriftCalc.optimize();	
 					}
 					
-					double[] tempLamda 		= NearestNeighbourDrift.getLambda(Data1,Data2,stepSize ,fineLb ,fineUb); 				// Get drift.
-					*/
-					
-					/*
-					 * Autocorrelation method.
-					 */
-					
-					//autoCorr2D CorrCalc	 	= new autoCorr2D(Data1, Data2, Math.round(width/stepSize[0]),Math.round(height/stepSize[1]), Math.round(depth/stepSize[2])+1, stepSize); // Setup calculations.
-					//int[] tempLamda			= CorrCalc.optimizeParallel(ub);				// optimize.
-					AutoCorr DriftCalc 		= new AutoCorr(Data1, Data2, stepSize, boundry, maxDistance);
-					int[] tempLamda 		= DriftCalc.optimize();
-					
-					//driftCorr DriftCalc 	= new driftCorr(Data1, Data2, boundry);
-					//double[] tempLamda 		= DriftCalc.optimize();
 					lambdax[i] 				= tempLamda[0] + lambdax[i-1];
 					lambday[i] 				= tempLamda[1] + lambday[i-1];
-					lambdaz[i] 				= tempLamda[2] + lambdaz[i-1];
-					//System.out.println(lambdax[i] + " " + lambday[i]);
+					lambdaz[i] 				= tempLamda[2] + lambdaz[i-1];					
 				}
-
 
 				int countx = lambda.length-1;
 				int county = lambda.length-1;
@@ -219,7 +197,7 @@ public class correctDrift {
 
 
 	//public static void ChannelAlign(int[] lb, int[] ub, int nParticles, int minParticles, int[] stepSize){
-	public static void ChannelAlign(int[] boundry, int nParticles, int minParticles, int[] stepSize){
+	public static void ChannelAlign(int[] boundry, int nParticles, int minParticles, int[] stepSize, boolean GPU){
 		int[] maxDistance = {2500,2500,2500}; // everything beyond 50 nm apart after shift will not affect outcome.
 		ArrayList<Particle> locatedParticles = TableIO.Load(); // Get current table data.
 		if (locatedParticles.size() == 0){ // If no particles.
@@ -266,28 +244,13 @@ public class correctDrift {
 			if(addedFrames2 < minParticles){
 				return;
 			}
-			/*
-
-			int[] roughStepsize  	= {stepSize[0]*5,stepSize[1]*5,stepSize[2]*5}; // increase stepSize for a first round of optimization. 
-			double[] roughlambda	= NearestNeighbourDrift.getLambda(Data1,Data2,roughStepsize,lb,ub); // Get rough estimate of lambda, drift.			
-			int[] fineLb 			= {(int) (roughlambda[0] - stepSize[0]),(int) (roughlambda[1] - stepSize[1]),(int) (roughlambda[2] - stepSize[2])}; 	// Narrow lower boundry.
-			
-			int[] fineUb 			= {(int) (roughlambda[0] + stepSize[0]),(int) (roughlambda[1] + stepSize[1]),(int) (roughlambda[2] + stepSize[2])}; 	// Narrow upper boundry.
-			for(int i = 0; i < lb.length;i++){
-				if(lb[i] == 0){
-					fineLb[i] = 0;
-				}					
-				if (ub[i] == 0){
-					fineUb[i] = 0;
-				}
+			int[] lambdaCh = {0,0,0}; // initiate.
+			if(GPU){
+				// TODO: run ptx code here.
+			}else{
+				AutoCorr DriftCalc 		= new AutoCorr(Data1, Data2, stepSize, boundry, maxDistance);
+				lambdaCh 				= DriftCalc.optimize();
 			}
-			double[] lambdaCh 		= NearestNeighbourDrift.getLambda(Data1,Data2,stepSize ,fineLb ,fineUb); 				// Get drift.
-			*/
-			/*
-			 * New autocorrelation version.
-			 */
-			AutoCorr DriftCalc 		= new AutoCorr(Data1, Data2, stepSize, boundry, maxDistance);
-			int[] lambdaCh 		= DriftCalc.optimize();
 			for(int i = 0; i < locatedParticles.size(); i++){
 				if (locatedParticles.get(i).channel == Ch){
 					locatedParticles.get(i).x = locatedParticles.get(i).x - lambdaCh[0];

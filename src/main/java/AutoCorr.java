@@ -28,22 +28,21 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import net.imagej.ImageJ;
 
 public class AutoCorr {
 	ArrayList<Particle> 
-		referenceParticle,		// Reference, check the other list against this one.
-		shiftParticle;			// Shift this one to maximize correlation between the two lists.
+	referenceParticle,		// Reference, check the other list against this one.
+	shiftParticle;			// Shift this one to maximize correlation between the two lists.
 	int[] stepSize;				// x, y and z step size in shift calculations. 
 	int[] maxShift;				// Maximal shift to calculate.
 	int[] maxDistance;
+
 	AutoCorr(ArrayList<Particle> Alpha, ArrayList<Particle> Beta, int[] stepSize, int[] maxShift, int[] maxDistance){
 		this.referenceParticle 	= Alpha;
 		this.shiftParticle 		= Beta;
 		this.stepSize 			= stepSize;
 		this.maxShift 			= maxShift;
-		this.maxDistance 		= maxDistance;
-		 														//max distance in any 1 dimension.
+		this.maxDistance 		= maxDistance; //max distance in any 1 dimension.
 	}
 
 	public double Correlation(int[] shift){  // Calculate correlation for the current shift (x, y and z).
@@ -82,22 +81,22 @@ public class AutoCorr {
 		}
 		return Corr;
 	}
-/*
- * optimize takes the global settings and loops over and finds optimal shift between the two groups of Particles. 
- * 2 rounds of optimization, once at Xx stepsize for coarse optimization and once at stepsize for fine optimization. 
- * Runs on all cores and scales linearly with number of cores for computation time.
- */
+	/*
+	 * optimize takes the global settings and loops over and finds optimal shift between the two groups of Particles. 
+	 * 2 rounds of optimization, once at Xx stepsize for coarse optimization and once at stepsize for fine optimization. 
+	 * Runs on all cores and scales linearly with number of cores for computation time.
+	 */
 	public int[] optimize(){
 		int[] shift 					= {0,0,0};													// Output, initialize.
 		int processors 					= Runtime.getRuntime().availableProcessors();				// Number of processor cores on this system.
 		ExecutorService exec 			= Executors.newFixedThreadPool(processors);					// Set up parallel computing using all cores.
 		List<Callable<double[]>> tasks 	= new ArrayList<Callable<double[]>>();						// Preallocate.
 		int stepIncrease 				= 3;														// How much coarser first scan is, higher number, faster total computation time.
-		
+
 		/*
 		 * Coarse round, find approximation of shift. Computation split this way to speed up performance. 
 		 */
-				
+
 		for (int shiftX = shift[0]- maxShift[0]; shiftX < shift[0]+  maxShift[0]; shiftX += stepIncrease*stepSize[0]){			// Loop over all x values surrounding the optimal shift value from coarse round.
 			for (int shiftY = shift[1]- maxShift[0]; shiftY <  shift[1]+  maxShift[0]; shiftY += stepIncrease*stepSize[1]){		// Loop over all y values surrounding the optimal shift value from coarse round.	
 				for (int shiftZ = shift[2]- maxShift[0]; shiftZ <  shift[2]+  maxShift[0]; shiftZ += stepIncrease*stepSize[2]){	// Loop over all z values surrounding the optimal shift value from coarse round.
@@ -119,7 +118,7 @@ public class AutoCorr {
 			}
 		}
 
-//		System.out.println("first " + tasks.size());
+		//		System.out.println("first " + tasks.size());
 		try {
 			List<Future<double[]>> parallelCompute = exec.invokeAll(tasks);							// Execute computation.
 			double[] Corr;
@@ -135,21 +134,21 @@ public class AutoCorr {
 						shift[2] = (int) Corr[3];													// Update best guess at z shift.
 
 					}				
-					
+
 				} catch (ExecutionException e) {
 					e.printStackTrace();
-			
+
 				}
 			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-	
+
 		}
-		
+
 		/*
 		 * Second round, smaller stepsize this time round.
 		 */
-		
+
 		List<Callable<double[]>> tasksSmall = new ArrayList<Callable<double[]>>();				// Preallocate.
 
 		for (int shiftX = shift[0]- stepIncrease * stepSize[0]; shiftX < shift[0]+ stepIncrease* stepSize[0]; shiftX += stepSize[0]){			// Loop over all x values surrounding the optimal shift value from coarse round.
@@ -207,6 +206,10 @@ public class AutoCorr {
 		P.x = 100;
 		P.y = 100;
 		P.z = 50;		
+		Particle Psecond = new Particle();
+		Psecond.x = 1000;
+		Psecond.y = 1000;
+		Psecond.z = 500;	
 		ArrayList<Particle> A = new ArrayList<Particle>();
 		ArrayList<Particle> B = new ArrayList<Particle>();
 		double drift = 0.5;
@@ -215,7 +218,7 @@ public class AutoCorr {
 			P2.x = P.x - i*drift;
 			P2.y = P.y - i*drift;
 			P2.z = P.z - i*drift;
-			
+
 			A.add(P2);
 			Particle P3 = new Particle();
 			P3.x = P.x + i*drift;
@@ -223,6 +226,19 @@ public class AutoCorr {
 			P3.z = P.z + i*drift;
 
 			B.add(P3);
+
+			Particle P4 = new Particle();
+			P4.x = Psecond.x - i*drift;
+			P4.y = Psecond.y - i*drift;
+			P4.z = Psecond.z - i*drift;
+
+			A.add(P4);
+			Particle P5 = new Particle();
+			P5.x = Psecond.x + i*drift;
+			P5.y = Psecond.y + i*drift;
+			P5.z = Psecond.z + i*drift;
+
+			B.add(P5);			
 		}
 
 		int[] stepSize = {5,5,5}; 			// shift will be rounded to these numbers.

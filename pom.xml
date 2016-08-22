@@ -35,10 +35,9 @@
 	<parent>	
 		<groupId>net.imagej</groupId>
 		<artifactId>pom-imagej</artifactId>
-		<version>14.4.1</version>
-	</parent>
-	
-	<repositories>
+		<version>14.4.1</version>	
+	</parent>	
+	<repositories>																	
 		<repository>
 			<id>imagej.releases</id>
 			<url>http://maven.imagej.net/content/repositories/releases/</url>
@@ -62,7 +61,7 @@
 			<artifactId>formats-api</artifactId>
 			</dependency>
 
-					<dependency>
+		<dependency>
 			<groupId>net.imagej</groupId>
 			<artifactId>imagej-plugins-commands</artifactId>
 			</dependency>
@@ -136,14 +135,7 @@
 					</descriptors>
 				</configuration>
 			</plugin>
-
-
 		</plugins>
-
-
 	</build>
-
-
-	
 	<inceptionYear>2016</inceptionYear>
 </project>
