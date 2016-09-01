@@ -18,20 +18,21 @@ import java.util.ArrayList;
 import ij.ImagePlus;
 import ij.measure.Calibration;
 import ij.process.ByteProcessor;
+import ij.process.ImageStatistics;
 
 public class generateImage {
 	
 	public static void create(String Imtitle,ArrayList<Particle> ParticleList, int width, int height, int pixelSize){
 		width = Math.round(width/pixelSize);
 		height = Math.round(height/pixelSize);
-		ByteProcessor IP  = new ByteProcessor(width,height);			
+		ByteProcessor IP  = new ByteProcessor(width,height);					
 		for (int x = 0; x < width; x++){
 			for (int y = 0; y < height; y++){
 				IP.putPixel(x, y, 0); // Set all data points to 0 as start.
 			}
 			
 		}
-	
+		
 		for (int i = 0; i < ParticleList.size(); i++){
 			if (ParticleList.get(i).include == 1){
 				int x = (int) Math.round(ParticleList.get(i).x/pixelSize);
@@ -46,6 +47,9 @@ public class generateImage {
 		cal.pixelWidth 	= pixelSize;
 		cal.setXUnit("nm");
 		cal.setYUnit("nm");
+		ImageStatistics ImStats = Image.getStatistics();
+		Image.setDisplayRange(ImStats.min, ImStats.max);
+		Image.updateAndDraw();
 		Image.setCalibration(cal);
 		Image.show(); 														// Make visible	
 	}	

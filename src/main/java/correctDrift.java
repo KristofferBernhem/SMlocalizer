@@ -187,12 +187,13 @@ public class correctDrift {
 					lz[i]	= lambda[i][2];
 				}
 				plot(lx,ly,timeV);
+				TableIO.Store(correctedResults);
 				
 			}else
 				System.out.println("No drift correction possible, not enough particles in each bin.");
 			
 		} // Channel loop ends.	
-		TableIO.Store(correctedResults);
+		
 	}
 
 

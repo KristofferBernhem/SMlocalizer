@@ -36,8 +36,8 @@ public class localizeAndFit {
 		int nFrames 						= LocalizeImage.getNFrames();		// Number of frames.
 		ArrayList<Particle> Results 		= new ArrayList<Particle>();		// Fitted results array list.
 		ArrayList<fitParameters> fitThese 	= new ArrayList<fitParameters>(); 	// arraylist to hold all fitting parameters.
-		double z0 = 0;
-		double sigma_z = 0;
+//		double z0 = 0;
+//		double sigma_z = 0;
 		if (nChannels > 1){ // If multichannel.
 			for (int Ch = 1; Ch <= nChannels; Ch++){							// Loop over all channels.
 				for (int Frame = 1; Frame <= nFrames;Frame++){					// Loop over all frames.
@@ -81,7 +81,7 @@ public class localizeAndFit {
 			 * device_bounds: boundry conditions.
 			 * device_steps: stepsize, in pixel fractions.
 			 */
-			
+			/*
             // low-high for each parameter. Bounds are inclusive.
             double[] bounds = {
                           0.8, 	1.3,         // amplitude, should be close to center pixel value. Add +/-20 % of center pixel, not critical for performance.
@@ -152,7 +152,7 @@ public class localizeAndFit {
         		Localized.precision_y 	= Localized.sigma_y/Localized.photons;
         		Localized.precision_z 	= Localized.sigma_z/Localized.photons; 
         		Results.add(Localized); // add current.
-            }
+            }*/
             
 		}else{
 			
@@ -204,13 +204,13 @@ public class localizeAndFit {
 		for (int i = 0; i < Center.size(); i++){
 			int[] dataFit = new int[Window*Window];							// Container for data to be fitted.
 			int[] Coord = Center.get(i);									// X and Y coordinates for center pixels to be fitted.
-			int count = 0;	
-			for (int x = Coord[0]-(Window-1)/2; x<= Coord[0] + (Window-1)/2; x++){ 	// Get all pixels for the region.
-				for (int y = Coord[1]-(Window-1)/2; y<= Coord[1] + (Window-1)/2; y++){
-					dataFit[count] = (int) IP.getf(x, y);	
-					count++;
-				}
-			}					
+			
+			for (int j = 0; j < Window*Window; j++)
+			{
+				int x =  Coord[0] - Math.round((Window)/2) +  (j % Window);
+				int y =  Coord[1] - Math.round((Window)/2) +  (j / Window);
+				dataFit[j] = (int) IP.getf(x,y);
+			}
 			fitThese.add(new fitParameters(Coord, 
 					dataFit,
 					Channel,
@@ -218,7 +218,6 @@ public class localizeAndFit {
 					pixelSize,
 					Window));
 		}
-
 		return fitThese;																					// Results contain all particles located.
 	} // end LocalizeEvents
 }

@@ -1836,8 +1836,8 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			DesiredPixelSize = 5;                 							// Default value.
 			desiredPixelSize.setText(String.valueOf(DesiredPixelSize)); 		// Update.
 		}  
-		int PixelRatio = Math.round(inputPixelSize/DesiredPixelSize);
-		DBClust.Ident(Epsilon, minConnectingPoints,PixelRatio); // Unsure if it handles 3D points, need to check. Not yet multi channel.		
+		
+		DBClust.Ident(Epsilon, minConnectingPoints,DesiredPixelSize); // Unsure if it handles 3D points, need to check. Not yet multi channel.		
 	}                                               
 
 	private void inclPhotonCountActionPerformed(java.awt.event.ActionEvent evt) {                                                

@@ -22,9 +22,6 @@ public class renderImage {
 			ArrayList<Particle> correctedResults = TableIO.Load();	
 			int Width 				= 0;
 			int Height 				= 0;
-	//		int Pad					= inputPixelSize;
-
-			//int PixelRatio = Math.round(inputPixelSize/DesiredPixelSize);
 			for (int i = 0; i < correctedResults.size();i++){
 				if (correctedResults.get(i).include == 1){ 
 

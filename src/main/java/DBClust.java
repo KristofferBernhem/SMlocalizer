@@ -22,6 +22,7 @@ import org.apache.commons.math3.ml.clustering.DBSCANClusterer;
 import org.apache.commons.math3.ml.clustering.DoublePoint;
 
 import ij.ImagePlus;
+import ij.measure.Calibration;
 import ij.plugin.filter.Analyzer;
 import ij.process.ByteProcessor;
 
@@ -111,6 +112,12 @@ public class DBClust {
 			tab.show("Results");
 			ImagePlus Image = new ImagePlus("ClusterData",IP);
 			Image.setImage(Image);
+			Calibration cal = new Calibration(Image);
+			cal.pixelHeight = pixelSize;
+			cal.pixelWidth 	= pixelSize;
+			cal.setXUnit("nm");
+			cal.setYUnit("nm");
+			Image.setCalibration(cal);
 			Image.show(); 														// Make visible
 		}
 		return cluster; 

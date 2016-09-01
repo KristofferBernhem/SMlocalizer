@@ -64,7 +64,7 @@ public class ParticleFitter {
 			};*/
 			
 			Gauss2Dfit gfit = new Gauss2Dfit(dataFit,Window);
-			Results.add(gfit.optimizeAdatpive(Frame, (int) Channel, Coord, pixelSize));
+			Results.add(gfit.optimizeAdaptive(Frame, (int) Channel, Coord, pixelSize));
 			/*
 			Eval tdgp = new Eval(dataFit, startParameters, Window, new int[] {10000,100}); // Create fit object.
 
@@ -115,15 +115,13 @@ public class ParticleFitter {
 		for (int Event = 0; Event < Center.size(); Event++){ 						// Pull out data based on each entry into Center.
 			int[] dataFit = new int[Window*Window];							// Container for data to be fitted.
 			int[] Coord = Center.get(Event);										// X and Y coordinates for center pixels to be fitted.
-			int count = 0;	
+	
 			//	double ExpectedValue = 0; 												// Total value within the region, to be compared to calculated gaussian.
-			for (int i = Coord[0]-(Window-1)/2; i<= Coord[0] + (Window-1)/2; i++){ 	// Get all pixels for the region.
-				for (int j = Coord[1]-(Window-1)/2; j<= Coord[1] + (Window-1)/2; j++){
-					dataFit[count] = (int) IP.getf(i, j);	
-					// Pull out data.				
-					//				ExpectedValue += dataFit[count];								// Add data to total.
-					count++;
-				}
+			for (int j = 0; j < Window*Window; j++)
+			{
+				int x =  Coord[0] - Math.round((Window)/2) +  (j % Window);
+				int y =  Coord[1] - Math.round((Window)/2) +  (j / Window);
+				dataFit[j] = (int) IP.getf(x,y);
 			}
 
 
@@ -140,7 +138,7 @@ public class ParticleFitter {
 					0											// Theta, angle in radians away from y axis.
 			};*/
 			Gauss2Dfit gfit = new Gauss2Dfit(dataFit,Window);
-			Results.add(gfit.optimizeRsquare(Frame, (int) Channel, Coord, pixelSize));
+			Results.add(gfit.optimizeAdaptive(Frame, (int) Channel, Coord, pixelSize));
 
 			/*		
 			Eval tdgp = new Eval(dataFit, startParameters, Window, new int[] {1000,1000}); // Create fit object.
@@ -191,11 +189,11 @@ public class ParticleFitter {
 		Gauss2Dfit gfit = new Gauss2Dfit(
 				fitThese.data,
 				fitThese.windowWidth);
-		Particle Results = gfit.optimizeRsquare(
+		Particle Results = gfit.optimizeAdaptive(
 				fitThese.frame, 
 				fitThese.channel, 
 				fitThese.Center, 
-				fitThese.pixelsize);
+				fitThese.pixelsize);			
 		return Results;
 	}
 
