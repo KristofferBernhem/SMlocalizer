@@ -154,6 +154,7 @@ public class GaussSolver {
 		////////////////////// Optimize parameters:////////////////////////
 		///////////////////////////////////////////////////////////////////
 
+		
 		while (optimize)
 		{						
 			if (pId == 0) // if we start a new full iteration over all parameters.
