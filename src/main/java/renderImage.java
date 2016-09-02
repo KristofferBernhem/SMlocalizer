@@ -19,25 +19,27 @@ import java.util.ArrayList;
 public class renderImage {
 	public static void run(int inputPixelSize, int DesiredPixelSize ){		
 		try{
-			ArrayList<Particle> correctedResults = TableIO.Load();	
-			int Width 				= 0;
-			int Height 				= 0;
+			ArrayList<Particle> correctedResults	= TableIO.Load(); // load dataset from results table.
+			int Width 								= 0; // will contain the largest width value of the dataset.
+			int Height 								= 0; // will contain the largest height value of the dataset.
 			for (int i = 0; i < correctedResults.size();i++){
 				if (correctedResults.get(i).include == 1){ 
 
-					if (Math.round(correctedResults.get(i).x) > Width){
-						Width = (int) Math.round(correctedResults.get(i).x);
+					if (Math.round(correctedResults.get(i).x) > Width){ // if the new value is larer.
+						Width = (int) Math.round(correctedResults.get(i).x); // update max value.
 					}
-					if (Math.round(correctedResults.get(i).y) > Height){
-						Height = (int) Math.round(correctedResults.get(i).y);
+					if (Math.round(correctedResults.get(i).y) > Height){ // if the new value is larger.
+						Height = (int) Math.round(correctedResults.get(i).y); // update max value.
 					}
 				}
 			}		
-			Width = Width + inputPixelSize;
-			Height = Height + inputPixelSize;
+			Width 	= Width + inputPixelSize; 	// pad with one pixel.
+			Height 	= Height + inputPixelSize; 	// pad with one pixel.
 			generateImage.create("RenderedResults",correctedResults, Width, Height, DesiredPixelSize);		
 		}
 		catch (Exception e){
-		}
+			ij.IJ.log("No results table found.");	
+		}		
 	}
+	
 }

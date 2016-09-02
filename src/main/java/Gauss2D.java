@@ -75,8 +75,6 @@ public class Gauss2D {
 				double SigmaX2 = 2*V[3]*V[3];
 				double SigmaY2 = 2*V[4]*V[4];
 				
-//				double x0 = V[1]*Math.cos(V[5]) - V[2]*Math.sin(V[5]);
-//				double y0 = V[1]*Math.sin(V[5]) - V[2]*Math.cos(V[5]);
 				for (int i = 0; i < eval.length; i++){
 					int xi = i % width;
 					int yi = i / width;				
@@ -109,8 +107,7 @@ public class Gauss2D {
 				double SigmaY2 = V[4]*V[4]; 	// sigma_y^2
 				double SigmaX3 = SigmaX2*V[3]; 	// sigma_x^3
 				double SigmaY3 = SigmaY2*V[4]; 	// sigma_y^3
-			//	double x0 = V[1]*Math.cos(V[6]) - V[2]*Math.sin(V[6]);
-//				double y0 = V[1]*Math.sin(V[6]) - V[2]*Math.cos(V[6]);
+
 				for (int i = 0; i < jacobian.length; i++){
 					int xi = i % width;
 					int yi = i / width;
