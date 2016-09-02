@@ -190,14 +190,11 @@ public class correctDrift {
 				TableIO.Store(correctedResults);
 				
 			}else
-				System.out.println("No drift correction possible, not enough particles in each bin.");
-			
-		} // Channel loop ends.	
-		
+				ij.IJ.log("No drift correction possible, not enough particles in each bin.");			
+		} // Channel loop ends.			
 	}
 
 
-	//public static void ChannelAlign(int[] lb, int[] ub, int nParticles, int minParticles, int[] stepSize){
 	public static void ChannelAlign(int[] boundry, int nParticles, int minParticles, int[] stepSize, boolean GPU){
 		int[] maxDistance = {2500,2500,2500}; // everything beyond 50 nm apart after shift will not affect outcome.
 		ArrayList<Particle> locatedParticles = TableIO.Load(); // Get current table data.
@@ -268,7 +265,7 @@ public class correctDrift {
 			}		
 		}
 		TableIO.Store(locatedParticles);
-		System.out.println("Channels aligned.");
+		ij.IJ.log("Channels aligned.");
 	}
 
 	public static double[] interp(double X1, double X2, int n){

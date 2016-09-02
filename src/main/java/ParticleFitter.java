@@ -17,6 +17,8 @@
 
 import java.util.ArrayList;
 
+import org.apache.commons.math3.fitting.leastsquares.LeastSquaresOptimizer.Optimum;
+
 //import org.apache.commons.math3.fitting.leastsquares.LeastSquaresOptimizer.Optimum;
 //import org.apache.commons.math3.fitting.leastsquares.LeastSquaresOptimizer.Optimum;
 
@@ -140,8 +142,8 @@ public class ParticleFitter {
 			Gauss2Dfit gfit = new Gauss2Dfit(dataFit,Window);
 			Results.add(gfit.optimizeAdaptive(Frame, (int) Channel, Coord, pixelSize));
 
-			/*		
-			Eval tdgp = new Eval(dataFit, startParameters, Window, new int[] {1000,1000}); // Create fit object.
+					
+		/*	Eval tdgp = new Eval(dataFit, startParameters, Window, new int[] {1000,1000}); // Create fit object.
 
 			try{									
 				//do LevenbergMarquardt optimization and get optimized parameters
@@ -185,15 +187,60 @@ public class ParticleFitter {
 		return Results;
 	}
 
-	public static Particle Fitter(fitParameters fitThese){
-		Gauss2Dfit gfit = new Gauss2Dfit(
-				fitThese.data,
-				fitThese.windowWidth);
-		Particle Results = gfit.optimizeAdaptive(
-				fitThese.frame, 
-				fitThese.channel, 
-				fitThese.Center, 
-				fitThese.pixelsize);			
+	public static Particle Fitter(fitParameters fitThese){ // setup a single gaussian fit, return localized particle.
+		double convergence	= 1E-5;	// stop optimizing once improvement is below this.
+		int maxIteration 	= 1000;	// max number of iterations.
+		GaussSolver Gsolver = new GaussSolver(
+				fitThese.data, 		// data to be fitted.
+				fitThese.windowWidth, // window used for data extraction.
+				convergence,
+				maxIteration, 
+				fitThese.Center, 		// center coordianates for center pixel.
+				fitThese.channel, 		// channel id.
+				fitThese.pixelsize,		// pixelsize in nm.
+				fitThese.frame);		// frame number.
+		Particle Results 	= Gsolver.Fit();	// do fit.
+		return Results;
+	}
+		public static Particle FitterLM(fitParameters fitThese){
+		double[] startParameters = {
+						26000,
+						2.4,
+						2.7,
+						1.0,
+						1.0,
+						0,
+						0
+				};
+				double[] data = new double[fitThese.data.length];
+				for (int i = 0; i < fitThese.data.length; i++){
+					data[i] = fitThese.data[i];
+				}
+				
+				Eval tdgp = new Eval(data, startParameters, fitThese.windowWidth, new int[] {1000,1000}); // Create fit object.
+				Particle Results = new Particle();	
+		try{									
+			//do LevenbergMarquardt optimization and get optimized parameters
+			Optimum opt = tdgp.fit2dGauss();				
+			final double[] optimalValues = opt.getPoint().toArray();
+			optimalValues[0] = Math.abs(optimalValues[0]);
+			optimalValues[1] = Math.abs(optimalValues[1]);
+			optimalValues[2] = Math.abs(optimalValues[2]);
+			optimalValues[3] = Math.abs(optimalValues[3]);
+			optimalValues[4] = Math.abs(optimalValues[4]);
+			optimalValues[6] = Math.abs(optimalValues[6]);
+			Results.x = 100*(optimalValues[1] + fitThese.Center[0] - Math.round((fitThese.windowWidth)/2));
+			Results.y = 100*(optimalValues[2] + fitThese.Center[1] - Math.round((fitThese.windowWidth)/2));
+			Results.frame = optimalValues[5];
+		//	System.out.println("coord: " + optimalValues[1] + " x " + optimalValues[2] + " sigma " + optimalValues[3] + " x " + optimalValues[4]);
+		
+			
+		}
+		catch (Exception e) {
+		
+		}
+			
+
 		return Results;
 	}
 

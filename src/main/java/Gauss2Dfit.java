@@ -153,14 +153,13 @@ public class Gauss2Dfit {
 				(width-1)/4.0, 										// sigma y.
 				0, 													// theta.
 				0 													// offset.
-		};
-
+		};		
 		double[] bounds = {
 				0.8*P[0],      1.2*P[0],   						// amplitude, should be close to center pixel value. Add +/-20 % of center pixel, not critical for performance.
 				weightedCentroid[0]-1, weightedCentroid[0]+1, 	// x coordinate. Center has to be around the center pixel if gaussian distributed.
 				weightedCentroid[1]-1, weightedCentroid[1]+1, 	// y coordinate. Center has to be around the center pixel if gaussian distributed.
-				width/7,  	 width/2,   						// sigma x. Based on window size.
-				width/7,  	 width/2,   						// sigma y. Based on window size.
+				width/9.0,  	 width/2.0,   						// sigma x. Based on window size.
+				width/9.0,  	 width/2.0,   						// sigma y. Based on window size.
 				0, 	   Math.PI/4,   							// Theta. Any larger and the same result can be gained by swapping sigma x and y, symmetry yields only positive theta relevant.
 				-P[0]*0.1,  	    P[0]*0.1};  				// offset, best estimate, not critical for performance.
 
@@ -177,7 +176,6 @@ public class Gauss2Dfit {
 		///////////////////////////////////////////////////////////////////
 		//////////////////// intitate variables. //////////////////////////
 		///////////////////////////////////////////////////////////////////
-
 		Boolean optimize    = true;
 		double z0 		  	= 0;
 		double sigma_z 	  	= 0;
@@ -211,7 +209,7 @@ public class Gauss2Dfit {
 		///////////////////////////////////////////////////////////////////
 		/////// optimize x, y, sigma x, sigma y and theta in parallel. /////
 		///////////////////////////////////////////////////////////////////
-
+	//	int count = 1;
 		ThetaA = 1 / (2 * sigmax2);
 		ThetaB = 0;
 		ThetaC = 1 / (2 * sigmay2);
@@ -268,12 +266,22 @@ public class Gauss2Dfit {
 													residual = P[0] * Math.exp(-(ThetaA * (xi - x) * (xi - x) -
 															2 * ThetaB * (xi - x) * (yi - y) +
 															ThetaC * (yi - y) * (yi - y)
+															)) - inputdata[xyIndex];
+													
+/*													residual = P[0] * Math.exp(-(ThetaA * (xi - x) * (xi - x) -
+															2 * ThetaB * (xi - x) * (yi - y) +
+															ThetaC * (yi - y) * (yi - y)
 															)) + P[6] - inputdata[xyIndex];
-
+*/
 													tempRsquare += residual * residual;
+																					
+													
 												}
+												//System.out.println("count: " + count + "sigma: " + sigmax + " x " + sigmay + " theta: " + theta + " xy: " + x + " x " + y);
+											//	System.out.println("sigma step " + sigmaxStep + " x " + sigmayStep + "xy steps: " + xStep + " x " + yStep + " theta: " + thetaStep);
+											//	count++;
 												tempRsquare = (tempRsquare / totalSumOfSquares);  // normalize.
-												if (tempRsquare < 0.999 * Rsquare)                // If improved, update variables.
+												if (tempRsquare < 0.99 * Rsquare)                // If improved, update variables.
 												{
 													Rsquare = tempRsquare;
 													P[1] = x;
@@ -291,7 +299,7 @@ public class Gauss2Dfit {
 						} //  theta loop.
 					} else // if sigmax and sigmay are the same, theta = 0 as the gaussian is perfectly circular. 
 					{
-						theta = 0;
+						//theta = 0;
 						if (sigmax >= bounds[6] && sigmax <= bounds[7] && // Check that the current parameters are within the allowed range.
 								sigmay >= bounds[8] && sigmay <= bounds[9])
 						{
@@ -320,10 +328,19 @@ public class Gauss2Dfit {
 												residual = P[0] * Math.exp(-(ThetaA * (xi - x) * (xi - x) -
 														2 * ThetaB * (xi - x) * (yi - y) +
 														ThetaC * (yi - y) * (yi - y)
-														)) + P[6] - inputdata[xyIndex];
+														)) - inputdata[xyIndex];
 
+/*												residual = P[0] * Math.exp(-(ThetaA * (xi - x) * (xi - x) -
+														2 * ThetaB * (xi - x) * (yi - y) +
+														ThetaC * (yi - y) * (yi - y)
+														)) + P[6] - inputdata[xyIndex];
+*/
 												tempRsquare += residual * residual;
+												
 											}
+											//System.out.println("count: " + count + "sigma: " + sigmax + " x " + sigmay + " theta: " + theta + " xy: " + x + " x " + y);
+										//	System.out.println("sigma step " + sigmaxStep + " x " + sigmayStep + "xy steps: " + xStep + " x " + yStep);
+										//	count++;
 											tempRsquare = (tempRsquare / totalSumOfSquares);  // normalize.
 											if (tempRsquare < 0.99	 * Rsquare)                // If improved, update variables.
 											{
@@ -332,7 +349,7 @@ public class Gauss2Dfit {
 												P[2] = y;
 												P[3] = sigmax;
 												P[4] = sigmay;
-												P[5] = theta;
+										//		P[5] = theta;
 
 											} // update parameters
 										}// bounds check.
@@ -346,22 +363,22 @@ public class Gauss2Dfit {
 			loopcounter++;
 			if (inputRsquare == Rsquare) // if no improvement was made.
 			{
-				if (improvedStep < 3) // if stepsize has not been decreased twice already.
+				if (improvedStep < 3) // if stepsize has not been decreased 6 times already. Final stepsize = 1/128th of start.
 				{
 					xStep           = xStep         / 5;
 					yStep           = yStep         / 5;
 					sigmaxStep      = sigmaxStep    / 5;
 					sigmayStep      = sigmayStep    / 5;
 					thetaStep       = thetaStep     / 5;
-					improvedStep++;
+					improvedStep++;					
 				}
 				else
 					optimize = false; // exit.
 			}
-			if (loopcounter > 50) // exit.
+			if (loopcounter > 500) // exit.
 				optimize = false;
 		} // optimize while loop.
-
+//System.out.println(count);
 		/////////////////////////////////////////////////////////////////////////////
 		////// optimize  amplitude and offset. Only used for photon estimate. ///////
 		/////////////////////////////////////////////////////////////////////////////
@@ -371,7 +388,7 @@ public class Gauss2Dfit {
 		ThetaA 		= Math.cos(P[5]) * Math.cos(P[5]) / (2 * P[3] * P[3]) + Math.sin(P[5]) * Math.sin(P[5]) / (2 * P[4] * P[4]);
 		ThetaB      = -Math.sin(2 * P[5]) / (4 * P[3] * P[3]) + Math.sin(2 * P[5]) / (4 * P[4] * P[4]);
 		ThetaC      = Math.sin(P[5]) * Math.sin(P[5]) / (2 * P[3] * P[3]) + Math.cos(P[5]) * Math.cos(P[5]) / (2 * P[4] * P[4]);
-		optimize    = true; // reset.
+		optimize    = true; // reset.	
 		loopcounter = 0; // reset.
 		improvedStep = 0; // reset.
 		while (optimize) // optimize amplitude and offset.
@@ -416,12 +433,11 @@ public class Gauss2Dfit {
 			loopcounter++;
 			if (inputRsquare == Rsquare) // if no improvement was made.
 			{
-				if (improvedStep < 3) // if stepsize has not been decreased twice already.
+				if (improvedStep < 3) // if stepsize has not been decreased 6 times already. Final stepsize = 1/64 of start.
 				{
-					ampStep = ampStep / 5;
-					offsetStep = offsetStep / 5;
+					ampStep = ampStep / 2;
+					offsetStep = offsetStep / 2;
 					improvedStep++;
-
 				}
 				else
 					optimize = false; // exit.
@@ -448,7 +464,8 @@ public class Gauss2Dfit {
 		Localized.photons		= Eval_photons(P);
 		Localized.precision_x 	= Localized.sigma_x/Localized.photons;
 		Localized.precision_y 	= Localized.sigma_y/Localized.photons;
-		Localized.precision_z 	= Localized.sigma_z/Localized.photons;
+		Localized.precision_z 	= Localized.sigma_z/Localized.photons;		
+
 		return Localized;
 	}
 }
