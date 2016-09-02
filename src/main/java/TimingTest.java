@@ -28,6 +28,7 @@ public class TimingTest {
 		int pixelsize = 100;
 		int windowWidth = 7;
 		int channel = 1;
+<<<<<<< HEAD
 	int n = 1000;
 	long start = System.nanoTime();
 	for (int i = 0; i < n; i ++){
@@ -59,5 +60,28 @@ public class TimingTest {
 	GaussSolver Gsolver = new GaussSolver(data2, windowWidth, 1E-5,1000, Center, channel, pixelsize,frame);		
 	P = Gsolver.Fit();
 	System.out.println("New: " + P.x + " x " + P.y);
+=======
+	/*int n = 10000;
+	long start = System.nanoTime();
+	for (int i = 0; i < n; i ++){
+		fitParameters fitThese = new fitParameters(Center,data, channel, frame, pixelsize,  windowWidth);
+		ParticleFitter.Fitter(fitThese);
+	}
+	long stop = System.nanoTime() - start;
+	long startLM = System.nanoTime();
+	for (int i = 0; i < n; i ++){
+		fitParameters fitThese = new fitParameters(Center,data, channel, frame, pixelsize,  windowWidth);
+		ParticleFitter.FitterLM(fitThese);
+	}
+	long stopLM = System.nanoTime() - startLM;
+	
+	System.out.println("Adaptive " + stop/1000000 + " LM: " + stopLM/1000000);
+	*/
+	fitParameters fitThese = new fitParameters(Center,data2, channel, frame, pixelsize,  windowWidth);
+	Particle P = ParticleFitter.Fitter(fitThese);
+	System.out.println(P.x + " x " + P.y);
+	P= ParticleFitter.FitterLM(fitThese);
+	System.out.println(P.x + " x " + P.y);
+>>>>>>> refs/remotes/origin/master
 	}
 }

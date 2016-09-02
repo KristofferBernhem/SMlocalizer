@@ -209,7 +209,11 @@ public class Gauss2Dfit {
 		///////////////////////////////////////////////////////////////////
 		/////// optimize x, y, sigma x, sigma y and theta in parallel. /////
 		///////////////////////////////////////////////////////////////////
+<<<<<<< HEAD
 	//	int count = 1;
+=======
+		int count = 1;
+>>>>>>> refs/remotes/origin/master
 		ThetaA = 1 / (2 * sigmax2);
 		ThetaB = 0;
 		ThetaC = 1 / (2 * sigmay2);
@@ -465,7 +469,11 @@ public class Gauss2Dfit {
 		Localized.precision_x 	= Localized.sigma_x/Localized.photons;
 		Localized.precision_y 	= Localized.sigma_y/Localized.photons;
 		Localized.precision_z 	= Localized.sigma_z/Localized.photons;		
+<<<<<<< HEAD
 
+=======
+System.out.println(1-Rsquare);
+>>>>>>> refs/remotes/origin/master
 		return Localized;
 	}
 }
