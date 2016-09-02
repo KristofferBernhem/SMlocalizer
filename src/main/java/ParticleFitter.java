@@ -187,7 +187,7 @@ public class ParticleFitter {
 		return Results;
 	}
 
-<<<<<<< HEAD
+
 	public static Particle Fitter(fitParameters fitThese){ // setup a single gaussian fit, return localized particle.
 		double convergence	= 1E-5;	// stop optimizing once improvement is below this.
 		int maxIteration 	= 1000;	// max number of iterations.
@@ -201,19 +201,6 @@ public class ParticleFitter {
 				fitThese.pixelsize,		// pixelsize in nm.
 				fitThese.frame);		// frame number.
 		Particle Results 	= Gsolver.Fit();	// do fit.
-=======
-	public static Particle Fitter(fitParameters fitThese){
-
-		Gauss2Dfit gfit = new Gauss2Dfit(
-				fitThese.data,
-				fitThese.windowWidth);
-		Particle Results = gfit.optimizeAdaptive(
-				fitThese.frame, 
-				fitThese.channel, 
-				fitThese.Center, 
-				fitThese.pixelsize);
-
->>>>>>> refs/remotes/origin/master
 		return Results;
 	}
 		public static Particle FitterLM(fitParameters fitThese){
