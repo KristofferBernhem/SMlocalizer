@@ -16,9 +16,9 @@
  */
 
 /*
- * TODO Add center, frame, channel input and fix updated output particle.
- * Evaluate with second and third gauss description.
+ * Solver sensitive to to small reduction in stepsize. Reasonably stable with regards to guess of parameters.
  */
+
 public class GaussSolver {
 
 	int[] data, center;
@@ -27,6 +27,7 @@ public class GaussSolver {
 	double totalSumOfSquares, convCritera;
 	public GaussSolver(int[] data, int width, double convCriteria, int maxIterations, int[] center, int channel, int pixelSize, int frame)
 	{
+		
 		this.data 			= data; 			// data to be fitted.
 		this.width 			= width; 			// data window width.
 		this.size 			= width*width;		// total number of datapoints.
@@ -52,8 +53,8 @@ public class GaussSolver {
 				data[width*(width-1)/2 + (width-1)/2], 	// use center pixel value to approximate max value.
 				mx/m0,									// weighted centroid as approximation.
 				my/m0,									// weighted centroid as approximation.
-				width/3.5,								// approximation of sigma x.
-				width/3.5,								// approximation of sigma y.
+				1.66,									// approximation of sigma x, 1.5Na objective with 500nm emission.
+				1.66,									// approximation of sigma y, 1.5Na objective with 500nm emission
 				0,										// theta.
 				0};										// offset, set to 0 initially.
 		this.P = tempP;									// add parameter estimate to P.
@@ -66,7 +67,7 @@ public class GaussSolver {
 	} // constructor.
 
 	public static void main(String[] args) { // testcase
-/*		int[] testdata ={ // slize 45 SingleBead2
+		/*		int[] testdata ={ // slize 45 SingleBead2
 				3888, 3984,  6192,   4192, 3664,  3472, 3136,
 				6384, 8192,  12368, 12720, 6032,  5360, 3408, 
 				6192, 13760, 21536, 20528, 9744,  6192, 2896,
@@ -92,7 +93,9 @@ public class GaussSolver {
 		int channel = 1;
 		int frame = 1;
 		int[] center = {5,5};
-		double convergence = 1E-5;
+		double convergence = 1E-6;
+
+	
 		long start = System.nanoTime();
 		for (int i = 0; i < 100; i++){ 
 			GaussSolver Gsolver = new GaussSolver(testdata2, width, convergence, maxIterations, center, channel, pixelSize,frame);		
@@ -100,9 +103,16 @@ public class GaussSolver {
 		}
 		long stop = System.nanoTime() - start;
 		System.out.println(stop/1000000); 
+	
+
 		GaussSolver Gsolver = new GaussSolver(testdata2, width, convergence, maxIterations, center, channel, pixelSize,frame);		
-		Gsolver.Fit();
-		System.out.println(Gsolver.P[0] + " " + Gsolver.P[1] + " x "+ Gsolver.P[2]+ " " +Gsolver.P[3] + " x "+ Gsolver.P[4]+" " + Gsolver.P[5] + " x "+ Gsolver.P[6]);
+		Particle P = Gsolver.Fit();
+		System.out.println("Rsquare: " + P.r_square + " " + Gsolver.P[0] + " " + Gsolver.P[1] + " x "+ Gsolver.P[2]+ " " +Gsolver.P[3] + " x "+ Gsolver.P[4]+" " + Gsolver.P[5] + " x "+ Gsolver.P[6]);
+		
+			
+		
+		
+		
 	} // main
 
 	public Particle Fit()
@@ -154,7 +164,7 @@ public class GaussSolver {
 		////////////////////// Optimize parameters:////////////////////////
 		///////////////////////////////////////////////////////////////////
 
-		
+
 		while (optimize)
 		{						
 			if (pId == 0) // if we start a new full iteration over all parameters.
@@ -196,11 +206,11 @@ public class GaussSolver {
 				}
 			}
 			else // if stepSize is out of bounds.
-				stepSize[pId] /= 2; // reduce stepSize.
+				stepSize[pId] /= -2; // reduce stepSize.
 			pId++; // update parameter id.
 			if (pId > 6){ // if all parameters has been evaluated this round.
 				pId = 0; // reset.
-				if (iterationCount > 12){ // if two rounds has been run.
+				if (iterationCount > 50){ // if two rounds has been run.
 					if ((oldRsquare  - Rsquare) < convCritera) // check if we improved the fit this full round by atleast the convergence criteria.
 					{	
 						optimize = false;	// exit.
@@ -251,5 +261,6 @@ public class GaussSolver {
 		Localized.precision_y 	= Localized.sigma_y/Localized.photons;
 		Localized.precision_z 	= Localized.sigma_z/Localized.photons;		
 		return Localized;
-	}
+	}	
+
 }

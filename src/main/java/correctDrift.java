@@ -16,11 +16,18 @@
  */
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 import ij.gui.Plot;
 
-
+// TODO: add nearest neigbour check for channel alignment, setting max distance for inclusion to boundry.
 public class correctDrift {
-//	public static void run(int[] lb, int[] ub, double BinFrac, int nParticles, int minParticles, int[] stepSize){
+	//	public static void run(int[] lb, int[] ub, double BinFrac, int nParticles, int minParticles, int[] stepSize){
 	public static void run(int[] boundry, double BinFrac, int nParticles, int minParticles, int[] stepSize, boolean GPU){
 		int[] maxDistance = {2500,2500,2500}; // everything beyond 50 nm apart after shift will not affect outcome.
 		ArrayList<Particle> locatedParticles = TableIO.Load(); // Get current table data.		
@@ -87,6 +94,15 @@ public class correctDrift {
 					okBins++;				
 				}
 			}
+
+
+			int processors 					= Runtime.getRuntime().availableProcessors();				// Number of processor cores on this system.
+			ExecutorService exec 			= Executors.newFixedThreadPool(processors);					// Set up parallel computing using all cores.
+			List<Callable<double[]>> tasks 	= new ArrayList<Callable<double[]>>();						// Preallocate.
+			double convergence = 1E-3;
+			int maxIterations = 1000;
+
+
 			if (okBins == 0){ 														// If all bins were ok.
 				for (int i = 1; i < Math.round(1.0/BinFrac) ; i++){ 				// Loop over all bins.
 					ArrayList<Particle> Data1 	= new ArrayList<Particle>(); 		// Target particles.			
@@ -107,19 +123,70 @@ public class correctDrift {
 							addedFrames2++;
 						}
 					}
-					int[] tempLamda = {0,0,0};
+					
+					ArrayList<Particle> Beta = hasNeighbors(Data1, Data2, (double) maxDistance[0]);
+					ArrayList<Particle> Alpha = hasNeighbors(Beta, Data1, (double) maxDistance[0]);
+					if(Alpha.size() < minParticles){
+						ij.IJ.log("not enough particles, no shift correction possible");
+						return;
+					}
+					if(Beta.size() < minParticles){
+						ij.IJ.log("not enough particles, no shift correction possible");
+						return;
+					}
+					/*	int[] tempLamda = {0,0,0};
 					if(GPU){
 						// TODO: run ptx code here.
 					}else{
 						AutoCorr DriftCalc 	= new AutoCorr(Data1, Data2, stepSize, boundry, maxDistance);
 						tempLamda 			= DriftCalc.optimize();	
 					}
-					
+
 					lambdax[i] 				= tempLamda[0] + lambdax[i-1];
 					lambday[i] 				= tempLamda[1] + lambday[i-1];
-					lambdaz[i] 				= tempLamda[2] + lambdaz[i-1];					
+					lambdaz[i] 				= tempLamda[2] + lambdaz[i-1];	
+					 */
+					// set up parallell computing of all bins.
+					Callable<double[]> c = new Callable<double[]>() {													// Computation to be done.
+						@Override
+						public double[] call() throws Exception {		
+							return autoCorr3.findDrift(Alpha,Beta,boundry,maxDistance,convergence,maxIterations);																			// Actual call for each parallel process.
+						}
+					};
+					tasks.add(c);		
+
 				}
 
+				try {
+					List<Future<double[]>> parallelComputeSmall = exec.invokeAll(tasks);		// Execute computation.
+					double[] Corr;
+
+					for (int i = 0; i < parallelComputeSmall.size(); i++){							// Loop over and transfer results.
+						try {
+							Corr = parallelComputeSmall.get(i).get();	
+							if (i == 0)
+							{
+								lambdax[i] = Corr[1];											// Update best guess at x shift.
+								lambdax[i] = Corr[1];											// Update best guess at y shift.
+								lambdax[i] = Corr[1];											// Update best guess at z shift.
+							}else
+							{
+								lambdax[i] = Corr[1] - lambdax[i - 1];											// Update best guess at x shift.
+								lambdax[i] = Corr[1] - lambdax[i - 1];											// Update best guess at y shift.
+								lambdax[i] = Corr[1] - lambdax[i - 1];											// Update best guess at z shift.
+							}
+
+						} catch (ExecutionException e) {
+							e.printStackTrace();
+						}
+					}
+				} catch (InterruptedException e) {
+
+					e.printStackTrace();
+				}
+				finally {
+					exec.shutdown();	// Shut down connection to cores.
+				}	
 				int countx = lambda.length-1;
 				int county = lambda.length-1;
 				int countz = lambda.length-1;
@@ -141,15 +208,15 @@ public class correctDrift {
 						countz--;
 					}
 				}
-				
+
 				System.out.println(lambda[lambda.length-1][0]);
 				double[] timeV = new double[lambda.length];
 				for (int i = 0; i < timeV.length;i++){
 					timeV[i] = i;
 				}		
-							
+
 				for (int index = 0; index < locatedParticles.size(); index++ ){
-					
+
 					if(locatedParticles.get(index).channel == Ch){
 						Particle tempPart 	= new Particle();
 						tempPart.frame	 	= locatedParticles.get(index).frame;
@@ -174,7 +241,7 @@ public class correctDrift {
 								}
 							}
 						}
-						
+
 					}
 
 				}
@@ -188,7 +255,7 @@ public class correctDrift {
 				}
 				plot(lx,ly,timeV);
 				TableIO.Store(correctedResults);
-				
+
 			}else
 				ij.IJ.log("No drift correction possible, not enough particles in each bin.");			
 		} // Channel loop ends.			
@@ -223,9 +290,7 @@ public class correctDrift {
 				}
 				index++;
 			}
-			if(addedFrames1 < minParticles){
-				return;
-			}
+
 
 			ArrayList<Particle> Data2 	= new ArrayList<Particle>(); 		// Change these particles so that the correlation function is maximized.
 			int addedFrames2 			= 0;								// Number of particles added to the bin.
@@ -238,16 +303,26 @@ public class correctDrift {
 				}
 				index++;
 			}
-
-			if(addedFrames2 < minParticles){
+			
+			ArrayList<Particle> Beta = hasNeighbors(Data1, Data2, (double) maxDistance[0]);
+			ArrayList<Particle> Alpha = hasNeighbors(Beta, Data1, (double) maxDistance[0]);
+			if(Alpha.size() < minParticles){
+				ij.IJ.log("not enough particles, no alignment possible");
 				return;
 			}
-			int[] lambdaCh = {0,0,0}; // initiate.
+			if(Beta.size() < minParticles){
+				ij.IJ.log("not enough particles, no alignment possible");
+				return;
+			}
+			double[] lambdaCh = {0,0,0}; // initiate.
 			if(GPU){
 				// TODO: run ptx code here.
 			}else{
-				AutoCorr DriftCalc 		= new AutoCorr(Data1, Data2, stepSize, boundry, maxDistance);
-				lambdaCh 				= DriftCalc.optimize();
+				//AutoCorr DriftCalc 		= new AutoCorr(Data1, Data2, stepSize, boundry, maxDistance);
+				//lambdaCh 				= DriftCalc.optimize();
+				double convergence = 1E-3;
+				int maxIterations = 1000;
+				lambdaCh = autoCorr3.findDrift(Alpha,Beta,boundry,maxDistance,convergence,maxIterations);
 			}
 			for(int i = 0; i < locatedParticles.size(); i++){
 				if (locatedParticles.get(i).channel == Ch){
@@ -307,5 +382,32 @@ public class correctDrift {
 		newPlot.addLegend("X \n Y");
 		newPlot.show();		
 	}
-
+	public static ArrayList<Particle> hasNeighbors(ArrayList<Particle> Alpha, ArrayList<Particle> Beta, double maxDistance)
+	{	
+		ArrayList<Particle> Include = new ArrayList<Particle>();		
+		boolean[] retainBeta = new boolean[Beta.size()];
+		for (int i = 0; i < Alpha.size(); i++) // loop over all entries in Alpha.
+		{
+			double x = Alpha.get(i).x;
+			double y = Alpha.get(i).x;
+			double z = Alpha.get(i).x;
+			
+			for (int j = 0; j < Beta.size(); j++)
+			{
+				double distance = Math.sqrt(
+						(x-Beta.get(j).x)*(x-Beta.get(j).x) +
+						(y-Beta.get(j).y)*(y-Beta.get(j).y)+
+						(z-Beta.get(j).z)*(z-Beta.get(j).z) );
+				if (distance < maxDistance)
+					retainBeta[j] = true;												
+			}						
+		}
+		for (int i = 0; i < Beta.size(); i++)
+		{
+			if(retainBeta[i])
+				Include.add(Beta.get(i));
+		}
+		
+		return Include;
+	}
 }
