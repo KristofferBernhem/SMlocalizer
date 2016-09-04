@@ -27,7 +27,7 @@ public class GaussSolver {
 	double totalSumOfSquares, convCritera;
 	public GaussSolver(int[] data, int width, double convCriteria, int maxIterations, int[] center, int channel, int pixelSize, int frame)
 	{
-		
+
 		this.data 			= data; 			// data to be fitted.
 		this.width 			= width; 			// data window width.
 		this.size 			= width*width;		// total number of datapoints.
@@ -43,11 +43,11 @@ public class GaussSolver {
 
 		for (int i = 0; i < data.length; i++) // get image moments.
 		{
-			int x = i % width;
-			int y = i / width; 
-			mx += x*data[i];
-			my += y*data[i];
-			m0 += data[i];
+			int x 	= i % width;
+			int y 	= i / width; 
+			mx 		+= x*data[i];
+			my 		+= y*data[i];
+			m0 		+= data[i];
 		}
 		double[] tempP = {
 				data[width*(width-1)/2 + (width-1)/2], 	// use center pixel value to approximate max value.
@@ -67,7 +67,7 @@ public class GaussSolver {
 	} // constructor.
 
 	public static void main(String[] args) { // testcase
-		/*		int[] testdata ={ // slize 45 SingleBead2
+		/*int[] testdata ={ // slize 45 SingleBead2
 				3888, 3984,  6192,   4192, 3664,  3472, 3136,
 				6384, 8192,  12368, 12720, 6032,  5360, 3408, 
 				6192, 13760, 21536, 20528, 9744,  6192, 2896,
@@ -76,7 +76,7 @@ public class GaussSolver {
 				2944, 4688,  7168,   5648, 5824,  3456, 2912,
 				2784, 3168,  4512,   4192, 3472,  2768, 2912
 		};*/
-		int[] testdata2 = {
+		int[] testdata = {
 				3296, 4544,  5600,  5536,  5248,  4448, 3328,
 				3760, 5344,  8240,  9680, 10592,  7056, 3328,
 				3744, 6672, 14256, 24224, 20256, 11136, 5248,
@@ -86,33 +86,33 @@ public class GaussSolver {
 				3088, 3248,  3552, 	3504,  4144,  4512, 2944  
 		};
 
+		// user provided parameter input.
+		int width 			= 7;
+		int maxIterations 	= 1000;
+		int pixelSize 		= 100;
+		int channel 		= 1;
+		int frame 			= 1;
+		int[] center 		= {5,5};
+		double convergence 	= 1E-8;
 
-		int width = 7;
-		int maxIterations = 1000;
-		int pixelSize = 100;
-		int channel = 1;
-		int frame = 1;
-		int[] center = {5,5};
-		double convergence = 1E-6;
 
-	
 		long start = System.nanoTime();
 		for (int i = 0; i < 100; i++){ 
-			GaussSolver Gsolver = new GaussSolver(testdata2, width, convergence, maxIterations, center, channel, pixelSize,frame);		
+			GaussSolver Gsolver = new GaussSolver(testdata, width, convergence, maxIterations, center, channel, pixelSize,frame);		
 			Gsolver.Fit();
 		}
 		long stop = System.nanoTime() - start;
 		System.out.println(stop/1000000); 
-	
 
-		GaussSolver Gsolver = new GaussSolver(testdata2, width, convergence, maxIterations, center, channel, pixelSize,frame);		
+
+		GaussSolver Gsolver = new GaussSolver(testdata, width, convergence, maxIterations, center, channel, pixelSize,frame);		
 		Particle P = Gsolver.Fit();
 		System.out.println("Rsquare: " + P.r_square + " " + Gsolver.P[0] + " " + Gsolver.P[1] + " x "+ Gsolver.P[2]+ " " +Gsolver.P[3] + " x "+ Gsolver.P[4]+" " + Gsolver.P[5] + " x "+ Gsolver.P[6]);
-		
-			
-		
-		
-		
+
+
+
+
+
 	} // main
 
 	public Particle Fit()
@@ -125,18 +125,18 @@ public class GaussSolver {
 				0.6			, 1.4,				// amplitude.
 				P[1] - 2	, P[1] + 2,			// x.
 				P[2] - 2	, P[2] + 2,			// y.
-				width/14.0	, width / 1.5,		// sigma x.
-				width/14.0	, width / 1.5,		// sigma y.
+				0.7			, width / 2.0,		// sigma x.
+				0.7			, width / 2.0,		// sigma y.
 				-0.5*Math	.PI,0.5*Math.PI,	// theta.
 				-0.5		, 0.5				// offset.
 		};
 
 		double[] stepSize = {
 				0.1,				// amplitude.
-				0.25*100/pixelSize,	// x.
-				0.25*100/pixelSize,	// y
+				0.25*100/pixelSize,// x.
+				0.25*100/pixelSize,// y
 				0.5*100/pixelSize,	// sigma x.
-				0.5*100/pixelSize, 	// sigma y.
+				0.5*100/pixelSize, // sigma y.
 				0.1965,				// theta.
 				0.01				// offset.
 		};
@@ -163,21 +163,30 @@ public class GaussSolver {
 		///////////////////////////////////////////////////////////////////
 		////////////////////// Optimize parameters:////////////////////////
 		///////////////////////////////////////////////////////////////////
-
-
+		ThetaA = Math.cos(P[5]) * Math.cos(P[5]) / (2 * P[3]*P[3]) + 
+				Math.sin(P[5]) * Math.sin(P[5]) / (2 * P[4]*P[4]);
+		ThetaB = -Math.sin(2 * P[5]) / (4 * P[3]*P[3]) + 
+				Math.sin(2 * P[5]) / (4 * P[4]*P[4]);
+		ThetaC = Math.sin(P[5]) * Math.sin(P[5]) / (2 * P[3]*P[3]) + 
+				Math.cos(P[5]) * Math.cos(P[5]) / (2 * P[4]*P[4]);
 		while (optimize)
-		{						
+		{					
 			if (pId == 0) // if we start a new full iteration over all parameters.
 				oldRsquare = Rsquare; // store the last iterations goodness of fit.
 			if (P[pId] + stepSize[pId] > bounds[pId*2] && P[pId] + stepSize[pId] < bounds[pId*2 + 1]){
 				P[pId] += stepSize[pId]; // add stepSize to the current parameter and evaluate gaussian.
-				ThetaA = Math.cos(P[5]) * Math.cos(P[5]) / (2 * P[3]*P[3]) + 
-						Math.sin(P[5]) * Math.sin(P[5]) / (2 * P[4]*P[4]);
-				ThetaB = -Math.sin(2 * P[5]) / (4 * P[3]*P[3]) + 
-						Math.sin(2 * P[5]) / (4 * P[4]*P[4]);
-				ThetaC = Math.sin(P[5]) * Math.sin(P[5]) / (2 * P[3]*P[3]) + 
-						Math.cos(P[5]) * Math.cos(P[5]) / (2 * P[4]*P[4]);
 
+				////////////////////////////////////////////////////////////
+				////// calculate 2D gaussian using current parameters  /////
+				////////////////////////////////////////////////////////////
+				if ( pId == 3 || pId == 4 || pId == 5){
+					ThetaA = Math.cos(P[5]) * Math.cos(P[5]) / (2 * P[3]*P[3]) + 
+							Math.sin(P[5]) * Math.sin(P[5]) / (2 * P[4]*P[4]);
+					ThetaB = -Math.sin(2 * P[5]) / (4 * P[3]*P[3]) + 
+							Math.sin(2 * P[5]) / (4 * P[4]*P[4]);
+					ThetaC = Math.sin(P[5]) * Math.sin(P[5]) / (2 * P[3]*P[3]) + 
+							Math.cos(P[5]) * Math.cos(P[5]) / (2 * P[4]*P[4]);
+				}
 				tempRsquare = 0; // reset.
 				for (int xyIndex = 0; xyIndex < width * width; xyIndex++)
 				{
@@ -192,10 +201,10 @@ public class GaussSolver {
 
 				tempRsquare = (tempRsquare / totalSumOfSquares);  // normalize.
 
-				if (tempRsquare < Rsquare)                // If improved, update variables.
+				if (tempRsquare < Rsquare)                // If improved, update best fit residual.
 				{				
 					Rsquare = tempRsquare;
-				} // update parameters
+				} 
 				else // if there was no improvement
 				{
 					P[pId] -= stepSize[pId]; // reset the current parameter.
@@ -206,16 +215,23 @@ public class GaussSolver {
 				}
 			}
 			else // if stepSize is out of bounds.
-				stepSize[pId] /= -2; // reduce stepSize.
+				if (stepSize[pId] < 0)  	// if stepSize is negative, try positive direction at reduced stepSize.
+					stepSize[pId] /= -1.5;
+				else						// if stepSize is positive, try changing direction.
+					stepSize[pId] /= -1;
+
 			pId++; // update parameter id.
+
+			
 			if (pId > 6){ // if all parameters has been evaluated this round.
-				pId = 0; // reset.
+
 				if (iterationCount > 50){ // if two rounds has been run.
 					if ((oldRsquare  - Rsquare) < convCritera) // check if we improved the fit this full round by atleast the convergence criteria.
 					{	
 						optimize = false;	// exit.
 					}				
 				}
+				pId = 0; // reset.
 			}
 			iterationCount++; // update iteration count.
 			if(iterationCount > maxIterations) // if we reached max iterations.
