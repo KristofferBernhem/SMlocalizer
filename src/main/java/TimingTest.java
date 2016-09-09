@@ -31,33 +31,24 @@ public class TimingTest {
 	int n = 1000;
 	long start = System.nanoTime();
 	for (int i = 0; i < n; i ++){
-		fitParameters fitThese = new fitParameters(Center,data2, channel, frame, pixelsize,  windowWidth);
+		fitParameters fitThese = new fitParameters(Center,data, channel, frame, pixelsize,  windowWidth);
 		ParticleFitter.Fitter(fitThese);
 	}
 	long stop = System.nanoTime() - start;
 	long startLM = System.nanoTime();
 	for (int i = 0; i < n; i ++){
-		fitParameters fitThese = new fitParameters(Center,data2, channel, frame, pixelsize,  windowWidth);
+		fitParameters fitThese = new fitParameters(Center,data, channel, frame, pixelsize,  windowWidth);
 		ParticleFitter.FitterLM(fitThese);
 	}
 	long stopLM = System.nanoTime() - startLM;
-	long startNew = System.nanoTime();
+
+	System.out.println("Adaptive " + stop/1000000 + " LM: " + stopLM/1000000 );
 	
-	for (int i = 0; i < n; i++)
-	{
-		GaussSolver Gsolver = new GaussSolver(data2, windowWidth, 1E-5,1000, Center, channel, pixelsize,frame);		
-		Gsolver.Fit();
-	}
-	long stopNew = System.nanoTime() - startNew;
-	System.out.println("Adaptive " + stop/1000000 + " LM: " + stopLM/1000000 + " new :" + stopNew/1000000);
-	
-	fitParameters fitThese = new fitParameters(Center,data2, channel, frame, pixelsize,  windowWidth);
+	fitParameters fitThese = new fitParameters(Center,data, channel, frame, pixelsize,  windowWidth);
 	Particle P = ParticleFitter.Fitter(fitThese);
 	System.out.println("Adaptive: " + P.x + " x " + P.y);
 	P= ParticleFitter.FitterLM(fitThese);
 	System.out.println("LM: " + P.x + " x " + P.y);
-	GaussSolver Gsolver = new GaussSolver(data2, windowWidth, 1E-5,1000, Center, channel, pixelsize,frame);		
-	P = Gsolver.Fit();
-	System.out.println("New: " + P.x + " x " + P.y);
+	
 	}
 }

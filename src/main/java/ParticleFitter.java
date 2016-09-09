@@ -189,7 +189,7 @@ public class ParticleFitter {
 
 
 	public static Particle Fitter(fitParameters fitThese){ // setup a single gaussian fit, return localized particle.
-		double convergence	= 1E-5;	// stop optimizing once improvement is below this.
+		double convergence	= 1E-8;	// stop optimizing once improvement is below this.
 		int maxIteration 	= 1000;	// max number of iterations.
 		GaussSolver Gsolver = new GaussSolver(
 				fitThese.data, 		// data to be fitted.
@@ -232,8 +232,44 @@ public class ParticleFitter {
 			optimalValues[6] = Math.abs(optimalValues[6]);
 			Results.x = 100*(optimalValues[1] + fitThese.Center[0] - Math.round((fitThese.windowWidth)/2));
 			Results.y = 100*(optimalValues[2] + fitThese.Center[1] - Math.round((fitThese.windowWidth)/2));
-			Results.frame = optimalValues[5];
-		//	System.out.println("coord: " + optimalValues[1] + " x " + optimalValues[2] + " sigma " + optimalValues[3] + " x " + optimalValues[4]);
+			//Results.frame = optimalValues[5];
+			/*
+			 * calculate Rsquare for comparison to adaptive method.
+			 */
+			/*
+			double m0= 0;
+			for (int i = 0; i < fitThese.data.length; i++) // get image moments.
+			{
+				m0 		+= data[i];
+			}
+			m0 /=  fitThese.data.length;// Mean value.		
+			double totalSumOfSquares= 0;
+			for (int i = 0; i < fitThese.data.length; i++){			// Calculate total sum of squares for R^2 calculations.
+				totalSumOfSquares += (fitThese.data[i] -m0)*(fitThese.data[i] -m0);
+			}
+				
+				double	ThetaA = Math.cos(optimalValues[6]) * Math.cos(optimalValues[6]) / (2 * optimalValues[3]*optimalValues[3]) + 
+							Math.sin(optimalValues[6]) * Math.sin(optimalValues[6]) / (2 * optimalValues[4]*optimalValues[4]);
+				double  ThetaB = -Math.sin(2 * optimalValues[5]) / (4 * optimalValues[3]*optimalValues[3]) + 
+							Math.sin(2 * optimalValues[6]) / (4 * optimalValues[4]*optimalValues[4]);
+				double	ThetaC = Math.sin(optimalValues[6]) * Math.sin(optimalValues[5]) / (2 * optimalValues[3]*optimalValues[3]) + 
+							Math.cos(optimalValues[6]) * Math.cos(optimalValues[6]) / (2 * optimalValues[4]*optimalValues[4]);
+				
+				double	tempRsquare = 0; // reset.
+				for (int xyIndex = 0; xyIndex < fitThese.windowWidth * fitThese.windowWidth; xyIndex++)
+				{
+					int xi = xyIndex % fitThese.windowWidth;
+					int yi = xyIndex / fitThese.windowWidth;
+					double residual = optimalValues[0] * Math.exp(-(ThetaA * (xi -  optimalValues[1]) * (xi -  optimalValues[1]) -
+							2 * ThetaB * (xi -  optimalValues[1]) * (yi - optimalValues[2]) +
+							ThetaC * (yi - optimalValues[2]) * (yi - optimalValues[2])
+							)) + optimalValues[5] - fitThese.data[xyIndex];
+					tempRsquare += residual * residual;
+				}
+				
+				tempRsquare = (tempRsquare / totalSumOfSquares);  // normalize.
+			System.out.println("LM: " +(1-tempRsquare));*/
+	
 		
 			
 		}
