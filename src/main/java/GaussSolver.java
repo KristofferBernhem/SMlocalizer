@@ -53,8 +53,8 @@ public class GaussSolver {
 				data[width*(width-1)/2 + (width-1)/2], 	// use center pixel value to approximate max value.
 				mx/m0,									// weighted centroid as approximation.
 				my/m0,									// weighted centroid as approximation.
-				1.66,									// approximation of sigma x, 1.5Na objective with 500nm emission.
-				1.66,									// approximation of sigma y, 1.5Na objective with 500nm emission
+				2,									// approximation of sigma x, 1.5Na objective with 500nm emission.
+				2,									// approximation of sigma y, 1.5Na objective with 500nm emission
 				0,										// theta.
 				0};										// offset, set to 0 initially.
 		this.P = tempP;									// add parameter estimate to P.
@@ -95,16 +95,21 @@ public class GaussSolver {
 		int[] center 		= {5,5};
 		double convergence 	= 1E-8;
 
-
+		int n = 100;
+		
 		long start = System.nanoTime();
-		for (int i = 0; i < 100; i++){ 
-			GaussSolver Gsolver = new GaussSolver(testdata, width, convergence, maxIterations, center, channel, pixelSize,frame);		
-			Gsolver.Fit();
+		for (int j = 0; j < 5; j++){
+
+			for (int i = 0; i < n; i++){ 
+				GaussSolver Gsolver = new GaussSolver(testdata, width, convergence, maxIterations, center, channel, pixelSize,frame);		
+				Gsolver.Fit();
+			}
 		}
 		long stop = System.nanoTime() - start;
+		stop = stop/5; // five time mean.
 		System.out.println(stop/1000000); 
-
-
+		
+		
 		GaussSolver Gsolver = new GaussSolver(testdata, width, convergence, maxIterations, center, channel, pixelSize,frame);		
 		Particle P = Gsolver.Fit();
 		System.out.println("Rsquare: " + P.r_square + " " + Gsolver.P[0] + " " + Gsolver.P[1] + " x "+ Gsolver.P[2]+ " " +Gsolver.P[3] + " x "+ Gsolver.P[4]+" " + Gsolver.P[5] + " x "+ Gsolver.P[6]);
@@ -135,11 +140,11 @@ public class GaussSolver {
 				0.1,				// amplitude.
 				0.25*100/pixelSize,// x.
 				0.25*100/pixelSize,// y
-				0.5*100/pixelSize,	// sigma x.
-				0.5*100/pixelSize, // sigma y.
+				0.25*100/pixelSize,	// sigma x.
+				0.25*100/pixelSize, // sigma y.
 				0.1965,				// theta.
 				0.01				// offset.
-		};
+		};		
 		double Rsquare 	= 1;			// start value.
 		double ThetaA 	= 0;			// Initialize, used for gaussian function evaluation.
 		double ThetaB 	= 0;			// Initialize, used for gaussian function evaluation.
@@ -159,18 +164,57 @@ public class GaussSolver {
 		double oldRsquare	= Rsquare;	// keep track of last main round of optimizations goodness of fit.
 		int pId 			= 0; 		// parameter id.
 		boolean optimize 	= true; 	// true whilst still optimizing parameters.
-
+double bestSigmaX = 0;
+double bestSigmaY = 0;
 		///////////////////////////////////////////////////////////////////
 		////////////////////// Optimize parameters:////////////////////////
 		///////////////////////////////////////////////////////////////////
-		ThetaA = Math.cos(P[5]) * Math.cos(P[5]) / (2 * P[3]*P[3]) + 
+
+		for (double sigmaX = P[3] - 2*stepSize[3]; sigmaX < P[3] + 2*stepSize[3]; sigmaX += stepSize[3])
+		{
+			for (double sigmaY = P[4] - 2*stepSize[4]; sigmaY < P[4] + 2*stepSize[4]; sigmaY += stepSize[4])
+			{
+	
+				ThetaA = 1/(2*sigmaX*sigmaX);
+				ThetaC = 1/(2*sigmaY*sigmaY);
+				for (int xyIndex = 0; xyIndex < width * width; xyIndex++)
+				{
+					int xi = xyIndex % width;
+					int yi = xyIndex / width;
+					residual = P[0] * Math.exp(-(ThetaA * (xi -  P[1]) * (xi -  P[1]) +
+							ThetaC * (yi - P[2]) * (yi - P[2])
+							)) - data[xyIndex];
+					tempRsquare += residual * residual;
+				}
+
+				tempRsquare = (tempRsquare / totalSumOfSquares);  // normalize.
+
+				if (tempRsquare < Rsquare)                // If improved, update best fit residual.
+				{				
+					Rsquare = tempRsquare;
+					bestSigmaX = sigmaX;
+					bestSigmaY = sigmaY;
+				} 
+			}
+		}
+		P[3] = bestSigmaX;
+		P[4] = bestSigmaY;
+
+		ThetaA = 1/(2*P[3]*P[3]);
+		ThetaC = 1/(2*P[4]*P[4]);		
+		ThetaB = 0; 
+		/*ThetaA = Math.cos(P[5]) * Math.cos(P[5]) / (2 * P[3]*P[3]) + 
 				Math.sin(P[5]) * Math.sin(P[5]) / (2 * P[4]*P[4]);
 		ThetaB = -Math.sin(2 * P[5]) / (4 * P[3]*P[3]) + 
 				Math.sin(2 * P[5]) / (4 * P[4]*P[4]);
 		ThetaC = Math.sin(P[5]) * Math.sin(P[5]) / (2 * P[3]*P[3]) + 
-				Math.cos(P[5]) * Math.cos(P[5]) / (2 * P[4]*P[4]);
+				Math.cos(P[5]) * Math.cos(P[5]) / (2 * P[4]*P[4]);*/
+		Rsquare 	= 1;			// start value.
+		tempRsquare = 0;
+		residual = 0;
 		while (optimize)
-		{					
+		{				
+			//System.out.println(iterationCount);
 			if (pId == 0) // if we start a new full iteration over all parameters.
 				oldRsquare = Rsquare; // store the last iterations goodness of fit.
 			if (P[pId] + stepSize[pId] > bounds[pId*2] && P[pId] + stepSize[pId] < bounds[pId*2 + 1]){
@@ -204,6 +248,7 @@ public class GaussSolver {
 				if (tempRsquare < Rsquare)                // If improved, update best fit residual.
 				{				
 					Rsquare = tempRsquare;
+					//stepSize[pId] *= 1.5;
 				} 
 				else // if there was no improvement
 				{
@@ -215,17 +260,18 @@ public class GaussSolver {
 				}
 			}
 			else // if stepSize is out of bounds.
+			{
 				if (stepSize[pId] < 0)  	// if stepSize is negative, try positive direction at reduced stepSize.
 					stepSize[pId] /= -1.5;
 				else						// if stepSize is positive, try changing direction.
 					stepSize[pId] /= -1;
-
+			}
 			pId++; // update parameter id.
 
-			
+
 			if (pId > 6){ // if all parameters has been evaluated this round.
 
-				if (iterationCount > 50){ // if two rounds has been run.
+				if (iterationCount > 60){ // if two rounds has been run.
 					if ((oldRsquare  - Rsquare) < convCritera) // check if we improved the fit this full round by atleast the convergence criteria.
 					{	
 						optimize = false;	// exit.

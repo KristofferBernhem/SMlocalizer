@@ -99,8 +99,8 @@ public class correctDrift {
 			int processors 					= Runtime.getRuntime().availableProcessors();				// Number of processor cores on this system.
 			ExecutorService exec 			= Executors.newFixedThreadPool(processors);					// Set up parallel computing using all cores.
 			List<Callable<double[]>> tasks 	= new ArrayList<Callable<double[]>>();						// Preallocate.
-			double convergence = 1E-3;
-			int maxIterations = 1000;
+			double convergence = 1E-2;
+			int maxIterations = 100;
 
 
 			if (okBins == 0){ 														// If all bins were ok.
@@ -128,12 +128,22 @@ public class correctDrift {
 					ArrayList<Particle> Alpha = hasNeighbors(Beta, Data1, (double) maxDistance[0]);
 					if(Alpha.size() < minParticles){
 						ij.IJ.log("not enough particles, no shift correction possible");
-						return;
-					}
-					if(Beta.size() < minParticles){
+						System.out.println(Alpha.size() + " in alpha from " + i);
+	//					return;
+					}else if(Beta.size() < minParticles){
 						ij.IJ.log("not enough particles, no shift correction possible");
-						return;
+						System.out.println(Beta.size() + " in alpha from " + i);
+		//				return;
+					} else{
+						Callable<double[]> c = new Callable<double[]>() {													// Computation to be done.
+							@Override
+							public double[] call() throws Exception {		
+								return autoCorr3.findDrift(Alpha,Beta,boundry,maxDistance,convergence,maxIterations);																			// Actual call for each parallel process.
+							}
+						};
+						tasks.add(c);	
 					}
+						
 					/*	int[] tempLamda = {0,0,0};
 					if(GPU){
 						// TODO: run ptx code here.
@@ -147,13 +157,13 @@ public class correctDrift {
 					lambdaz[i] 				= tempLamda[2] + lambdaz[i-1];	
 					 */
 					// set up parallell computing of all bins.
-					Callable<double[]> c = new Callable<double[]>() {													// Computation to be done.
+	/*				Callable<double[]> c = new Callable<double[]>() {													// Computation to be done.
 						@Override
 						public double[] call() throws Exception {		
 							return autoCorr3.findDrift(Alpha,Beta,boundry,maxDistance,convergence,maxIterations);																			// Actual call for each parallel process.
 						}
 					};
-					tasks.add(c);		
+					tasks.add(c);*/		
 
 				}
 

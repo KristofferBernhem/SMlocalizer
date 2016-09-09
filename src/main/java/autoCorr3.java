@@ -103,9 +103,7 @@ public class autoCorr3 {
 		//stepSize[1] = (double) maxShift[1]/5;
 		//stepSize[2] = (double) maxShift[2]/5;
 		correlation[0] = 0;
-		correlation[1] += -10;
-		correlation[2] += 10;
-		correlation[3] += -5;
+
 		double[] lastRoundCorr = correlation;
 		while(optimize)
 		{
