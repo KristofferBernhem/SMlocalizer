@@ -127,12 +127,12 @@ public class correctDrift {
 						
 						ArrayList<Particle> Beta = hasNeighbors(Data1, Data2, (double) maxDistance[0]);
 						ArrayList<Particle> Alpha = hasNeighbors(Beta, Data1, (double) maxDistance[0]);
-						System.out.println("Alpha " + Data1.size() + " from round " + i);
-						System.out.println("Beta " + Data2.size() + " from round " + i);
+					//	System.out.println("Alpha " + Data1.size() + " from round " + i);
+					//	System.out.println("Beta " + Data2.size() + " from round " + i);
 						if(Alpha.size() < minParticles &&
 								Beta.size() < minParticles){
 							ij.IJ.log("not enough particles, no shift correction possible");
-							System.out.println(Alpha.size() + " in alpha and " + Beta.size() + " in beta from " + i);
+						//	System.out.println(Alpha.size() + " in alpha and " + Beta.size() + " in beta from " + i);
 							ToFewReached = true;
 						} else if (!GPU){
 							Callable<float[]> c = new Callable<float[]>() {													// Computation to be done.							
@@ -322,10 +322,10 @@ public class correctDrift {
 				//lambdaCh 				= DriftCalc.optimize();
 			//	double convergence = 1E-3;
 			//	int maxIterations = 1000;
-				System.out.println(Alpha.size() + " and " + Beta.size());
+				//System.out.println(Alpha.size() + " and " + Beta.size());
 				//lambdaCh = DriftCompensation.findDrift(Alpha,Beta,boundry,maxDistance,convergence,maxIterations);
 				lambdaCh = DriftCompensation.findDrift (Alpha, Beta, boundry,  maxDistance);// Actual call for each parallel process.
-				System.out.println(lambdaCh[1]+  " x " + lambdaCh[2] + " x " + lambdaCh[3]);
+				ij.IJ.log("Channel " + Ch + " shifted by " + lambdaCh[1]+  " x " + lambdaCh[2] + " x " + lambdaCh[3] + " nm.");
 			}
 			for(int i = 0; i < locatedParticles.size(); i++){
 				if (locatedParticles.get(i).channel == Ch){
