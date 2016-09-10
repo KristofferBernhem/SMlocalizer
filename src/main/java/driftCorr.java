@@ -18,12 +18,12 @@ public class driftCorr {
 	/*
 	 * IDEA: calculate NN distance vector. Filter out large numbers outside of maxShift. Mean or median of these shifts should maximize correlation.
 	 */
-	public double[] optimize()
+/*	public double[] optimize()
 	{
 //		double[] shiftX = new double[referenceParticle.size()];
 //		double[] shiftY = new double[referenceParticle.size()];
 //		double[] shiftZ = new double[referenceParticle.size()];
-		double minDist  = maxShift[0];
+	/*	double minDist  = maxShift[0];
 		double distance = 0;
 		double x,y,z;
 		int idx = shiftParticle.size();
@@ -66,7 +66,7 @@ public class driftCorr {
 				shiftZ[2] += maxShift[2];
 				
 			}*/
-				
+/*				
 			idx = shiftParticle.size();
 		}
 		
@@ -89,7 +89,7 @@ public class driftCorr {
 					(shiftZ[entry/2] + shiftZ[entry/2 - 1]) / 2};
 			return outShift;
 		}
-	*/	
+
 		return shift;
 	}
 	
@@ -154,7 +154,7 @@ public class driftCorr {
 		ImagePlus Image = new ImagePlus("Start",IP);
 		Image.setImage(Image);
 		Image.show(); 						*/
-		int[] maxShift = {500*500,250*250,250*250};	// maximal shift (+/-).
+	/*	int[] maxShift = {500*500,250*250,250*250};	// maximal shift (+/-).
 		long start = System.nanoTime();
 		driftCorr AC = new driftCorr(A,B,maxShift);
 
@@ -183,10 +183,10 @@ public class driftCorr {
 		ImagePlus Image2 = new ImagePlus("Corrected",IP2);
 		Image2.setImage(Image2);
 		Image2.show(); 	
-		*/
 		
 		
-	}
+		
+	} */
 }
 
 

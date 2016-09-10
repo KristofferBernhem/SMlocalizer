@@ -21,7 +21,7 @@ import java.util.ArrayList;
  */
 
 public class NearestNeighbourDrift {
-	public static double[] getLambda(ArrayList<Particle> First, ArrayList<Particle> Second, int[] stepSize,int[] lb, int[] ub){		
+/*	public static double[] getLambda(ArrayList<Particle> First, ArrayList<Particle> Second, int[] stepSize,int[] lb, int[] ub){		
 		double[][] tempData = new double[First.size()][3];
 		for (int i = 0; i < First.size(); i++){
 			Particle tempParticle = First.get(i);
@@ -83,5 +83,5 @@ public class NearestNeighbourDrift {
 			eval += NN_x; // Add nearest neighbor distance for the current particle. 
 		}	
 		return eval;	
-	} // end value
+	} // end value*/
 }

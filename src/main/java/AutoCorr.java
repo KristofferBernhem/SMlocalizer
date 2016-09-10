@@ -45,7 +45,7 @@ public class AutoCorr {
 		this.maxDistance 		= maxDistance; //max distance in any 1 dimension.
 	}
 
-	public double Correlation(int[] shift){  // Calculate correlation for the current shift (x, y and z).
+/*	public double Correlation(int[] shift){  // Calculate correlation for the current shift (x, y and z).
 		double Corr = 0;
 
 		for(int referenceIndex = 0; referenceIndex < referenceParticle.size(); referenceIndex++){				// Loop over all referenceParticles.								
@@ -86,7 +86,7 @@ public class AutoCorr {
 	 * 2 rounds of optimization, once at Xx stepsize for coarse optimization and once at stepsize for fine optimization. 
 	 * Runs on all cores and scales linearly with number of cores for computation time.
 	 */
-	public int[] optimize(){
+/*	public int[] optimize(){
 		int[] shift 					= {0,0,0};													// Output, initialize.
 		int processors 					= Runtime.getRuntime().availableProcessors();				// Number of processor cores on this system.
 		ExecutorService exec 			= Executors.newFixedThreadPool(processors);					// Set up parallel computing using all cores.
@@ -96,7 +96,7 @@ public class AutoCorr {
 		/*
 		 * Coarse round, find approximation of shift. Computation split this way to speed up performance. 
 		 */
-
+/*
 		for (int shiftX = shift[0]- maxShift[0]; shiftX < shift[0]+  maxShift[0]; shiftX += stepIncrease*stepSize[0]){			// Loop over all x values surrounding the optimal shift value from coarse round.
 			for (int shiftY = shift[1]- maxShift[0]; shiftY <  shift[1]+  maxShift[0]; shiftY += stepIncrease*stepSize[1]){		// Loop over all y values surrounding the optimal shift value from coarse round.	
 				for (int shiftZ = shift[2]- maxShift[0]; shiftZ <  shift[2]+  maxShift[0]; shiftZ += stepIncrease*stepSize[2]){	// Loop over all z values surrounding the optimal shift value from coarse round.
@@ -148,7 +148,7 @@ public class AutoCorr {
 		/*
 		 * Second round, smaller stepsize this time round.
 		 */
-
+/*
 		List<Callable<double[]>> tasksSmall = new ArrayList<Callable<double[]>>();				// Preallocate.
 
 		for (int shiftX = shift[0]- stepIncrease * stepSize[0]; shiftX < shift[0]+ stepIncrease* stepSize[0]; shiftX += stepSize[0]){			// Loop over all x values surrounding the optimal shift value from coarse round.
@@ -201,7 +201,7 @@ public class AutoCorr {
 	/* 
 	 * function  tests.
 	 */
-	public static void main(String[] args){
+/*	public static void main(String[] args){
 		Particle P = new Particle();
 		P.x = 100;
 		P.y = 100;
@@ -253,5 +253,6 @@ public class AutoCorr {
 		System.out.println(shift[0]+  "x" +shift[1]+"x"+shift[2] + " in " + elapsed + " ms");
 	}
 
+*/
 }
 

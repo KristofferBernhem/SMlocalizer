@@ -30,7 +30,7 @@ import ij.process.ImageProcessor;
 
 
 public class localizeAndFit {
-	public static void run(double MinLevel, double sqDistance, int gWindow, int inputPixelSize, int minPosPixels, boolean GPU){				
+	public static void run(double MinLevel, double sqDistance, int gWindow, int inputPixelSize, int minPosPixels, int photonToElectron , boolean GPU){		
 		ImagePlus LocalizeImage 			= WindowManager.getCurrentImage();  // Acquire the selected image.		
 		int nChannels 						= LocalizeImage.getNChannels(); 	// Number of channels.
 		int nFrames 						= LocalizeImage.getNFrames();		// Number of frames.
@@ -51,7 +51,8 @@ public class localizeAndFit {
 							Frame, 
 							Ch, 
 							inputPixelSize, 
-							minPosPixels)); 
+							minPosPixels,
+							photonToElectron)); 
 				}					
 			}
 		}else { // if single channel data.
@@ -68,7 +69,8 @@ public class localizeAndFit {
 						Frame, 
 						Ch, 
 						inputPixelSize, 
-						minPosPixels)); 
+						minPosPixels,
+						photonToElectron)); 
 			}
 		}
 
@@ -197,7 +199,7 @@ public class localizeAndFit {
 	 * Generate fitParameter objects by finding local maximas seperated by sqDistance of atleast MinLevel center pixel intensity. 
 	 * Returns fitParameters for subsequent gaussian fitting.
 	 */
-	public static ArrayList<fitParameters> LocalizeEvents(ImageProcessor IP, double MinLevel, double sqDistance, int Window, int Frame, int Channel, int pixelSize, int minPosPixels){
+	public static ArrayList<fitParameters> LocalizeEvents(ImageProcessor IP, double MinLevel, double sqDistance, int Window, int Frame, int Channel, int pixelSize, int minPosPixels, int photonToElectron){
 		float[][] DataArray 		= IP.getFloatArray();												// Array representing the frame.
 		ArrayList<int[]> Center 	= LocalMaxima.FindMaxima(DataArray, Window, MinLevel, sqDistance,minPosPixels); 	// Get possibly relevant center coordinates.
 		ArrayList<fitParameters> fitThese = new ArrayList<fitParameters>();
@@ -209,7 +211,7 @@ public class localizeAndFit {
 			{
 				int x =  Coord[0] - Math.round((Window)/2) +  (j % Window);
 				int y =  Coord[1] - Math.round((Window)/2) +  (j / Window);
-				dataFit[j] = (int) IP.getf(x,y);
+				dataFit[j] = (int) IP.getf(x,y) / photonToElectron;
 			}
 			fitThese.add(new fitParameters(Coord, 
 					dataFit,

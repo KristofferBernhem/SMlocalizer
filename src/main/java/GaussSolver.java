@@ -297,7 +297,7 @@ double bestSigmaY = 0;
 		{
 			int xi = xyIndex % width;
 			int yi = xyIndex / width;
-			tempRsquare = P[0] * Math.exp(-(ThetaA * (xi -  P[1]) * (xi -  P[1]) -
+			tempRsquare += P[0] * Math.exp(-(ThetaA * (xi -  P[1]) * (xi -  P[1]) -
 					2 * ThetaB * (xi -  P[1]) * (yi - P[2]) +
 					ThetaC * (yi - P[2]) * (yi - P[2])
 					)) + P[6];			 

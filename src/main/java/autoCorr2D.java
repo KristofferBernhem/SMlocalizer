@@ -35,11 +35,12 @@ import ij.process.ShortProcessor;
  * Create 3D blur. 
  * To slow, not functional in current state.
  */
+
 public class autoCorr2D {
 	int[][][] imageAlpha, imageBeta;
 	int width, height, depth;
 
-	autoCorr2D(int[][][] imageAlpha, int[][][] imageBeta, int width, int height, int depth){
+/*	autoCorr2D(int[][][] imageAlpha, int[][][] imageBeta, int width, int height, int depth){
 		this.imageAlpha = imageAlpha;
 		this.imageBeta = imageBeta;
 		this.width = width;
@@ -108,7 +109,7 @@ public class autoCorr2D {
 		/*
 		 * Limit loop as 0 padding will result in the same value as exclusion.
 		 */
-		int minX = 0;
+	/*	int minX = 0;
 		int maxX = width;
 		int minY = 0;
 		int maxY = height;
@@ -381,6 +382,6 @@ public class autoCorr2D {
 		System.out.println(String.format("... but compute tasks waited for total of %d ms; speed-up of %.2fx", sum, sum / (elapsed * 1d)));
 		System.out.println(ShiftP[0]+" "+ShiftP[1]+" "+ShiftP[2]);
 	}
-
+*/
 
 }

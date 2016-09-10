@@ -1170,7 +1170,11 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			pixelSize.setText(String.valueOf(inputPixelSize)); 		// Update.
 		}    
 		
-		localizeAndFit.run(SignalNoise, Distance*Distance, gWindow, inputPixelSize,ROIpositivePixels,GPUprocess.isSelected()); 
+		/*
+		 * TODO insert photonToElectron into GUI. 
+		 */
+		int photonToElectron = 100;
+		localizeAndFit.run(SignalNoise, Distance*Distance, gWindow, inputPixelSize,ROIpositivePixels,photonToElectron,GPUprocess.isSelected()); 
 		
 
 	}                                        
