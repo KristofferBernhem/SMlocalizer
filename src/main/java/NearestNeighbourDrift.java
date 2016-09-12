@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with SMLocalizer.  If not, see <http://www.gnu.org/licenses/>.
  */
-import java.util.ArrayList;
+//import java.util.ArrayList;
 
 /*
  * 

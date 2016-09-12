@@ -125,8 +125,8 @@ public class correctDrift {
 						}
 						
 						
-						ArrayList<Particle> Beta = hasNeighbors(Data1, Data2, (double) maxDistance[0]);
-						ArrayList<Particle> Alpha = hasNeighbors(Beta, Data1, (double) maxDistance[0]);
+						final ArrayList<Particle> Beta = hasNeighbors(Data1, Data2, (double) maxDistance[0]);
+						final ArrayList<Particle> Alpha = hasNeighbors(Beta, Data1, (double) maxDistance[0]);
 					//	System.out.println("Alpha " + Data1.size() + " from round " + i);
 					//	System.out.println("Beta " + Data2.size() + " from round " + i);
 						if(Alpha.size() < minParticles &&
@@ -135,10 +135,12 @@ public class correctDrift {
 						//	System.out.println(Alpha.size() + " in alpha and " + Beta.size() + " in beta from " + i);
 							ToFewReached = true;
 						} else if (!GPU){
+							final int[] boundryFinal = boundry;
+							final int[] maxDistanceFinal = maxDistance;
 							Callable<float[]> c = new Callable<float[]>() {													// Computation to be done.							
 								@Override
 								public float[] call() throws Exception {		
-									return DriftCompensation.findDrift (Alpha, Beta, boundry,  maxDistance);// Actual call for each parallel process.
+									return DriftCompensation.findDrift (Alpha, Beta, boundryFinal,  maxDistanceFinal);// Actual call for each parallel process.
 								}
 							};
 							tasks.add(c);	
