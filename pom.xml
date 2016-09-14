@@ -206,52 +206,6 @@
                 </configuration>
             </plugin>
         </plugins>
-	<!-- 
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<includes>
-					<include>**/*</include>
-				</includes>
-			</resource>
-		</resources>
-		<plugins>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-		
-					<archive>
-		
-						<manifest>
-		
-							<addClasspath>true</addClasspath>
-		 
-		
-							<classpathPrefix>lib/</classpathPrefix>
-		
-							<mainClass>ijfx.ui.main.ImageJFX</mainClass>
-						</manifest>
-
-						<manifestEntries>
-							<SplashScreen-Image>logo.gif</SplashScreen-Image>
-						</manifestEntries>
-
-					</archive>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-		
-					<descriptors>
-						<descriptor>assembly.xml</descriptor>
-					</descriptors>
-				</configuration>
-			</plugin>
-		</plugins> -->
 	</build>
 	
 	    <!--Set of auto detected profiles for different OS family/architecture-->
