@@ -18,7 +18,7 @@
 import ij.IJ;
 import ij.plugin.PlugIn;
 import net.imagej.ImageJ;
-
+import ij.Prefs;
 
 
 public class SMLocalizer_ implements PlugIn {
@@ -36,6 +36,16 @@ public class SMLocalizer_ implements PlugIn {
 		String pluginsDir = url.substring("file:".length(), url.length() - clazz.getName().length() - ".class".length());
 		System.setProperty("plugins.dir", pluginsDir);				
 		IJ.runPlugIn(clazz.getName(), "");
+		
+		/*
+		 * how to store variables:
+		 */
+	/*	Prefs.set(("SMlocalizer.newTestValue." + 1), 21);
+		Prefs.set(("SMlocalizer.newTestValue." + 3), 93);		
+		int MyNr = (int) Prefs.get("SMlocalizer.newTestValue.1", 0);
+		int MyNr2 = (int) Prefs.get("SMlocalizer.newTestValue.3", 0);
+		System.out.println(MyNr + " x " + MyNr2);
+		*/
 	}
 
 
