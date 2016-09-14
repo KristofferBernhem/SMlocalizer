@@ -44,7 +44,186 @@ class BackgroundCorrection {
 	 *	Scientific Reports 4, Article number: 3854 (2014)	
 	 */
 
-	public static void medianFiltering(final int W){
+	/*
+	 * new version.
+	 */
+	public static int[][][][] medianFiltering(final int[] W,ImagePlus image){
+	//	ImagePlus image 			= WindowManager.getCurrentImage();  				// Aquire the selected image.
+		image.getImageStackSize();
+		int[] dim = image.getDimensions();
+	//	System.out.println("w: " + dim[0]+ " h: " + dim[1]+ " nCh: " + dim[2]+ " nSlice: " + dim[3]+" nFrames: " + dim[4]);
+
+		int nChannels 	= image.getNChannels();
+		int nFrames 	= image.getNFrames();
+		if (nFrames == 1)
+			nFrames = image.getNSlices();  				// some formats store frames as slices, some as frames.
+		int rows 		= image.getWidth();
+		int columns 	= image.getHeight();
+		
+		System.out.println("channels" + nChannels);
+		int[][][][] outputArray = new int[rows][columns][nFrames][nChannels];
+		if (nChannels == 1){
+			float[] MeanFrame = new float[nFrames]; 		// Will include frame mean value.
+			ImageProcessor IP = image.getProcessor();
+			//int[][][] stackArray = new int[rows][columns][nFrames];
+			for (int Frame = 1; Frame <= nFrames; Frame++){			
+
+				image.setSlice(Frame);
+				IP = image.getProcessor();
+				
+				ImageStatistics Stat 	= IP.getStatistics();
+				MeanFrame[Frame-1] 		= (float) Stat.mean;
+				if (Stat.mean == 0){
+					MeanFrame[Frame-1] = 1;
+				}
+				
+				for (int i = 0; i < rows; i++){
+					for (int j = 0; j < columns; j++){
+						outputArray[i][j][Frame-1][0] = IP.getPixel(i, j);
+					}
+				}	
+				
+			}
+
+	
+			List<Callable<float[]>> tasks = new ArrayList<Callable<float[]>>();	// Preallocate.			
+			for (int i = 0; i < rows; i++){
+				for (int j = 0; j < columns; j++){							// Loop over and setup computation.
+					final float[] timeVector = new float[nFrames];
+					for (int Frame = 0; Frame < nFrames; Frame++){										
+						timeVector[Frame] = outputArray[i][j][Frame][0]/MeanFrame[Frame]; // Normalize voxels;							
+					}
+					Callable<float[]> c = new Callable<float[]>() {				// Computation to be done.
+						@Override
+						public float[] call() throws Exception {
+							return runningMedian(timeVector, W[0]);						// Actual call for each parallel process.
+						}
+					};
+					tasks.add(c);														// Que this task.
+				}
+			} 			
+		
+			
+			int processors 			= Runtime.getRuntime().availableProcessors();	// Number of processor cores on this system.
+			ExecutorService exec 	= Executors.newFixedThreadPool(processors);		// Set up parallel computing using all cores.
+			
+				try {					
+					List<Future<float[]>> parallelCompute = exec.invokeAll(tasks);				// Execute computation.    									
+					for (int i = 0; i < parallelCompute.size(); i++){							// Loop over and transfer results.
+						try {
+							int xi = i % rows;
+							int yi = i / columns;	
+							float[] data = parallelCompute.get(i).get();
+							
+							for (int k = 0; k < data.length; k++){																
+								if (data[k]<0)
+									data[k] = 0;
+								//CorrectedImage.setSlice(k+1);
+								//IP = CorrectedImage.getProcessor();
+								outputArray[xi][yi][k][0]  -= (int)(data[k]*MeanFrame[k]);
+								if (outputArray[xi][yi][k][0] < 0){
+									outputArray[xi][yi][k][0] = 0;
+								}
+								//IP.set(xi, yi, putData);
+							}		
+						} catch (ExecutionException e) {
+							e.printStackTrace();
+						}
+					}
+				
+			} catch (InterruptedException e) {
+
+				e.printStackTrace();				
+			}
+			finally {
+				exec.shutdown();
+			}								
+		}else{ // if multichannel.
+
+			for (int Ch = 1; Ch <= nChannels; Ch++){ // Loop over all channels.
+				double[] MeanFrame = new double[nFrames]; 		// Will include frame mean value.
+				ImageProcessor IP = image.getProcessor();		// get image processor for the stack.
+					for (int Frame = 1; Frame < nFrames+1; Frame++){			
+					image.setPosition(
+							Ch,			// channel.
+							1,			// slice.
+							Frame);		// frame.
+					IP 						= image.getProcessor(); 			// Update processor to next slice.
+					ImageStatistics Stat 	= IP.getStatistics();
+					MeanFrame[Frame-1] 		= Stat.mean;
+					if (Stat.mean == 0){
+						MeanFrame[Frame-1] = 1;
+					}
+					for (int i = 0; i < rows; i++){
+						for (int j = 0; j < columns; j++){
+							outputArray[i][j][Frame-1][Ch-1] = IP.getPixel(i, j);
+						}
+					}										
+				} // Meanframe calculation.
+
+
+				List<Callable<double[]>> tasks = new ArrayList<Callable<double[]>>();	// Preallocate.
+
+				for (int i = 0; i < rows; i++){
+					for (int j = 0; j < columns; j++){							// Loop over and setup computation.
+						final double[] timeVector = new double[nFrames];
+						for (int Frame = 0; Frame < nFrames; Frame++){										
+							timeVector[Frame] = outputArray[i][j][Frame][Ch-1]/MeanFrame[Frame]; // Normalize voxels;							
+						}
+						final int chFinal = Ch - 1;
+						Callable<double[]> c = new Callable<double[]>() {				// Computation to be done.
+							@Override
+							public double[] call() throws Exception {
+								return runningMedian(timeVector, W[chFinal]);						// Actual call for each parallel process.
+							}
+						};
+						tasks.add(c);														// Que this task.
+					}
+				} 
+				int processors 			= Runtime.getRuntime().availableProcessors();	// Number of processor cores on this system.
+				ExecutorService exec 	= Executors.newFixedThreadPool(processors);		// Set up parallel computing using all cores.
+				try {
+					List<Future<double[]>> parallelCompute = exec.invokeAll(tasks);				// Execute computation.    
+					for (int i = 0; i < parallelCompute.size(); i++){							// Loop over and transfer results.
+						try {
+							int xi = i % rows;
+							int yi = i / columns;	
+							double[] data = parallelCompute.get(i).get();
+							for (int k = 0; k < data.length; k++){																
+								if (data[k]<0)
+									data[k] = 0;
+			
+								outputArray[xi][yi][k][Ch-1] -= (int)(data[k]*MeanFrame[k]);
+								if (outputArray[xi][yi][k][Ch-1]  < 0){
+									outputArray[xi][yi][k][Ch-1]  = 0;
+								}
+															
+							}			
+						} catch (ExecutionException e) {
+							e.printStackTrace();
+						}
+					}
+						
+					} catch (InterruptedException e) {
+
+					e.printStackTrace();
+				}
+				finally {
+					exec.shutdown();
+				}
+			} // Channel loop.				
+		}// Multichannel processing.
+		
+		
+		return outputArray;
+	} // medianfiltering.
+	
+	
+	
+	/*
+	 * old version:
+	 */
+	public static void medianFiltering(final int W[]){
 		ImagePlus image 			= WindowManager.getCurrentImage();  				// Aquire the selected image.		
 		if (image.getNChannels() == 1){
 			ImagePlus CorrectedImage 	= image.duplicate(); 	// Generate copy to modify.
@@ -77,28 +256,7 @@ class BackgroundCorrection {
 				
 			}
 
-			
-			int mb = 1024*1024;
-			
-			//Getting the runtime reference from system
-			Runtime runtime = Runtime.getRuntime();
-			
-			System.out.println("##### Heap utilization statistics [MB] #####");
-			
-			//Print used memory
-			System.out.println("Used Memory:" 
-				+ (runtime.totalMemory() - runtime.freeMemory()) / mb);
-
-			//Print free memory
-			System.out.println("Free Memory:" 
-				+ runtime.freeMemory() / mb);
-			
-			//Print total available memory
-			System.out.println("Total Memory:" + runtime.totalMemory() / mb);
-
-			//Print Maximum available memory
-			System.out.println("Max Memory:" + runtime.maxMemory() / mb);
-long start = System.nanoTime();
+	
 			List<Callable<float[]>> tasks = new ArrayList<Callable<float[]>>();	// Preallocate.			
 			for (int i = 0; i < rows; i++){
 				for (int j = 0; j < columns; j++){							// Loop over and setup computation.
@@ -109,27 +267,13 @@ long start = System.nanoTime();
 					Callable<float[]> c = new Callable<float[]>() {				// Computation to be done.
 						@Override
 						public float[] call() throws Exception {
-							return runningMedian(timeVector, W);						// Actual call for each parallel process.
+							return runningMedian(timeVector, W[0]);						// Actual call for each parallel process.
 						}
 					};
 					tasks.add(c);														// Que this task.
 				}
 			} 			
-			System.out.println("##### Heap utilization statistics [MB] #####");
-			
-			//Print used memory
-			System.out.println("Used Memory:" 
-				+ (runtime.totalMemory() - runtime.freeMemory()) / mb);
-
-			//Print free memory
-			System.out.println("Free Memory:" 
-				+ runtime.freeMemory() / mb);
-			
-			//Print total available memory
-			System.out.println("Total Memory:" + runtime.totalMemory() / mb);
-
-			//Print Maximum available memory
-			System.out.println("Max Memory:" + runtime.maxMemory() / mb);
+		
 			
 			int processors 			= Runtime.getRuntime().availableProcessors();	// Number of processor cores on this system.
 			ExecutorService exec 	= Executors.newFixedThreadPool(processors);		// Set up parallel computing using all cores.
@@ -165,9 +309,8 @@ long start = System.nanoTime();
 			finally {
 				exec.shutdown();
 			}
-				long stop = System.nanoTime() - start;
-				stop /= 1E6;
-				System.out.println(stop + " ms.");
+			
+				
 			CorrectedImage.setCalibration(cal);
 			CorrectedImage.show();
 			
@@ -210,10 +353,11 @@ long start = System.nanoTime();
 						for (int Frame = 0; Frame < nFrames; Frame++){										
 							timeVector[Frame] = stackArray[i][j][Frame]/MeanFrame[Frame]; // Normalize voxels;							
 						}
+						final int chFinal = Ch - 1;
 						Callable<double[]> c = new Callable<double[]>() {				// Computation to be done.
 							@Override
 							public double[] call() throws Exception {
-								return runningMedian(timeVector, W);						// Actual call for each parallel process.
+								return runningMedian(timeVector, W[chFinal]);						// Actual call for each parallel process.
 							}
 						};
 						tasks.add(c);														// Que this task.
@@ -260,69 +404,12 @@ long start = System.nanoTime();
 		}// Multichannel processing.
 	} // medianfiltering.
 
-	public static double[] medianFiltering2(double[][][] IMstack,int W){
-
-		int rows = IMstack.length; // Get input size in x.
-		int cols = IMstack[0].length; // Get input size in y.
-		int frames = IMstack[0][0].length; // Get input size in z.
-		double[] MeanFrame = new double[frames]; // Will include frame mean value.
-		for (int z = 0; z < frames; z ++){ // Loop over all frames, calculate frame median.
-			double Sum = 0;
-			for (int x = 0; x < rows; x ++){
-				for (int y = 0; y < cols; y ++){
-					Sum += IMstack[x][y][z] + 1e-20; // Add small number to avoid division by 0.
-				}
-			}
-			MeanFrame[z] = Sum/(rows*cols);
-		}
-
-		double[] timeVector = new double[frames]; 
-		double[] NoiseVector = new double[frames];
-		for (int x = 0; x < rows; x ++){
-			for (int y = 0; y < cols; y ++){
-
-				for (int z = 0; z < frames; z ++){ // Loop over all frames, normalize IMstack.
-					timeVector[z] = IMstack[x][y][z]/MeanFrame[z]; // Normalized values
-				}			
-				// This call could be parallelized over x and y on GPU for speedup, completely disconnected
-				double[] timeVectorMedian = runningMedian(timeVector, W); // Calculate time median for this xy position.
-
-				for (int z = 0; z < frames; z ++){ // Loop over all frames,
-					IMstack[x][y][z] -= MeanFrame[z]*timeVectorMedian[z]; // Correct each pixel based on normalized time median.
-					NoiseVector[z] += timeVectorMedian[z]; // Add up all pixelvalues
-				}
-
-
-			}	
-		}
-		int Pixels = rows*cols;
-		for (int z = 0; z < frames; z++){			
-			NoiseVector[z]  = MeanFrame[z]*NoiseVector[z]/Pixels;						
-		}
-		// Combine output into one array
-		double[] OutputArray = new double[Pixels*frames+frames]; // All IMstack data followed by NoiseVector
-		int x = 0;
-		int y = 0;
-		int z = 0;
-		for (int i = 0; i < Pixels*frames;i++){
-			OutputArray[i] = IMstack[x][y][z];
-			x++;
-			if (x == rows){
-				x = 0; // Reset
-				y++;				
-			}
-			if (y == cols){
-				y = 0;
-				z++;
-			}
-		}
-		int Count = 0;
-		for (int i = Pixels*frames; i < Pixels*frames + frames; i++){
-			OutputArray[i] =  NoiseVector[Count];
-			Count++;			
-		}
-		return OutputArray;
-	}
+	
+	
+	
+	
+	
+	
 	/*
 	 * float precision version.
 	 */

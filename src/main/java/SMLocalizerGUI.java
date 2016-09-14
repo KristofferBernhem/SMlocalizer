@@ -1,3 +1,7 @@
+import java.util.ArrayList;
+
+import ij.WindowManager;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -870,9 +874,8 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		}else{
 			try {
 				Window = Integer.parseInt(medianWindow.getText()); // Try to convert value to string.
-				int W = (Window-1)/2; // window in one direction.		
-				//filterBackground.run(W); // Need to find out how multi channel images are organized for multi channel functions.
-				BackgroundCorrection.medianFiltering(W);
+				int[] W = {(Window-1)/2,(Window-1)/2,(Window-1)/2,(Window-1)/2,(Window-1)/2,(Window-1)/2,(Window-1)/2,(Window-1)/2,(Window-1)/2,(Window-1)/2}; // window in one direction.						
+				BackgroundCorrection.medianFiltering(W);								
 			}catch (NumberFormatException e) { // If user wrote non numerical test into the field.
 				Window = 101;                 // Default value.
 				medianWindow.setText(String.valueOf(Window)); // Update.
@@ -927,6 +930,286 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			ClusterAnalysisActionPerformed(evt); // Do cluster analysis
 		}else{
 			renderActionPerformed(evt); 		// Otherwise, render drift corrected image.
+		}
+		if(1<2)// never enter
+		{
+			int Window = Integer.parseInt(medianWindow.getText()); // Try to convert value to string.
+			int[] W2 = {(Window-1)/2,(Window-1)/2};
+			int[][][][] corrImStack = BackgroundCorrection.medianFiltering(W2,WindowManager.getCurrentImage());
+			
+			
+			
+			int ROIWindow = gWindow.getSelectedIndex();
+			int[] possibleWindows =	{3,5,7};    			
+			int gWindow = possibleWindows[ROIWindow];
+
+			int ROIpositivePixels; // Initiate. 
+			try {
+				ROIpositivePixels = Integer.parseInt(positivePixels.getText());        		
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.
+				ROIpositivePixels = 9;                 							// Default value.
+				positivePixels.setText(String.valueOf(ROIpositivePixels)); 		// Update.
+			}    
+
+			double SignalNoise;        
+			try {
+				SignalNoise = Double.parseDouble(MinSignal.getText());        		
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.
+				SignalNoise = 2;                 								// Default value.
+				MinSignal.setText(String.valueOf(SignalNoise)); 						// Update.
+			}   
+
+			double Distance;
+			try {
+				Distance = Double.parseDouble(minParticleDistance.getText());        		
+			} catch (NumberFormatException e) { 							// If user wrote non numerical test into the field.
+				Distance = 7;                 								// Default value.
+				minParticleDistance.setText(String.valueOf(Distance)); 		// Update.
+			} 
+
+			int inputPixelSize;
+			try {
+				inputPixelSize = Integer.parseInt(pixelSize.getText());        		
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.
+				inputPixelSize = 100;                 							// Default value.
+				pixelSize.setText(String.valueOf(inputPixelSize)); 		// Update.
+			}    
+			
+			/*
+			 * TODO insert photonToElectron into GUI. 
+			 */
+			int photonToElectron = 100;
+			ArrayList<Particle> Results = localizeAndFit.run(corrImStack, SignalNoise, Distance*Distance, gWindow, inputPixelSize,ROIpositivePixels,photonToElectron,GPUprocess.isSelected());
+			TableIO.Store(Results);												// Return and display results to user.
+			/*
+			 * drift correct
+			 */
+			int photonLow; // Initiate. 
+			try {
+				photonLow = Integer.parseInt(lowPhotonCount.getText());        		
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.
+				photonLow = 0;                 							// Default value.
+				lowPhotonCount.setText(String.valueOf(photonLow)); 		// Update.
+			}    
+
+			int photonHigh; // Initiate. 
+			try {
+				photonHigh = Integer.parseInt(highPhotonCount.getText());        		
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.
+				photonHigh = 5000;                 							// Default value.
+				highPhotonCount.setText(String.valueOf(photonHigh)); 		// Update.
+			}  
+			int SigmaLow; // Initiate. 
+			try {
+				SigmaLow = Integer.parseInt(lowSigma.getText());        		
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.
+				SigmaLow = 300;                 							// Default value.
+				lowSigma.setText(String.valueOf(SigmaLow)); 		// Update.
+			}  
+			int SigmaHigh; // Initiate. 
+			try {
+				SigmaHigh = Integer.parseInt(highSigma.getText());        		
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.
+				SigmaHigh = 300;                 							// Default value.
+				highSigma.setText(String.valueOf(SigmaHigh)); 		// Update.
+			}  
+			int ZSigmaLow; // Initiate. 
+			try {
+				ZSigmaLow = Integer.parseInt(lowSigmaZ.getText());        		
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.
+				ZSigmaLow = 0;                 							// Default value.
+				lowSigmaZ.setText(String.valueOf(ZSigmaLow)); 		// Update.
+			}  
+			int ZSigmaHigh; // Initiate. 
+			try {
+				ZSigmaHigh = Integer.parseInt(highSigmaZ.getText());        		
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.
+				ZSigmaHigh = 300;                 							// Default value.
+				highSigmaZ.setText(String.valueOf(ZSigmaHigh)); 		// Update.
+			}         
+			double ChiSquareLow;        
+			try {
+				ChiSquareLow = Double.parseDouble(Chi_low.getText());        		
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.
+				ChiSquareLow = 0.9;                 								// Default value.
+				Chi_low.setText(String.valueOf(ChiSquareLow)); 						// Update.
+			}  
+			double ChiSquareHigh;        
+			try {
+				ChiSquareHigh = Double.parseDouble(Chi_high.getText());        		
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.
+				ChiSquareHigh = 1.0;                 								// Default value.
+				Chi_high.setText(String.valueOf(ChiSquareHigh)); 						// Update.
+			}
+			int PrecisionLow; // Initiate. 
+			try {
+				PrecisionLow = Integer.parseInt(lowPrecisionXY.getText());        		
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.
+				PrecisionLow = 0;                 							// Default value.
+				lowPrecisionXY.setText(String.valueOf(PrecisionLow)); 		// Update.
+			}  
+			int PrecisionHigh; // Initiate. 
+			try {
+				PrecisionHigh = Integer.parseInt(highSigmaZ.getText());        		
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.
+				PrecisionHigh = 50;                 							// Default value.
+				highPrecisionXY.setText(String.valueOf(PrecisionHigh)); 		// Update.
+			} 
+			int PrecisionLowZ; // Initiate. 
+			try {
+				PrecisionLowZ = Integer.parseInt(lowZprecision.getText());        		
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.
+				PrecisionLowZ = 0;                 							// Default value.
+				lowZprecision.setText(String.valueOf(PrecisionLowZ)); 		// Update.
+			}  
+			int PrecisionHighZ; // Initiate. 
+			try {
+				PrecisionHighZ = Integer.parseInt(highZprecision.getText());        		
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.
+				PrecisionHighZ = 50;                 							// Default value.
+				highZprecision.setText(String.valueOf(PrecisionHighZ)); 		// Update.
+			}         
+			boolean[] Include = new boolean[6];
+
+
+
+			Include[0] = inclXYsigma.isSelected();
+			Include[1] = inclZsigma.isSelected();        
+			Include[2] = inclXYprecision.isSelected();
+			Include[3] = inclZprecision.isSelected();
+			Include[4] = inclChiSquare.isSelected();
+			Include[5] = inclPhotonCount.isSelected();
+
+			double[] lb = {
+					SigmaLow,								// Allowed lower range of sigma_x in nm, user input.
+					SigmaLow,								// Allowed lower range of sigma_y in nm, user input.
+					ZSigmaLow,								// Allowed lower range of sigma_z in nm, user input.
+					PrecisionLow,								// Allowed lower range of precision_x in nm, user input.
+					PrecisionLow,								// Allowed lower range of precision_y in nm, user input.
+					PrecisionLowZ,								// Allowed lower range of precision_z in nm, user input.
+					ChiSquareLow,								// Allowed lower range of r_square, user input.
+					photonLow								// Allowed lower range of photon count, user input.
+			};  				
+			double[] ub = {
+					SigmaHigh,						// Allowed upper range of sigma_x in nm, user input.
+					SigmaHigh,						// Allowed upper range of sigma_y in nm, user input.
+					ZSigmaHigh,						// Allowed upper range of sigma_z in nm, user input.
+					PrecisionHigh,						// Allowed upper range of precision_x in nm, user input.
+					PrecisionHigh,						// Allowed upper range of precision_y in nm, user input.
+					PrecisionHighZ,						// Allowed upper range of precision_z in nm, user input.
+					ChiSquareHigh,						// Allowed upper range of r_square, user input.
+					photonHigh					// Allowed upper range of photon count, user input.
+			};
+
+
+			cleanParticleList.run(lb,ub,Include);
+
+
+			/*
+			 * Correct drift based on user input parameters. Get parameters:
+			 */
+
+			int minParticles; // Initiate. 
+			try {
+				minParticles = Integer.parseInt(lowDriftBinCount.getText());        		
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.
+				minParticles = 100;                 							// Default value.
+				lowDriftBinCount.setText(String.valueOf(minParticles)); 		// Update.
+			}  
+			int nParticles; // Initiate. 
+			try {
+				nParticles = Integer.parseInt(highDriftBinCount.getText());        		
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.
+				nParticles = 1000;                 							// Default value.
+				highDriftBinCount.setText(String.valueOf(nParticles)); 		// Update.
+			}
+			int StepXY; // Initiate. 
+			try {
+				StepXY = Integer.parseInt(stepsizeXY.getText());        		
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.
+				StepXY = 5;                 							// Default value.
+				stepsizeXY.setText(String.valueOf(StepXY)); 		// Update.
+			}  
+			int StepZ; // Initiate. 
+			try {
+				StepZ = Integer.parseInt(stepsizeZ.getText());        		
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.
+				StepZ = 5;                 							// Default value.
+				stepsizeZ.setText(String.valueOf(StepZ)); 		// Update.
+			}
+			int BinCount; // Initiate. 
+			try {
+				BinCount = Integer.parseInt(binCount.getText());        		
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.
+				BinCount = 50;                 							// Default value.
+				binCount.setText(String.valueOf(BinCount)); 		// Update.
+			}
+			int DriftXY; // Initiate. 
+			try {
+				DriftXY = Integer.parseInt(xyDrift.getText());        		
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.
+				DriftXY = 250;                 							// Default value.
+				xyDrift.setText(String.valueOf(DriftXY)); 		// Update.
+			}
+			int DriftZ; // Initiate. 
+			try {
+				DriftZ = Integer.parseInt(zDrift.getText());        		
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.
+				DriftZ = 250;                 							// Default value.
+				zDrift.setText(String.valueOf(DriftZ)); 		// Update.
+			}
+
+			int[] boundry = {DriftXY,DriftXY,DriftZ};
+
+			double BinFrac				= 1.0/BinCount;							// Fraction of total frames in each bin for drift corrrection. User input.
+			int[] stepSize 				= {StepXY,StepXY,StepZ};						// Stepsize in nm, user input.
+			
+			correctDrift.run(boundry, BinFrac, nParticles, minParticles, stepSize,GPUprocess.isSelected()); 
+			
+			// Table now updated. Generate image and be finished.
+			if (doClusterAnalysis.isSelected()){ 	// If user wants to do cluster analysis.
+				int Epsilon; // Initiate. 
+				try {
+					Epsilon = Integer.parseInt(epsilon.getText());        		
+				} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.
+					Epsilon = 10;                 							// Default value.
+					epsilon.setText(String.valueOf(Epsilon)); 		// Update.
+				}
+				int minConnectingPoints; // Initiate. 
+				try {
+					minConnectingPoints = Integer.parseInt(minPts.getText());        		
+				} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.
+					minConnectingPoints = 5;                 							// Default value.
+					minPts.setText(String.valueOf(minConnectingPoints)); 		// Update.
+				}
+			
+				int DesiredPixelSize; // Initiate. 
+				try {
+					DesiredPixelSize = Integer.parseInt(desiredPixelSize.getText());        		
+				} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.
+					DesiredPixelSize = 5;                 							// Default value.
+					desiredPixelSize.setText(String.valueOf(DesiredPixelSize)); 		// Update.
+				}  
+				
+				DBClust.Ident(Epsilon, minConnectingPoints,DesiredPixelSize); // Unsure if it handles 3D points, need to check. Not yet multi channel.		
+			}else{
+				int DesiredPixelSize; // Initiate. 
+				try {
+					DesiredPixelSize = Integer.parseInt(desiredPixelSize.getText());        		
+				} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.
+					DesiredPixelSize = 5;                 							// Default value.
+					desiredPixelSize.setText(String.valueOf(DesiredPixelSize)); 		// Update.
+				}  
+				renderImage.run(inputPixelSize,DesiredPixelSize); // Not 3D yet, how to implement? Need to find out how multi channel images are organized for multi channel functions.
+				
+			}
+
+			
+			
+			/*
+			 *  final output now done. store images and repeat if required. 
+			 */
+			
 		}
 
 		// Get variables.
@@ -1174,7 +1457,8 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		 * TODO insert photonToElectron into GUI. 
 		 */
 		int photonToElectron = 100;
-		localizeAndFit.run(SignalNoise, Distance*Distance, gWindow, inputPixelSize,ROIpositivePixels,photonToElectron,GPUprocess.isSelected()); 
+		ArrayList<Particle> Results = localizeAndFit.run(SignalNoise, Distance*Distance, gWindow, inputPixelSize,ROIpositivePixels,photonToElectron,GPUprocess.isSelected());
+		TableIO.Store(Results);												// Return and display results to user.
 		
 
 	}                                        
