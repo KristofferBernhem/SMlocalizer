@@ -17,7 +17,7 @@
 import java.util.ArrayList;
 
 public class renderImage {
-	public static void run(int inputPixelSize, int DesiredPixelSize ){		
+	public static void run( int[] DesiredPixelSize ){		
 		try{
 			ArrayList<Particle> correctedResults	= TableIO.Load(); // load dataset from results table.
 			int Width 								= 0; // will contain the largest width value of the dataset.
@@ -33,13 +33,12 @@ public class renderImage {
 					}
 				}
 			}		
-			Width 	= Width + inputPixelSize; 	// pad with one pixel.
-			Height 	= Height + inputPixelSize; 	// pad with one pixel.
+			Width 	= Width + 10; //inputPixelSize[0]; 	// pad with one pixel.
+			Height 	= Height + 10; //inputPixelSize[0]; 	// pad with one pixel.
 			generateImage.create("RenderedResults",correctedResults, Width, Height, DesiredPixelSize);		
 		}
 		catch (Exception e){
 			ij.IJ.log("No results table found.");	
 		}		
-	}
-	
+	}	
 }

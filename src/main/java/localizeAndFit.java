@@ -196,7 +196,12 @@ public class localizeAndFit {
 		return Results;
 	}
 
-	public static ArrayList<Particle> run(int[][][][] inputArray, double MinLevel, double sqDistance, int gWindow, int inputPixelSize, int minPosPixels, int photonToElectron , boolean GPU){		
+	
+	
+	/*
+	 * New run method for multichannel settings. TODO run and bugtest.
+	 */
+	public static ArrayList<Particle> run(int[][][][] inputArray, double[] MinLevel, double[] sqDistance, int[] gWindow, int[] inputPixelSize, int[] minPosPixels, int[] photonToElectron , boolean GPU){		
 
 		int nChannels 						= inputArray[0][0][0].length; 	// Number of channels.
 		int nFrames 						= inputArray[0][0].length;		// Number of frames.
@@ -215,24 +220,24 @@ public class localizeAndFit {
 					}
 				}
 
-				ArrayList<int[]> Center 	= LocalMaxima.FindMaxima(DataArray, gWindow, MinLevel, sqDistance,minPosPixels); 	// Get possibly relevant center coordinates.
+				ArrayList<int[]> Center 	= LocalMaxima.FindMaxima(DataArray, gWindow[Ch-1], MinLevel[Ch-1], sqDistance[Ch-1], minPosPixels[Ch-1]); 	// Get possibly relevant center coordinates.
 
 				for (int i = 0; i < Center.size(); i++){
-					int[] dataFit = new int[gWindow*gWindow];							// Container for data to be fitted.
+					int[] dataFit = new int[gWindow[Ch-1]*gWindow[Ch-1]];							// Container for data to be fitted.
 					int[] Coord = Center.get(i);									// X and Y coordinates for center pixels to be fitted.
 					
-					for (int j = 0; j < gWindow*gWindow; j++)
+					for (int j = 0; j < gWindow[Ch-1]*gWindow[Ch-1]; j++)
 					{
-						int x =  Coord[0] - Math.round((gWindow)/2) +  (j % gWindow);
-						int y =  Coord[1] - Math.round((gWindow)/2) +  (j / gWindow);
-						dataFit[j] = inputArray[x][y][Frame-1][Ch - 1] / photonToElectron;
+						int x =  Coord[0] - Math.round((gWindow[Ch-1])/2) +  (j % gWindow[Ch-1]);
+						int y =  Coord[1] - Math.round((gWindow[Ch-1])/2) +  (j / gWindow[Ch-1]);
+						dataFit[j] = inputArray[x][y][Frame-1][Ch - 1] / photonToElectron[Ch-1];
 					}
 					fitThese.add(new fitParameters(Coord, 
 							dataFit,
 							Ch,
 							Frame,
-							inputPixelSize,
-							gWindow));
+							inputPixelSize[Ch-1],
+							gWindow[Ch-1]));
 				}
 									
 			}					

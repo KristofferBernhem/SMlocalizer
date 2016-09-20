@@ -23,10 +23,11 @@ import ij.process.ImageStatistics;
 
 public class generateImage {
 	
-	public static void create(String Imtitle,ArrayList<Particle> ParticleList, int width, int height, int pixelSize){
-		width = Math.round(width/pixelSize);
-		height = Math.round(height/pixelSize);
-	if (ParticleList.get(ParticleList.size()-1).channel == 1){	
+	public static void create(String Imtitle,ArrayList<Particle> ParticleList, int width, int height, int[] pixelSize){
+		
+	if (ParticleList.get(ParticleList.size()-1).channel == 1){
+		width = Math.round(width/pixelSize[0]);
+		height = Math.round(height/pixelSize[0]);
 			ByteProcessor IP  = new ByteProcessor(width,height);					
 		/*	for (int x = 0; x < width; x++){
 				for (int y = 0; y < height; y++){
@@ -38,16 +39,16 @@ public class generateImage {
 			
 			for (int i = 0; i < ParticleList.size(); i++){
 				if (ParticleList.get(i).include == 1){
-					int x = (int) Math.round(ParticleList.get(i).x/pixelSize);
-					int y = (int) Math.round(ParticleList.get(i).y/pixelSize);				
+					int x = (int) Math.round(ParticleList.get(i).x/pixelSize[0]);
+					int y = (int) Math.round(ParticleList.get(i).y/pixelSize[0]);				
 					IP.putPixel(x, y, (IP.get(x, y) + 1));
 				}
 			}		
 			ImagePlus Image = new ImagePlus(Imtitle,IP);
 			Image.setImage(Image);
 			Calibration cal = new Calibration(Image);
-			cal.pixelHeight = pixelSize;
-			cal.pixelWidth 	= pixelSize;
+			cal.pixelHeight = pixelSize[0];
+			cal.pixelWidth 	= pixelSize[0];
 			cal.setXUnit("nm");
 			cal.setYUnit("nm");
 			ImageStatistics ImStats = Image.getStatistics();
@@ -60,7 +61,12 @@ public class generateImage {
 		
 		ImageStack imstack = new ImageStack(width,height);
 		for (int ch = 1; ch <= ParticleList.get(ParticleList.size()-1).channel; ch ++){
-			
+			if (ch > 1){
+				width *=pixelSize[ch-2]; // reset.
+				height *=pixelSize[ch-2]; // reset.
+			}
+			width = Math.round(width/pixelSize[ch-1]);
+			height = Math.round(height/pixelSize[ch-1]);
 		
 		ByteProcessor IP  = new ByteProcessor(width,height);					
 
@@ -68,8 +74,8 @@ public class generateImage {
 			
 			for (int i = 0; i < ParticleList.size(); i++){
 				if (ParticleList.get(i).include == 1 && ParticleList.get(i).channel == ch){
-					int x = (int) Math.round(ParticleList.get(i).x/pixelSize);
-					int y = (int) Math.round(ParticleList.get(i).y/pixelSize);				
+					int x = (int) Math.round(ParticleList.get(i).x/pixelSize[ch-1]);
+					int y = (int) Math.round(ParticleList.get(i).y/pixelSize[ch-1]);				
 					IP.putPixel(x, y, (IP.get(x, y) + 1));
 				}
 			}
@@ -80,10 +86,11 @@ public class generateImage {
 		ImagePlus Image = new ImagePlus(Imtitle, imstack);
 		Image.setImage(Image);
 		Calibration cal = new Calibration(Image);
-		cal.pixelHeight = pixelSize;
-		cal.pixelWidth 	= pixelSize;
+		cal.pixelHeight = pixelSize[0];// TODO: check if possible to add calibartion to each slize. 
+		cal.pixelWidth 	= pixelSize[0];
 		cal.setXUnit("nm");
 		cal.setYUnit("nm");
+		
 		ImageStatistics ImStats = Image.getStatistics();
 		Image.setDisplayRange(ImStats.min, ImStats.max);
 		Image.updateAndDraw();

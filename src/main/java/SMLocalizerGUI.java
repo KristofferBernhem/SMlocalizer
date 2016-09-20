@@ -978,8 +978,14 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			/*
 			 * TODO insert photonToElectron into GUI. 
 			 */
-			int photonToElectron = 100;
-			ArrayList<Particle> Results = localizeAndFit.run(corrImStack, SignalNoise, Distance*Distance, gWindow, inputPixelSize,ROIpositivePixels,photonToElectron,GPUprocess.isSelected());
+			double[] minLevelV = {SignalNoise, SignalNoise, SignalNoise};
+			double[] DistanceV = { Distance*Distance,Distance*Distance,Distance*Distance};
+			int[] gWindowV = {gWindow,gWindow,gWindow};
+			int[] inputPixelSizeV  = {inputPixelSize,inputPixelSize,inputPixelSize};
+			int[] ROIpositivePixelsV = {ROIpositivePixels,ROIpositivePixels,ROIpositivePixels}; 
+			
+			int[] photonToElectron = {100,100,100};
+			ArrayList<Particle> Results = localizeAndFit.run(corrImStack, minLevelV, DistanceV, gWindowV, inputPixelSizeV,ROIpositivePixelsV,photonToElectron,GPUprocess.isSelected());
 			TableIO.Store(Results);												// Return and display results to user.
 			/*
 			 * drift correct
@@ -1190,8 +1196,12 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 					DesiredPixelSize = 5;                 							// Default value.
 					desiredPixelSize.setText(String.valueOf(DesiredPixelSize)); 		// Update.
 				}  
+				double[] epsilonV = {Epsilon,Epsilon,Epsilon};
+				int[] minConnectingPointsV ={minConnectingPoints,minConnectingPoints,minConnectingPoints};
+				int[] desiredPixelSizeV  = {DesiredPixelSize,DesiredPixelSize,DesiredPixelSize};
 				
-				DBClust.Ident(Epsilon, minConnectingPoints,DesiredPixelSize); // Unsure if it handles 3D points, need to check. Not yet multi channel.		
+				DBClust.Ident(epsilonV, minConnectingPointsV,desiredPixelSizeV); // Unsure if it handles 3D points, need to check. Not yet multi channel.
+						
 			}else{
 				int DesiredPixelSize; // Initiate. 
 				try {
@@ -1200,7 +1210,8 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 					DesiredPixelSize = 5;                 							// Default value.
 					desiredPixelSize.setText(String.valueOf(DesiredPixelSize)); 		// Update.
 				}  
-				renderImage.run(inputPixelSize,DesiredPixelSize); // Not 3D yet, how to implement? Need to find out how multi channel images are organized for multi channel functions.
+				int[] desiredPixelSizeV = {DesiredPixelSize,DesiredPixelSize,DesiredPixelSize};
+				renderImage.run(desiredPixelSizeV); // Not 3D yet, how to implement? Need to find out how multi channel images are organized for multi channel functions.
 				
 			}
 
@@ -1412,7 +1423,8 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			DesiredPixelSize = 5;                 							// Default value.
 			desiredPixelSize.setText(String.valueOf(DesiredPixelSize)); 		// Update.
 		}  
-		renderImage.run(inputPixelSize,DesiredPixelSize); // Not 3D yet, how to implement? Need to find out how multi channel images are organized for multi channel functions.
+		int[] desiredPixelSizeV = {DesiredPixelSize,DesiredPixelSize,DesiredPixelSize};
+		renderImage.run(desiredPixelSizeV); // Not 3D yet, how to implement? Need to find out how multi channel images are organized for multi channel functions.
 
 	}                                      
 
@@ -2124,8 +2136,11 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			DesiredPixelSize = 5;                 							// Default value.
 			desiredPixelSize.setText(String.valueOf(DesiredPixelSize)); 		// Update.
 		}  
+		double[] epsilonV = {Epsilon,Epsilon,Epsilon};
+		int[] minConnectingPointsV ={minConnectingPoints,minConnectingPoints,minConnectingPoints};
+		int[] desiredPixelSizeV  = {DesiredPixelSize,DesiredPixelSize,DesiredPixelSize};
 		
-		DBClust.Ident(Epsilon, minConnectingPoints,DesiredPixelSize); // Unsure if it handles 3D points, need to check. Not yet multi channel.		
+		DBClust.Ident(epsilonV, minConnectingPointsV,desiredPixelSizeV); // Unsure if it handles 3D points, need to check. Not yet multi channel.		
 	}                                               
 
 	private void inclPhotonCountActionPerformed(java.awt.event.ActionEvent evt) {                                                
