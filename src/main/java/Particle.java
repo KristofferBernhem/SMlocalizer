@@ -19,8 +19,8 @@
  * Particle is a object that hold all fitting information.
  */
 public class Particle {
-	double x, y, z, frame, channel, sigma_x, sigma_y, sigma_z, precision_x, precision_y, precision_z, r_square,photons;
-	int include;
+	double x, y, z, sigma_x, sigma_y, sigma_z, precision_x, precision_y, precision_z, r_square,photons;
+	int include, frame, channel;
 	public Particle(){
 		this.x 				= 0; // Fitted x coordinate.
 		this.y 				= 0; // Fitted y coordinate.
@@ -38,7 +38,7 @@ public class Particle {
 		this.include		= 0; // If this particle should be included in analysis and plotted.
 	}
 	
-	public Particle(double x, double y, double z, double frame, double channel, double sigma_x, double sigma_y, double sigma_z, double precision_x, double precision_y, double precision_z, double r_square,double photons, int include){
+	public Particle(double x, double y, double z, int frame, int channel, double sigma_x, double sigma_y, double sigma_z, double precision_x, double precision_y, double precision_z, double r_square,double photons, int include){
 		this.x 				= x; 			// Fitted x coordinate.
 		this.y 				= y;			// Fitted y coordinate.
 		this.z				= z; 			// Fitted z coordinate.

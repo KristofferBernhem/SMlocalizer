@@ -27,8 +27,8 @@ public class TableIO {
 			double x = tab.getValue("x0", i);
 			double y = tab.getValue("y0", i);
 			double z = tab.getValue("z0", i);
-			double frame = tab.getValue("frame", i);
-			double channel = tab.getValue("channel", i);
+			int frame = (int) tab.getValue("frame", i);
+			int channel = (int) tab.getValue("channel", i);
 			double sigma_x = tab.getValue("sigma_x", i);
 			double sigma_y = tab.getValue("sigma_y", i);
 			double sigma_z = tab.getValue("sigma_z", i);

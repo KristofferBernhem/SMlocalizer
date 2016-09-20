@@ -17,8 +17,7 @@
 
 import ij.IJ;
 import ij.plugin.PlugIn;
-import net.imagej.ImageJ;
-import ij.Prefs;
+
 
 
 public class SMLocalizer_ implements PlugIn {
@@ -26,10 +25,12 @@ public class SMLocalizer_ implements PlugIn {
 	public static void main(final String... args) throws Exception {
 		// create the ImageJ application context with all available services
 
-		final ImageJ ij = new ImageJ();
-		ij.ui().showUI();
-		createTestDataSet.stack(64, 64, 1000, 1, 1); // get dataset.
-		double[] drift = {0.1,0.1};
+		//final ImageJ ij = new ImageJ();
+		//ij.ui().showUI();
+		final ij.ImageJ ij = new ij.ImageJ();
+		ij.setVisible(true);
+//		createTestDataSet.stack(64, 64, 1000, 1, 1); // get dataset.
+	//	double[] drift = {0.1,0.1};
 	//	createTestDataSet.ParticleList(6400, 6400, 10000, 500, drift);
 		Class<?> clazz = SMLocalizer_.class;
 		String url = clazz.getResource("/" + clazz.getName().replace('.', '/') + ".class").toString();

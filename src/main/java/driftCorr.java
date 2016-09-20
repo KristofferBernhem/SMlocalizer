@@ -1,7 +1,5 @@
 import java.util.ArrayList;
 
-import net.imagej.ImageJ;
-
 public class driftCorr {
 	ArrayList<Particle> 
 	referenceParticle,		// Reference, check the other list against this one.

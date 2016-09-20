@@ -30,7 +30,7 @@ import ij.process.ImageProcessor;
 
 
 public class localizeAndFit {
-	public static ArrayList<Particle> run(double MinLevel, double sqDistance, int gWindow, int inputPixelSize, int minPosPixels, int photonToElectron , boolean GPU){		
+	public static ArrayList<Particle> run(int MinLevel, double sqDistance, int gWindow, int inputPixelSize, int minPosPixels, int photonToElectron , boolean GPU){		
 		ImagePlus LocalizeImage 			= WindowManager.getCurrentImage();  // Acquire the selected image.		
 		int nChannels 						= LocalizeImage.getNChannels(); 	// Number of channels.
 		int nFrames 						= LocalizeImage.getNFrames();		// Number of frames.
@@ -193,7 +193,21 @@ public class localizeAndFit {
 		} // end CPU bound computing.
 		
 		//TableIO.Store(Results);												// Return and display results to user.
-		return Results;
+		
+		// clean out results from NaN fits.
+		ArrayList<Particle> cleanResults = new ArrayList<Particle>();
+		for (int i = 0; i < Results.size(); i++)
+		{
+			if (Results.get(i).sigma_x > 0 &&
+					Results.get(i).sigma_y > 0 &&
+					Results.get(i).precision_x > 0 &&
+					Results.get(i).precision_y > 0 &&
+					Results.get(i).photons > 0 && 
+					Results.get(i).r_square > 0)
+			cleanResults.add(Results.get(i));
+				
+		}
+		return cleanResults;
 	}
 
 	
@@ -201,7 +215,7 @@ public class localizeAndFit {
 	/*
 	 * New run method for multichannel settings. TODO run and bugtest.
 	 */
-	public static ArrayList<Particle> run(int[][][][] inputArray, double[] MinLevel, double[] sqDistance, int[] gWindow, int[] inputPixelSize, int[] minPosPixels, int[] photonToElectron , boolean GPU){		
+	public static ArrayList<Particle> run(int[][][][] inputArray, int[] MinLevel, double[] sqDistance, int[] gWindow, int[] inputPixelSize, int[] minPosPixels, int[] photonToElectron , boolean GPU){		
 
 		int nChannels 						= inputArray[0][0][0].length; 	// Number of channels.
 		int nFrames 						= inputArray[0][0].length;		// Number of frames.
@@ -365,14 +379,26 @@ public class localizeAndFit {
 		} // end CPU bound computing.
 		
 		//TableIO.Store(Results);												// Return and display results to user.
-		return Results;
+		ArrayList<Particle> cleanResults = new ArrayList<Particle>();
+		for (int i = 0; i < Results.size(); i++)
+		{
+			if (Results.get(i).sigma_x > 0 &&
+					Results.get(i).sigma_y > 0 &&
+					Results.get(i).precision_x > 0 &&
+					Results.get(i).precision_y > 0 &&
+					Results.get(i).photons > 0 && 
+					Results.get(i).r_square > 0)
+			cleanResults.add(Results.get(i));
+				
+		}
+		return cleanResults;
 	}
 
 	/*
 	 * Generate fitParameter objects by finding local maximas seperated by sqDistance of atleast MinLevel center pixel intensity. 
 	 * Returns fitParameters for subsequent gaussian fitting.
 	 */
-	public static ArrayList<fitParameters> LocalizeEvents(ImageProcessor IP, double MinLevel, double sqDistance, int Window, int Frame, int Channel, int pixelSize, int minPosPixels, int photonToElectron){
+	public static ArrayList<fitParameters> LocalizeEvents(ImageProcessor IP, int MinLevel, double sqDistance, int Window, int Frame, int Channel, int pixelSize, int minPosPixels, int photonToElectron){
 		float[][] DataArray 		= IP.getFloatArray();												// Array representing the frame.
 		ArrayList<int[]> Center 	= LocalMaxima.FindMaxima(DataArray, Window, MinLevel, sqDistance,minPosPixels); 	// Get possibly relevant center coordinates.
 		ArrayList<fitParameters> fitThese = new ArrayList<fitParameters>();

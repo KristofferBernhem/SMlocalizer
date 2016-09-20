@@ -28,7 +28,7 @@ import ij.gui.Plot;
 // TODO: check drift correction application of correction. Appears to skip first bin!. 
 public class correctDrift {
 	//	public static void run(int[] lb, int[] ub, double BinFrac, int nParticles, int minParticles, int[] stepSize){
-	public static void run(int[] boundry, double BinFrac, int nParticles, int minParticles, int[] stepSize, boolean GPU){
+	public static void run(int[][] boundry, int[] nBins, int[] nParticles, int[] minParticles,boolean GPU){
 		int[] maxDistance = {2500,2500,2500}; // everything beyond 50 nm apart after shift will not affect outcome.
 		ArrayList<Particle> locatedParticles = TableIO.Load(); // Get current table data.		
 		ArrayList<Particle> correctedResults = new ArrayList<Particle>(); // Output arraylist, will contain all particles that fit user input requirements after drift correction.
@@ -53,20 +53,23 @@ public class correctDrift {
 				depth = (int) Math.round(correctedResults.get(i).z);
 			}
 		}
-		for(double Ch = 1; Ch <= Channels; Ch++){
+		for(int Ch = 1; Ch <= Channels; Ch++){
 			int idx 			= locatedParticles.size() - 1;
 
 			double frameBin = Math.round( 				// Bin size for drift correction based on total number of frames and user input fraction. 
 					locatedParticles.get(idx).frame * 	// Last frame that was used.
-					BinFrac);							// User input fraction.
+					(double) (1.0/nBins[Ch-1]));						// User input fraction.
+			
 			ArrayList<Particle> filteredResults =  new ArrayList<Particle>(); // output arraylist.
-			int[] timeIndex = new int[(int) (Math.round(1.0/BinFrac)+1)];
-			double[] timeIndexDouble = new double[(int) (Math.round(1.0/BinFrac)+1)];
+			int[] timeIndex = new int[(nBins[Ch-1])];
+			double[] timeIndexDouble = new double[(nBins[Ch-1])];
+			
 			int count = 0;					
 			// Check which particles are within user set parameters.
 			for (int i = 0; i < locatedParticles.size(); i++){
 				if (locatedParticles.get(i).include == 1 &&
-						locatedParticles.get(i).channel == Ch){
+						locatedParticles.get(i).channel == Ch && 
+						count < nBins[Ch-1]){
 					filteredResults.add(locatedParticles.get(i)); 	// Add particles that match user set parameters.										
 					if (filteredResults.get(filteredResults.size()-1).frame > frameBin*count){	// First time data from a new bin is added, register index.						
 						timeIndex[count] = filteredResults.size() - 1; // Get the index for the first entry with the new bin.
@@ -81,9 +84,9 @@ public class correctDrift {
 			}
 			timeIndex[timeIndex.length-1] =  filteredResults.size(); 									// Final entry.
 			timeIndexDouble[timeIndex.length-1] = filteredResults.get(filteredResults.size()-1).frame; 	// Final entry.
-			double[] lambdax = new double[(int) Math.round(1.0/BinFrac)];								// Holds drift estimate between all bins in x.
-			double[] lambday = new double[(int) Math.round(1.0/BinFrac)];								// Holds drift estimate between all bins in y.
-			double[] lambdaz = new double[(int) Math.round(1.0/BinFrac)];								// Holds drift estimate between all bins in y.
+			double[] lambdax = new double[nBins[Ch-1]];								// Holds drift estimate between all bins in x.
+			double[] lambday = new double[nBins[Ch-1]];								// Holds drift estimate between all bins in y.
+			double[] lambdaz = new double[nBins[Ch-1]];								// Holds drift estimate between all bins in y.
 			lambdax[0] = 0;																				// Drift for first bin is 0.
 			lambday[0] = 0;																				// Drift for first bin is 0.
 			lambdaz[0] = 0;																				// Drift for first bin is 0.
@@ -91,7 +94,7 @@ public class correctDrift {
 			double[][] lambda = new double[maxTime][3];													// Holds interpolated drift corrections in x and y.
 			int okBins = 0;																				// If all bins are ok, this will still be 0.
 			for (int i = 1; i < timeIndex.length ; i++){ 												// Loop over all bins.
-				if ((timeIndex[i] - timeIndex[i-1])<minParticles){									// If the bin lacks enough points to meet user minimum criteria.
+				if ((timeIndex[i] - timeIndex[i-1])<minParticles[Ch-1]){									// If the bin lacks enough points to meet user minimum criteria.
 					okBins++;				
 				}
 			}
@@ -103,12 +106,12 @@ public class correctDrift {
 
 			boolean ToFewReached = false;
 			if (okBins == 0){ 														// If all bins were ok.
-				for (int i = 1; i < Math.round(1.0/BinFrac) ; i++){ 				// Loop over all bins.
+				for (int i = 1; i < nBins[Ch-1]; i++){ 				// Loop over all bins.
 					if(!ToFewReached){
 						ArrayList<Particle> Data1 	= new ArrayList<Particle>(); 		// Target particles.			
 						int addedFrames1 			= 0;								// Number of particles added to the bin.
 						for (int j = timeIndex[i]; j < timeIndex[i+1];j++){
-							if (addedFrames1 < nParticles &&
+							if (addedFrames1 < nParticles[Ch-1] &&
 									filteredResults.get(j).frame < frameBin*(i+1)){
 								Data1.add(filteredResults.get(j));
 								addedFrames1++;
@@ -117,7 +120,7 @@ public class correctDrift {
 						ArrayList<Particle> Data2 	= new ArrayList<Particle>(); 		// Change these particles so that the correlation function is maximized.
 						int addedFrames2 			= 0;								// Number of particles added to the bin.
 						for (int j = timeIndex[i-1]; j < timeIndex[i];j++){
-							if (addedFrames2 < nParticles &&
+							if (addedFrames2 < nParticles[Ch-1] &&
 									filteredResults.get(j).frame < frameBin*i ){
 								Data2.add(filteredResults.get(j));
 								addedFrames2++;
@@ -129,13 +132,13 @@ public class correctDrift {
 						final ArrayList<Particle> Alpha = hasNeighbors(Beta, Data1, (double) maxDistance[0]);
 					//	System.out.println("Alpha " + Data1.size() + " from round " + i);
 					//	System.out.println("Beta " + Data2.size() + " from round " + i);
-						if(Alpha.size() < minParticles &&
-								Beta.size() < minParticles){
+						if(Alpha.size() < minParticles[Ch-1] &&
+								Beta.size() < minParticles[Ch-1]){
 							ij.IJ.log("not enough particles, no shift correction possible");
 						//	System.out.println(Alpha.size() + " in alpha and " + Beta.size() + " in beta from " + i);
 							ToFewReached = true;
 						} else if (!GPU){
-							final int[] boundryFinal = boundry;
+							final int[] boundryFinal = {boundry[0][Ch-1], boundry[1][Ch-1]};
 							final int[] maxDistanceFinal = maxDistance;
 							Callable<float[]> c = new Callable<float[]>() {													// Computation to be done.							
 								@Override
@@ -188,7 +191,7 @@ public class correctDrift {
 				int county = lambda.length-1;
 				int countz = lambda.length-1;
 
-				for (int j =  (int) (Math.round(1.0/BinFrac) - 1); j >0; j--){
+				for (int j =  nBins[Ch-1] - 1; j >0; j--){
 					double[] temp 			= interp(lambdax[j],lambdax[j-1],(int) frameBin);
 					for (int k = 0; k < temp.length; k++){
 						lambda[countx][0] = temp[k];
@@ -262,7 +265,7 @@ public class correctDrift {
 	}
 
 
-	public static void ChannelAlign(int[] boundry, int nParticles, int minParticles, int[] stepSize, boolean GPU){
+	public static void ChannelAlign(int[][] boundry, int[] nParticles, int[] minParticles, boolean GPU){
 		int[] maxDistance = {2500,2500,2500}; // everything beyond 50 nm apart after shift will not affect outcome.
 		ArrayList<Particle> locatedParticles = TableIO.Load(); // Get current table data.
 		if (locatedParticles.size() == 0){ // If no particles.
@@ -280,11 +283,11 @@ public class correctDrift {
 			ij.IJ.log("Single channel data, no second channel to align against.");
 			return;
 		}
-		for (double Ch = 2; Ch <= Channels; Ch++){
+		for (int Ch = 2; Ch <= Channels; Ch++){
 			ArrayList<Particle> Data1 	= new ArrayList<Particle>(); 		// Target particles.			
 			int addedFrames1 			= 0;								// Number of particles added to the bin.
 			int index = 0;
-			while (addedFrames1 < nParticles && index < locatedParticles.size()){
+			while (addedFrames1 < nParticles[Ch-2] && index < locatedParticles.size()){
 				if (locatedParticles.get(index).channel == Ch-1 &&
 						locatedParticles.get(index).include == 1){
 					Data1.add(locatedParticles.get(index));					
@@ -297,7 +300,7 @@ public class correctDrift {
 			ArrayList<Particle> Data2 	= new ArrayList<Particle>(); 		// Change these particles so that the correlation function is maximized.
 			int addedFrames2 			= 0;								// Number of particles added to the bin.
 			index = 0;
-			while (addedFrames2 < nParticles && index < locatedParticles.size()){
+			while (addedFrames2 < nParticles[Ch-1] && index < locatedParticles.size()){
 				if (locatedParticles.get(index).channel == Ch &&
 						locatedParticles.get(index).include == 1){
 					Data2.add(locatedParticles.get(index));					
@@ -308,11 +311,11 @@ public class correctDrift {
 			
 			ArrayList<Particle> Beta = hasNeighbors(Data1, Data2, (double) maxDistance[0]);
 			ArrayList<Particle> Alpha = hasNeighbors(Beta, Data1, (double) maxDistance[0]);
-			if(Alpha.size() < minParticles){
+			if(Alpha.size() < minParticles[Ch-2]){
 				ij.IJ.log("not enough particles, no alignment possible");
 				return;
 			}
-			if(Beta.size() < minParticles){
+			if(Beta.size() < minParticles[Ch-1]){
 				ij.IJ.log("not enough particles, no alignment possible");
 				return;
 			}
@@ -326,7 +329,8 @@ public class correctDrift {
 			//	int maxIterations = 1000;
 				//System.out.println(Alpha.size() + " and " + Beta.size());
 				//lambdaCh = DriftCompensation.findDrift(Alpha,Beta,boundry,maxDistance,convergence,maxIterations);
-				lambdaCh = DriftCompensation.findDrift (Alpha, Beta, boundry,  maxDistance);// Actual call for each parallel process.
+				int[] boundryCh = {boundry[0][Ch-1], boundry[1][Ch-1]}; 
+				lambdaCh = DriftCompensation.findDrift (Alpha, Beta, boundryCh,  maxDistance);// Actual call for each parallel process.
 				ij.IJ.log("Channel " + Ch + " shifted by " + lambdaCh[1]+  " x " + lambdaCh[2] + " x " + lambdaCh[3] + " nm.");
 			}
 			for(int i = 0; i < locatedParticles.size(); i++){

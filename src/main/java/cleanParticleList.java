@@ -18,80 +18,73 @@ import java.util.ArrayList;
 
 public class cleanParticleList {
 
-	public static void run(double[] lb, double[] ub, boolean[] Include){
+	public static void run(double[][] lb, double[][] ub, boolean[][] Include){
 		// Pull in user data.
-		/*	Include[0] = inclXYsigma.isSelected();
-        Include[1] = inclZsigma.isSelected();        
-        Include[2] = inclXYprecision.isSelected();
-        Include[3] = inclZprecision.isSelected();
-        Include[4] = inclChiSquare.isSelected();
-        Include[5] = inclPhotonCount.isSelected();
+		/*	            Include[0][id] = doPhotonCountChList.getItem(id).isSelected();
+            Include[1][id] = doSigmaXYChList.getItem(id).isSelected();
+            Include[2][id] = doSigmaZChList.getItem(id).isSelected();
+            Include[3][id] = doRsquareChList.getItem(id).isSelected();
+            Include[4][id] = doPrecisionXYChList.getItem(id).isSelected();
+            Include[5][id] = doPrecisionZChList.getItem(id).isSelected();
 
 		 */
-
 		ArrayList<Particle> Results = TableIO.Load();
-
+		int Ch = 0;
+		int remove = 0;
 		for (int i = 0; i < Results.size(); i++){
-			int Remove = 0;
-			if (Include[0]){
-				if(Results.get(i).sigma_x >= lb[0] &&
-						Results.get(i).sigma_x <= ub[0]){
+			Ch = (int) Results.get(i).channel-1;
+			remove = 0;
+			if (Include[0][Ch]== true)
+			{
+				
+				if(Results.get(i).photons >= lb[0][Ch] &&
+						Results.get(i).photons <= ub[0][Ch]){
 
 				}else
-					Remove++;
+					remove++;				
 			}
-
-			if (Include[0]){
-				if(Results.get(i).sigma_y >= lb[1] &&			
-						Results.get(i).sigma_y <= ub[1]){
+			
+			if (Include[1][Ch]){
+				
+				if(Results.get(i).sigma_x >= lb[1][Ch] &&
+						Results.get(i).sigma_x <= ub[1][Ch] &&
+						Results.get(i).sigma_y >= lb[1][Ch] &&			
+						Results.get(i).sigma_y <= ub[1][Ch]){
 
 				}else
-					Remove++;
+					remove++;
 			}
-			if (Include[1]){ 
-				if(Results.get(i).sigma_z >= lb[2] &&
-						Results.get(i).sigma_z <= ub[2]){
+			if (Include[2][Ch]){ 
+				if(Results.get(i).sigma_z >= lb[2][Ch] &&
+						Results.get(i).sigma_z <= ub[2][Ch]){
 
 				}else
-					Remove++;
+					remove++;
 			}
-			if (Include[2]){
-				if(Results.get(i).precision_x >= lb[3] &&
-						Results.get(i).precision_x <= ub[3]){
+			if (Include[3][Ch]){
+				if(Results.get(i).r_square >= lb[3][Ch] &&			
+						Results.get(i).r_square <= ub[3][Ch]){
 
 				}else
-					Remove++;
+					remove++;
 			}
-			if (Include[2]){ 
-				if(Results.get(i).precision_y >= lb[4] &&
-						Results.get(i).precision_y <= ub[4]){
+			if (Include[4][Ch]){
+				if(Results.get(i).precision_x >= lb[4][Ch] &&
+						Results.get(i).precision_x <= ub[4][Ch] && 
+						Results.get(i).precision_y >= lb[4][Ch] &&
+						Results.get(i).precision_y <= ub[4][Ch]){
 
 				}else
-					Remove++;
+					remove++;
 			}
-			if (Include[3]){ 
-				if(Results.get(i).precision_z >= lb[5] &&
-						Results.get(i).precision_z <= ub[5]){
+			if (Include[5][Ch]){ 
+				if(Results.get(i).precision_z >= lb[5][Ch] &&
+						Results.get(i).precision_z <= ub[5][Ch]){
 
 				}else
-					Remove++;
-			}
-			if (Include[4]){
-				if(Results.get(i).r_square >= lb[6] &&			
-						Results.get(i).r_square <= ub[6]){
-
-				}else
-					Remove++;
-			}
-			if (Include[5]){
-				if(Results.get(i).photons >= lb[7] &&
-						Results.get(i).photons <= ub[7]){
-
-				}else
-					Remove++;				
-			}
-
-			if(Remove == 0){
+					remove++;
+			}			
+			if(remove == 0){
 				Results.get(i).include = 1; // Include particle.
 			}else {
 				Results.get(i).include = 0; // Exclude particle

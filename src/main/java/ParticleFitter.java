@@ -32,7 +32,7 @@ import ij.process.ImageProcessor;
 
 public class ParticleFitter {
 
-	public static ArrayList<Particle> Fitter(float[][] InpArray, ArrayList<int[]> Center, int Window, int Frame, double Channel, int pixelSize){				
+	public static ArrayList<Particle> Fitter(float[][] InpArray, ArrayList<int[]> Center, int Window, int Frame, int Channel, int pixelSize){				
 		//		double z0 			= 0; 													// Fitter does not support 3D fitting at this time.
 		//		double sigma_z  	= 0;													// Fitter does not support 3D fitting at this time.
 		//		double precision_z 	= 0;													// Fitter does not support 3D fitting at this time.
@@ -66,7 +66,7 @@ public class ParticleFitter {
 			};*/
 			
 			Gauss2Dfit gfit = new Gauss2Dfit(dataFit,Window);
-			Results.add(gfit.optimizeAdaptive(Frame, (int) Channel, Coord, pixelSize));
+			Results.add(gfit.optimizeAdaptive(Frame, Channel, Coord, pixelSize));
 			/*
 			Eval tdgp = new Eval(dataFit, startParameters, Window, new int[] {10000,100}); // Create fit object.
 

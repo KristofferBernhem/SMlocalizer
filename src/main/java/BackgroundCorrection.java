@@ -49,8 +49,8 @@ class BackgroundCorrection {
 	 */
 	public static int[][][][] medianFiltering(final int[] W,ImagePlus image){
 	//	ImagePlus image 			= WindowManager.getCurrentImage();  				// Aquire the selected image.
-		image.getImageStackSize();
-		int[] dim = image.getDimensions();
+		//image.getImageStackSize();
+		//int[] dim = image.getDimensions();
 	//	System.out.println("w: " + dim[0]+ " h: " + dim[1]+ " nCh: " + dim[2]+ " nSlice: " + dim[3]+" nFrames: " + dim[4]);
 
 		int nChannels 	= image.getNChannels();
@@ -60,7 +60,7 @@ class BackgroundCorrection {
 		int rows 		= image.getWidth();
 		int columns 	= image.getHeight();
 		
-		System.out.println("channels" + nChannels);
+		//System.out.println("channels" + nChannels);
 		int[][][][] outputArray = new int[rows][columns][nFrames][nChannels];
 		if (nChannels == 1){
 			float[] MeanFrame = new float[nFrames]; 		// Will include frame mean value.
