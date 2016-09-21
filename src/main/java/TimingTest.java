@@ -31,20 +31,20 @@ public class TimingTest {
 	int n = 1000;
 	long start = System.nanoTime();
 	for (int i = 0; i < n; i ++){
-		fitParameters fitThese = new fitParameters(Center,data, channel, frame, pixelsize,  windowWidth);
+		fitParameters fitThese = new fitParameters(Center,data, channel, frame, pixelsize,  windowWidth,100);
 		ParticleFitter.Fitter(fitThese);
 	}
 	long stop = System.nanoTime() - start;
 	long startLM = System.nanoTime();
 	for (int i = 0; i < n; i ++){
-		fitParameters fitThese = new fitParameters(Center,data, channel, frame, pixelsize,  windowWidth);
+		fitParameters fitThese = new fitParameters(Center,data, channel, frame, pixelsize,  windowWidth,100);
 		ParticleFitter.FitterLM(fitThese);
 	}
 	long stopLM = System.nanoTime() - startLM;
 
 	System.out.println("Adaptive " + stop/1000000 + " LM: " + stopLM/1000000 );
 	
-	fitParameters fitThese = new fitParameters(Center,data, channel, frame, pixelsize,  windowWidth);
+	fitParameters fitThese = new fitParameters(Center,data, channel, frame, pixelsize,  windowWidth,100);
 	Particle P = ParticleFitter.Fitter(fitThese);
 	System.out.println("Adaptive: " + P.x + " x " + P.y);
 	P= ParticleFitter.FitterLM(fitThese);

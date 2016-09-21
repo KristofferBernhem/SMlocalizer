@@ -36,7 +36,7 @@ public class TableIO {
 			double precision_y = tab.getValue("precision_y", i);
 			double precision_z = tab.getValue("precision_z", i);
 			double r_square = tab.getValue("r_square", i);
-			double photons = tab.getValue("photons", i);
+			int photons = (int) tab.getValue("photons", i);
 			int include = (int) tab.getValue("include", i);
 			Results.add(new Particle(x,y,z,frame,channel,sigma_x,sigma_y,sigma_z,precision_x,precision_y,precision_z,r_square,photons,include));			
 		}		

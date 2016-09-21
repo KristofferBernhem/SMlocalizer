@@ -26,7 +26,266 @@ import java.util.concurrent.Future;
 import ij.gui.Plot;
 
 // TODO: check drift correction application of correction. Appears to skip first bin!. 
+// TODO: Go through function and error check.
 public class correctDrift {
+	
+	public static void main(String[] args){ // test case.
+		Particle P = new Particle();
+		P.x = 100;
+		P.y = 100;
+		P.z = 50;		
+		P.channel = 1;
+		Particle Psecond = new Particle();
+		Psecond.x = 1000;
+		Psecond.y = 1000;
+		Psecond.z = 500;
+		Psecond.channel = 1;
+		ArrayList<Particle> A = new ArrayList<Particle>();
+		double drift = 0.20;
+		for (double i = 0; i < 2000; i++){
+			Particle P2 = new Particle();
+			P2.x = P.x - i*drift;
+			P2.y = P.y - i*drift;
+			P2.z = P.z - 2*i*drift;
+			P2.channel = 1;
+			P2.include = 1;
+			P2.frame = (int) i;
+
+			A.add(P2);
+			
+			Particle P4 = new Particle();
+			P4.x = Psecond.x - i*drift;
+			P4.y = Psecond.y - i*drift;
+			P4.z = Psecond.z - 2*i*drift;
+			P4.frame = (int) i;
+			P4.channel = 1;
+			P4.include = 1;
+			A.add(P4);
+			
+		}
+//		TableIO.Store(A);
+		
+		int[][] boundry = new int[3][10];
+		int[] nBins = new int[10];
+		int[] nParticles = new int[10];
+		int[] minParticles = new int[10];
+		for (int i = 0; i < 10;i++)
+		{
+			boundry[0][i] = 250;
+			boundry[1][i] = 250;
+			boundry[2][i] = 250;
+			nBins[i] = 10;
+			nParticles[i] = 1000;
+			minParticles[i] = 10;					
+			
+		}
+		run2(A,boundry,nBins,nParticles,minParticles,false);
+	}
+	public static void run2(ArrayList<Particle> locatedParticles ,int[][] boundry, int[] nBins, int[] nParticles, int[] minParticles,boolean GPU){
+		int[] maxDistance = {2500,2500,2500}; // everything beyond 50 nm apart after shift will not affect outcome.
+		//ArrayList<Particle> locatedParticles = TableIO.Load(); // Get current table data.		
+		ArrayList<Particle> correctedResults = new ArrayList<Particle>(); // Output arraylist, will contain all particles that fit user input requirements after drift correction.
+		if (locatedParticles.size() == 0){
+			return;
+		}
+		double Channels = locatedParticles.get(locatedParticles.size()-1).channel;
+		
+		int width = 0;
+		int height = 0;
+		int depth = 0;
+		for (int i = 0; i < locatedParticles.size(); i ++){
+			if (locatedParticles.get(i).channel>Channels){
+				Channels = locatedParticles.get(i).channel;
+			}
+			if(locatedParticles.get(i).x > width){
+				width = (int) Math.round(locatedParticles.get(i).x);
+			}
+			if(locatedParticles.get(i).y > height){
+				height = (int) Math.round(locatedParticles.get(i).y);
+			}
+			if(locatedParticles.get(i).z > depth){
+				depth = (int) Math.round(locatedParticles.get(i).z);
+			}
+		}
+		
+		int lastIndex = 0;
+		int startIndex = 0;
+		for (int Ch = 1; Ch <= Channels; Ch ++)
+		{
+			if(Ch > 1)
+				startIndex = lastIndex+1;
+			for (int i = startIndex; i <  locatedParticles.size(); i++) // locate last index of this series.
+			{
+				if (locatedParticles.get(i).channel == Ch)
+					lastIndex = i;
+				
+			} // locate index interval for this channel.
+			int processors 					= Runtime.getRuntime().availableProcessors();				// Number of processor cores on this system.
+			ExecutorService exec 			= Executors.newFixedThreadPool(processors);					// Set up parallel computing using all cores.
+			List<Callable<float[]>> tasks 	= new ArrayList<Callable<float[]>>();						// Preallocate.
+
+			boolean enoughParticles = true;
+			int binSize = Math.round((lastIndex - startIndex)/(nBins[Ch-1] + 1));
+			int bin  = 0;
+			while (bin < nBins[Ch]) // seperate out data.
+			{
+				if (enoughParticles)
+					{
+					ArrayList<Particle> A = new ArrayList<Particle>();
+					ArrayList<Particle> B = new ArrayList<Particle>();
+					for (int i = startIndex + bin*binSize; i < startIndex + (1+bin)*binSize; i++)
+					{
+						if (locatedParticles.get(i).include == 1)
+							A.add(locatedParticles.get(i));
+					}
+	
+					if (bin == nBins[Ch]-1) // last round, include final elements that might be missed due to rounding errors.
+					{
+						for (int i = startIndex + (1+bin)*binSize; i <= lastIndex; i++)
+						{
+							if (locatedParticles.get(i).include == 1)
+								B.add(locatedParticles.get(i));
+						}
+					}else
+					{
+						for (int i = startIndex + (1+bin)*binSize; i < startIndex + (2+bin)*binSize; i++)
+						{
+							if (locatedParticles.get(i).include == 1)
+								B.add(locatedParticles.get(i));
+						}
+					}
+			
+					final ArrayList<Particle> Beta = hasNeighbors(A, B, (double) maxDistance[0]);
+					final ArrayList<Particle> Alpha = hasNeighbors(Beta, A, (double) maxDistance[0]);
+					if(Alpha.size() < minParticles[Ch-1] &&
+							Beta.size() < minParticles[Ch-1]){
+						ij.IJ.log("not enough particles, no shift correction possible");
+					//	System.out.println(Alpha.size() + " in alpha and " + Beta.size() + " in beta from " + i);
+						enoughParticles = false;
+						bin = nBins[Ch-1];
+					} else if (!GPU){
+						final int[] boundryFinal = {boundry[0][Ch-1], boundry[1][Ch-1], boundry[2][Ch-1]};
+						final int[] maxDistanceFinal = maxDistance;
+						Callable<float[]> c = new Callable<float[]>() {													// Computation to be done.							
+							@Override
+							public float[] call() throws Exception {		
+								return DriftCompensation.findDrift (Alpha, Beta, boundryFinal,  maxDistanceFinal);// Actual call for each parallel process.
+							}
+						};
+						tasks.add(c);	
+					} // Parallel CPU bound.
+				}						
+				bin++;
+			} // while loop to set up correction calculations.
+/*
+ * TODO: add processing of tasks here and transfer results out.
+	 */		double[] lambdax = new double[nBins[Ch-1]];								// Holds drift estimate between all bins in x.
+			double[] lambday = new double[nBins[Ch-1]];								// Holds drift estimate between all bins in y.
+			double[] lambdaz = new double[nBins[Ch-1]];								// Holds drift estimate between all bins in y.
+			lambdax[0] = 0;																				// Drift for first bin is 0.
+			lambday[0] = 0;																				// Drift for first bin is 0.
+			lambdaz[0] = 0;																				// Drift for first bin is 0.
+			if (!GPU){
+				try {
+					List<Future<float[]>> parallelComputeSmall = exec.invokeAll(tasks);		// Execute computation.
+					float[] Corr;
+					for (int i = 1; i < parallelComputeSmall.size(); i++){							// Loop over and transfer results.
+						try {
+							Corr = parallelComputeSmall.get(i-1).get();	
+							lambdax[i] = Corr[1] + lambdax[i - 1];											// Update best guess at x shift.
+							lambday[i] = Corr[2] + lambday[i - 1];											// Update best guess at y shift.
+							lambdaz[i] = Corr[3] + lambdaz[i - 1];											// Update best guess at z shift.				
+						} catch (ExecutionException e) {
+							e.printStackTrace();
+						}
+					}
+				} catch (InterruptedException e) {
+		
+					e.printStackTrace();
+				}
+				finally {
+					exec.shutdown();	// Shut down connection to cores.
+				}	
+			} // Parallel CPU bound.
+					
+			// apply drift compensation.
+			int maxTime =locatedParticles.get(lastIndex).frame; 								// Last frame included.
+			double[][] lambda = new double[maxTime][3];													// Holds interpolated drift corrections in x and y.
+			int countx = lambda.length-1;
+			int county = lambda.length-1;
+			int countz = lambda.length-1;
+/*
+ * TODO: rewrite interpolation.
+ *//*
+			for (int j =  nBins[Ch-1]-1; j >0; j--){
+				double[] temp 			= interp(lambdax[j],lambdax[j-1],(int) binSize);
+				for (int k = 0; k < temp.length; k++){
+					lambda[countx][0] = temp[k];
+					countx--;
+				}
+				double[] temp2 			= interp(lambday[j],lambday[j-1],(int) binSize);
+				for (int k = 0; k < temp2.length; k++){
+					lambda[county][1] = temp2[k];
+					county--;
+				}
+				double[] temp3 			= interp(lambdaz[j],lambdaz[j-1],(int) binSize);
+				for (int k = 0; k < temp3.length; k++){
+					lambda[countz][2] = temp3[k];
+					countz--;
+				}
+			}
+
+//			System.out.println(lambda[lambda.length-1][0]);
+			double[] timeV = new double[lambda.length];
+			for (int i = 0; i < timeV.length;i++){
+				timeV[i] = i;
+			}		
+
+			for (int index = startIndex; index <= lastIndex; index++ ){
+
+				if(locatedParticles.get(index).channel == Ch){
+					Particle tempPart 	= new Particle();
+					tempPart.frame	 	= locatedParticles.get(index).frame;
+					tempPart.r_square 	= locatedParticles.get(index).r_square;
+					tempPart.photons 	= locatedParticles.get(index).photons;
+					tempPart.include 	= locatedParticles.get(index).include;
+					tempPart.precision_x= locatedParticles.get(index).precision_x;
+					tempPart.precision_y= locatedParticles.get(index).precision_y;
+					tempPart.precision_z= locatedParticles.get(index).precision_z;
+					tempPart.sigma_x 	= locatedParticles.get(index).sigma_x;
+					tempPart.sigma_y 	= locatedParticles.get(index).sigma_y;
+					tempPart.sigma_z 	= locatedParticles.get(index).sigma_z;
+					tempPart.channel 	= locatedParticles.get(index).channel;
+
+					tempPart.x = locatedParticles.get(index).x - lambda[(int) tempPart.frame-1][0];
+					tempPart.y = locatedParticles.get(index).y - lambda[(int) tempPart.frame-1][1];
+					tempPart.z = locatedParticles.get(index).z - lambda[(int) tempPart.frame-1][2];
+					if(tempPart.x >= 0){
+						if(tempPart.y >= 0){
+							if(tempPart.z >= 0){
+								correctedResults.add(tempPart);
+							}
+						}
+					}
+
+				}
+
+			}
+			double[] lx = new double[lambda.length];
+			double[] ly = new double[lambda.length];
+			double[] lz = new double[lambda.length];
+			for (int i 	= 0; i < lambda.length;i++){
+				lx[i] 	= lambda[i][0];
+				ly[i]	= lambda[i][1];
+				lz[i]	= lambda[i][2];
+			}
+			plot(lx,ly,timeV);
+			if (Ch == Channels){
+				TableIO.Store(correctedResults);
+			}			*/
+		}// channel loop.
+		System.out.println("Success!");
+	}
 	//	public static void run(int[] lb, int[] ub, double BinFrac, int nParticles, int minParticles, int[] stepSize){
 	public static void run(int[][] boundry, int[] nBins, int[] nParticles, int[] minParticles,boolean GPU){
 		int[] maxDistance = {2500,2500,2500}; // everything beyond 50 nm apart after shift will not affect outcome.
@@ -36,6 +295,7 @@ public class correctDrift {
 			return;
 		}
 		double Channels = locatedParticles.get(locatedParticles.size()-1).channel;
+		
 		int width = 0;
 		int height = 0;
 		int depth = 0;
@@ -58,7 +318,7 @@ public class correctDrift {
 
 			double frameBin = Math.round( 				// Bin size for drift correction based on total number of frames and user input fraction. 
 					locatedParticles.get(idx).frame * 	// Last frame that was used.
-					(double) (1.0/nBins[Ch-1]));						// User input fraction.
+					(double) (1.0/(nBins[Ch-1]-1)));						// User input fraction.
 			
 			ArrayList<Particle> filteredResults =  new ArrayList<Particle>(); // output arraylist.
 			int[] timeIndex = new int[(nBins[Ch-1])];
@@ -79,6 +339,7 @@ public class correctDrift {
 				}
 			}
 			if (count == 0){
+				System.out.println(frameBin);
 				ij.IJ.log("not enough particles, no shift correction possible");
 				return;
 			}
@@ -106,7 +367,7 @@ public class correctDrift {
 
 			boolean ToFewReached = false;
 			if (okBins == 0){ 														// If all bins were ok.
-				for (int i = 1; i < nBins[Ch-1]; i++){ 				// Loop over all bins.
+				for (int i = 1; i < nBins[Ch-1]-1; i++){ 				// Loop over all bins.
 					if(!ToFewReached){
 						ArrayList<Particle> Data1 	= new ArrayList<Particle>(); 		// Target particles.			
 						int addedFrames1 			= 0;								// Number of particles added to the bin.
@@ -130,8 +391,8 @@ public class correctDrift {
 						
 						final ArrayList<Particle> Beta = hasNeighbors(Data1, Data2, (double) maxDistance[0]);
 						final ArrayList<Particle> Alpha = hasNeighbors(Beta, Data1, (double) maxDistance[0]);
-					//	System.out.println("Alpha " + Data1.size() + " from round " + i);
-					//	System.out.println("Beta " + Data2.size() + " from round " + i);
+						System.out.println("Alpha " + Data1.size() + " from round " + i);
+						System.out.println("Beta " + Data2.size() + " from round " + i);
 						if(Alpha.size() < minParticles[Ch-1] &&
 								Beta.size() < minParticles[Ch-1]){
 							ij.IJ.log("not enough particles, no shift correction possible");
@@ -158,7 +419,7 @@ public class correctDrift {
 					} // verification of correct number of particles found.
 
 				} // loop over bins, setting up calculations.
-				if (! GPU){
+				if (!GPU){
 					try {
 						List<Future<float[]>> parallelComputeSmall = exec.invokeAll(tasks);		// Execute computation.
 						float[] Corr;
@@ -191,7 +452,7 @@ public class correctDrift {
 				int county = lambda.length-1;
 				int countz = lambda.length-1;
 
-				for (int j =  nBins[Ch-1] - 1; j >0; j--){
+				for (int j =  nBins[Ch-1]; j >0; j--){
 					double[] temp 			= interp(lambdax[j],lambdax[j-1],(int) frameBin);
 					for (int k = 0; k < temp.length; k++){
 						lambda[countx][0] = temp[k];
@@ -209,7 +470,7 @@ public class correctDrift {
 					}
 				}
 
-				System.out.println(lambda[lambda.length-1][0]);
+//				System.out.println(lambda[lambda.length-1][0]);
 				double[] timeV = new double[lambda.length];
 				for (int i = 0; i < timeV.length;i++){
 					timeV[i] = i;

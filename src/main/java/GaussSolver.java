@@ -22,10 +22,10 @@
 public class GaussSolver {
 
 	int[] data, center;
-	int width, size, maxIterations, frame, pixelSize, channel;		
+	int width, size, maxIterations, frame, pixelSize, channel, totalGain;		
 	double[] P;
 	double totalSumOfSquares, convCritera;
-	public GaussSolver(int[] data, int width, double convCriteria, int maxIterations, int[] center, int channel, int pixelSize, int frame)
+	public GaussSolver(int[] data, int width, double convCriteria, int maxIterations, int[] center, int channel, int pixelSize, int frame, int totalGain)
 	{
 
 		this.data 			= data; 			// data to be fitted.
@@ -37,6 +37,7 @@ public class GaussSolver {
 		this.pixelSize 		= pixelSize;		// pixelsize  in nm.
 		this.convCritera 	= convCriteria; 	// convergence criteria
 		this.maxIterations 	= maxIterations;	// maximal number of iterations.
+		this.totalGain		= totalGain;		// total conversion rate from input photon to image pixel intensity. Ask camera manufacturer for details on how to obtain this value.
 		double mx 			= 0; 				// moment in x (first order).
 		double my 			= 0; 				// moment in y (first order).
 		double m0 			= 0; 				// 0 order moment.
@@ -86,6 +87,7 @@ public class GaussSolver {
 				3088, 3248,  3552, 	3504,  4144,  4512, 2944  
 		};
 
+		
 		// user provided parameter input.
 		int width 			= 7;
 		int maxIterations 	= 1000;
@@ -94,14 +96,14 @@ public class GaussSolver {
 		int frame 			= 1;
 		int[] center 		= {5,5};
 		double convergence 	= 1E-8;
-
+		int gain = 100;
 		int n = 100;
 		
 		long start = System.nanoTime();
 		for (int j = 0; j < 5; j++){
 
 			for (int i = 0; i < n; i++){ 
-				GaussSolver Gsolver = new GaussSolver(testdata, width, convergence, maxIterations, center, channel, pixelSize,frame);		
+				GaussSolver Gsolver = new GaussSolver(testdata, width, convergence, maxIterations, center, channel, pixelSize,frame,gain);		
 				Gsolver.Fit();
 			}
 		}
@@ -110,7 +112,7 @@ public class GaussSolver {
 		System.out.println(stop/1000000); 
 		
 		
-		GaussSolver Gsolver = new GaussSolver(testdata, width, convergence, maxIterations, center, channel, pixelSize,frame);		
+		GaussSolver Gsolver = new GaussSolver(testdata, width, convergence, maxIterations, center, channel, pixelSize,frame,gain);		
 		Particle P = Gsolver.Fit();
 		System.out.println("Rsquare: " + P.r_square + " " + Gsolver.P[0] + " " + Gsolver.P[1] + " x "+ Gsolver.P[2]+ " " +Gsolver.P[3] + " x "+ Gsolver.P[4]+" " + Gsolver.P[5] + " x "+ Gsolver.P[6]);
 
@@ -164,8 +166,8 @@ public class GaussSolver {
 		double oldRsquare	= Rsquare;	// keep track of last main round of optimizations goodness of fit.
 		int pId 			= 0; 		// parameter id.
 		boolean optimize 	= true; 	// true whilst still optimizing parameters.
-double bestSigmaX = 0;
-double bestSigmaY = 0;
+		double bestSigmaX = 0;
+		double bestSigmaY = 0;
 		///////////////////////////////////////////////////////////////////
 		////////////////////// Optimize parameters:////////////////////////
 		///////////////////////////////////////////////////////////////////
@@ -318,10 +320,10 @@ double bestSigmaY = 0;
 		Localized.sigma_x		= pixelSize*P[3];
 		Localized.sigma_y		= pixelSize*P[4];
 		Localized.sigma_z		= pixelSize*0; // no 3D information.
-		Localized.photons		= tempRsquare;
-		Localized.precision_x 	= Localized.sigma_x/Localized.photons;
-		Localized.precision_y 	= Localized.sigma_y/Localized.photons;
-		Localized.precision_z 	= Localized.sigma_z/Localized.photons;		
+		Localized.photons		= (int) (tempRsquare/totalGain);
+		Localized.precision_x 	= Localized.sigma_x/Math.sqrt(Localized.photons);
+		Localized.precision_y 	= Localized.sigma_y/Math.sqrt(Localized.photons);
+		Localized.precision_z 	= Localized.sigma_z/Math.sqrt(Localized.photons);		
 		return Localized;
 	}	
 

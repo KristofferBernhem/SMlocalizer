@@ -30,13 +30,14 @@ public class fitParameters {
 	int frame;
 	int pixelsize;
 	int windowWidth;
-	
-	public fitParameters(int[] Center, int[] data, int channel, int frame, int pixelsize, int windowWidth){
+	int totalGain;
+	public fitParameters(int[] Center, int[] data, int channel, int frame, int pixelsize, int windowWidth, int totalGain){
 		this.Center 	= Center; 			// X and Y center coordinates.
 		this.data 		= data; 			// array of pixelvalues.
 		this.channel 	= channel;  		// channel number.
 		this.frame 		= frame;			// frame number.
 		this.pixelsize 	= pixelsize;		// pixelsize.
 		this.windowWidth = windowWidth; 	// width of extracted region.
+		this.totalGain	= totalGain; 		// total amplification from photon to pixel value in input image. Ask camera manufacturer for how to obtain this.
 	}
 }

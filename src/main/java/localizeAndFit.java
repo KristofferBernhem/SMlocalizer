@@ -215,7 +215,7 @@ public class localizeAndFit {
 	/*
 	 * New run method for multichannel settings. TODO run and bugtest.
 	 */
-	public static ArrayList<Particle> run(int[][][][] inputArray, int[] MinLevel, double[] sqDistance, int[] gWindow, int[] inputPixelSize, int[] minPosPixels, int[] photonToElectron , boolean GPU){		
+	public static ArrayList<Particle> run(int[][][][] inputArray, int[] MinLevel, double[] sqDistance, int[] gWindow, int[] inputPixelSize, int[] minPosPixels, int[] totalGain , boolean GPU){		
 
 		int nChannels 						= inputArray[0][0][0].length; 	// Number of channels.
 		int nFrames 						= inputArray[0][0].length;		// Number of frames.
@@ -244,14 +244,15 @@ public class localizeAndFit {
 					{
 						int x =  Coord[0] - Math.round((gWindow[Ch-1])/2) +  (j % gWindow[Ch-1]);
 						int y =  Coord[1] - Math.round((gWindow[Ch-1])/2) +  (j / gWindow[Ch-1]);
-						dataFit[j] = inputArray[x][y][Frame-1][Ch - 1] / photonToElectron[Ch-1];
+						dataFit[j] = inputArray[x][y][Frame-1][Ch - 1];
 					}
 					fitThese.add(new fitParameters(Coord, 
 							dataFit,
 							Ch,
 							Frame,
 							inputPixelSize[Ch-1],
-							gWindow[Ch-1]));
+							gWindow[Ch-1],
+							totalGain[Ch-1]));
 				}
 									
 			}					
@@ -398,7 +399,7 @@ public class localizeAndFit {
 	 * Generate fitParameter objects by finding local maximas seperated by sqDistance of atleast MinLevel center pixel intensity. 
 	 * Returns fitParameters for subsequent gaussian fitting.
 	 */
-	public static ArrayList<fitParameters> LocalizeEvents(ImageProcessor IP, int MinLevel, double sqDistance, int Window, int Frame, int Channel, int pixelSize, int minPosPixels, int photonToElectron){
+	public static ArrayList<fitParameters> LocalizeEvents(ImageProcessor IP, int MinLevel, double sqDistance, int Window, int Frame, int Channel, int pixelSize, int minPosPixels, int totalGain){
 		float[][] DataArray 		= IP.getFloatArray();												// Array representing the frame.
 		ArrayList<int[]> Center 	= LocalMaxima.FindMaxima(DataArray, Window, MinLevel, sqDistance,minPosPixels); 	// Get possibly relevant center coordinates.
 		ArrayList<fitParameters> fitThese = new ArrayList<fitParameters>();
@@ -410,14 +411,15 @@ public class localizeAndFit {
 			{
 				int x =  Coord[0] - Math.round((Window)/2) +  (j % Window);
 				int y =  Coord[1] - Math.round((Window)/2) +  (j / Window);
-				dataFit[j] = (int) IP.getf(x,y) / photonToElectron;
+				dataFit[j] = (int) IP.getf(x,y);
 			}
 			fitThese.add(new fitParameters(Coord, 
 					dataFit,
 					Channel,
 					Frame,
 					pixelSize,
-					Window));
+					Window,
+					totalGain));
 		}
 		return fitThese;																					// Results contain all particles located.
 	} // end LocalizeEvents

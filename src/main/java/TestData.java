@@ -45,7 +45,7 @@ public class TestData {
 						1 + 5*(10*r.nextDouble()), 	// precision y
 						0,
 						0.1 + 0.1*r.nextDouble(),  	// chi square.
-						100 + 500*r.nextDouble(),	// photons.			 						
+						100 + 500*r.nextInt(),	// photons.			 						
 						1));
 				count++;
 				if (count == total){

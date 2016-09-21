@@ -44,15 +44,7 @@ class BackgroundCorrection {
 	 *	Scientific Reports 4, Article number: 3854 (2014)	
 	 */
 
-	/*
-	 * new version.
-	 */
 	public static int[][][][] medianFiltering(final int[] W,ImagePlus image){
-	//	ImagePlus image 			= WindowManager.getCurrentImage();  				// Aquire the selected image.
-		//image.getImageStackSize();
-		//int[] dim = image.getDimensions();
-	//	System.out.println("w: " + dim[0]+ " h: " + dim[1]+ " nCh: " + dim[2]+ " nSlice: " + dim[3]+" nFrames: " + dim[4]);
-
 		int nChannels 	= image.getNChannels();
 		int nFrames 	= image.getNFrames();
 		if (nFrames == 1)
@@ -84,7 +76,7 @@ class BackgroundCorrection {
 				}	
 				
 			}
-
+			image.close();
 	
 			List<Callable<float[]>> tasks = new ArrayList<Callable<float[]>>();	// Preallocate.			
 			for (int i = 0; i < rows; i++){
@@ -118,8 +110,6 @@ class BackgroundCorrection {
 							for (int k = 0; k < data.length; k++){																
 								if (data[k]<0)
 									data[k] = 0;
-								//CorrectedImage.setSlice(k+1);
-								//IP = CorrectedImage.getProcessor();
 								outputArray[xi][yi][k][0]  -= (int)(data[k]*MeanFrame[k]);
 								if (outputArray[xi][yi][k][0] < 0){
 									outputArray[xi][yi][k][0] = 0;
@@ -414,10 +404,11 @@ class BackgroundCorrection {
 	 * float precision version.
 	 */
 	public static float[] runningMedian(float[] Vector, int W){
-		// Preallocate variables.
+		// Preallocate variables.		
+		// TODO add second W long float vector to hold current entries (to replace lack of pointers) so that medianVector does not need to be created. 
 		float[] medianVector = new float[Vector.length]; // Output vector.
-		float[] V = new float[W+1];  // Vector for calculating running median.		
-		for(int i = 0; i <= W; i++){ // Transfer first 2xW+1 entries.
+		float[] V = new float[2*W+1];  // Vector for calculating running median.		
+		for(int i = 0; i < W; i++){ // Transfer first 2xW+1 entries.
 			V[i] = Vector[i];
 		}
 
@@ -425,32 +416,37 @@ class BackgroundCorrection {
 		int high = W-1;			   
 		quickSort(V, low, high); // Quicksort first W entries.		
 
-		for (int i = 0; i < W; i ++){ // First section, without access to data on left.//
+		for (int i = 0; i < 2*W+1; i ++){ // First section, without access to data on left.//
 			if (i % 2 == 0){
 				medianVector[i] = (float) ((V[W/2+i/2]+V[W/2+i/2+1])/2.0);
-
+			//	Vector[i] = (float) ((V[W/2+i/2]+V[W/2+i/2+1])/2.0);
 			}else{
 				medianVector[i] = V[W/2+i];
+		//		Vector[i] = V[W/2+i];
 			}		
 			V = sortInsert(V,Vector[i+W+1]); // Add new entry.
 
 		}				
 
-		for(int i = W; i < Vector.length-W-1; i++){ // Main loop, middle section.			
-			medianVector[i] = V[W]; // Pull out median value.					
+		for(int i = 2*W+1; i < Vector.length-W-1; i++){ // Main loop, middle section.			
+			medianVector[i] = V[W]; // Pull out median value.
+		//	Vector[i] = V[W]; // Pull out median value.
 			V = removeEntry(V,Vector[i-W]);
 			V = sortInsert(V,Vector[i+W+1]);		
 		}
 
 		for (int i = Vector.length-W-1; i < Vector.length; i++){ // Last section, without access to data on right.			
 			if (i % 2 == 0){				
-				medianVector[i] = V[W-(i-Vector.length + W +1)/2];
+				medianVector[i] = V[W-(i-Vector.length + W + 1)/2];
+				//Vector[i] = V[W-(i-Vector.length + W + 1)/2];
 			}else{
 				medianVector[i] = (float) ((V[W-(i-Vector.length + W)/2]+V[W-(i-Vector.length + W)/2-1])/2.0);
+			//	Vector[i] = (float) ((V[W-(i-Vector.length + W)/2]+V[W-(i-Vector.length + W)/2-1])/2.0);
 			}
 			V = removeEntry(V,Vector[i-W]); // Remove items from V once per loop, ending with a W+1 large vector.	
 		}		
 		return medianVector;
+	//	return Vector;
 	}
 
 	public static float[] removeEntry(float[] inVector, float entry) { // Return vector with element "entry" missing.

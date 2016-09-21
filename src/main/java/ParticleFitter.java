@@ -199,7 +199,8 @@ public class ParticleFitter {
 				fitThese.Center, 		// center coordianates for center pixel.
 				fitThese.channel, 		// channel id.
 				fitThese.pixelsize,		// pixelsize in nm.
-				fitThese.frame);		// frame number.
+				fitThese.frame,			// frame number.
+				fitThese.totalGain);	// total gain, camera specific parameter giving relation between input photon to output pixel intensity.
 		Particle Results 	= Gsolver.Fit();	// do fit.
 		return Results;
 	}

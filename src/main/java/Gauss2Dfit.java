@@ -461,10 +461,10 @@ public class Gauss2Dfit {
 		Localized.sigma_x		= pixelSize*P[3];
 		Localized.sigma_y		= pixelSize*P[4];
 		Localized.sigma_z		= pixelSize*sigma_z;
-		Localized.photons		= Eval_photons(P);
-		Localized.precision_x 	= Localized.sigma_x/Localized.photons;
-		Localized.precision_y 	= Localized.sigma_y/Localized.photons;
-		Localized.precision_z 	= Localized.sigma_z/Localized.photons;		
+		Localized.photons		= (int) Eval_photons(P);
+		Localized.precision_x 	= Localized.sigma_x/Math.sqrt(Localized.photons);
+		Localized.precision_y 	= Localized.sigma_y/Math.sqrt(Localized.photons);
+		Localized.precision_z 	= Localized.sigma_z/Math.sqrt(Localized.photons);		
 
 		return Localized;
 	}
