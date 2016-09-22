@@ -70,8 +70,8 @@ public class GPUtest {
 	    cuMemFree(device_vectorB); 
 	    cuMemFree(device_vectorOutput);
 	    
-	    
-		/*
+	/*    
+		
 	short[] width           = {50};                                       // filter window width.
     int[] depth           = {1000};                                    // z.
     short framewidth      = 64;
