@@ -75,30 +75,11 @@ public class LocalMaxima {
 					found[Check]++;
 
 				}
-
-				/*
-				if (Math.abs(Start[0] - Compare[0]) < Dist &&
-						Math.abs(Start[1] - Compare[1]) < Dist){
-					int[] entry = {Check};
-					Ignore.add(entry);
-
-				}*/
 			}
 			if (found[i] == 0){				
 				int[] coord = Start;
 				CheckedArray.add(coord);
 			}
-			/*}
-		if( !Ignore.isEmpty()){
-			for (int j = Ignore.size()-1; j >= 0; j--){
-				int[] entry = Ignore.get(j);
-				Array.remove(entry[0]);
-			}
-			Array.remove(i);
-			Ignore.clear();
-		}*/
-
-
 		}
 		return CheckedArray; 
 	}

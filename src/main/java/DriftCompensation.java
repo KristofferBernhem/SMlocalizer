@@ -100,8 +100,8 @@ public class DriftCompensation {
 		float[] tempShift 	= {0,0,0,0};					// {correlation, x, y, z}, temporary array, holds value within a given iteration.
 		float[] lastShift 	= {0,0,0,0};					// {correlation, x, y, z}, temporary array, holds values from last round.
 		float[] stepSize 	= { (float)(maxShift[0]/5.0),	// x.
-								(float)(maxShift[1]/5.0),	// y.
-								(float)(maxShift[2]/5.0)};	// z.
+								(float)(maxShift[0]/5.0),	// y.
+								(float)(maxShift[1]/5.0)};	// z.
 		boolean threeD 		= false;						// if we deal with 3d data.
 		int index 			= 0;							// index of particles.
 		while (index < Alpha.size())

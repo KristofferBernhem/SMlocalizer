@@ -19,14 +19,12 @@ import java.util.ArrayList;
 public class cleanParticleList {
 
 	public static void run(double[][] lb, double[][] ub, boolean[][] Include){
-		// Pull in user data.
-		/*	            Include[0][id] = doPhotonCountChList.getItem(id).isSelected();
-            Include[1][id] = doSigmaXYChList.getItem(id).isSelected();
-            Include[2][id] = doSigmaZChList.getItem(id).isSelected();
-            Include[3][id] = doRsquareChList.getItem(id).isSelected();
-            Include[4][id] = doPrecisionXYChList.getItem(id).isSelected();
-            Include[5][id] = doPrecisionZChList.getItem(id).isSelected();
-
+		/*	Include[0][id] = photon limits.
+            Include[1][id] = sigma xy limits.
+            Include[2][id] = sigma z limits.
+            Include[3][id] = r square limits.
+            Include[4][id] = precision xy limits.
+            Include[5][id] = precision z limits.
 		 */
 		ArrayList<Particle> Results = TableIO.Load();
 		int Ch = 0;

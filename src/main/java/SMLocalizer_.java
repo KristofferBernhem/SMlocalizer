@@ -25,38 +25,22 @@ public class SMLocalizer_ implements PlugIn {
 	public static void main(final String... args) throws Exception {
 		// create the ImageJ application context with all available services
 
-		//final ImageJ ij = new ImageJ();
-		//ij.ui().showUI();
 		final ij.ImageJ ij = new ij.ImageJ();
 		ij.setVisible(true);
-//		createTestDataSet.stack(64, 64, 1000, 1, 1); // get dataset.
-	//	double[] drift = {0.1,0.1};
-	//	createTestDataSet.ParticleList(6400, 6400, 10000, 500, drift);
+
 		Class<?> clazz = SMLocalizer_.class;
 		String url = clazz.getResource("/" + clazz.getName().replace('.', '/') + ".class").toString();
 		String pluginsDir = url.substring("file:".length(), url.length() - clazz.getName().length() - ".class".length());
 		System.setProperty("plugins.dir", pluginsDir);				
 		IJ.runPlugIn(clazz.getName(), "");
-		
-		/*
-		 * how to store variables:
-		 */
-	/*	Prefs.set(("SMlocalizer.newTestValue." + 1), 21);
-		Prefs.set(("SMlocalizer.newTestValue." + 3), 93);		
-		int MyNr = (int) Prefs.get("SMlocalizer.newTestValue.1", 0);
-		int MyNr2 = (int) Prefs.get("SMlocalizer.newTestValue.3", 0);
-		System.out.println(MyNr + " x " + MyNr2);
-		*/
-	}
+		}
 
 
 	@Override
 	public void run(String arg0) {
 		String args[] = null;
 		SMLocalizerGUI.main(args); //call GUI.
-		
-		
-		
+	
 	}
 
 }

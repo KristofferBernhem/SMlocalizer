@@ -19,6 +19,9 @@
  * Solver sensitive to to small reduction in stepsize. Reasonably stable with regards to guess of parameters.
  */
 
+/*
+ * TODO: change loop to GPU version.
+ */
 public class GaussSolver {
 
 	int[] data, center;
@@ -205,12 +208,7 @@ public class GaussSolver {
 		ThetaA = 1/(2*P[3]*P[3]);
 		ThetaC = 1/(2*P[4]*P[4]);		
 		ThetaB = 0; 
-		/*ThetaA = Math.cos(P[5]) * Math.cos(P[5]) / (2 * P[3]*P[3]) + 
-				Math.sin(P[5]) * Math.sin(P[5]) / (2 * P[4]*P[4]);
-		ThetaB = -Math.sin(2 * P[5]) / (4 * P[3]*P[3]) + 
-				Math.sin(2 * P[5]) / (4 * P[4]*P[4]);
-		ThetaC = Math.sin(P[5]) * Math.sin(P[5]) / (2 * P[3]*P[3]) + 
-				Math.cos(P[5]) * Math.cos(P[5]) / (2 * P[4]*P[4]);*/
+
 		Rsquare 	= 1;			// start value.
 		tempRsquare = 0;
 		residual = 0;

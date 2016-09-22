@@ -78,8 +78,6 @@ public class TranslateIm {
 		int columns 	= inputData[0].length;
 		ImagePlus IM = ij.IJ.createHyperStack("", rows, columns, nChannels, 1, nFrames, 16);
 		ImageStack imStack = new ImageStack(rows, columns);
-		//image.setDimensions(nChannels, 1, nFrames);		
-		
 			for (int frame = 1; frame <= nFrames; frame++){
 				for (int ch = 1; ch <= nChannels; ch++){
 			

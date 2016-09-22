@@ -30,38 +30,32 @@ public class generateImage {
 		height = Math.round(height/pixelSize[0] + 1);
 		
 		ShortProcessor IP  = new ShortProcessor(width,height);					
-		/*	for (int x = 0; x < width; x++){
-				for (int y = 0; y < height; y++){
-					IP.putPixel(x, y, 0); // Set all data points to 0 as start.
-				}
-				
-			}*/
-			IP.set(0); // set all pixel values to 0 as default.
-			
-			for (int i = 0; i < ParticleList.size(); i++){
-				if (ParticleList.get(i).include == 1){
-					int x = (int) Math.round(ParticleList.get(i).x/pixelSize[0]);
-					int y = (int) Math.round(ParticleList.get(i).y/pixelSize[0]);						
-					IP.putPixel(x, y, (IP.get(x, y) + 1));
-				}
-			}	
-			if(gSmoothing)
-			{
-				IP.multiply(1000);
-				IP.blurGaussian(2);
+		IP.set(0); // set all pixel values to 0 as default.
+		
+		for (int i = 0; i < ParticleList.size(); i++){
+			if (ParticleList.get(i).include == 1){
+				int x = (int) Math.round(ParticleList.get(i).x/pixelSize[0]);
+				int y = (int) Math.round(ParticleList.get(i).y/pixelSize[0]);						
+				IP.putPixel(x, y, (IP.get(x, y) + 1));
 			}
-			ImagePlus Image = new ImagePlus(Imtitle,IP);
-			Image.setImage(Image);
-			Calibration cal = new Calibration(Image);
-			cal.pixelHeight = pixelSize[0];
-			cal.pixelWidth 	= pixelSize[0];
-			cal.setXUnit("nm");
-			cal.setYUnit("nm");
-			ImageStatistics ImStats = Image.getStatistics();
-			Image.setDisplayRange(ImStats.min, ImStats.max);
-			Image.updateAndDraw();
-			Image.setCalibration(cal);
-			Image.show(); 														// Make visible
+		}	
+		if(gSmoothing)
+		{
+			IP.multiply(1000);
+			IP.blurGaussian(2);
+		}
+		ImagePlus Image = new ImagePlus(Imtitle,IP);
+		Image.setImage(Image);
+		Calibration cal = new Calibration(Image);
+		cal.pixelHeight = pixelSize[0];
+		cal.pixelWidth 	= pixelSize[0];
+		cal.setXUnit("nm");
+		cal.setYUnit("nm");
+		ImageStatistics ImStats = Image.getStatistics();
+		Image.setDisplayRange(ImStats.min, ImStats.max);
+		Image.updateAndDraw();
+		Image.setCalibration(cal);
+		Image.show(); 														// Make visible
 	} // if single channel
 	else{
 		boolean samePixelSize = true;

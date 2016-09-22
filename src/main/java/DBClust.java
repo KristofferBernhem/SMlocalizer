@@ -26,6 +26,7 @@ import ij.plugin.filter.Analyzer;
 
 
 /*
+ * TODO:
  * Change to update table with cluster information.
  * Create version for 3D data.
  * Create channel loop.
