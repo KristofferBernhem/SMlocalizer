@@ -22,35 +22,5 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/kristoffer.bernhem/Documents/javalibraries/JCuda-All-0.8.0RC-bin-windows-x86_64/jcublas-0.8.0RC.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="SMlocalizer/lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/kristoffer.bernhem/Documents/javalibraries/JCuda-All-0.8.0RC-bin-windows-x86_64/jcuda-0.8.0RC.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="SMlocalizer/lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/kristoffer.bernhem/Documents/javalibraries/JCuda-All-0.8.0RC-bin-windows-x86_64/jcufft-0.8.0RC.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="SMlocalizer/lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/kristoffer.bernhem/Documents/javalibraries/JCuda-All-0.8.0RC-bin-windows-x86_64/jcurand-0.8.0RC.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="SMlocalizer/lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/kristoffer.bernhem/Documents/javalibraries/JCuda-All-0.8.0RC-bin-windows-x86_64/jcusolver-0.8.0RC.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="SMlocalizer/lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/kristoffer.bernhem/Documents/javalibraries/JCuda-All-0.8.0RC-bin-windows-x86_64/jcusparse-0.8.0RC.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="SMlocalizer/lib"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
