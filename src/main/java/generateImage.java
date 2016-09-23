@@ -76,7 +76,8 @@ public class generateImage {
 				}
 				width = Math.round(width/pixelSize[ch-1]) + 1;
 				height = Math.round(height/pixelSize[ch-1] + 1);
-			
+			}
+			for (int ch = 1; ch <= ParticleList.get(ParticleList.size()-1).channel; ch ++){
 				ShortProcessor IP  = new ShortProcessor(width,height);					
 	
 				IP.set(0); // set all pixel values to 0 as default.
