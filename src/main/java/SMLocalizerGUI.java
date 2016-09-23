@@ -21,7 +21,6 @@ import ij.WindowManager;
 /* PROJECT IMPLEMENTATIONS PRIOR TO RELEASE
 * TODO: Store preference action not implemented.
 * TODO: GPU implementation.
-* TODO: Cleanup of CPU bound code.
 * TODO: Implement variable pixel size image rendering.
 * TODO: Add tooltips to GUI.
  */

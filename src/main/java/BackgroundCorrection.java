@@ -14,6 +14,16 @@
  *  You should have received a copy of the GNU General Public License
  *  along with SMLocalizer.  If not, see <http://www.gnu.org/licenses/>.
  */
+import static jcuda.driver.JCudaDriver.cuCtxCreate;
+import static jcuda.driver.JCudaDriver.cuCtxSynchronize;
+import static jcuda.driver.JCudaDriver.cuDeviceGet;
+import static jcuda.driver.JCudaDriver.cuInit;
+import static jcuda.driver.JCudaDriver.cuLaunchKernel;
+import static jcuda.driver.JCudaDriver.cuMemFree;
+import static jcuda.driver.JCudaDriver.cuMemcpyDtoH;
+import static jcuda.driver.JCudaDriver.cuModuleGetFunction;
+import static jcuda.driver.JCudaDriver.cuModuleLoad;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -24,12 +34,19 @@ import java.util.concurrent.Future;
 import ij.ImagePlus;
 import ij.process.ImageProcessor;
 import ij.process.ImageStatistics;
+import jcuda.Pointer;
+import jcuda.Sizeof;
+import jcuda.driver.CUcontext;
+import jcuda.driver.CUdevice;
+import jcuda.driver.CUdeviceptr;
+import jcuda.driver.CUfunction;
+import jcuda.driver.CUmodule;
 
 
 /* This class contains all relevant algorithms for background corrections. Handles 2D and 3D stacks with single slice per frame.
  * V 2.0 2016-07-18 Kristoffer Bernhem, kristoffer.bernhem@gmail.com
  */
-
+// TODO: Change to return image. 
 class BackgroundCorrection {
 
 	/* Main function for background filtering using the time median based method described in:
@@ -98,9 +115,11 @@ class BackgroundCorrection {
 			} // end single channel.
 			else // multichannel
 			{
+				float[] MeanFrame = new float[nFrames]; 		// Will include frame mean value.
+				float[] timeVector = new float[nFrames];
 			for (int Ch = 1; Ch <= nChannels; Ch++) // Loop over all channels.
 				{
-					float[] MeanFrame = new float[nFrames]; 		// Will include frame mean value.
+					
 					ImageProcessor IP = image.getProcessor();		// get image processor for the stack.
 					for (int Frame = 1; Frame < nFrames+1; Frame++)
 					{			
@@ -126,8 +145,7 @@ class BackgroundCorrection {
 					for (int i = 0; i < rows; i++)
 					{
 						for (int j = 0; j < columns; j++)
-						{							// Loop over and setup computation.
-							float[] timeVector = new float[nFrames];
+						{							// Loop over and setup computation.							
 							for (int Frame = 0; Frame < nFrames; Frame++)
 							{										
 								timeVector[Frame] = outputArray[i][j][Frame][Ch-1]/MeanFrame[Frame]; // Normalize voxels;							
@@ -297,7 +315,116 @@ class BackgroundCorrection {
 		}else // end parallel.
 			if(selectedModel == 2) // GPU.
 		{
-			
+				// TODO look over kernel for errors. Change median from int to float. 
+				 // Initialize the driver and create a context for the first device.
+			    cuInit(0);
+			    CUdevice device = new CUdevice();
+			    cuDeviceGet(device, 0);
+			    CUcontext context = new CUcontext();
+			    cuCtxCreate(context, 0, device);
+			 // Load the PTX that contains the kernel.
+			    CUmodule module = new CUmodule();
+			    cuModuleLoad(module, "CUDAFYSOURCETEMP.ptx");
+			 // Obtain a handle to the kernel function.
+			    CUfunction function = new CUfunction();
+			    cuModuleGetFunction(function, module, "medianKernel");
+			    if (nChannels == 1) // single channel data.
+			    {
+			    	int[] MeanFrame = new int[nFrames]; 		// Will include frame mean value.
+					ImageProcessor IP = image.getProcessor();
+					for (int Frame = 1; Frame <= nFrames; Frame++)
+					{			
+						image.setSlice(Frame);
+						IP = image.getProcessor();
+						
+						ImageStatistics Stat 	= IP.getStatistics();
+						MeanFrame[Frame-1] 		= (int) Stat.mean;
+						System.out.println(MeanFrame[Frame-1]);
+						if (Stat.mean == 0)
+						{
+							MeanFrame[Frame-1] = 1;
+						}
+						
+						for (int i = 0; i < rows; i++)
+						{
+							for (int j = 0; j < columns; j++)
+							{
+								outputArray[i][j][Frame-1][0] = IP.getPixel(i, j); // populate.
+							} // y loop.
+						} // x loop.		
+					} // frame loop for mean calculations.
+
+					// create data vector.
+					int[] timeVector = new int[nFrames * rows * columns];
+					int idx = 0;
+					for (int i = 0; i < rows; i++){
+						for (int j = 0; j < columns; j++){							// Loop over and setup computation.
+							
+							for (int Frame = 0; Frame < nFrames; Frame++){										
+								timeVector[idx] = outputArray[i][j][Frame][0]/MeanFrame[Frame]; // Normalize voxels;
+								idx ++;
+							}
+						}
+					}
+					
+					CUdeviceptr device_window 		= CUDA.allocateOnDevice((2 * W[0] + 1) * rows * columns); // swap vector.
+				    CUdeviceptr device_test_Data 	= CUDA.copyToDevice(timeVector);
+				    CUdeviceptr device_meanVector 	= CUDA.copyToDevice(MeanFrame);
+				    CUdeviceptr deviceOutput 		= CUDA.allocateOnDevice(timeVector.length);
+
+				    int filteWindowLength 		= (2 * W[0] + 1) * rows * columns;
+				    int testDataLength 			= timeVector.length;
+				    int meanVectorLength 		= MeanFrame.length;
+				    Pointer kernelParameters 	= Pointer.to(   
+				    	Pointer.to(new int[]{W[0]}),
+				        Pointer.to(device_window),
+				        Pointer.to(new int[]{filteWindowLength}),
+				        Pointer.to(new int[]{nFrames}),
+				        Pointer.to(device_test_Data),
+				        Pointer.to(new int[]{testDataLength}),
+				        Pointer.to(device_meanVector),
+				        Pointer.to(new int[]{meanVectorLength}),
+				        Pointer.to(deviceOutput),
+				        Pointer.to(new int[]{testDataLength})
+				    );
+				    int blockSizeX 	= 1;
+				    int blockSizeY 	= 1;				   
+				    int gridSizeX 	= columns;
+				    int gridSizeY 	= rows;
+				    cuLaunchKernel(function,
+				        gridSizeX,  gridSizeY, 1, 	// Grid dimension
+				        blockSizeX, blockSizeY, 1,  // Block dimension
+				        0, null,               		// Shared memory size and stream
+				        kernelParameters, null 		// Kernel- and extra parameters
+				    );
+				    cuCtxSynchronize();
+				     
+				    // Pull data from device.
+				    int hostOutput[] = new int[timeVector.length];
+				    cuMemcpyDtoH(Pointer.to(hostOutput), deviceOutput,
+				    		timeVector.length * Sizeof.INT);
+
+				   // Free up memory allocation on device, housekeeping.
+				    cuMemFree(device_window);   
+				    cuMemFree(device_test_Data);    
+				    cuMemFree(deviceOutput);
+					// return data.
+					idx = 0;
+					for (int i = 0; i < rows; i++){
+						for (int j = 0; j < columns; j++){							// Loop over and setup computation.
+							
+							for (int Frame = 0; Frame < nFrames; Frame++){										
+								outputArray[i][j][Frame][0] = hostOutput[idx]; // Normalize voxels;
+								idx ++;
+							}
+						}
+					}
+			    } // single channel end.
+			    else // if multichannel data.
+			    {
+			    	
+			    } // multichannel end.
+			    
 		} // end GPU.
 		return outputArray;
 		
