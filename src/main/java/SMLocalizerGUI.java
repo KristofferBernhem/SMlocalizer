@@ -16,6 +16,9 @@
  *  along with SMLocalizer.  If not, see <http://www.gnu.org/licenses/>.
  */
 import java.util.ArrayList;
+
+import javax.swing.JOptionPane;
+
 import ij.WindowManager;
 
 /* PROJECT IMPLEMENTATIONS PRIOR TO RELEASE
@@ -3865,6 +3868,217 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         }
         return ub;
     }
+    
+    
+    
+    
+    public void setParameters()
+    // TODO: add store of variables at end of function.
+    {
+    	updateList(channelId.getSelectedIndex()-1);  // verify that current channel have ok set fields:
+    	// pop list of current settings, first entry = add new.
+		String storeName = JOptionPane.showInputDialog("Settings name?");
+		int idx = 0;
+		int entries = 0;
+		try 
+		{
+			entries = (int) ij.Prefs.get("SMLocalizer.settingsEntries",0);
+		}finally
+		{
+			
+		}
+		if (entries > 0) // if no entries has been entered.
+		{
+			for (int i = 1; i <= entries; i++)
+			{
+				if(storeName.equals(ij.Prefs.get("SMLocalizer.settingsName"+i, ""))) // check if the name is in current use, if so, overwrite.
+					idx = i;
+			}
+		}
+		if (idx == 0)
+		{
+			idx = entries + 1;
+			ij.Prefs.set("SMLocalizer.settingsEntries", idx);
+		}
+		ij.Prefs.set("SMLocalizer.settingsName"+idx, storeName); // add storename
+		
+		/*
+		 * TODO: add non channel seperate variables.
+		 */
+		
+		for (int Ch = 0; Ch < 10; Ch++){
+		    /*
+		    *   Basic input settings
+		    */		    		                           		   
+		    // pixel size
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".pixelSize."+Ch, 
+					pixelSizeChList.getItem(Ch).getText());
+		    // total gain
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".totaGain."+Ch, 
+					totalGainChList.getItem(Ch).getText());
+		    // minimum pixel over background
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".minPixelOverBackground."+Ch, 
+					minPixelOverBackgroundChList.getItem(Ch).getText());
+		    // minimal signal
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".minimalSignal."+Ch, 
+					minimalSignalChList.getItem(Ch).getText());
+		    // gauss window size
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".gaussWindow."+Ch, 
+					gaussWindowChList.getItem(Ch).getText());
+		    // gauss window size
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".windowWidth."+Ch, 
+					windowWidthChList.getItem(Ch).getText());
+		    // min pixel distance
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".minPixelDist."+Ch, 
+					minPixelDistChList.getItem(Ch).getText());		    
+
+
+		    /*
+		    *       Cluster analysis settings
+		    */
+		    // min pixel distance
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".doClusterAnalysis."+Ch, 
+					doClusterAnalysisChList.getItem(Ch).getText());
+		    // min pixel distance
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".epsilon."+Ch, 
+					epsilonChList.getItem(Ch).getText());
+		    // min pixel distance
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".minPtsCluster."+Ch, 
+					minPtsClusterChList.getItem(Ch).getText());		    
+		    
+
+		    /*
+		    *       Render image settings.
+		    */
+		    // min pixel distance
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".outputPixelSize."+Ch, 
+					outputPixelSizeChList.getItem(Ch).getText());		    
+		    
+		    /*
+		     * store parameter settings:
+		     */		    		   					
+		    // photon count
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".doPotonCount."+Ch, 
+					doPhotonCountChList.getItem(Ch).getText());
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".minPotonCount."+Ch, 
+					minPhotonCountChList.getItem(Ch).getText());
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".maxPotonCount."+Ch, 
+					maxPhotonCountChList.getItem(Ch).getText());
+		    
+		    // Sigma XY        		    
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".doSigmaXY."+Ch, 
+					doSigmaXYChList.getItem(Ch).getText());
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".minSigmaXY."+Ch, 
+					minSigmaXYChList.getItem(Ch).getText());
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".maxSigmaXY."+Ch, 
+					maxSigmaXYChList.getItem(Ch).getText());
+		    
+		    // Sigma Z        		    
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".doSigmaZ."+Ch, 
+					doSigmaZChList.getItem(Ch).getText());
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".minSigmaZ."+Ch, 
+					minSigmaZChList.getItem(Ch).getText());
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".maxSigmaZ."+Ch, 
+					maxSigmaZChList.getItem(Ch).getText());
+		    
+		    // Rsquare        
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".doRsquare."+Ch, 
+					doRsquareChList.getItem(Ch).getText());
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".minRsquare."+Ch, 
+					minRsquareChList.getItem(Ch).getText());
+			ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".maxRsquare."+Ch, 
+					maxRsquareChList.getItem(Ch).getText());
+
+			// Precision XY
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".doPrecisionXY."+Ch, 
+					doPrecisionXYChList.getItem(Ch).getText());
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".minPrecisionXY."+Ch, 
+					minPrecisionXYChList.getItem(Ch).getText());
+			ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".maxPrecisionXY."+Ch, 
+					maxPrecisionXYChList.getItem(Ch).getText());
+			
+			// Precision Z
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".doPrecisionZ."+Ch, 
+					doPrecisionZChList.getItem(Ch).getText());
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".minPrecisionZ."+Ch, 
+					minPrecisionZChList.getItem(Ch).getText());
+			ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".maxPrecisionZ."+Ch, 
+					maxPrecisionZChList.getItem(Ch).getText());
+			/*
+		    *   Drift and channel correct settings
+		    */
+		    
+		    // drift correction bins.
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".driftCorrBinLow."+Ch, 
+					driftCorrBinLowCountChList.getItem(Ch).getText());
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".driftCorrBinHigh."+Ch, 
+					driftCorrBinHighCountChList.getItem(Ch).getText());
+		    
+		    // drift correction shift
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".driftCorrShiftXY."+Ch, 
+					driftCorrShiftXYChList.getItem(Ch).getText());
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".driftCorrShiftZ."+Ch, 
+					driftCorrShiftZChList.getItem(Ch).getText());
+		    
+		    // number of drift bins
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".driftCorrBin."+Ch, 
+					numberOfBinsDriftCorrChList.getItem(Ch).getText());
+		    
+		    // channel align bin low
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".chAlignBinLow."+Ch, 
+					chAlignBinLowCountChList.getItem(Ch).getText());
+		    // channel align bin high
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".chAlignBinHigh."+Ch, 
+					chAlignBinHighCountChList.getItem(Ch).getText());
+		    
+		    // channel align shift
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".chAlignShiftXY."+Ch, 
+					chAlignShiftXYChList.getItem(Ch).getText());
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".chAlignShiftZ."+Ch, 
+					chAlignShiftZChList.getItem(Ch).getText());		    
+		}
+		
+    }
+    
+    
     /**
      * @param args the command line arguments
      */

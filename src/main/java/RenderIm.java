@@ -35,7 +35,7 @@ public class RenderIm {
 			}		
 			Width 	= Width + 10; //inputPixelSize[0]; 	// pad with one pixel.
 			Height 	= Height + 10; //inputPixelSize[0]; 	// pad with one pixel.
-			
+			System.out.println(Width + " and " + Height);
 			generateImage.create("RenderedResults",correctedResults, Width, Height, DesiredPixelSize, gSmoothing);		
 		}
 		catch (Exception e){
