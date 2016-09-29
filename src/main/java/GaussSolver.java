@@ -66,12 +66,12 @@ public class GaussSolver {
 		m0 /=  size;									// Mean value.
 		for (int i = 0; i < data.length; i++){			// Calculate total sum of squares for R^2 calculations.
 			this.totalSumOfSquares += (data[i] -m0)*(data[i] -m0);
-		}
+		}		
 
 	} // constructor.
 
 	public static void main(String[] args) { // testcase
-		/*int[] testdata ={ // slize 45 SingleBead2
+		int[] testdata ={ // slize 45 SingleBead2
 				3888, 3984,  6192,   4192, 3664,  3472, 3136,
 				6384, 8192,  12368, 12720, 6032,  5360, 3408, 
 				6192, 13760, 21536, 20528, 9744,  6192, 2896,
@@ -79,8 +79,8 @@ public class GaussSolver {
 				4816, 11312, 15376, 14816, 8016,  4512, 3360,
 				2944, 4688,  7168,   5648, 5824,  3456, 2912,
 				2784, 3168,  4512,   4192, 3472,  2768, 2912
-		};*/
-		int[] testdata = {
+		};
+		/*int[] testdata = {
 				3296, 4544,  5600,  5536,  5248,  4448, 3328,
 				3760, 5344,  8240,  9680, 10592,  7056, 3328,
 				3744, 6672, 14256, 24224, 20256, 11136, 5248,
@@ -89,7 +89,7 @@ public class GaussSolver {
 				2912, 3872,  4992,  6560,  6448,  4896, 3392,
 				3088, 3248,  3552, 	3504,  4144,  4512, 2944  
 		};
-
+*/
 		
 		// user provided parameter input.
 		int width 			= 7;
@@ -100,10 +100,10 @@ public class GaussSolver {
 		int[] center 		= {5,5};
 		double convergence 	= 1E-8;
 		int gain = 100;
-		int n = 100;
+		int n = 1;
 		
 		long start = System.nanoTime();
-		for (int j = 0; j < 5; j++){
+		for (int j = 0; j < 1; j++){
 
 			for (int i = 0; i < n; i++){ 
 				GaussSolver Gsolver = new GaussSolver(testdata, width, convergence, maxIterations, center, channel, pixelSize,frame,gain);		
@@ -321,7 +321,8 @@ public class GaussSolver {
 		Localized.photons		= (int) (tempRsquare/totalGain);
 		Localized.precision_x 	= Localized.sigma_x/Math.sqrt(Localized.photons);
 		Localized.precision_y 	= Localized.sigma_y/Math.sqrt(Localized.photons);
-		Localized.precision_z 	= Localized.sigma_z/Math.sqrt(Localized.photons);		
+		Localized.precision_z 	= Localized.sigma_z/Math.sqrt(Localized.photons);	
+		
 		return Localized;
 	}	
 

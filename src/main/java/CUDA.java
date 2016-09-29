@@ -31,5 +31,10 @@ public class CUDA {
 	    cuMemAlloc(deviceData, hostDatasize * Sizeof.INT);	  
 	    return deviceData;
 	}
-
+	static CUdeviceptr allocateOnDevice(short hostDatasize)
+	{
+	    CUdeviceptr deviceData = new CUdeviceptr();
+	    cuMemAlloc(deviceData, hostDatasize * Sizeof.SHORT);	  
+	    return deviceData;
+	}
 }

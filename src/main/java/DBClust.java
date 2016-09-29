@@ -34,8 +34,8 @@ import ij.plugin.filter.Analyzer;
 public class DBClust {
 	public static void Ident(double[] eps, int[] minPts, int[] pixelSize, boolean[] doCluster){
 		ArrayList<Particle> InpParticle = TableIO.Load(); // Get current table data.
-		int Width 				= 0;
-		int Height 				= 0;
+	//	int Width 				= 0;
+	//	int Height 				= 0;
 		ij.measure.ResultsTable tab = Analyzer.getResultsTable();
 		tab.reset();		
 		for (int Ch = 1; Ch <=InpParticle.get(InpParticle.size()-1).channel; Ch++){
@@ -56,7 +56,7 @@ public class DBClust {
 				int ClustIdx 			= 1;
 				int[] IndexList 		= new int[InpParticle.size()];
 	
-				int Pad					= 100;
+			//	int Pad					= 100;
 				for(Cluster<DoublePoint> c: cluster){
 					for (int j = 0; j < c.getPoints().size(); j++){
 						DoublePoint p = c.getPoints().get(j);
@@ -66,19 +66,19 @@ public class DBClust {
 							if(tempParticle.x == Coord[0] && tempParticle.y == Coord[1]){
 								IndexList[i] = ClustIdx; 
 							}
-							if (Math.round(tempParticle.x) > Width){
+			/*				if (Math.round(tempParticle.x) > Width){
 								Width = (int) Math.round(tempParticle.x) + Pad;
 							}
 							if (Math.round(tempParticle.y) > Height){
 								Height = (int) Math.round(tempParticle.y) + Pad;
 							}
-		
+		*/
 						}				
 					}
 					ClustIdx++;
 				}  
-				Width = Math.round(Width/pixelSize[Ch-1]) + 1;
-				Height = Math.round(Height/pixelSize[Ch-1] + 1);
+		//	Width = Math.round(Width/pixelSize[Ch-1]) + 1;
+		//		Height = Math.round(Height/pixelSize[Ch-1] + 1);
 				
 				for (int i = 0; i < InpParticle.size(); i++){
 					
@@ -105,7 +105,7 @@ public class DBClust {
 		} // Channel loop.
 		tab.show("Results");
 		
-		RenderIm.run(pixelSize,false);
+		RenderIm.run(doCluster,pixelSize,false);
 		
 	}
 	public static int getIdx(double x, double y, int width, int height){

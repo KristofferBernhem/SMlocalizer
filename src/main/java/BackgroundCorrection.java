@@ -63,7 +63,8 @@ class BackgroundCorrection {
 		int rows 		= image.getWidth();
 		int columns 	= image.getHeight();		
 		int[][][][] outputArray = new int[rows][columns][nFrames][nChannels];
-		if (selectedModel == 0) // sequential.
+		System.out.println(selectedModel);
+		if (selectedModel == 1) // sequential.
 		{
 			if (nChannels == 1) // single channel.
 			{
@@ -165,7 +166,7 @@ class BackgroundCorrection {
 				} // channel loop.
 			} // end multichannel.			
 		}else // end sequential. 
-			if(selectedModel == 1) // parallel.
+			if(selectedModel == 0) // parallel.
 		{
 				if (nChannels == 1){
 					float[] MeanFrame = new float[nFrames]; 		// Will include frame mean value.
@@ -324,7 +325,7 @@ class BackgroundCorrection {
 			    cuCtxCreate(context, 0, device);
 			 // Load the PTX that contains the kernel.
 			    CUmodule module = new CUmodule();
-			    cuModuleLoad(module, "CUDAFYSOURCETEMP.ptx");
+			    cuModuleLoad(module, "medianFilter.ptx");
 			 // Obtain a handle to the kernel function.
 			    CUfunction function = new CUfunction();
 			    cuModuleGetFunction(function, module, "medianKernel");

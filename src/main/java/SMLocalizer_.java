@@ -15,26 +15,27 @@
  *  along with SMLocalizer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import javax.swing.JOptionPane;
+
 
 import ij.IJ;
 import ij.plugin.PlugIn;
-import ij.Prefs;;
 
 public class SMLocalizer_ implements PlugIn {
 
 	public static void main(final String... args) throws Exception {
 		// create the ImageJ application context with all available services
 
+		
+		
 		final ij.ImageJ ij = new ij.ImageJ();
-		ij.setVisible(true);
-		String storeName = JOptionPane.showInputDialog("give me input!");
-				/*
+		ij.setVisible(true);			
+
+		
 		Class<?> clazz = SMLocalizer_.class;
 		String url = clazz.getResource("/" + clazz.getName().replace('.', '/') + ".class").toString();
 		String pluginsDir = url.substring("file:".length(), url.length() - clazz.getName().length() - ".class".length());
 		System.setProperty("plugins.dir", pluginsDir);				
-		IJ.runPlugIn(clazz.getName(), "");*/
+		IJ.runPlugIn(clazz.getName(), "");
 		}
 
 

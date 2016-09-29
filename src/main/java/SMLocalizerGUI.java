@@ -17,7 +17,11 @@
  */
 import java.util.ArrayList;
 
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import ij.WindowManager;
 
@@ -37,76 +41,95 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 
     public SMLocalizerGUI() {
         initComponents();
-        // SET values here from pref file:
-        //inputPixelSize.setText("50");
         
-        for (int id = 0; id < 10; id++){ // update list of variables for each ch.
-            /*
-            *   Basic input settings
-            */
-            pixelSizeChList.getItem(id).setText("100");
-            totalGainChList.getItem(id).setText("100");                        
-            minPixelOverBackgroundChList.getItem(id).setText("12");
-            minimalSignalChList.getItem(id).setText("2000");
-            gaussWindowChList.getItem(id).setText("1");
-            windowWidthChList.getItem(id).setText("101");
-            minPixelDistChList.getItem(id).setText("7");
-            /*
-            *       Cluster analysis settings
-            */
-            doClusterAnalysisChList.getItem(id).setText("0");
-            epsilonChList.getItem(id).setText("10");
-            minPtsClusterChList.getItem(id).setText("5");
-            
-            /*
-            *       Render image settings.
-            */
-            outputPixelSizeChList.getItem(id).setText("5");
-            
-            /*
-            *   Drift and channel correct settings
-            */
-            driftCorrBinLowCountChList.getItem(id).setText("100");
-            driftCorrBinHighCountChList.getItem(id).setText("1000");
-            driftCorrShiftXYChList.getItem(id).setText("250");
-            driftCorrShiftZChList.getItem(id).setText("250");
-            numberOfBinsDriftCorrChList.getItem(id).setText("50");
-            chAlignBinLowCountChList.getItem(id).setText("100");
-            chAlignBinHighCountChList.getItem(id).setText("1000");
-            chAlignShiftXYChList.getItem(id).setText("250");
-            chAlignShiftZChList.getItem(id).setText("250");
-            
-            /*
-            *   Parameter settings
-            */
-            //Photon count
-            doPhotonCountChList.getItem(id).setText("0");
-            minPhotonCountChList.getItem(id).setText("100");
-            maxPhotonCountChList.getItem(id).setText("1000");
-            // Sigma XY        
-            doSigmaXYChList.getItem(id).setText("1");       
-            minSigmaXYChList.getItem(id).setText("100");
-            maxSigmaXYChList.getItem(id).setText("200");  
-            // Sigma Z        
-            doSigmaZChList.getItem(id).setText("0");       
-            minSigmaZChList.getItem(id).setText("100");
-            maxSigmaZChList.getItem(id).setText("300");              
-            // Rsquare        
-            doRsquareChList.getItem(id).setText("1");       
-            minRsquareChList.getItem(id).setText("0.9");
-            maxRsquareChList.getItem(id).setText("1.0"); 
-            // Precision XY
-            doPrecisionXYChList.getItem(id).setText("1");       
-            minPrecisionXYChList.getItem(id).setText("5");
-            maxPrecisionXYChList.getItem(id).setText("50"); 
-            // Precision Z
-            doPrecisionZChList.getItem(id).setText("0");       
-            minPrecisionZChList.getItem(id).setText("5");
-            maxPrecisionZChList.getItem(id).setText("75"); 
+        
+        /*try{
+        	loadParameters(ij.Prefs.get("SMLocalizer.CurrentSetting", "")); // current.
+        }catch (NumberFormatException e)
+        { */       	
+	        for (int id = 0; id < 10; id++){ // update list of variables for each ch.
+	            /*
+	            *   Basic input settings
+	            */
+	            pixelSizeChList.getItem(id).setText("100");
+	            totalGainChList.getItem(id).setText("100");                        
+	            minPixelOverBackgroundChList.getItem(id).setText("12");
+	            minimalSignalChList.getItem(id).setText("2000");
+	            gaussWindowChList.getItem(id).setText("1");
+	            windowWidthChList.getItem(id).setText("101");
+	            minPixelDistChList.getItem(id).setText("7");
+	            /*
+	            *       Cluster analysis settings
+	            */
+	            doClusterAnalysisChList.getItem(id).setText("0");
+	            epsilonChList.getItem(id).setText("10");
+	            minPtsClusterChList.getItem(id).setText("5");
+	            
+	            /*
+	            *       Render image settings.
+	            */
+	            doRenderImageChList.getItem(id).setText("1");
+	            outputPixelSizeChList.getItem(id).setText("5");
+	            
+	            /*
+	            *   Drift and channel correct settings
+	            */
+	            driftCorrBinLowCountChList.getItem(id).setText("100");
+	            driftCorrBinHighCountChList.getItem(id).setText("1000");
+	            driftCorrShiftXYChList.getItem(id).setText("250");
+	            driftCorrShiftZChList.getItem(id).setText("250");
+	            numberOfBinsDriftCorrChList.getItem(id).setText("50");
+	            chAlignBinLowCountChList.getItem(id).setText("100");
+	            chAlignBinHighCountChList.getItem(id).setText("1000");
+	            chAlignShiftXYChList.getItem(id).setText("250");
+	            chAlignShiftZChList.getItem(id).setText("250");
+	            
+	            /*
+	            *   Parameter settings
+	            */
+	            //Photon count
+	            doPhotonCountChList.getItem(id).setText("0");
+	            minPhotonCountChList.getItem(id).setText("100");
+	            maxPhotonCountChList.getItem(id).setText("1000");
+	            // Sigma XY        
+	            doSigmaXYChList.getItem(id).setText("1");       
+	            minSigmaXYChList.getItem(id).setText("100");
+	            maxSigmaXYChList.getItem(id).setText("200");  
+	            // Sigma Z        
+	            doSigmaZChList.getItem(id).setText("0");       
+	            minSigmaZChList.getItem(id).setText("100");
+	            maxSigmaZChList.getItem(id).setText("300");              
+	            // Rsquare        
+	            doRsquareChList.getItem(id).setText("1");       
+	            minRsquareChList.getItem(id).setText("0.9");
+	            maxRsquareChList.getItem(id).setText("1.0"); 
+	            // Precision XY
+	            doPrecisionXYChList.getItem(id).setText("1");       
+	            minPrecisionXYChList.getItem(id).setText("5");
+	            maxPrecisionXYChList.getItem(id).setText("50"); 
+	            // Precision Z
+	            doPrecisionZChList.getItem(id).setText("0");       
+	            minPrecisionZChList.getItem(id).setText("5");
+	            maxPrecisionZChList.getItem(id).setText("75"); 
+	            // Frame
+	            doFrameChList.getItem(id).setText("0");
+	            minFrameChList.getItem(id).setText("1");
+	            maxFrameChList.getItem(id).setText("100000");
+	         }
+	        
+	        int id = 0; // set current ch to 1.
+	        updateVisible(id); // update fields that user can see.
+	        /*String name = "default";
+
+			ij.Prefs.set("SMLocalizer.settingsEntries", 1);
+
+			ij.Prefs.set("SMLocalizer.settingsName"+1, name); // add storename
+			
+	        setParameters(name);
+        } finally{
+        	
         }
-        
-        int id = 0; // set current ch to 1.
-        updateVisible(id); // update fields that user can see.
+*/
     }
 
     /**
@@ -114,8 +137,8 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
      * WARNING: Do NOT modify this code. The content of this method is always
      * regenerated by the Form Editor.
      */
-    //@SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
+   
+ // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
     private void initComponents() {
 
         pixelSizeChList = new javax.swing.JMenu();
@@ -537,6 +560,50 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         chAlignShiftZData9 = new javax.swing.JMenuItem();
         chAlignShiftZData10 = new javax.swing.JMenuItem();
         buttonGroup2 = new javax.swing.ButtonGroup();
+        doFrameChList = new javax.swing.JMenu();
+        doFrameData1 = new javax.swing.JMenuItem();
+        doFrameData2 = new javax.swing.JMenuItem();
+        doFrameData3 = new javax.swing.JMenuItem();
+        doFrameData4 = new javax.swing.JMenuItem();
+        doFrameData5 = new javax.swing.JMenuItem();
+        doFrameData6 = new javax.swing.JMenuItem();
+        doFrameData7 = new javax.swing.JMenuItem();
+        doFrameData8 = new javax.swing.JMenuItem();
+        doFrameData9 = new javax.swing.JMenuItem();
+        doFrameData10 = new javax.swing.JMenuItem();
+        minFrameChList = new javax.swing.JMenu();
+        minFrameData1 = new javax.swing.JMenuItem();
+        minFrameData2 = new javax.swing.JMenuItem();
+        minFrameData3 = new javax.swing.JMenuItem();
+        minFrameData4 = new javax.swing.JMenuItem();
+        minFrameData5 = new javax.swing.JMenuItem();
+        minFrameData6 = new javax.swing.JMenuItem();
+        minFrameData7 = new javax.swing.JMenuItem();
+        minFrameData8 = new javax.swing.JMenuItem();
+        minFrameData9 = new javax.swing.JMenuItem();
+        minFrameData10 = new javax.swing.JMenuItem();
+        maxFrameChList = new javax.swing.JMenu();
+        maxFrameData1 = new javax.swing.JMenuItem();
+        maxFrameData2 = new javax.swing.JMenuItem();
+        maxFrameData3 = new javax.swing.JMenuItem();
+        maxFrameData4 = new javax.swing.JMenuItem();
+        maxFrameData5 = new javax.swing.JMenuItem();
+        maxFrameData6 = new javax.swing.JMenuItem();
+        maxFrameData7 = new javax.swing.JMenuItem();
+        maxFrameData8 = new javax.swing.JMenuItem();
+        maxFrameData9 = new javax.swing.JMenuItem();
+        maxFrameData10 = new javax.swing.JMenuItem();
+        doRenderImageChList = new javax.swing.JMenu();
+        doRenderImageData1 = new javax.swing.JMenuItem();
+        doRenderImageData2 = new javax.swing.JMenuItem();
+        doRenderImageData3 = new javax.swing.JMenuItem();
+        doRenderImageData4 = new javax.swing.JMenuItem();
+        doRenderImageData5 = new javax.swing.JMenuItem();
+        doRenderImageData6 = new javax.swing.JMenuItem();
+        doRenderImageData7 = new javax.swing.JMenuItem();
+        doRenderImageData8 = new javax.swing.JMenuItem();
+        doRenderImageData9 = new javax.swing.JMenuItem();
+        doRenderImageData10 = new javax.swing.JMenuItem();
         Header = new javax.swing.JLabel();
         BasicInp = new javax.swing.JPanel();
         basicInput = new javax.swing.JLabel();
@@ -580,6 +647,9 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         resetParameterRange = new javax.swing.JButton();
         maxLabel3 = new javax.swing.JLabel();
         minLabel3 = new javax.swing.JLabel();
+        doFrame = new javax.swing.JCheckBox();
+        minFrame = new javax.swing.JTextField();
+        maxFrame = new javax.swing.JTextField();
         Analysis = new javax.swing.JPanel();
         doClusterAnalysis = new javax.swing.JCheckBox();
         epsilonLabel = new javax.swing.JLabel();
@@ -1896,7 +1966,135 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         chAlignShiftZData10.setText("jMenuItem2");
         chAlignShiftZChList.add(chAlignShiftZData10);
 
-     //   setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        doFrameChList.setText("jMenu1");
+
+        doFrameData1.setText("jMenuItem1");
+        doFrameChList.add(doFrameData1);
+
+        doFrameData2.setText("jMenuItem1");
+        doFrameChList.add(doFrameData2);
+
+        doFrameData3.setText("jMenuItem1");
+        doFrameChList.add(doFrameData3);
+
+        doFrameData4.setText("jMenuItem1");
+        doFrameChList.add(doFrameData4);
+
+        doFrameData5.setText("jMenuItem1");
+        doFrameChList.add(doFrameData5);
+
+        doFrameData6.setText("jMenuItem1");
+        doFrameChList.add(doFrameData6);
+
+        doFrameData7.setText("jMenuItem1");
+        doFrameChList.add(doFrameData7);
+
+        doFrameData8.setText("jMenuItem1");
+        doFrameChList.add(doFrameData8);
+
+        doFrameData9.setText("jMenuItem1");
+        doFrameChList.add(doFrameData9);
+
+        doFrameData10.setText("jMenuItem1");
+        doFrameChList.add(doFrameData10);
+
+        minFrameChList.setText("jMenu1");
+
+        minFrameData1.setText("jMenuItem1");
+        minFrameChList.add(minFrameData1);
+
+        minFrameData2.setText("jMenuItem1");
+        minFrameChList.add(minFrameData2);
+
+        minFrameData3.setText("jMenuItem1");
+        minFrameChList.add(minFrameData3);
+
+        minFrameData4.setText("jMenuItem1");
+        minFrameChList.add(minFrameData4);
+
+        minFrameData5.setText("jMenuItem1");
+        minFrameChList.add(minFrameData5);
+
+        minFrameData6.setText("jMenuItem1");
+        minFrameChList.add(minFrameData6);
+
+        minFrameData7.setText("jMenuItem1");
+        minFrameChList.add(minFrameData7);
+
+        minFrameData8.setText("jMenuItem1");
+        minFrameChList.add(minFrameData8);
+
+        minFrameData9.setText("jMenuItem1");
+        minFrameChList.add(minFrameData9);
+
+        minFrameData10.setText("jMenuItem1");
+        minFrameChList.add(minFrameData10);
+
+        maxFrameChList.setText("jMenu1");
+
+        maxFrameData1.setText("jMenuItem1");
+        maxFrameChList.add(maxFrameData1);
+
+        maxFrameData2.setText("jMenuItem1");
+        maxFrameChList.add(maxFrameData2);
+
+        maxFrameData3.setText("jMenuItem1");
+        maxFrameChList.add(maxFrameData3);
+
+        maxFrameData4.setText("jMenuItem1");
+        maxFrameChList.add(maxFrameData4);
+
+        maxFrameData5.setText("jMenuItem1");
+        maxFrameChList.add(maxFrameData5);
+
+        maxFrameData6.setText("jMenuItem1");
+        maxFrameChList.add(maxFrameData6);
+
+        maxFrameData7.setText("jMenuItem1");
+        maxFrameChList.add(maxFrameData7);
+
+        maxFrameData8.setText("jMenuItem1");
+        maxFrameChList.add(maxFrameData8);
+
+        maxFrameData9.setText("jMenuItem1");
+        maxFrameChList.add(maxFrameData9);
+
+        maxFrameData10.setText("jMenuItem1");
+        maxFrameChList.add(maxFrameData10);
+
+        doRenderImageChList.setText("jMenu1");
+
+        doRenderImageData1.setText("jMenuItem1");
+        doRenderImageChList.add(doRenderImageData1);
+
+        doRenderImageData2.setText("jMenuItem1");
+        doRenderImageChList.add(doRenderImageData2);
+
+        doRenderImageData3.setText("jMenuItem1");
+        doRenderImageChList.add(doRenderImageData3);
+
+        doRenderImageData4.setText("jMenuItem1");
+        doRenderImageChList.add(doRenderImageData4);
+
+        doRenderImageData5.setText("jMenuItem1");
+        doRenderImageChList.add(doRenderImageData5);
+
+        doRenderImageData6.setText("jMenuItem1");
+        doRenderImageChList.add(doRenderImageData6);
+
+        doRenderImageData7.setText("jMenuItem1");
+        doRenderImageChList.add(doRenderImageData7);
+
+        doRenderImageData8.setText("jMenuItem1");
+        doRenderImageChList.add(doRenderImageData8);
+
+        doRenderImageData9.setText("jMenuItem1");
+        doRenderImageChList.add(doRenderImageData9);
+
+        doRenderImageData10.setText("jMenuItem1");
+        doRenderImageChList.add(doRenderImageData10);
+
+       
         setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
 
         Header.setFont(new java.awt.Font("Times New Roman", 3, 24)); // NOI18N
@@ -2205,15 +2403,31 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         minLabel3.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
         minLabel3.setText("min");
 
+        doFrame.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+        doFrame.setText("Frame");
+        doFrame.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                doFrameActionPerformed(evt);
+            }
+        });
+
+        minFrame.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+        minFrame.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        minFrame.setText("1");
+        minFrame.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                minFrameActionPerformed(evt);
+            }
+        });
+
+        maxFrame.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+        maxFrame.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        maxFrame.setText("100000");
+
         javax.swing.GroupLayout ParameterRangeLayout = new javax.swing.GroupLayout(ParameterRange);
         ParameterRange.setLayout(ParameterRangeLayout);
         ParameterRangeLayout.setHorizontalGroup(
             ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ParameterRangeLayout.createSequentialGroup()
-                .addComponent(cleanTable)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(resetParameterRange, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(48, 48, 48))
             .addGroup(ParameterRangeLayout.createSequentialGroup()
                 .addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(doSigmaZ)
@@ -2222,10 +2436,8 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
                     .addComponent(doRsquare)
                     .addComponent(doPrecisionXY)
                     .addComponent(doPrecisionZ)
-                    .addGroup(ParameterRangeLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(ParameterLabel)))
-                .addGap(45, 45, 45)
+                    .addComponent(doFrame))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(minPhotonCount, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(minSigmaXY, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -2233,17 +2445,29 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
                     .addComponent(minRsquare, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(minPrecisionXY, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(minPrecisionZ, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(minFrame, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(minLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(maxSigmaXY)
-                    .addComponent(maxSigmaZ, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(maxRsquare, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(maxPrecisionXY, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(maxFrame, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(maxPrecisionZ, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(maxLabel3)
-                    .addComponent(maxPhotonCount, javax.swing.GroupLayout.Alignment.LEADING))
+                    .addComponent(maxPrecisionXY, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(maxRsquare, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(maxSigmaZ, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(maxSigmaXY, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(maxPhotonCount, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
+            .addGroup(ParameterRangeLayout.createSequentialGroup()
+                .addComponent(cleanTable)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(resetParameterRange, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(48, 48, 48))
+            .addGroup(ParameterRangeLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(ParameterLabel)
+                .addGap(111, 111, 111)
+                .addComponent(maxLabel3)
+                .addContainerGap(26, Short.MAX_VALUE))
         );
         ParameterRangeLayout.setVerticalGroup(
             ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2283,7 +2507,12 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
                     .addComponent(minPrecisionZ, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(maxPrecisionZ, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(doPrecisionZ))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(minFrame, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(maxFrame, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(doFrame))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cleanTable)
                     .addComponent(resetParameterRange))
@@ -2382,6 +2611,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         numberOfBinsLabel.setText("Number of bins");
 
         doDriftCorrect.setSelected(true);
+    
 
         driftCorrect.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
         driftCorrect.setText("Drift correct");
@@ -2390,6 +2620,8 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
                 driftCorrectActionPerformed(evt);
             }
         });
+
+      
 
         alignChannels.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
         alignChannels.setText("Align channels");
@@ -2552,7 +2784,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
                                 .addComponent(doChannelAlign)
                                 .addGap(18, 18, 18)
                                 .addComponent(alignChannels)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 2, Short.MAX_VALUE)))
                 .addContainerGap())
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
@@ -2634,9 +2866,19 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 
         loadSettings.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
         loadSettings.setText("Load settings");
+        loadSettings.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loadSettingsActionPerformed(evt);
+            }
+        });
 
         storeSettings.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
         storeSettings.setText("Store settings");
+        storeSettings.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                storeSettingsActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -2684,7 +2926,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         outputPixelSize.setText("5");
 
         doGaussianSmoothing.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-        doGaussianSmoothing.setText("Gaussian smoothing");
+        doGaussianSmoothing.setText("Gaussian smoothing");           
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -2767,7 +3009,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
                     .addComponent(sequentialComputation))
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
-                .addGap(0, 8, Short.MAX_VALUE)
+                .addGap(0, 6, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(BasicInp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -2796,23 +3038,22 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
                     .addComponent(channelId, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(GPUcomputation))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(BasicInp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ParameterRange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(ParameterRange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(BasicInp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(Analysis, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(Analysis, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
-    }// </editor-fold>                        
+    }// </editor-fold>                           
 
     private void minimalSignalActionPerformed(java.awt.event.ActionEvent evt) {                                              
         // TODO add your handling code here:
@@ -2832,7 +3073,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
     }                                           
 
     private void ProcessActionPerformed(java.awt.event.ActionEvent evt) {                                        
-        /*
+      /*
         * Take user settings and run through all analysis steps selected. 
         */
        
@@ -2893,10 +3134,9 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         if (doClusterAnalysis)
         	DBClust.Ident(epsilon, minPts,desiredPixelSize,doCluster); // change call to include no loop but checks for number of channels within DBClust.	
 
-        if(doRenderImage.isSelected())
-        {                       	
-            RenderIm.run(desiredPixelSize,doGaussianSmoothing.isSelected()); // Not 3D yet, how to implement? Need to find out how multi channel images are organized for multi channel functions.
-        }
+                              	
+        RenderIm.run(getDoRender(),desiredPixelSize,doGaussianSmoothing.isSelected()); // Not 3D yet, how to implement? Need to find out how multi channel images are organized for multi channel functions.
+       
     }                                       
 
     private void doClusterAnalysisActionPerformed(java.awt.event.ActionEvent evt) {                                                  
@@ -2904,7 +3144,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
     }                                                 
 
     private void clusterAnalysisActionPerformed(java.awt.event.ActionEvent evt) {                                                
-    	updateList(channelId.getSelectedIndex()-1);
+    	    	updateList(channelId.getSelectedIndex()-1);
         int[] desiredPixelSize = getOutputPixelSize();
         boolean[] doCluster = getDoClusterAnalysis();
         double[] epsilon     = getEpsilon();
@@ -2946,8 +3186,23 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         int[] minParticles = getChAlignBinLowCount();
         int[] maxParticles = getChAlignBinHighCount();
         correctDrift.ChannelAlign(boundry, maxParticles, minParticles, selectedModel); // drift correct all channels.
-    }                                             
+    }                                            
 
+ /*   private void alignChannelsActionPerformed(java.awt.event.ActionEvent evt) {                                              
+          updateList(channelId.getSelectedIndex()-1);
+        int selectedModel = 5;
+        if (parallelComputation.isSelected()) // linear computation.
+        	selectedModel = 0;
+        else if (GPUcomputation.isSelected()) // parallell computation.
+        	selectedModel = 2;
+        else if (sequentialComputation.isSelected()) // GPU accelerated computation.
+        	selectedModel = 1;
+        int[][] boundry = getChAlignShift();
+        int[] minParticles = getChAlignBinLowCount();
+        int[] maxParticles = getChAlignBinHighCount();
+        correctDrift.ChannelAlign(boundry, maxParticles, minParticles, selectedModel); // drift correct all channels.
+    }                                             
+*/
     private void chAlignBinHighCountActionPerformed(java.awt.event.ActionEvent evt) {                                                    
 
     }                                                   
@@ -3048,15 +3303,16 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
     }                                               
 
     private void renderImageActionPerformed(java.awt.event.ActionEvent evt) {                                            
-            	updateList(channelId.getSelectedIndex()-1);
+        updateList(channelId.getSelectedIndex()-1);        
         int[] desiredPixelSize = getOutputPixelSize();        
         boolean[][] include = IncludeParameters();
         double[][] lb = lbParameters();
         double[][] ub = ubParameters();        
         cleanParticleList.run(lb,ub,include);
         
-        RenderIm.run(desiredPixelSize,doGaussianSmoothing.isSelected()); // Not 3D yet, how to implement? Need to find out how multi channel images are organized for multi channel functions.
-    }                                           
+        RenderIm.run(getDoRender(),desiredPixelSize,doGaussianSmoothing.isSelected()); // Not 3D yet, how to implement? Need to find out how multi channel images are organized for multi channel functions.
+    }            
+    
 
     private void correctBackgroundActionPerformed(java.awt.event.ActionEvent evt) {                                                  
         updateList(channelId.getSelectedIndex()-1);          
@@ -3088,8 +3344,13 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 	   int[] signalStrength = getMinSignal();
 	   double[] minDistance = getMinDistance();        
 	   int[][][][] corrImStack = TranslateIm.ReadIm();
+	   long time = System.nanoTime();
 	   ArrayList<Particle> Results = localizeAndFit.run(corrImStack, signalStrength, minDistance, gWindow, pixelSize,minPixelOverBkgrnd,totalGain,selectedModel);  //locate and fit all particles.
+	   time = System.nanoTime() - time;
+	   time = (long) (time / 1E6);
+	   System.out.println(time + " ms");
 	   TableIO.Store(Results);
+	   
     }                                            
 
     private void cleanTableActionPerformed(java.awt.event.ActionEvent evt) {                                           
@@ -3102,21 +3363,105 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
     }                                          
 
     private void driftCorrShiftZActionPerformed(java.awt.event.ActionEvent evt) {                                                
-
+        // TODO add your handling code here:
     }                                               
 
     private void chAlignShiftZActionPerformed(java.awt.event.ActionEvent evt) {                                              
-
+        // TODO add your handling code here:
     }                                             
 
     private void driftCorrShiftXYActionPerformed(java.awt.event.ActionEvent evt) {                                                 
-
+        // TODO add your handling code here:
     }                                                
+
+    private void minFrameActionPerformed(java.awt.event.ActionEvent evt) {                                         
+        // TODO add your handling code here:
+    }                                        
+
+    private void doFrameActionPerformed(java.awt.event.ActionEvent evt) {                                        
+        // TODO add your handling code here:
+    }                                
+    private void storeSettingsActionPerformed(java.awt.event.ActionEvent evt) {      
+    	JPanel panel = new JPanel();
+        panel.add(new JLabel("Please make a selection:"));
+        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
+        int entries = 0;
+		try 
+		{
+			entries = (int) ij.Prefs.get("SMLocalizer.settingsEntries",0);
+		}finally
+		{
+			
+		}		
+		String[] storeName = new String[entries+1];
+		storeName[0] = "new file";
+		model.addElement(storeName[0] );
+		for (int id = 1; id <= entries; id++){
+			storeName[id] = ij.Prefs.get("SMLocalizer.settingsName"+id, "");
+			model.addElement(storeName[id] );
+		}
+		
+        JComboBox<String> comboBox = new JComboBox<String>(model);
+        panel.add(comboBox);
+
+        int result = JOptionPane.showConfirmDialog(null, panel, "Settings", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+        switch (result) {
+            case JOptionPane.OK_OPTION:
+            {
+            	
+            	String loadName = storeName[comboBox.getSelectedIndex()];
+            	if(comboBox.getSelectedIndex() == 0) // new name
+            	{
+            		loadName = JOptionPane.showInputDialog("Settings name?");
+            		ij.Prefs.set("SMLocalizer.settingsEntries",entries+1); // adding a new entry
+            		ij.Prefs.set("SMLocalizer.settingsName"+(entries+1), loadName);
+            	}
+            	
+            	setParameters(loadName);
+            }             
+        
+        }
+            	
+    }                                             
+
+    private void loadSettingsActionPerformed(java.awt.event.ActionEvent evt) {
+    	JPanel panel = new JPanel();
+        panel.add(new JLabel("Please make a selection:"));
+        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
+        int entries = 0;
+		try 
+		{
+			entries = (int) ij.Prefs.get("SMLocalizer.settingsEntries",0);
+		}finally
+		{
+			
+		}		
+		String[] storeName = new String[entries];
+		for (int id = 1; id <= entries; id++){
+			storeName[id-1] = ij.Prefs.get("SMLocalizer.settingsName"+id, "");
+			model.addElement(storeName[id-1] );
+		}
+		
+        JComboBox<String> comboBox = new JComboBox<String>(model);
+        panel.add(comboBox);
+
+        int result = JOptionPane.showConfirmDialog(null, panel, "Settings", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+        switch (result) {
+            case JOptionPane.OK_OPTION:
+            {
+            	loadParameters(storeName[comboBox.getSelectedIndex()]);
+            }             
+        
+        }
+        
+        
+        
+    } 
     
     /*
     *   stores current id among the parameters.
     */
-     private void updateList(int id)
+      private void updateList(int id)
     {    	
         checkUserInp(id); // verify that user has input correct values.
         /*
@@ -3140,7 +3485,13 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         minPtsClusterChList.getItem(id).setText(minPtsCluster.getText());
         /*
         *       Render image settings.
-        */        
+        */ 
+        
+        if (renderImage.isEnabled())
+        	doRenderImageChList.getItem(id).setText("1");
+        else
+        	doRenderImageChList.getItem(id).setText("0");
+        
         outputPixelSizeChList.getItem(id).setText(outputPixelSize.getText());
         /*
         *       Drift and channel correction settings.
@@ -3198,7 +3549,15 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         else
             doPrecisionZChList.getItem(id).setText("0");
         minPrecisionZChList.getItem(id).setText(minPrecisionZ.getText());
-        maxPrecisionZChList.getItem(id).setText(maxPrecisionZ.getText());         
+        maxPrecisionZChList.getItem(id).setText(maxPrecisionZ.getText());
+        
+        // Frame
+        if (doFrame.isSelected())
+        	doFrameChList.getItem(id).setText("1");
+        else
+        	doFrameChList.getItem(id).setText("0");
+        minFrameChList.getItem(id).setText(minFrame.getText());
+        maxFrameChList.getItem(id).setText(maxFrame.getText());       
     }
     
     /*
@@ -3229,7 +3588,11 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         /*
         *       Render image settings.
         */
-        
+        if (doRenderImageChList.getItem(id).getText().equals("1"))
+        	renderImage.setEnabled(true);
+        else
+        	renderImage.setEnabled(false);
+                
         outputPixelSize.setText(outputPixelSizeChList.getItem(id).getText());
         
         /*
@@ -3289,7 +3652,14 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
          else
              doPrecisionZ.setSelected(false);
         minPrecisionZ.setText(minPrecisionZChList.getItem(id).getText());
-        maxPrecisionZ.setText(maxPrecisionZChList.getItem(id).getText());                            
+        maxPrecisionZ.setText(maxPrecisionZChList.getItem(id).getText());             
+        // Frame
+        if(doFrameChList.getItem(id).getText().equals("1"))
+            doFrame.setSelected(true);
+        else
+        	doFrame.setSelected(false);
+        minFrame.setText(minFrameChList.getItem(id).getText());
+        maxFrame.setText(maxFrameChList.getItem(id).getText());             
     }
     
     /*
@@ -3549,6 +3919,24 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         } catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
                 maxPrecisionZ.setText(maxPrecisionZChList.getItem(id).getText()); 		// Update.
         }
+        
+        // Frame
+        try {
+            int I = Integer.parseInt(minFrame.getText());        		
+            if (I < 0)
+            	minFrame.setText(minFrameChList.getItem(id).getText()); 		// Update.                    
+        } catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
+        	minFrame.setText(minFrameChList.getItem(id).getText()); 		// Update.
+        }
+        try {
+            int I = Integer.parseInt(maxFrame.getText());        		
+            if (I <= Integer.parseInt(minFrame.getText()))
+            	maxFrame.setText(minFrame.getText());
+            if (I <= 0)
+            	maxFrame.setText(maxFrameChList.getItem(id).getText()); 		// Update.                    
+        } catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
+        	maxFrame.setText(maxFrameChList.getItem(id).getText()); 		// Update.
+        }           
 
     }
     
@@ -3648,6 +4036,22 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
             data[id] *= data[id];
         }
         return data;
+    }
+    
+    /*
+     * render channels.
+     */
+    private boolean[] getDoRender()
+    {
+    	boolean[] Include = new boolean[10];
+    	for (int id = 0; id < 10; id ++)
+    	{
+	    	if(doRenderImageChList.getItem(id).getText().equals("1"))
+	    		Include[id] = true;
+	    	else
+	    		Include[id] = false;
+    	}
+    	return Include;
     }
     
     /*
@@ -3802,7 +4206,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
     
     private boolean[][] IncludeParameters()
     {
-        boolean[][] Include = new boolean[6][10];
+        boolean[][] Include = new boolean[7][10];
         for (int id = 0; id < Include[0].length; id++)
         {        	
         	if(doPhotonCountChList.getItem(id).getText().equals("1"))
@@ -3829,6 +4233,10 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         		Include[5][id] = true;
         	else
         		Include[5][id] = false;
+        	if(doFrameChList.getItem(id).getText().equals("1"))
+        		Include[6][id] = true;
+        	else
+        		Include[6][id] = false;
         }
         return Include;
     }
@@ -3838,7 +4246,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
     */
     private double[][] lbParameters()
     {
-        double[][] lb = new double[6][10];
+        double[][] lb = new double[7][10];
         for (int id = 0; id < lb[0].length; id++)
         {
             lb[0][id] = Float.parseFloat(minPhotonCountChList.getItem(id).getText());
@@ -3846,7 +4254,8 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
             lb[2][id] = Float.parseFloat(minSigmaZChList.getItem(id).getText());
             lb[3][id] = Float.parseFloat(minRsquareChList.getItem(id).getText());
             lb[4][id] = Float.parseFloat(minPrecisionXYChList.getItem(id).getText());
-            lb[5][id] = Float.parseFloat(minPrecisionZChList.getItem(id).getText());            
+            lb[5][id] = Float.parseFloat(minPrecisionZChList.getItem(id).getText());
+            lb[6][id] = Float.parseFloat(minFrameChList.getItem(id).getText());
         }
         return lb;
     }
@@ -3856,7 +4265,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
     */
     private double[][] ubParameters()
     {
-        double[][] ub = new double[6][10];
+        double[][] ub = new double[7][10];
         for (int id = 0; id < ub[0].length; id++)
         {
             ub[0][id] = Float.parseFloat(maxPhotonCountChList.getItem(id).getText());
@@ -3865,46 +4274,268 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
             ub[3][id] = Float.parseFloat(maxRsquareChList.getItem(id).getText());
             ub[4][id] = Float.parseFloat(maxPrecisionXYChList.getItem(id).getText());
             ub[5][id] = Float.parseFloat(maxPrecisionZChList.getItem(id).getText());
+            ub[6][id] = Float.parseFloat(maxFrameChList.getItem(id).getText());
         }
         return ub;
     }
     
+
+    public void loadParameters(String storeName)
+    {
+    	
+		/*
+		 * non channel unique variables.
+		 */
+    	ij.Prefs.set("SMLocalizer.CurrentSetting", storeName); // current.
+		if (ij.Prefs.get("SMLocalizer.settings."+storeName+
+				".doDriftCorrect.",1) == 1)
+			doDriftCorrect.setSelected(true);		
+		else
+			doDriftCorrect.setSelected(false);
+		if (ij.Prefs.get("SMLocalizer.settings."+storeName+
+				".doChannelAlign.",1) == 1)
+			doChannelAlign.setSelected(true);		
+		else
+			doChannelAlign.setSelected(false);
+				
+		
+		for (int Ch = 0; Ch < 10; Ch++){
+		    /*
+		    *   Basic input settings
+		    */		    		                           		   
+		    // pixel size
+			pixelSizeChList.getItem(Ch).setText( 
+		    ij.Prefs.get("SMLocalizer.settings."+storeName+
+					".pixelSize."+Ch, 
+					""));
+		    // total gain
+			totalGainChList.getItem(Ch).setText( 
+				    ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".totaGain."+Ch, 
+							""));		   
+		    // minimum pixel over background
+			minPixelOverBackgroundChList.getItem(Ch).setText( 
+				    ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".minPixelOverBackground."+Ch, 
+							""));		   
+		    // minimal signal
+			minimalSignalChList.getItem(Ch).setText( 
+				    ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".minimalSignal."+Ch, 
+							""));
+		    // gauss window size
+			gaussWindowChList.getItem(Ch).setText( 
+				    ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".gaussWindow."+Ch, 
+							""));
+		    // gauss window size
+			windowWidthChList.getItem(Ch).setText( 
+				    ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".windowWidth."+Ch, 
+							""));
+		    // min pixel distance
+			minPixelDistChList.getItem(Ch).setText( 
+				    ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".minPixelDist."+Ch, 
+							""));
+		    /*
+		    *       Cluster analysis settings
+		    */
+		    // min pixel distance
+			doClusterAnalysisChList.getItem(Ch).setText( 
+				    ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".doClusterAnalysis."+Ch, 
+							""));
+		    // min pixel distance			
+			epsilonChList.getItem(Ch).setText( 
+		    ij.Prefs.get("SMLocalizer.settings."+storeName+
+					".epsilon."+Ch, 
+					""));
+		    // min pixel distance
+			minPtsClusterChList.getItem(Ch).setText( 
+				    ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".minPtsCluster."+Ch, 
+							""));  		    
+		    /*
+		    *       Render image settings.
+		    */
+			// render image
+			outputPixelSizeChList.getItem(Ch).setText( 
+				    ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".doRender."+Ch, 
+							"")); 
+		    // pixel size
+			outputPixelSizeChList.getItem(Ch).setText( 
+				    ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".outputPixelSize."+Ch, 
+							""));  		    
+		    /*
+		     * store parameter settings:
+		     */		    		   					
+		    // photon count
+			doPhotonCountChList.getItem(Ch).setText( 
+				    ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".doPotonCount."+Ch, 
+							""));  
+		    minPhotonCountChList.getItem(Ch).setText( 
+				    ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".minPotonCount."+Ch, 
+							""));  
+		    maxPhotonCountChList.getItem(Ch).setText( 
+				    ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".maxPotonCount."+Ch, 
+							""));  		    
+		    // Sigma XY  
+		    doSigmaXYChList.getItem(Ch).setText( 
+				    ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".doSigmaXY."+Ch, 
+							""));  
+		    minSigmaXYChList.getItem(Ch).setText( 
+				    ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".minSigmaXY."+Ch, 
+							""));  
+		    maxSigmaXYChList.getItem(Ch).setText( 
+				    ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".maxSigmaXY."+Ch, 
+							""));  
+		    // Sigma Z 		    
+		    doSigmaZChList.getItem(Ch).setText( 
+				    ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".doSigmaZ."+Ch, 
+							""));  
+		    minSigmaZChList.getItem(Ch).setText( 
+				    ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".minSigmaZ."+Ch, 
+							""));  
+		    maxSigmaZChList.getItem(Ch).setText( 
+				    ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".maxSigmaZ."+Ch,
+							""));
+		    // Rsquare  
+			
+		    doRsquareChList.getItem(Ch).setText( 
+				    ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".doRsquare."+Ch, 
+							""));  
+		    minRsquareChList.getItem(Ch).setText( 
+				    ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".minRsquare."+Ch, 
+							""));  
+		    maxRsquareChList.getItem(Ch).setText( 
+				    ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".maxRsquare."+Ch,
+							""));		    		    
+
+			// Precision XY
+		    doPrecisionXYChList.getItem(Ch).setText( 
+				    ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".doPrecisionXY."+Ch, 
+							""));  
+		    minPrecisionXYChList.getItem(Ch).setText( 
+				    ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".minPrecisionXY."+Ch, 
+							""));  
+		    maxPrecisionXYChList.getItem(Ch).setText( 
+				    ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".maxPrecisionXY."+Ch,
+							""));		   
+			// Precision Z
+		    doPrecisionZChList.getItem(Ch).setText( 
+				    ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".doPrecisionZ."+Ch, 
+							""));  
+		    minPrecisionZChList.getItem(Ch).setText( 
+				    ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".minPrecisionZ."+Ch, 
+							""));  
+		    maxPrecisionZChList.getItem(Ch).setText( 
+				    ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".maxPrecisionZ."+Ch,
+							""));		    
+			/*
+		    *   Drift and channel correct settings
+		    */
+		    
+		    // drift correction bins.
+		    driftCorrBinLowCountChList.getItem(Ch).setText( 
+				    ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".driftCorrBinLow."+Ch, 
+							""));  
+		    driftCorrBinHighCountChList.getItem(Ch).setText( 
+				    ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".driftCorrBinHigh."+Ch,
+							""));
+			    
+		    // drift correction shift
+		    driftCorrShiftXYChList.getItem(Ch).setText( 
+				    ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".driftCorrShiftXY."+Ch, 
+							""));  
+		    driftCorrShiftZChList.getItem(Ch).setText( 
+				    ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".driftCorrShiftZ."+Ch,
+							""));			    
+		    // number of drift bins
+		    numberOfBinsDriftCorrChList.getItem(Ch).setText( 
+				    ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".driftCorrBin."+Ch,
+							""));	
+
+		    
+		    // channel align bin low
+		    chAlignBinLowCountChList.getItem(Ch).setText( 
+				    ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".chAlignBinLow."+Ch,
+							""));	
+		    
+		    // channel align bin high
+		    chAlignBinHighCountChList.getItem(Ch).setText( 
+				    ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".chAlignBinHigh."+Ch,
+							""));	
+
+		    
+		    // channel align shift
+		    chAlignShiftXYChList.getItem(Ch).setText( 
+				    ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".chAlignShiftXY."+Ch,
+							""));	
+		    chAlignShiftZChList.getItem(Ch).setText( 
+				    ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".chAlignShiftZ."+Ch,
+							""));	 
+		}
+		
+		 int id = 0; // set current ch to 1.
+	     updateVisible(id); // update fields that user can see.
+		
+    } // loadParameters
     
     
-    
-    public void setParameters()
-    // TODO: add store of variables at end of function.
+    public void setParameters(String storeName)
     {
     	updateList(channelId.getSelectedIndex()-1);  // verify that current channel have ok set fields:
+    	
     	// pop list of current settings, first entry = add new.
-		String storeName = JOptionPane.showInputDialog("Settings name?");
-		int idx = 0;
-		int entries = 0;
-		try 
-		{
-			entries = (int) ij.Prefs.get("SMLocalizer.settingsEntries",0);
-		}finally
-		{
-			
-		}
-		if (entries > 0) // if no entries has been entered.
-		{
-			for (int i = 1; i <= entries; i++)
-			{
-				if(storeName.equals(ij.Prefs.get("SMLocalizer.settingsName"+i, ""))) // check if the name is in current use, if so, overwrite.
-					idx = i;
-			}
-		}
-		if (idx == 0)
-		{
-			idx = entries + 1;
-			ij.Prefs.set("SMLocalizer.settingsEntries", idx);
-		}
-		ij.Prefs.set("SMLocalizer.settingsName"+idx, storeName); // add storename
 		
 		/*
-		 * TODO: add non channel seperate variables.
+		 * non channel unique variables.
 		 */
+
+		
+		if (doDriftCorrect.isSelected())
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".doDriftCorrect.",1);
+		else
+			ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".doDriftCorrect.",0);
+
+		if (doChannelAlign.isSelected())
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".doChannelAlign.",1);
+		else
+			ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".doChannelAlign.",0);		
 		
 		for (int Ch = 0; Ch < 10; Ch++){
 		    /*
@@ -3960,7 +4591,11 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		    /*
 		    *       Render image settings.
 		    */
-		    // min pixel distance
+			// render image		
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".doRenderImage."+Ch,
+					outputPixelSizeChList.getItem(Ch).getText());						  
+		    // pixel size.
 		    ij.Prefs.set("SMLocalizer.settings."+storeName+
 					".outputPixelSize."+Ch, 
 					outputPixelSizeChList.getItem(Ch).getText());		    
@@ -4033,6 +4668,16 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			ij.Prefs.set("SMLocalizer.settings."+storeName+
 					".maxPrecisionZ."+Ch, 
 					maxPrecisionZChList.getItem(Ch).getText());
+			// Frame
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".doFrame."+Ch, 
+					doFrameChList.getItem(Ch).getText());
+		    ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".minFrame."+Ch, 
+					minFrameChList.getItem(Ch).getText());
+			ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".maxFrame."+Ch, 
+					maxFrameChList.getItem(Ch).getText());
 			/*
 		    *   Drift and channel correct settings
 		    */
@@ -4075,10 +4720,9 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 					".chAlignShiftZ."+Ch, 
 					chAlignShiftZChList.getItem(Ch).getText());		    
 		}
-		
-    }
-    
-    
+			
+		ij.Prefs.savePreferences(); // store settings. 
+    } // setParameters
     /**
      * @param args the command line arguments
      */
@@ -4204,6 +4848,18 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
     private javax.swing.JMenuItem doClusterAnalysisData8;
     private javax.swing.JMenuItem doClusterAnalysisData9;
     private javax.swing.JCheckBox doDriftCorrect;
+    private javax.swing.JCheckBox doFrame;
+    private javax.swing.JMenu doFrameChList;
+    private javax.swing.JMenuItem doFrameData1;
+    private javax.swing.JMenuItem doFrameData10;
+    private javax.swing.JMenuItem doFrameData2;
+    private javax.swing.JMenuItem doFrameData3;
+    private javax.swing.JMenuItem doFrameData4;
+    private javax.swing.JMenuItem doFrameData5;
+    private javax.swing.JMenuItem doFrameData6;
+    private javax.swing.JMenuItem doFrameData7;
+    private javax.swing.JMenuItem doFrameData8;
+    private javax.swing.JMenuItem doFrameData9;
     private javax.swing.JCheckBox doGaussianSmoothing;
     private javax.swing.JCheckBox doPhotonCount;
     private javax.swing.JMenu doPhotonCountChList;
@@ -4242,6 +4898,17 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
     private javax.swing.JMenuItem doPrecisionZData8;
     private javax.swing.JMenuItem doPrecisionZData9;
     private javax.swing.JCheckBox doRenderImage;
+    private javax.swing.JMenu doRenderImageChList;
+    private javax.swing.JMenuItem doRenderImageData1;
+    private javax.swing.JMenuItem doRenderImageData10;
+    private javax.swing.JMenuItem doRenderImageData2;
+    private javax.swing.JMenuItem doRenderImageData3;
+    private javax.swing.JMenuItem doRenderImageData4;
+    private javax.swing.JMenuItem doRenderImageData5;
+    private javax.swing.JMenuItem doRenderImageData6;
+    private javax.swing.JMenuItem doRenderImageData7;
+    private javax.swing.JMenuItem doRenderImageData8;
+    private javax.swing.JMenuItem doRenderImageData9;
     private javax.swing.JCheckBox doRsquare;
     private javax.swing.JMenu doRsquareChList;
     private javax.swing.JMenuItem doRsquareData1;
@@ -4349,6 +5016,18 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JButton loadSettings;
     private javax.swing.JButton localize_Fit;
+    private javax.swing.JTextField maxFrame;
+    private javax.swing.JMenu maxFrameChList;
+    private javax.swing.JMenuItem maxFrameData1;
+    private javax.swing.JMenuItem maxFrameData10;
+    private javax.swing.JMenuItem maxFrameData2;
+    private javax.swing.JMenuItem maxFrameData3;
+    private javax.swing.JMenuItem maxFrameData4;
+    private javax.swing.JMenuItem maxFrameData5;
+    private javax.swing.JMenuItem maxFrameData6;
+    private javax.swing.JMenuItem maxFrameData7;
+    private javax.swing.JMenuItem maxFrameData8;
+    private javax.swing.JMenuItem maxFrameData9;
     private javax.swing.JLabel maxLabel;
     private javax.swing.JLabel maxLabel1;
     private javax.swing.JLabel maxLabel2;
@@ -4426,6 +5105,18 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
     private javax.swing.JMenuItem maxSigmaZData7;
     private javax.swing.JMenuItem maxSigmaZData8;
     private javax.swing.JMenuItem maxSigmaZData9;
+    private javax.swing.JTextField minFrame;
+    private javax.swing.JMenu minFrameChList;
+    private javax.swing.JMenuItem minFrameData1;
+    private javax.swing.JMenuItem minFrameData10;
+    private javax.swing.JMenuItem minFrameData2;
+    private javax.swing.JMenuItem minFrameData3;
+    private javax.swing.JMenuItem minFrameData4;
+    private javax.swing.JMenuItem minFrameData5;
+    private javax.swing.JMenuItem minFrameData6;
+    private javax.swing.JMenuItem minFrameData7;
+    private javax.swing.JMenuItem minFrameData8;
+    private javax.swing.JMenuItem minFrameData9;
     private javax.swing.JLabel minLabel;
     private javax.swing.JLabel minLabel1;
     private javax.swing.JLabel minLabel2;

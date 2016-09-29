@@ -18,15 +18,14 @@ import java.util.ArrayList;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.measure.Calibration;
-import ij.process.ByteProcessor;
 import ij.process.ImageStatistics;
 import ij.process.ShortProcessor;
 
 public class generateImage {
 	
-	public static void create(String Imtitle,ArrayList<Particle> ParticleList, int width, int height, int[] pixelSize, boolean gSmoothing){
+	public static void create(String Imtitle,boolean[] renderCh, ArrayList<Particle> ParticleList, int width, int height, int[] pixelSize, boolean gSmoothing){
 
-	if (ParticleList.get(ParticleList.size()-1).channel == 1){
+	if (ParticleList.get(ParticleList.size()-1).channel == 1 && renderCh[0]){
 		width = Math.round(width/pixelSize[0]) + 1;
 		height = Math.round(height/pixelSize[0] + 1);
 		
@@ -77,24 +76,26 @@ public class generateImage {
 			ImageStack imstack = new ImageStack(width,height);
 		
 			for (int ch = 1; ch <= ParticleList.get(ParticleList.size()-1).channel; ch ++){
-				ShortProcessor IP  = new ShortProcessor(width,height);					
-//				ByteProcessor IP = new ByteProcessor(width,height);
-				IP.set(0); // set all pixel values to 0 as default.
-				
-				for (int i = 0; i < ParticleList.size(); i++){
-					if (ParticleList.get(i).include == 1 && ParticleList.get(i).channel == ch){
-						int x = (int) Math.round(ParticleList.get(i).x/pixelSize[ch-1]);
-						int y = (int) Math.round(ParticleList.get(i).y/pixelSize[ch-1]);				
-						IP.putPixel(x, y, (IP.get(x, y) + 1));
-					}
-				}
-				if(gSmoothing)
+				if (renderCh[ch-1])
 				{
-					IP.multiply(1000);
-					IP.blurGaussian(2);
-				}
-				imstack.addSlice(IP);
-			
+					ShortProcessor IP  = new ShortProcessor(width,height);					
+	//				ByteProcessor IP = new ByteProcessor(width,height);
+					IP.set(0); // set all pixel values to 0 as default.
+					
+					for (int i = 0; i < ParticleList.size(); i++){
+						if (ParticleList.get(i).include == 1 && ParticleList.get(i).channel == ch){
+							int x = (int) Math.round(ParticleList.get(i).x/pixelSize[ch-1]);
+							int y = (int) Math.round(ParticleList.get(i).y/pixelSize[ch-1]);				
+							IP.putPixel(x, y, (IP.get(x, y) + 1));
+						}
+					}
+					if(gSmoothing)
+					{
+						IP.multiply(1000);
+						IP.blurGaussian(2);
+					}
+					imstack.addSlice(IP);
+				} // if the channel should be drawn.
 				
 			} // channel loop.
 			
@@ -122,39 +123,42 @@ public class generateImage {
 			Image.show();
 		}else
 		{
-			for(int Ch=1; Ch <= ParticleList.get(ParticleList.size()-1).channel; Ch++)
+			for(int ch=1; ch <= ParticleList.get(ParticleList.size()-1).channel; ch++)
 			{
-				int widthCh = Math.round(width/pixelSize[Ch-1]) + 1;
-				int heightCh = Math.round(height/pixelSize[Ch-1] + 1);
-				
-				ShortProcessor IP  = new ShortProcessor(widthCh,heightCh);					
-				IP.set(0); // set all pixel values to 0 as default.
-				
-				for (int i = 0; i < ParticleList.size(); i++){
-					if (ParticleList.get(i).include == 1 && 
-							ParticleList.get(i).channel == Ch){
-						int x = (int) Math.round(ParticleList.get(i).x/pixelSize[Ch-1]);
-						int y = (int) Math.round(ParticleList.get(i).y/pixelSize[Ch-1]);						
-						IP.putPixel(x, y, (IP.get(x, y) + 1));
-					}
-				}	
-				if(gSmoothing)
+				if (renderCh[ch-1])
 				{
-					IP.multiply(1000);
-					IP.blurGaussian(2);
-				}
-				ImagePlus Image = new ImagePlus((Imtitle + " channel " + Ch),IP);
-				Image.setImage(Image);
-				Calibration cal = new Calibration(Image);
-				cal.pixelHeight = pixelSize[0];
-				cal.pixelWidth 	= pixelSize[0];
-				cal.setXUnit("nm");
-				cal.setYUnit("nm");
-				ImageStatistics ImStats = Image.getStatistics();
-				Image.setDisplayRange(ImStats.min, ImStats.max);
-				Image.updateAndDraw();
-				Image.setCalibration(cal);
-				Image.show();
+					int widthCh = Math.round(width/pixelSize[ch-1]) + 1;
+					int heightCh = Math.round(height/pixelSize[ch-1] + 1);
+					
+					ShortProcessor IP  = new ShortProcessor(widthCh,heightCh);					
+					IP.set(0); // set all pixel values to 0 as default.
+					
+					for (int i = 0; i < ParticleList.size(); i++){
+						if (ParticleList.get(i).include == 1 && 
+								ParticleList.get(i).channel == ch){
+							int x = (int) Math.round(ParticleList.get(i).x/pixelSize[ch-1]);
+							int y = (int) Math.round(ParticleList.get(i).y/pixelSize[ch-1]);						
+							IP.putPixel(x, y, (IP.get(x, y) + 1));
+						}
+					}	
+					if(gSmoothing)
+					{
+						IP.multiply(1000);
+						IP.blurGaussian(2);
+					}
+					ImagePlus Image = new ImagePlus((Imtitle + " channel " + ch),IP);
+					Image.setImage(Image);
+					Calibration cal = new Calibration(Image);
+					cal.pixelHeight = pixelSize[0];
+					cal.pixelWidth 	= pixelSize[0];
+					cal.setXUnit("nm");
+					cal.setYUnit("nm");
+					ImageStatistics ImStats = Image.getStatistics();
+					Image.setDisplayRange(ImStats.min, ImStats.max);
+					Image.updateAndDraw();
+					Image.setCalibration(cal);
+					Image.show();
+				}// check if the channel should be rendered.
 			}// loop over channel
 		}
 	}

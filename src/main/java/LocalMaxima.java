@@ -37,7 +37,7 @@ public class LocalMaxima {
 							}
 						}										
 					}
-					if(posPix>=minPosPixels){
+					if(posPix>minPosPixels){
 						int[] coord = {i,j};					
 						Results.add(coord);	
 					}

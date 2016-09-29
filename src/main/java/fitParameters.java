@@ -31,6 +31,10 @@ public class fitParameters {
 	int pixelsize;
 	int windowWidth;
 	int totalGain;
+	public fitParameters()
+	{
+		
+	}
 	public fitParameters(int[] Center, int[] data, int channel, int frame, int pixelsize, int windowWidth, int totalGain){
 		this.Center 	= Center; 			// X and Y center coordinates.
 		this.data 		= data; 			// array of pixelvalues.

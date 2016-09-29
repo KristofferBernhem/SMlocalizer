@@ -25,6 +25,7 @@ public class cleanParticleList {
             Include[3][id] = r square limits.
             Include[4][id] = precision xy limits.
             Include[5][id] = precision z limits.
+            Include[6][id] = frame limits.
 		 */
 		ArrayList<Particle> Results = TableIO.Load();
 		int Ch = 0;
@@ -81,7 +82,14 @@ public class cleanParticleList {
 
 				}else
 					remove++;
-			}			
+			}
+			if (Include[6][Ch]){ 
+				if(Results.get(i).frame >= lb[6][Ch] &&
+						Results.get(i).frame <= ub[6][Ch]){
+
+				}else
+					remove++;
+			}	
 			if(remove == 0){
 				Results.get(i).include = 1; // Include particle.
 			}else {

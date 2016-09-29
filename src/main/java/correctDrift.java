@@ -92,7 +92,7 @@ public class correctDrift {
 			return;
 		}
 		double Channels = locatedParticles.get(locatedParticles.size()-1).channel;		
-		if (selectedModel == 0) // sequential
+		if (selectedModel == 1) // sequential
 		{
 			int lastIndex = 0;
 			int startIndex = 0;
@@ -238,13 +238,16 @@ public class correctDrift {
 				for (int i = 0; i < timeV.length;i++){
 					timeV[i] = i;
 				}
+				
+				
 				plot(lx,ly,lz,timeV);
+				
 				if (Ch == Channels){
 					TableIO.Store(correctedResults);
 				}		
 			} // channel loop.
 		}else // end sequential.
-			if (selectedModel == 1)// parallel.
+			if (selectedModel == 0)// parallel.
 		{
 			int lastIndex = 0;
 			int startIndex = 0;
@@ -446,11 +449,11 @@ public class correctDrift {
 			ij.IJ.log("Single channel data, no second channel to align against.");
 			return;
 		}
-		if (selectedModel == 0) // sequential
+		if (selectedModel == 1) // sequential
 		{
 			
 		}else // end sequential.
-			if (selectedModel == 1) // parallel
+			if (selectedModel == 0) // parallel
 		{
 			for (int Ch = 2; Ch <= Channels; Ch++)
 			{

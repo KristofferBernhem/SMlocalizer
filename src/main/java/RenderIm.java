@@ -17,7 +17,7 @@
 import java.util.ArrayList;
 
 public class RenderIm {
-	public static void run( int[] DesiredPixelSize, boolean gSmoothing){		
+	public static void run(boolean[] renderCh, int[] DesiredPixelSize, boolean gSmoothing){		
 		try{
 			ArrayList<Particle> correctedResults	= TableIO.Load(); // load dataset from results table.
 			int Width 								= 0; // will contain the largest width value of the dataset.
@@ -34,9 +34,8 @@ public class RenderIm {
 				}
 			}		
 			Width 	= Width + 10; //inputPixelSize[0]; 	// pad with one pixel.
-			Height 	= Height + 10; //inputPixelSize[0]; 	// pad with one pixel.
-			System.out.println(Width + " and " + Height);
-			generateImage.create("RenderedResults",correctedResults, Width, Height, DesiredPixelSize, gSmoothing);		
+			Height 	= Height + 10; //inputPixelSize[0]; 	// pad with one pixel.			
+			generateImage.create("RenderedResults",renderCh,correctedResults, Width, Height, DesiredPixelSize, gSmoothing);		
 		}
 		catch (Exception e){
 			ij.IJ.log("No results table found.");	
