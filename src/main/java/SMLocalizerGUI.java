@@ -3145,8 +3145,8 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		boolean[] doCluster = getDoClusterAnalysis();
 		double[] epsilon     = getEpsilon();
 		int[] minPts        = getMinPtsCluster();
-
-		DBClust.Ident(epsilon, minPts,desiredPixelSize,doCluster); // change call to include no loop but checks for number of channels within DBClust.
+		nearestNeighbour.analyse();
+		//DBClust.Ident(epsilon, minPts,desiredPixelSize,doCluster); // change call to include no loop but checks for number of channels within DBClust.
 	}                                               
 
 	private void driftCorrBinHighCountActionPerformed(java.awt.event.ActionEvent evt) {                                                      
@@ -3167,7 +3167,11 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		int[] maxParticles = getDriftCorrBinHighCount();
 		int[] bins         = getNumberOfBinsDriftCorr();
 		int[][] boundry     = getDriftCorrShift();            
+		long time = System.nanoTime();
 		correctDrift.run(boundry, bins, maxParticles, minParticles, selectedModel); // drift correct all channels.
+		time = System.nanoTime() - time;
+		time *= 1E-6;
+		System.out.println("Drift correction took " + time + " ms.");
 	}                                            
 
 	private void alignChannelsActionPerformed(java.awt.event.ActionEvent evt) {                                              

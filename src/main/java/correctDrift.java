@@ -268,7 +268,7 @@ public class correctDrift {
 				boolean enoughParticles = true;
 				int binSize = Math.round((locatedParticles.get(lastIndex).frame - locatedParticles.get(startIndex).frame)/(nBins[Ch-1] + 1));
 				int bin  = 0;
-				while (bin < nBins[Ch-1]) // seperate out data.
+				while (bin < nBins[Ch-1]) // Separate out data.
 				{
 					if (enoughParticles)
 						{
@@ -295,6 +295,7 @@ public class correctDrift {
 						}
 						final ArrayList<Particle> Beta = hasNeighbors(A, B, (double) maxDistance[0]);
 						final ArrayList<Particle> Alpha = hasNeighbors(Beta, A, (double) maxDistance[0]);
+						
 						if(Alpha.size() < minParticles[Ch-1] &&
 								Beta.size() < minParticles[Ch-1]){
 							ij.IJ.log("not enough particles, no shift correction possible");
@@ -376,6 +377,7 @@ public class correctDrift {
 					}
 				}
 				
+				bin=0;
 				idx = startIndex;			
 				while (idx <= lastIndex)
 				{				
@@ -391,10 +393,19 @@ public class correctDrift {
 					tempPart.sigma_y 	= locatedParticles.get(idx).sigma_y;
 					tempPart.sigma_z 	= locatedParticles.get(idx).sigma_z;
 					tempPart.channel 	= locatedParticles.get(idx).channel;
-
+					if ((bin+1)*binSize <= locatedParticles.get(idx).frame)										
+						bin++;						
+					
+					if (bin == nBins[Ch-1]) // load last fragment of data.
+						bin--;
+				
+					tempPart.x = locatedParticles.get(idx).x - lambdax[bin];
+					tempPart.y = locatedParticles.get(idx).y - lambday[bin];
+					tempPart.z = locatedParticles.get(idx).z - lambdaz[bin];
+/*					
 					tempPart.x = locatedParticles.get(idx).x - lambda[tempPart.frame-1][0];
 					tempPart.y = locatedParticles.get(idx).y - lambda[tempPart.frame-1][1];
-					tempPart.z = locatedParticles.get(idx).z - lambda[tempPart.frame-1][2];
+					tempPart.z = locatedParticles.get(idx).z - lambda[tempPart.frame-1][2];*/
 					if(tempPart.x >= 0){
 						if(tempPart.y >= 0){
 							if(tempPart.z >= 0){
