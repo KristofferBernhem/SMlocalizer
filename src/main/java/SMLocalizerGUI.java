@@ -28,7 +28,6 @@ import ij.WindowManager;
 /* PROJECT IMPLEMENTATIONS PRIOR TO RELEASE
  * TODO: Store preference action not implemented.
  * TODO: GPU implementation.
- * TODO: Implement variable pixel size image rendering.
  * TODO: Add tooltips to GUI.
  */
 
@@ -43,10 +42,10 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		initComponents();
 
 
-		/*try{
+		try{
         	loadParameters(ij.Prefs.get("SMLocalizer.CurrentSetting", "")); // current.
         }catch (NumberFormatException e)
-        { */       	
+        {        	
 		for (int id = 0; id < 10; id++){ // update list of variables for each ch.
 			/*
 			 *   Basic input settings
@@ -119,17 +118,14 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 
 		int id = 0; // set current ch to 1.
 		updateVisible(id); // update fields that user can see.
-		/*String name = "default";
-
+		String name = "default";
 			ij.Prefs.set("SMLocalizer.settingsEntries", 1);
-
 			ij.Prefs.set("SMLocalizer.settingsName"+1, name); // add storename
-
 	        setParameters(name);
         } finally{
 
         }
-		 */
+		 
 	}
 
 	/**
@@ -3056,20 +3052,20 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 	}// </editor-fold>                           
 
 	private void minimalSignalActionPerformed(java.awt.event.ActionEvent evt) {                                              
-		// TODO add your handling code here:
+		
 	}                                             
 
 	private void minPixelOverBackgroundActionPerformed(java.awt.event.ActionEvent evt) {                                                       
-		// TODO add your handling code here:
+		
 	}                                                      
 
 	private void totalGainActionPerformed(java.awt.event.ActionEvent evt) {                                          
 
-		// TODO add your handling code here:
+		
 	}                                         
 
 	private void windowWidthActionPerformed(java.awt.event.ActionEvent evt) {                                            
-		// TODO add your handling code here:
+		
 	}                                           
 
 	private void ProcessActionPerformed(java.awt.event.ActionEvent evt) {                                        
@@ -3289,7 +3285,9 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		maxPrecisionXY.setText("50"); 
 		doPrecisionZ.setSelected(false);
 		minPrecisionZ.setText("5");
-		maxPrecisionZ.setText("75");    
+		maxPrecisionZ.setText("75");
+		minFrame.setText("1");
+		maxFrame.setText("100000");
 		updateList(channelId.getSelectedIndex()-1);
 	}                                                   
 
@@ -3363,23 +3361,23 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 	}                                          
 
 	private void driftCorrShiftZActionPerformed(java.awt.event.ActionEvent evt) {                                                
-		// TODO add your handling code here:
+
 	}                                               
 
 	private void chAlignShiftZActionPerformed(java.awt.event.ActionEvent evt) {                                              
-		// TODO add your handling code here:
+
 	}                                             
 
 	private void driftCorrShiftXYActionPerformed(java.awt.event.ActionEvent evt) {                                                 
-		// TODO add your handling code here:
+
 	}                                                
 
 	private void minFrameActionPerformed(java.awt.event.ActionEvent evt) {                                         
-		// TODO add your handling code here:
+
 	}                                        
 
 	private void doFrameActionPerformed(java.awt.event.ActionEvent evt) {                                        
-		// TODO add your handling code here:
+
 	}                                
 	private void storeSettingsActionPerformed(java.awt.event.ActionEvent evt) {      
 		JPanel panel = new JPanel();
@@ -3405,21 +3403,21 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		panel.add(comboBox);
 
 		int result = JOptionPane.showConfirmDialog(null, panel, "Settings", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-		switch (result) {
-		case JOptionPane.OK_OPTION:
+		switch (result) 
 		{
-
-			String loadName = storeName[comboBox.getSelectedIndex()];
-			if(comboBox.getSelectedIndex() == 0) // new name
+			case JOptionPane.OK_OPTION:
 			{
-				loadName = JOptionPane.showInputDialog("Settings name?");
-				ij.Prefs.set("SMLocalizer.settingsEntries",entries+1); // adding a new entry
-				ij.Prefs.set("SMLocalizer.settingsName"+(entries+1), loadName);
-			}
-
-			setParameters(loadName);
-		}             
-
+	
+				String loadName = storeName[comboBox.getSelectedIndex()];
+				if(comboBox.getSelectedIndex() == 0) // new name
+				{
+					loadName = JOptionPane.showInputDialog("Settings name?");
+					ij.Prefs.set("SMLocalizer.settingsEntries",entries+1); // adding a new entry
+					ij.Prefs.set("SMLocalizer.settingsName"+(entries+1), loadName);
+				}
+	
+				setParameters(loadName);
+			}             
 		}
 
 	}                                             
@@ -4448,6 +4446,19 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 					ij.Prefs.get("SMLocalizer.settings."+storeName+
 							".maxPrecisionZ."+Ch,
 							""));		    
+			// Frame
+			doFrameChList.getItem(Ch).setText( 
+					ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".doFrame."+Ch, 
+							""));  
+			minFrameChList.getItem(Ch).setText( 
+					ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".minFrame."+Ch, 
+							""));  
+			maxFrameChList.getItem(Ch).setText( 
+					ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".maxFrame."+Ch,
+							""));		
 			/*
 			 *   Drift and channel correct settings
 			 */
