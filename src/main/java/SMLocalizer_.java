@@ -23,8 +23,7 @@ import ij.plugin.PlugIn;
 public class SMLocalizer_ implements PlugIn {
 
 	public static void main(final String... args) throws Exception {
-		// create the ImageJ application context with all available services
-
+		// create the ImageJ application context with all available services		
 		
 		
 		final ij.ImageJ ij = new ij.ImageJ();

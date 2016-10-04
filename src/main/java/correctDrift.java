@@ -276,18 +276,21 @@ public class correctDrift {
 						ArrayList<Particle> B = new ArrayList<Particle>();
 						for (int i = startIndex; i <= lastIndex; i ++){ // loop over the full range.
 							if (locatedParticles.get(i).frame > bin*binSize &&
-									locatedParticles.get(i).frame <= (bin+1)*binSize)
+									locatedParticles.get(i).frame <= (bin+1)*binSize &&
+									locatedParticles.get(i).include == 1)
 							{
 								A.add(locatedParticles.get(i));
 							}
 							else if(locatedParticles.get(i).frame > (bin+1)*binSize &&
-									locatedParticles.get(i).frame <= (bin+2)*binSize)
+									locatedParticles.get(i).frame <= (bin+2)*binSize &&
+									locatedParticles.get(i).include == 1)
 							{
 								B.add(locatedParticles.get(i));
 							}
 							else if (bin== nBins[Ch-1] &&
 									locatedParticles.get(i).frame > (bin+1)*binSize &&
-									i <= lastIndex)
+									i <= lastIndex &&
+									locatedParticles.get(i).include == 1)
 							{														
 									B.add(locatedParticles.get(i));
 								

@@ -54,8 +54,277 @@ class BackgroundCorrection {
 	 *	E. Hoogendoorn, K. C. Crosby, D. Leyton-Puig, R. M.P. Breedijk, K. Jalink, T. W.J. Gadella & M. Postma
 	 *	Scientific Reports 4, Article number: 3854 (2014)	
 	 */
+	public static void medianFiltering(final int[] W,ImagePlus image, int selectedModel){		
+		int nChannels 	= image.getNChannels();
+		int nFrames 	= image.getNFrames();
+		if (nFrames == 1)
+			nFrames = image.getNSlices();  				// some formats store frames as slices, some as frames.
+		int rows 		= image.getWidth();
+		int columns 	= image.getHeight();		
+		//		int[][][][] outputArray = new int[rows][columns][nFrames][nChannels];
 
-	public static int[][][][] medianFiltering(final int[] W,ImagePlus image, int selectedModel){		
+		if (selectedModel == 1) // sequential.
+		{
+			for (int Ch = 1; Ch <= nChannels; Ch++) // Loop over all channels.
+			{
+				float[] timeVector = new float[nFrames]; // alternate between entry 1 and 2 to minimize loop count.
+
+				float[] MeanFrame = new float[nFrames]; 		// Will include frame mean value.
+				int value = 0;
+				ImageProcessor IP = image.getProcessor();
+		
+				for (int i = 0; i < rows*columns; i++)
+					{
+						int x = i % rows;
+						int y = i / columns;
+						for (int Frame = 1; Frame <= nFrames; Frame++)
+						{			
+
+							image.setPosition(
+									Ch,			// channel.
+									1,			// slice.
+									Frame);		// frame.
+							IP = image.getProcessor();
+							if (i == 0)
+							{
+								ImageStatistics Stat 	= IP.getStatistics();
+								MeanFrame[Frame-1] 		= (float) Stat.mean;							
+								if (Stat.mean == 0)
+								{
+									MeanFrame[Frame-1] = 1;
+								}
+							}
+							else if ( i < rows*columns-1) // if we are not on the final round.
+							{
+								
+								value = (int) (IP.get((i-1) % rows, (i-1) / columns)- (timeVector[Frame-1]*MeanFrame[Frame-1]));
+								if (value < 0)
+									value = 0;
+								IP.set((i-1) % rows, (i-1) / columns, value); // store last round of calculations.
+
+							} 
+							timeVector[Frame-1]= IP.getPixel((i-1) % rows, (i-1) / columns)/MeanFrame[Frame - 1]; // load data.
+							image.setProcessor(IP); // store last round.							
+						} // frame loop for mean calculations.
+						timeVector = runningMedian(timeVector, W[Ch]);						// Compute median.
+						if (i == rows*columns-1) // last round.
+						{
+							for (int Frame = 1; Frame <= nFrames; Frame++)
+							{
+								image.setPosition(
+										Ch,			// channel.
+										1,			// slice.
+										Frame);		// frame.
+								IP = image.getProcessor();
+								value = (int) (IP.get((i-1) % rows, (i-1) / columns) - (timeVector[Frame-1]*MeanFrame[Frame-1]));
+								if (value < 0)
+									value = 0;
+								IP.set(x, y, value); // store last round of calculations.
+								image.setProcessor(IP); // store last round,	
+							}
+						}
+					} // i loop.
+				image.updateAndDraw();
+			} // end channel loop.			
+		}else // end sequential. 
+			if(selectedModel == 0) // parallel.
+			{
+				for (int Ch = 1; Ch <= nChannels; Ch++){ // Loop over all channels.
+					float[] MeanFrame = new float[nFrames]; 		// Will include frame mean value.
+					float[][] timeVector = new float[rows*columns][nFrames];
+					ImageProcessor IP = image.getProcessor();		// get image processor for the stack.´
+
+
+					for (int Frame = 1; Frame < nFrames+1; Frame++){			
+						image.setPosition(
+								Ch,			// channel.
+								1,			// slice.
+								Frame);		// frame.
+						IP 						= image.getProcessor(); 			// Update processor to next slice.
+						ImageStatistics Stat 	= IP.getStatistics();
+						MeanFrame[Frame-1] 		= (float) Stat.mean;
+						if (Stat.mean == 0){
+							MeanFrame[Frame-1] = 1;
+						}
+						for (int i = 0; i < rows*columns; i++)
+						{
+			//				if (i == 0)
+			//					System.out.print(IP.get(i % rows, i / columns) + ", ");
+							timeVector[i][Frame-1] = (float) (IP.get(i % rows, i / columns)/MeanFrame[Frame-1]); // load data. 
+						}
+					} // Data loading.
+
+					List<Callable<float[]>> tasks = new ArrayList<Callable<float[]>>();	// Preallocate.
+					for (int i = 0; i < rows*columns; i++)
+					{
+						final float[] timeVectorF = timeVector[i];
+
+						final int chFinal = Ch - 1;
+						Callable<float[]> c = new Callable<float[]>() {				// Computation to be done.
+							@Override
+							public float[] call() throws Exception {
+								return runningMedian(timeVectorF, W[chFinal]);						// Actual call for each parallel process.
+							}
+						};
+						tasks.add(c);
+					}
+
+					int processors 			= Runtime.getRuntime().availableProcessors();	// Number of processor cores on this system.
+					ExecutorService exec 	= Executors.newFixedThreadPool(processors);		// Set up parallel computing using all cores.
+					try {
+						List<Future<float[]>> parallelCompute = exec.invokeAll(tasks);				// Execute computation.    
+						for (int i = 0; i < parallelCompute.size(); i++){							// Loop over and transfer results.
+							try {
+								float[] data = parallelCompute.get(i).get();
+
+								for (int k = 0; k < data.length; k++){																														
+									timeVector[i][k] = (int)(data[k]*MeanFrame[k]);								
+								}			
+							} catch (ExecutionException e) {
+								e.printStackTrace();
+							}
+						}
+
+					} catch (InterruptedException e) {
+
+						e.printStackTrace();
+					}
+					finally {
+						exec.shutdown();
+					}
+					int value = 0;
+				//	System.out.println("\n");
+				//	for (int Frame = 0; Frame < nFrames; Frame++)
+				//		System.out.print(MeanFrame[Frame] + ", ");
+				//	System.out.println("\n");
+					for (int Frame = 1; Frame <= nFrames; Frame++) // store data.
+					{						
+						image.setPosition(
+								Ch,			// channel.
+								1,			// slice.
+								Frame);		// frame.
+						IP 						= image.getProcessor(); 			// Update processor to next slice.
+						
+						for (int i = 0; i < rows*columns; i++)
+						{
+							//if (i == 0)
+							//	System.out.print(IP.get(i % rows, i / columns) -(int)timeVector[i][Frame-1] + ", ");
+							value = IP.get(i % rows, i / columns) - (int)timeVector[i][Frame-1];
+							if (value < 0)
+								value = 0;
+							IP.set(i % rows, i / columns, value);							
+						}
+					}
+					image.updateAndDraw();
+				} // Channel loop.
+				
+			}else // end parallel.
+				if(selectedModel == 2) // GPU.
+				{
+					// TODO look over kernel for errors. Change median from int to float. 
+					// Initialize the driver and create a context for the first device.
+					cuInit(0);
+					CUdevice device = new CUdevice();
+					cuDeviceGet(device, 0);
+					CUcontext context = new CUcontext();
+					cuCtxCreate(context, 0, device);
+					// Load the PTX that contains the kernel.
+					CUmodule module = new CUmodule();
+					cuModuleLoad(module, "medianFilter.ptx");
+					// Obtain a handle to the kernel function.
+					CUfunction function = new CUfunction();
+					cuModuleGetFunction(function, module, "medianKernel");
+					
+					for(int Ch = 1; Ch <= nChannels; Ch++)
+					{
+						int[] timeVector = new int[nFrames * rows * columns];
+						int[] MeanFrame = new int[nFrames]; 		// Will include frame mean value.
+						ImageProcessor IP = image.getProcessor();
+						for (int Frame = 1; Frame <= nFrames; Frame++)
+						{			
+							image.setPosition(
+									Ch,			// channel.
+									1,			// slice.
+									Frame);		// frame.
+							IP = image.getProcessor();
+
+							ImageStatistics Stat 	= IP.getStatistics();
+							MeanFrame[Frame-1] 		= (int) Stat.mean;							
+							if (Stat.mean == 0)
+							{
+								MeanFrame[Frame-1] = 1;
+							}
+							for (int i = 0; i < rows*columns; i ++)
+							{
+								timeVector[i + i*(nFrames-1)] = IP.get(i);								
+							}
+							
+									
+						} // frame loop for mean calculations.
+
+						CUdeviceptr device_window 		= CUDA.allocateOnDevice((2 * W[Ch] + 1) * rows * columns); // swap vector.
+						CUdeviceptr device_Data 		= CUDA.copyToDevice(timeVector);
+						CUdeviceptr device_meanVector 	= CUDA.copyToDevice(MeanFrame);
+						CUdeviceptr deviceOutput 		= CUDA.allocateOnDevice((int)timeVector.length);
+
+						int filteWindowLength 		= (2 * W[0] + 1) * rows * columns;
+						int testDataLength 			= timeVector.length;
+						int meanVectorLength 		= MeanFrame.length;
+						Pointer kernelParameters 	= Pointer.to(   
+								Pointer.to(new int[]{W[Ch]}),
+								Pointer.to(device_window),
+								Pointer.to(new int[]{filteWindowLength}),
+								Pointer.to(new int[]{nFrames}),
+								Pointer.to(device_Data),
+								Pointer.to(new int[]{testDataLength}),
+								Pointer.to(device_meanVector),
+								Pointer.to(new int[]{meanVectorLength}),
+								Pointer.to(deviceOutput),
+								Pointer.to(new int[]{testDataLength})
+								);
+						int blockSizeX 	= 1;
+						int blockSizeY 	= 1;				   
+						int gridSizeX 	= columns;
+						int gridSizeY 	= rows;
+						cuLaunchKernel(function,
+								gridSizeX,  gridSizeY, 1, 	// Grid dimension
+								blockSizeX, blockSizeY, 1,  // Block dimension
+								0, null,               		// Shared memory size and stream
+								kernelParameters, null 		// Kernel- and extra parameters
+								);
+						cuCtxSynchronize();
+
+						// Pull data from device.
+						int hostOutput[] = new int[timeVector.length];
+						cuMemcpyDtoH(Pointer.to(hostOutput), deviceOutput,
+								timeVector.length * Sizeof.INT);
+
+						// Free up memory allocation on device, housekeeping.
+						cuMemFree(device_window);   
+						cuMemFree(device_Data);    
+						cuMemFree(deviceOutput);
+						// return data.
+						for (int Frame = 1; Frame <= nFrames; Frame++)
+						{			
+							image.setPosition(
+									Ch,			// channel.
+									1,			// slice.
+									Frame);		// frame.
+							IP = image.getProcessor();						
+							for (int i = 0; i < rows*columns; i ++)
+							{																
+								IP.set(i, hostOutput[i + i*(nFrames-1)]);
+							}
+							image.setProcessor(IP);
+									
+						} // frame loop for mean calculations.
+					} // Channel loop.				
+					image.updateAndDraw();
+				} // end GPU.
+		//return outputArray;
+
+	} // medianfiltering with image output.
+	public static int[][][][] medianFilteringOld(final int[] W,ImagePlus image, int selectedModel){		
 		int nChannels 	= image.getNChannels();
 		int nFrames 	= image.getNFrames();
 		if (nFrames == 1)
@@ -63,7 +332,7 @@ class BackgroundCorrection {
 		int rows 		= image.getWidth();
 		int columns 	= image.getHeight();		
 		int[][][][] outputArray = new int[rows][columns][nFrames][nChannels];
-		System.out.println(selectedModel);
+
 		if (selectedModel == 1) // sequential.
 		{
 			if (nChannels == 1) // single channel.
@@ -74,14 +343,14 @@ class BackgroundCorrection {
 				{			
 					image.setSlice(Frame);
 					IP = image.getProcessor();
-					
+
 					ImageStatistics Stat 	= IP.getStatistics();
 					MeanFrame[Frame-1] 		= (float) Stat.mean;
 					if (Stat.mean == 0)
 					{
 						MeanFrame[Frame-1] = 1;
 					}
-					
+
 					for (int i = 0; i < rows; i++)
 					{
 						for (int j = 0; j < columns; j++)
@@ -101,7 +370,7 @@ class BackgroundCorrection {
 						{										
 							timeVector[Frame] = outputArray[i][j][Frame][0]/MeanFrame[Frame]; // Normalize voxels;							
 						}
-						
+
 						timeVector = runningMedian(timeVector, W[0]);						// Compute median.
 						for (int Frame = 0; Frame < nFrames; Frame++)
 						{
@@ -118,9 +387,9 @@ class BackgroundCorrection {
 			{
 				float[] MeanFrame = new float[nFrames]; 		// Will include frame mean value.
 				float[] timeVector = new float[nFrames];
-			for (int Ch = 1; Ch <= nChannels; Ch++) // Loop over all channels.
+				for (int Ch = 1; Ch <= nChannels; Ch++) // Loop over all channels.
 				{
-					
+
 					ImageProcessor IP = image.getProcessor();		// get image processor for the stack.
 					for (int Frame = 1; Frame < nFrames+1; Frame++)
 					{			
@@ -142,7 +411,7 @@ class BackgroundCorrection {
 							}
 						}										
 					} // Meanframe calculation, frame loop.
-					
+
 					for (int i = 0; i < rows; i++)
 					{
 						for (int j = 0; j < columns; j++)
@@ -151,7 +420,7 @@ class BackgroundCorrection {
 							{										
 								timeVector[Frame] = outputArray[i][j][Frame][Ch-1]/MeanFrame[Frame]; // Normalize voxels;							
 							}
-							
+
 							timeVector = runningMedian(timeVector, W[Ch-1]);						// Compute median.
 							for (int Frame = 0; Frame < nFrames; Frame++)
 							{
@@ -167,7 +436,7 @@ class BackgroundCorrection {
 			} // end multichannel.			
 		}else // end sequential. 
 			if(selectedModel == 0) // parallel.
-		{
+			{
 				if (nChannels == 1){
 					float[] MeanFrame = new float[nFrames]; 		// Will include frame mean value.
 					ImageProcessor IP = image.getProcessor();
@@ -176,13 +445,13 @@ class BackgroundCorrection {
 
 						image.setSlice(Frame);
 						IP = image.getProcessor();
-						
+
 						ImageStatistics Stat 	= IP.getStatistics();
 						MeanFrame[Frame-1] 		= (float) Stat.mean;
 						if (Stat.mean == 0){
 							MeanFrame[Frame-1] = 1;
 						}
-						
+
 						for (int i = 0; i < rows; i++){
 							for (int j = 0; j < columns; j++){
 								outputArray[i][j][Frame-1][0] = IP.getPixel(i, j);
@@ -209,28 +478,28 @@ class BackgroundCorrection {
 					} 							
 					int processors 			= Runtime.getRuntime().availableProcessors();	// Number of processor cores on this system.
 					ExecutorService exec 	= Executors.newFixedThreadPool(processors);		// Set up parallel computing using all cores.
-					
-						try {					
-							List<Future<float[]>> parallelCompute = exec.invokeAll(tasks);				// Execute computation.    									
-							for (int i = 0; i < parallelCompute.size(); i++){							// Loop over and transfer results.
-								try {
-									int xi = i % rows;
-									int yi = i / columns;	
-									float[] data = parallelCompute.get(i).get();
-									
-									for (int k = 0; k < data.length; k++){																
-										if (data[k]<0)
-											data[k] = 0;
-										outputArray[xi][yi][k][0]  -= (int)(data[k]*MeanFrame[k]);
-										if (outputArray[xi][yi][k][0] < 0){
-											outputArray[xi][yi][k][0] = 0;
-										}
-									}		
-								} catch (ExecutionException e) {
-									e.printStackTrace();
-								}
+
+					try {					
+						List<Future<float[]>> parallelCompute = exec.invokeAll(tasks);				// Execute computation.    									
+						for (int i = 0; i < parallelCompute.size(); i++){							// Loop over and transfer results.
+							try {
+								int xi = i % rows;
+								int yi = i / columns;	
+								float[] data = parallelCompute.get(i).get();
+
+								for (int k = 0; k < data.length; k++){																
+									if (data[k]<0)
+										data[k] = 0;
+									outputArray[xi][yi][k][0]  -= (int)(data[k]*MeanFrame[k]);
+									if (outputArray[xi][yi][k][0] < 0){
+										outputArray[xi][yi][k][0] = 0;
+									}
+								}		
+							} catch (ExecutionException e) {
+								e.printStackTrace();
 							}
-						
+						}
+
 					} catch (InterruptedException e) {
 
 						e.printStackTrace();				
@@ -243,7 +512,7 @@ class BackgroundCorrection {
 					for (int Ch = 1; Ch <= nChannels; Ch++){ // Loop over all channels.
 						double[] MeanFrame = new double[nFrames]; 		// Will include frame mean value.
 						ImageProcessor IP = image.getProcessor();		// get image processor for the stack.
-							for (int Frame = 1; Frame < nFrames+1; Frame++){			
+						for (int Frame = 1; Frame < nFrames+1; Frame++){			
 							image.setPosition(
 									Ch,			// channel.
 									1,			// slice.
@@ -292,19 +561,19 @@ class BackgroundCorrection {
 									for (int k = 0; k < data.length; k++){																
 										if (data[k]<0)
 											data[k] = 0;
-					
+
 										outputArray[xi][yi][k][Ch-1] -= (int)(data[k]*MeanFrame[k]);
 										if (outputArray[xi][yi][k][Ch-1]  < 0){
 											outputArray[xi][yi][k][Ch-1]  = 0;
 										}
-																	
+
 									}			
 								} catch (ExecutionException e) {
 									e.printStackTrace();
 								}
 							}
-								
-							} catch (InterruptedException e) {
+
+						} catch (InterruptedException e) {
 
 							e.printStackTrace();
 						}
@@ -313,125 +582,125 @@ class BackgroundCorrection {
 						}
 					} // Channel loop.				
 				}// Multichannel processing.											
-		}else // end parallel.
-			if(selectedModel == 2) // GPU.
-		{
-				// TODO look over kernel for errors. Change median from int to float. 
-				 // Initialize the driver and create a context for the first device.
-			    cuInit(0);
-			    CUdevice device = new CUdevice();
-			    cuDeviceGet(device, 0);
-			    CUcontext context = new CUcontext();
-			    cuCtxCreate(context, 0, device);
-			 // Load the PTX that contains the kernel.
-			    CUmodule module = new CUmodule();
-			    cuModuleLoad(module, "medianFilter.ptx");
-			 // Obtain a handle to the kernel function.
-			    CUfunction function = new CUfunction();
-			    cuModuleGetFunction(function, module, "medianKernel");
-			    if (nChannels == 1) // single channel data.
-			    {
-			    	int[] MeanFrame = new int[nFrames]; 		// Will include frame mean value.
-					ImageProcessor IP = image.getProcessor();
-					for (int Frame = 1; Frame <= nFrames; Frame++)
-					{			
-						image.setSlice(Frame);
-						IP = image.getProcessor();
-						
-						ImageStatistics Stat 	= IP.getStatistics();
-						MeanFrame[Frame-1] 		= (int) Stat.mean;
-						System.out.println(MeanFrame[Frame-1]);
-						if (Stat.mean == 0)
-						{
-							MeanFrame[Frame-1] = 1;
-						}
-						
-						for (int i = 0; i < rows; i++)
-						{
-							for (int j = 0; j < columns; j++)
+			}else // end parallel.
+				if(selectedModel == 2) // GPU.
+				{
+					// TODO look over kernel for errors. Change median from int to float. 
+					// Initialize the driver and create a context for the first device.
+					cuInit(0);
+					CUdevice device = new CUdevice();
+					cuDeviceGet(device, 0);
+					CUcontext context = new CUcontext();
+					cuCtxCreate(context, 0, device);
+					// Load the PTX that contains the kernel.
+					CUmodule module = new CUmodule();
+					cuModuleLoad(module, "medianFilter.ptx");
+					// Obtain a handle to the kernel function.
+					CUfunction function = new CUfunction();
+					cuModuleGetFunction(function, module, "medianKernel");
+					if (nChannels == 1) // single channel data.
+					{
+						int[] MeanFrame = new int[nFrames]; 		// Will include frame mean value.
+						ImageProcessor IP = image.getProcessor();
+						for (int Frame = 1; Frame <= nFrames; Frame++)
+						{			
+							image.setSlice(Frame);
+							IP = image.getProcessor();
+
+							ImageStatistics Stat 	= IP.getStatistics();
+							MeanFrame[Frame-1] 		= (int) Stat.mean;
+							System.out.println(MeanFrame[Frame-1]);
+							if (Stat.mean == 0)
 							{
-								outputArray[i][j][Frame-1][0] = IP.getPixel(i, j); // populate.
-							} // y loop.
-						} // x loop.		
-					} // frame loop for mean calculations.
+								MeanFrame[Frame-1] = 1;
+							}
 
-					// create data vector.
-					int[] timeVector = new int[nFrames * rows * columns];
-					int idx = 0;
-					for (int i = 0; i < rows; i++){
-						for (int j = 0; j < columns; j++){							// Loop over and setup computation.
-							
-							for (int Frame = 0; Frame < nFrames; Frame++){										
-								timeVector[idx] = outputArray[i][j][Frame][0]/MeanFrame[Frame]; // Normalize voxels;
-								idx ++;
+							for (int i = 0; i < rows; i++)
+							{
+								for (int j = 0; j < columns; j++)
+								{
+									outputArray[i][j][Frame-1][0] = IP.getPixel(i, j); // populate.
+								} // y loop.
+							} // x loop.		
+						} // frame loop for mean calculations.
+
+						// create data vector.
+						int[] timeVector = new int[nFrames * rows * columns];
+						int idx = 0;
+						for (int i = 0; i < rows; i++){
+							for (int j = 0; j < columns; j++){							// Loop over and setup computation.
+
+								for (int Frame = 0; Frame < nFrames; Frame++){										
+									timeVector[idx] = outputArray[i][j][Frame][0]/MeanFrame[Frame]; // Normalize voxels;
+									idx ++;
+								}
 							}
 						}
-					}
-					
-					CUdeviceptr device_window 		= CUDA.allocateOnDevice((2 * W[0] + 1) * rows * columns); // swap vector.
-				    CUdeviceptr device_test_Data 	= CUDA.copyToDevice(timeVector);
-				    CUdeviceptr device_meanVector 	= CUDA.copyToDevice(MeanFrame);
-				    CUdeviceptr deviceOutput 		= CUDA.allocateOnDevice(timeVector.length);
 
-				    int filteWindowLength 		= (2 * W[0] + 1) * rows * columns;
-				    int testDataLength 			= timeVector.length;
-				    int meanVectorLength 		= MeanFrame.length;
-				    Pointer kernelParameters 	= Pointer.to(   
-				    	Pointer.to(new int[]{W[0]}),
-				        Pointer.to(device_window),
-				        Pointer.to(new int[]{filteWindowLength}),
-				        Pointer.to(new int[]{nFrames}),
-				        Pointer.to(device_test_Data),
-				        Pointer.to(new int[]{testDataLength}),
-				        Pointer.to(device_meanVector),
-				        Pointer.to(new int[]{meanVectorLength}),
-				        Pointer.to(deviceOutput),
-				        Pointer.to(new int[]{testDataLength})
-				    );
-				    int blockSizeX 	= 1;
-				    int blockSizeY 	= 1;				   
-				    int gridSizeX 	= columns;
-				    int gridSizeY 	= rows;
-				    cuLaunchKernel(function,
-				        gridSizeX,  gridSizeY, 1, 	// Grid dimension
-				        blockSizeX, blockSizeY, 1,  // Block dimension
-				        0, null,               		// Shared memory size and stream
-				        kernelParameters, null 		// Kernel- and extra parameters
-				    );
-				    cuCtxSynchronize();
-				     
-				    // Pull data from device.
-				    int hostOutput[] = new int[timeVector.length];
-				    cuMemcpyDtoH(Pointer.to(hostOutput), deviceOutput,
-				    		timeVector.length * Sizeof.INT);
+						CUdeviceptr device_window 		= CUDA.allocateOnDevice((2 * W[0] + 1) * rows * columns); // swap vector.
+						CUdeviceptr device_test_Data 	= CUDA.copyToDevice(timeVector);
+						CUdeviceptr device_meanVector 	= CUDA.copyToDevice(MeanFrame);
+						CUdeviceptr deviceOutput 		= CUDA.allocateOnDevice(timeVector.length);
 
-				   // Free up memory allocation on device, housekeeping.
-				    cuMemFree(device_window);   
-				    cuMemFree(device_test_Data);    
-				    cuMemFree(deviceOutput);
-					// return data.
-					idx = 0;
-					for (int i = 0; i < rows; i++){
-						for (int j = 0; j < columns; j++){							// Loop over and setup computation.
-							
-							for (int Frame = 0; Frame < nFrames; Frame++){										
-								outputArray[i][j][Frame][0] = hostOutput[idx]; // Normalize voxels;
-								idx ++;
+						int filteWindowLength 		= (2 * W[0] + 1) * rows * columns;
+						int testDataLength 			= timeVector.length;
+						int meanVectorLength 		= MeanFrame.length;
+						Pointer kernelParameters 	= Pointer.to(   
+								Pointer.to(new int[]{W[0]}),
+								Pointer.to(device_window),
+								Pointer.to(new int[]{filteWindowLength}),
+								Pointer.to(new int[]{nFrames}),
+								Pointer.to(device_test_Data),
+								Pointer.to(new int[]{testDataLength}),
+								Pointer.to(device_meanVector),
+								Pointer.to(new int[]{meanVectorLength}),
+								Pointer.to(deviceOutput),
+								Pointer.to(new int[]{testDataLength})
+								);
+						int blockSizeX 	= 1;
+						int blockSizeY 	= 1;				   
+						int gridSizeX 	= columns;
+						int gridSizeY 	= rows;
+						cuLaunchKernel(function,
+								gridSizeX,  gridSizeY, 1, 	// Grid dimension
+								blockSizeX, blockSizeY, 1,  // Block dimension
+								0, null,               		// Shared memory size and stream
+								kernelParameters, null 		// Kernel- and extra parameters
+								);
+						cuCtxSynchronize();
+
+						// Pull data from device.
+						int hostOutput[] = new int[timeVector.length];
+						cuMemcpyDtoH(Pointer.to(hostOutput), deviceOutput,
+								timeVector.length * Sizeof.INT);
+
+						// Free up memory allocation on device, housekeeping.
+						cuMemFree(device_window);   
+						cuMemFree(device_test_Data);    
+						cuMemFree(deviceOutput);
+						// return data.
+						idx = 0;
+						for (int i = 0; i < rows; i++){
+							for (int j = 0; j < columns; j++){							// Loop over and setup computation.
+
+								for (int Frame = 0; Frame < nFrames; Frame++){										
+									outputArray[i][j][Frame][0] = hostOutput[idx]; // Normalize voxels;
+									idx ++;
+								}
 							}
 						}
-					}
-			    } // single channel end.
-			    else // if multichannel data.
-			    {
-			    	
-			    } // multichannel end.
-			    
-		} // end GPU.
+					} // single channel end.
+					else // if multichannel data.
+					{
+
+					} // multichannel end.
+
+				} // end GPU.
 		return outputArray;
-		
-	} // medianfiltering.
-	
-	
+
+	} // medianfiltering with array output.
+
+
 	/*
 	 * float precision version.
 	 */
@@ -451,10 +720,10 @@ class BackgroundCorrection {
 		for (int i = 0; i < 2*W+1; i ++){ // First section, without access to data on left.//
 			if (i % 2 == 0){
 				medianVector[i] = (float) ((V[W/2+i/2]+V[W/2+i/2+1])/2.0);
-			//	Vector[i] = (float) ((V[W/2+i/2]+V[W/2+i/2+1])/2.0);
+				//	Vector[i] = (float) ((V[W/2+i/2]+V[W/2+i/2+1])/2.0);
 			}else{
 				medianVector[i] = V[W/2+i];
-		//		Vector[i] = V[W/2+i];
+				//		Vector[i] = V[W/2+i];
 			}		
 			V = sortInsert(V,Vector[i+W+1]); // Add new entry.
 
@@ -462,7 +731,7 @@ class BackgroundCorrection {
 
 		for(int i = 2*W+1; i < Vector.length-W-1; i++){ // Main loop, middle section.			
 			medianVector[i] = V[W]; // Pull out median value.
-		//	Vector[i] = V[W]; // Pull out median value.
+			//	Vector[i] = V[W]; // Pull out median value.
 			V = removeEntry(V,Vector[i-W]);
 			V = sortInsert(V,Vector[i+W+1]);		
 		}
@@ -473,12 +742,12 @@ class BackgroundCorrection {
 				//Vector[i] = V[W-(i-Vector.length + W + 1)/2];
 			}else{
 				medianVector[i] = (float) ((V[W-(i-Vector.length + W)/2]+V[W-(i-Vector.length + W)/2-1])/2.0);
-			//	Vector[i] = (float) ((V[W-(i-Vector.length + W)/2]+V[W-(i-Vector.length + W)/2-1])/2.0);
+				//	Vector[i] = (float) ((V[W-(i-Vector.length + W)/2]+V[W-(i-Vector.length + W)/2-1])/2.0);
 			}
 			V = removeEntry(V,Vector[i-W]); // Remove items from V once per loop, ending with a W+1 large vector.	
 		}		
 		return medianVector;
-	//	return Vector;
+		//	return Vector;
 	}
 
 	public static float[] removeEntry(float[] inVector, float entry) { // Return vector with element "entry" missing.
@@ -508,7 +777,7 @@ class BackgroundCorrection {
 		float[] bigVector = new float[Vector.length + 1]; // Add InsVal into this vector		
 		int indexToInsert = 0;
 		if (InsVal > Vector[Vector.length-1]){ // If the value to be inserted is larger then the last value in the vector.
-								
+
 			System.arraycopy(Vector, 0, bigVector, 0, Vector.length);
 			bigVector[bigVector.length-1] = InsVal;
 			return bigVector;
@@ -571,7 +840,7 @@ class BackgroundCorrection {
 		if (high > i)
 			quickSort(arr, i, high);
 	}
-	
+
 	/*
 	 * double precision version.
 	 */
@@ -642,7 +911,7 @@ class BackgroundCorrection {
 		double[] bigVector = new double[Vector.length + 1]; // Add InsVal into this vector		
 		int indexToInsert = 0;
 		if (InsVal > Vector[Vector.length-1]){ // If the value to be inserted is larger then the last value in the vector.
-								
+
 			System.arraycopy(Vector, 0, bigVector, 0, Vector.length);
 			bigVector[bigVector.length-1] = InsVal;
 			return bigVector;

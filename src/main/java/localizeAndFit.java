@@ -32,6 +32,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+
+import ij.ImagePlus;
+import ij.WindowManager;
 import ij.process.ImageProcessor;
 import jcuda.Pointer;
 import jcuda.Sizeof;
@@ -44,9 +47,15 @@ import jcuda.driver.CUmodule;
 
 public class localizeAndFit {
 
-	public static ArrayList<Particle> run(int[][][][] inputArray, int[] MinLevel, double[] sqDistance, int[] gWindow, int[] inputPixelSize, int[] minPosPixels, int[] totalGain , int selectedModel){				
+	public static ArrayList<Particle> run(int[] MinLevel, double[] sqDistance, int[] gWindow, int[] inputPixelSize, int[] minPosPixels, int[] totalGain , int selectedModel){				
+		int[][][][] inputArray 				= TranslateIm.ReadIm();
+		ImagePlus image 					= WindowManager.getCurrentImage();
+		int columns 						= image.getWidth();
+		int rows 							= image.getHeight();
+		
 		int nChannels 						= inputArray[0][0][0].length; 	// Number of channels.
 		int nFrames 						= inputArray[0][0].length;		// Number of frames.
+		
 		ArrayList<Particle> Results 		= new ArrayList<Particle>();		// Fitted results array list.
 
 		if (selectedModel == 1) // sequential
@@ -56,7 +65,7 @@ public class localizeAndFit {
 			{
 				for (int Frame = 1; Frame <= nFrames;Frame++)					// Loop over all frames.
 				{
-					float[][] DataArray = new float[inputArray.length][inputArray[0].length];
+					int[][] DataArray = new int[inputArray.length][inputArray[0].length];
 					for (int x = 0; x < inputArray.length; x++)
 					{
 						for (int y = 0; y < inputArray[0].length; y++)
@@ -101,12 +110,14 @@ public class localizeAndFit {
 		}else // sequential 
 			if (selectedModel == 0) // parallel
 			{
+				ImageProcessor IP = image.getProcessor();
 				ArrayList<fitParameters> fitThese 	= new ArrayList<fitParameters>(); 	// arraylist to hold all fitting parameters.
 				for (int Ch = 1; Ch <= nChannels; Ch++)							// Loop over all channels.
 				{
 					for (int Frame = 1; Frame <= nFrames;Frame++)					// Loop over all frames.
 					{
-						float[][] DataArray = new float[inputArray.length][inputArray[0].length];
+						
+						/*int[][] DataArray = new int[inputArray.length][inputArray[0].length];
 						for (int x = 0; x < inputArray.length; x++)
 						{
 							for (int y = 0; y < inputArray[0].length; y++)
@@ -114,8 +125,13 @@ public class localizeAndFit {
 								DataArray[x][y] = inputArray[x][y][Frame-1][Ch - 1];
 							} // y loop.
 						} // x loop.
-
-						ArrayList<int[]> Center 	= LocalMaxima.FindMaxima(DataArray, gWindow[Ch-1], MinLevel[Ch-1], sqDistance[Ch-1], minPosPixels[Ch-1]); 	// Get possibly relevant center coordinates.
+*/						
+						image.setPosition(
+								Ch,			// channel.
+								1,			// slice.
+								Frame);		// frame.
+						IP = image.getProcessor();
+						ArrayList<int[]> Center 	= LocalMaxima.FindMaxima(IP.getIntArray(), gWindow[Ch-1], MinLevel[Ch-1], sqDistance[Ch-1], minPosPixels[Ch-1]); 	// Get possibly relevant center coordinates.
 
 						for (int i = 0; i < Center.size(); i++)
 						{
@@ -126,7 +142,8 @@ public class localizeAndFit {
 							{
 								int x =  Coord[0] - Math.round((gWindow[Ch-1])/2) +  (j % gWindow[Ch-1]);
 								int y =  Coord[1] - Math.round((gWindow[Ch-1])/2) +  (j / gWindow[Ch-1]);
-								dataFit[j] = inputArray[x][y][Frame-1][Ch - 1];
+								//dataFit[j] = inputArray[x][y][Frame-1][Ch - 1];
+								dataFit[j] = IP.get(x, y);
 							} // pull out data for this fit.
 							fitThese.add(new fitParameters(Coord, 
 									dataFit,
@@ -188,11 +205,11 @@ public class localizeAndFit {
 				}
 				return cleanResults; // end parallel computation by returning results.
 			}else // end parallel. 
-				if (selectedModel == 2) // GPU 
+				if (selectedModel == 2) // GPU TODO: ADd image loading to GPU bound code. 
 				{			
 					double convCriteria = 1E-8; // how large improvement from one step to next we require.
 					int maxIterations = 1000;  // stop if an individual fit reaches this number of iterations.
-
+					ImageProcessor IP = image.getProcessor();
 					// Initialize the driver and create a context for the first device.
 					cuInit(0);
 					CUdevice device = new CUdevice();
@@ -216,10 +233,8 @@ public class localizeAndFit {
 					CUfunction findMaximaFcn = new CUfunction();
 					cuModuleGetFunction(findMaximaFcn, moduleLM, "run");	// findMaxima.ptx (run function).
 					for (int Ch = 1; Ch <= nChannels; Ch++)					// Loop over all channels.
-					{
-						
+					{						
 						int nCenter =2*(( inputArray.length*inputArray[0].length/(gWindow[Ch-1]*gWindow[Ch-1])) / 2); // ~ 80 possible particles for a 64x64 frame. Lets the program scale with frame size.
-						System.out.println(nCenter);
 						double gb = 1024*1024*1024;
 						double maxMemoryGPU = 3*gb; // TODO: get size of gpu memory.
 						int nMax = (int) (maxMemoryGPU/(inputArray.length*inputArray[0].length*Sizeof.INT + nCenter*Sizeof.INT)); 	// the localMaxima GPU calculations require: (x*y*frame*(Sizeof.INT ) + frame*nCenters*Sizeof.FLOAT)/gb memory. with known x and y dimensions, determine maximum size of frame for each batch.
@@ -234,6 +249,12 @@ public class localizeAndFit {
 						boolean processed = true;
 						for (int Frame = 1; Frame <= nFrames; Frame ++)
 						{					
+							
+							image.setPosition(
+									Ch,			// channel.
+									1,			// slice.
+									Frame);		// frame.
+							IP = image.getProcessor();
 							if (processed)
 							{
 								loopStartFrame = Frame;
@@ -246,8 +267,8 @@ public class localizeAndFit {
 								{									
 									for (int y = 0; y < inputArray[0].length; y++)
 									{				
-
-										data[idx] = inputArray[x][y][Frame-1][Ch - 1];									
+										data[idx] = IP.get(x, y);
+										//data[idx] = inputArray[x][y][Frame-1][Ch - 1];									
 										idx++;
 
 									} // y loop.
@@ -408,12 +429,18 @@ public class localizeAndFit {
 						for (int n = 0; n < N; n++) //loop over all parameters to set up calculations:
 						{
 							int x0 = fitThese.get(n).Center[0] - gWindow[Ch-1]/2; // upper left corner of region.
-							int y0 = fitThese.get(n).Center[1] - gWindow[Ch-1]/2; // upper left corner of region.				
+							int y0 = fitThese.get(n).Center[1] - gWindow[Ch-1]/2; // upper left corner of region.		
+							image.setPosition(
+									Ch,			// channel.
+									1,			// slice.
+									fitThese.get(n).frame);		// frame.
+							IP = image.getProcessor();
 							for (int j = 0; j < gWindowSquare; j++ )
 							{
 								int xi = (j % gWindow[Ch-1]) + x0; // step through all points in the area.
-								int yi = (j / gWindow[Ch-1]) + y0; // step through all points in the area.				
-								gaussVector[gIdx] = inputArray[xi][yi][fitThese.get(n).frame-1][Ch - 1]; // pull out data.
+								int yi = (j / gWindow[Ch-1]) + y0; // step through all points in the area.
+								gaussVector[gIdx] = IP.get(xi, yi);
+//								gaussVector[gIdx] = inputArray[xi][yi][fitThese.get(n).frame-1][Ch - 1]; // pull out data.
 								gIdx++;
 							}	
 							// start parameters for fit:
@@ -520,7 +547,7 @@ public class localizeAndFit {
 	 * Returns fitParameters for subsequent gaussian fitting.
 	 */
 	public static ArrayList<fitParameters> LocalizeEvents(ImageProcessor IP, int MinLevel, double sqDistance, int Window, int Frame, int Channel, int pixelSize, int minPosPixels, int totalGain){
-		float[][] DataArray 		= IP.getFloatArray();												// Array representing the frame.
+		int[][] DataArray 		= IP.getIntArray();												// Array representing the frame.
 		ArrayList<int[]> Center 	= LocalMaxima.FindMaxima(DataArray, Window, MinLevel, sqDistance,minPosPixels); 	// Get possibly relevant center coordinates.
 		ArrayList<fitParameters> fitThese = new ArrayList<fitParameters>();
 		for (int i = 0; i < Center.size(); i++){

@@ -17,7 +17,7 @@
 import java.util.ArrayList;
 
 public class LocalMaxima {
-	public static ArrayList<int[]> FindMaxima(float[][] Array, int Window, int MinLevel,double sqDistance, int minPosPixels){		
+	public static ArrayList<int[]> FindMaxima(int[][] Array, int Window, int MinLevel,double sqDistance, int minPosPixels){		
 		ArrayList<int[]> Results = new ArrayList<int[]>();
 		//int[] XY = {5,3}; //Example of how results are organized.		
 		//Results.add(XY);

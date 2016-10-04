@@ -26,8 +26,7 @@ import javax.swing.JPanel;
 import ij.WindowManager;
 
 /* PROJECT IMPLEMENTATIONS PRIOR TO RELEASE
- * TODO: Store preference action not implemented.
- * TODO: GPU implementation.
+ * TODO: GPU implementation. Fitting functional.
  * TODO: Add tooltips to GUI.
  */
 
@@ -42,8 +41,8 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		initComponents();
 
 
-		try{
-        	loadParameters(ij.Prefs.get("SMLocalizer.CurrentSetting", "")); // current.
+		try{			
+			loadParameters(ij.Prefs.get("SMLocalizer.CurrentSetting", "")); // current.
         }catch (NumberFormatException e)
         {        	
 		for (int id = 0; id < 10; id++){ // update list of variables for each ch.
@@ -3088,9 +3087,9 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		int[] signalStrength = getMinSignal();
 		double[] minDistance = getMinDistance();
 		int[] desiredPixelSize = getOutputPixelSize();
-		int[][][][] corrImStack = BackgroundCorrection.medianFiltering(Window,WindowManager.getCurrentImage(),selectedModel); // correct background.
-
-		ArrayList<Particle> Results = localizeAndFit.run(corrImStack, signalStrength, minDistance, gWindow, pixelSize,minPixelOverBkgrnd,totalGain,selectedModel);  //locate and fit all particles.
+//		int[][][][] corrImStack = BackgroundCorrection.medianFilteringOld(Window,WindowManager.getCurrentImage(),selectedModel); // correct background.
+		BackgroundCorrection.medianFiltering(Window,WindowManager.getCurrentImage(),selectedModel); // correct background.
+		ArrayList<Particle> Results = localizeAndFit.run(signalStrength, minDistance, gWindow, pixelSize,minPixelOverBkgrnd,totalGain,selectedModel);  //locate and fit all particles.
 		TableIO.Store(Results);
 		boolean[][] include = IncludeParameters();
 		double[][] lb = lbParameters();
@@ -3141,6 +3140,10 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		boolean[] doCluster = getDoClusterAnalysis();
 		double[] epsilon     = getEpsilon();
 		int[] minPts        = getMinPtsCluster();
+		boolean[][] include = IncludeParameters();
+		double[][] lb = lbParameters();
+		double[][] ub = ubParameters();
+		cleanParticleList.run(lb,ub,include);
 		nearestNeighbour.analyse();
 		//DBClust.Ident(epsilon, minPts,desiredPixelSize,doCluster); // change call to include no loop but checks for number of channels within DBClust.
 	}                                               
@@ -3158,7 +3161,11 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			selectedModel = 2;
 		else if (sequentialComputation.isSelected()) // linear computation.
 			selectedModel = 1; 
+		boolean[][] include = IncludeParameters();
+		double[][] lb = lbParameters();
+		double[][] ub = ubParameters();
 
+		cleanParticleList.run(lb,ub,include);
 		int[] minParticles = getDriftCorrBinLowCount();
 		int[] maxParticles = getDriftCorrBinHighCount();
 		int[] bins         = getNumberOfBinsDriftCorr();
@@ -3179,28 +3186,16 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			selectedModel = 2;
 		else if (sequentialComputation.isSelected()) // linear computation.
 			selectedModel = 1; 
-
+		boolean[][] include = IncludeParameters();
+		double[][] lb = lbParameters();
+		double[][] ub = ubParameters();
+		cleanParticleList.run(lb,ub,include);
 		int[][] boundry = getChAlignShift();
 		int[] minParticles = getChAlignBinLowCount();
 		int[] maxParticles = getChAlignBinHighCount();
 		correctDrift.ChannelAlign(boundry, maxParticles, minParticles, selectedModel); // drift correct all channels.
 	}                                            
 
-	/*   private void alignChannelsActionPerformed(java.awt.event.ActionEvent evt) {                                              
-          updateList(channelId.getSelectedIndex()-1);
-        int selectedModel = 5;
-        if (parallelComputation.isSelected()) // linear computation.
-        	selectedModel = 0;
-        else if (GPUcomputation.isSelected()) // parallell computation.
-        	selectedModel = 2;
-        else if (sequentialComputation.isSelected()) // GPU accelerated computation.
-        	selectedModel = 1;
-        int[][] boundry = getChAlignShift();
-        int[] minParticles = getChAlignBinLowCount();
-        int[] maxParticles = getChAlignBinHighCount();
-        correctDrift.ChannelAlign(boundry, maxParticles, minParticles, selectedModel); // drift correct all channels.
-    }                                             
-	 */
 	private void chAlignBinHighCountActionPerformed(java.awt.event.ActionEvent evt) {                                                    
 
 	}                                                   
@@ -3325,8 +3320,9 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			selectedModel = 1; 
 
 		int[] Window = getWindowWidth(); // get user input, (W-1)/2.                
-		int[][][][] corrImStack = BackgroundCorrection.medianFiltering(Window,WindowManager.getCurrentImage(),selectedModel); // correct background.
-		TranslateIm.MakeIm(corrImStack);
+		BackgroundCorrection.medianFiltering(Window,WindowManager.getCurrentImage(),selectedModel); // correct background.
+//		int[][][][] corrImStack = BackgroundCorrection.medianFilteringOld(Window,WindowManager.getCurrentImage(),selectedModel); // correct background.
+//		TranslateIm.MakeIm(corrImStack);
 	}                                                 
 
 	private void localize_FitActionPerformed(java.awt.event.ActionEvent evt) {                                             
@@ -3344,10 +3340,11 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		int[] gWindow = getGaussWindowsize();
 		int[] minPixelOverBkgrnd = getMinPixelOverBackground();
 		int[] signalStrength = getMinSignal();
-		double[] minDistance = getMinDistance();        
-		int[][][][] corrImStack = TranslateIm.ReadIm();	   
-		ArrayList<Particle> Results = localizeAndFit.run(corrImStack, signalStrength, minDistance, gWindow, pixelSize,minPixelOverBkgrnd,totalGain,selectedModel);  //locate and fit all particles.	   	   
+		double[] minDistance = getMinDistance();
+		long time = System.nanoTime();
+		ArrayList<Particle> Results = localizeAndFit.run(signalStrength, minDistance, gWindow, pixelSize,minPixelOverBkgrnd,totalGain,selectedModel);  //locate and fit all particles.	   	   
 		TableIO.Store(Results);
+		System.out.println((System.nanoTime()-time)*1E-6 + " ms");
 
 	}                                            
 
@@ -3481,7 +3478,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		 *       Render image settings.
 		 */ 
 
-		if (renderImage.isEnabled())
+		if (doRenderImage.isSelected())
 			doRenderImageChList.getItem(id).setText("1");
 		else
 			doRenderImageChList.getItem(id).setText("0");
@@ -3583,9 +3580,9 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		 *       Render image settings.
 		 */
 		if (doRenderImageChList.getItem(id).getText().equals("1"))
-			renderImage.setEnabled(true);
+			doRenderImage.setSelected(true);
 		else
-			renderImage.setEnabled(false);
+			doRenderImage.setSelected(false);
 
 		outputPixelSize.setText(outputPixelSizeChList.getItem(id).getText());
 
@@ -4354,10 +4351,10 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			 *       Render image settings.
 			 */
 			// render image
-			outputPixelSizeChList.getItem(Ch).setText( 
+			doRenderImageChList.getItem(Ch).setText( 
 					ij.Prefs.get("SMLocalizer.settings."+storeName+
-							".doRender."+Ch, 
-							"")); 
+							".doRenderImage."+Ch, 
+							""));			
 			// pixel size
 			outputPixelSizeChList.getItem(Ch).setText( 
 					ij.Prefs.get("SMLocalizer.settings."+storeName+
@@ -4601,7 +4598,8 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			// render image		
 			ij.Prefs.set("SMLocalizer.settings."+storeName+
 					".doRenderImage."+Ch,
-					outputPixelSizeChList.getItem(Ch).getText());						  
+					doRenderImageChList.getItem(Ch).getText());		
+			
 			// pixel size.
 			ij.Prefs.set("SMLocalizer.settings."+storeName+
 					".outputPixelSize."+Ch, 
