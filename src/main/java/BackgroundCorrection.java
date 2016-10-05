@@ -78,10 +78,20 @@ class BackgroundCorrection {
 						for (int Frame = 1; Frame <= nFrames; Frame++)
 						{			
 
-							image.setPosition(
+							if (image.getNFrames() == 1)
+							{
+								image.setPosition(							
 									Ch,			// channel.
-									1,			// slice.
-									Frame);		// frame.
+									Frame,			// slice.
+									1);		// frame.
+							}
+							else
+							{														
+								image.setPosition(
+										Ch,			// channel.
+										1,			// slice.
+										Frame);		// frame.
+							}
 							IP = image.getProcessor();
 							if (i == 0)
 							{
@@ -109,10 +119,20 @@ class BackgroundCorrection {
 						{
 							for (int Frame = 1; Frame <= nFrames; Frame++)
 							{
-								image.setPosition(
+								if (image.getNFrames() == 1)
+								{
+									image.setPosition(							
 										Ch,			// channel.
-										1,			// slice.
-										Frame);		// frame.
+										Frame,			// slice.
+										1);		// frame.
+								}
+								else
+								{														
+									image.setPosition(
+											Ch,			// channel.
+											1,			// slice.
+											Frame);		// frame.
+								}
 								IP = image.getProcessor();
 								value = (int) (IP.get((i-1) % rows, (i-1) / columns) - (timeVector[Frame-1]*MeanFrame[Frame-1]));
 								if (value < 0)
@@ -134,10 +154,20 @@ class BackgroundCorrection {
 
 
 					for (int Frame = 1; Frame < nFrames+1; Frame++){			
-						image.setPosition(
+						if (image.getNFrames() == 1)
+						{
+							image.setPosition(							
 								Ch,			// channel.
-								1,			// slice.
-								Frame);		// frame.
+								Frame,			// slice.
+								1);		// frame.
+						}
+						else
+						{														
+							image.setPosition(
+									Ch,			// channel.
+									1,			// slice.
+									Frame);		// frame.
+						}
 						IP 						= image.getProcessor(); 			// Update processor to next slice.
 						ImageStatistics Stat 	= IP.getStatistics();
 						MeanFrame[Frame-1] 		= (float) Stat.mean;
@@ -191,10 +221,20 @@ class BackgroundCorrection {
 					int value = 0;
 					for (int Frame = 1; Frame <= nFrames; Frame++) // store data.
 					{						
-						image.setPosition(
+						if (image.getNFrames() == 1)
+						{
+							image.setPosition(							
 								Ch,			// channel.
-								1,			// slice.
-								Frame);		// frame.
+								Frame,			// slice.
+								1);		// frame.
+						}
+						else
+						{														
+							image.setPosition(
+									Ch,			// channel.
+									1,			// slice.
+									Frame);		// frame.
+						}
 						IP 						= image.getProcessor(); 			// Update processor to next slice.
 						
 						for (int i = 0; i < rows*columns; i++)
@@ -232,10 +272,20 @@ class BackgroundCorrection {
 						ImageProcessor IP = image.getProcessor();
 						for (int Frame = 1; Frame <= nFrames; Frame++)
 						{			
-							image.setPosition(
+							if (image.getNFrames() == 1)
+							{
+								image.setPosition(							
 									Ch,			// channel.
-									1,			// slice.
-									Frame);		// frame.
+									Frame,			// slice.
+									1);		// frame.
+							}
+							else
+							{														
+								image.setPosition(
+										Ch,			// channel.
+										1,			// slice.
+										Frame);		// frame.
+							}
 							IP = image.getProcessor();
 
 							ImageStatistics Stat 	= IP.getStatistics();
@@ -296,10 +346,20 @@ class BackgroundCorrection {
 						// return data.
 						for (int Frame = 1; Frame <= nFrames; Frame++)
 						{			
-							image.setPosition(
+							if (image.getNFrames() == 1)
+							{
+								image.setPosition(							
 									Ch,			// channel.
-									1,			// slice.
-									Frame);		// frame.
+									Frame,			// slice.
+									1);		// frame.
+							}
+							else
+							{														
+								image.setPosition(
+										Ch,			// channel.
+										1,			// slice.
+										Frame);		// frame.
+							}
 							IP = image.getProcessor();						
 							for (int i = 0; i < rows*columns; i ++)
 							{																

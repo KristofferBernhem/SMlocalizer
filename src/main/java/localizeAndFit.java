@@ -57,6 +57,7 @@ public class localizeAndFit {
 		int nFrames 						= image.getNFrames();
 		if (nFrames == 1)
 			nFrames 						= image.getNSlices();  	
+		System.out.println(nFrames + " " + nChannels + " " + image.getNSlices());
 		ArrayList<Particle> Results 		= new ArrayList<Particle>();		// Fitted results array list.
 
 		if (selectedModel == 1) // sequential
@@ -118,10 +119,20 @@ public class localizeAndFit {
 				{
 					for (int Frame = 1; Frame <= nFrames;Frame++)					// Loop over all frames.
 					{											
-						image.setPosition(
+						if (image.getNFrames() == 1)
+						{
+							image.setPosition(							
 								Ch,			// channel.
-								1,			// slice.
-								Frame);		// frame.
+								Frame,			// slice.
+								1);		// frame.
+						}
+						else
+						{														
+							image.setPosition(
+									Ch,			// channel.
+									1,			// slice.
+									Frame);		// frame.
+						}
 						IP = image.getProcessor();					
 						int[][] Arr = IP.getIntArray();
 						
@@ -247,12 +258,23 @@ public class localizeAndFit {
 						boolean processed = true;
 						for (int Frame = 1; Frame <= nFrames; Frame ++)
 						{					
-							
-							image.setPosition(
+							if (image.getNFrames() == 1)
+							{
+								image.setPosition(							
 									Ch,			// channel.
-									1,			// slice.
-									Frame);		// frame.
+									Frame,			// slice.
+									1);		// frame.
+							}
+							else
+							{														
+								image.setPosition(
+										Ch,			// channel.
+										1,			// slice.
+										Frame);		// frame.
+							}
+								
 							IP = image.getProcessor();
+							
 							if (processed)
 							{
 								loopStartFrame = Frame;
@@ -424,10 +446,20 @@ public class localizeAndFit {
 						{
 							int x0 = fitThese.get(n).Center[0] - gWindow[Ch-1]/2; // upper left corner of region.
 							int y0 = fitThese.get(n).Center[1] - gWindow[Ch-1]/2; // upper left corner of region.		
-							image.setPosition(
+							if (image.getNFrames() == 1)
+							{
+								image.setPosition(							
 									Ch,			// channel.
-									1,			// slice.
-									fitThese.get(n).frame);		// frame.
+									fitThese.get(n).frame,			// slice.
+									1);		// frame.
+							}
+							else
+							{														
+								image.setPosition(
+										Ch,			// channel.
+										1,			// slice.
+										fitThese.get(n).frame);		// frame.
+							}
 							IP = image.getProcessor();
 							
 							for (int j = 0; j < gWindowSquare; j++ )
