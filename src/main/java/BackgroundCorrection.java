@@ -46,7 +46,7 @@ import jcuda.driver.CUmodule;
 /* This class contains all relevant algorithms for background corrections. Handles 2D and 3D stacks with single slice per frame.
  * V 2.0 2016-07-18 Kristoffer Bernhem, kristoffer.bernhem@gmail.com
  */
-// TODO: Change to return image. 
+
 class BackgroundCorrection {
 
 	/* Main function for background filtering using the time median based method described in:
@@ -54,15 +54,13 @@ class BackgroundCorrection {
 	 *	E. Hoogendoorn, K. C. Crosby, D. Leyton-Puig, R. M.P. Breedijk, K. Jalink, T. W.J. Gadella & M. Postma
 	 *	Scientific Reports 4, Article number: 3854 (2014)	
 	 */
-	public static void medianFiltering(final int[] W,ImagePlus image, int selectedModel){		
+	public static void medianFiltering(final int[] W, ImagePlus image, int selectedModel){		
 		int nChannels 	= image.getNChannels();
 		int nFrames 	= image.getNFrames();
 		if (nFrames == 1)
 			nFrames = image.getNSlices();  				// some formats store frames as slices, some as frames.
 		int rows 		= image.getWidth();
 		int columns 	= image.getHeight();		
-		//		int[][][][] outputArray = new int[rows][columns][nFrames][nChannels];
-
 		if (selectedModel == 1) // sequential.
 		{
 			for (int Ch = 1; Ch <= nChannels; Ch++) // Loop over all channels.
@@ -148,8 +146,6 @@ class BackgroundCorrection {
 						}
 						for (int i = 0; i < rows*columns; i++)
 						{
-			//				if (i == 0)
-			//					System.out.print(IP.get(i % rows, i / columns) + ", ");
 							timeVector[i][Frame-1] = (float) (IP.get(i % rows, i / columns)/MeanFrame[Frame-1]); // load data. 
 						}
 					} // Data loading.
@@ -193,10 +189,6 @@ class BackgroundCorrection {
 						exec.shutdown();
 					}
 					int value = 0;
-				//	System.out.println("\n");
-				//	for (int Frame = 0; Frame < nFrames; Frame++)
-				//		System.out.print(MeanFrame[Frame] + ", ");
-				//	System.out.println("\n");
 					for (int Frame = 1; Frame <= nFrames; Frame++) // store data.
 					{						
 						image.setPosition(
@@ -207,8 +199,6 @@ class BackgroundCorrection {
 						
 						for (int i = 0; i < rows*columns; i++)
 						{
-							//if (i == 0)
-							//	System.out.print(IP.get(i % rows, i / columns) -(int)timeVector[i][Frame-1] + ", ");
 							value = IP.get(i % rows, i / columns) - (int)timeVector[i][Frame-1];
 							if (value < 0)
 								value = 0;

@@ -26,7 +26,7 @@ import javax.swing.JPanel;
 import ij.WindowManager;
 
 /* PROJECT IMPLEMENTATIONS PRIOR TO RELEASE
- * TODO: GPU implementation. Fitting functional.
+ * TODO: GPU implementation. Fitting functional. local maxima requires tweeking. Removal of copies. Medianfiltering non functional.
  * TODO: Add tooltips to GUI.
  */
 
@@ -3071,13 +3071,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		/*
 		 * Take user settings and run through all analysis steps selected. 
 		 */
-		int selectedModel = 5;
-		if (parallelComputation.isSelected()) // parallel computation.
-			selectedModel = 0;
-		else if (GPUcomputation.isSelected()) // GPU accelerated computation.
-			selectedModel = 2;
-		else if (sequentialComputation.isSelected()) // linear computation.
-			selectedModel = 1; 
+	
 
 		int[] pixelSize = getPixelSize();
 		int[] totalGain = getTotalGain();
@@ -3088,9 +3082,22 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		double[] minDistance = getMinDistance();
 		int[] desiredPixelSize = getOutputPixelSize();
 //		int[][][][] corrImStack = BackgroundCorrection.medianFilteringOld(Window,WindowManager.getCurrentImage(),selectedModel); // correct background.
-		BackgroundCorrection.medianFiltering(Window,WindowManager.getCurrentImage(),selectedModel); // correct background.
-		ArrayList<Particle> Results = localizeAndFit.run(signalStrength, minDistance, gWindow, pixelSize,minPixelOverBkgrnd,totalGain,selectedModel);  //locate and fit all particles.
-		TableIO.Store(Results);
+		int selectedModel = 5;
+		if (parallelComputation.isSelected()) // parallel computation.
+			selectedModel = 0;
+		else if (GPUcomputation.isSelected()) // GPU accelerated computation.
+		{
+			selectedModel = 2;
+			processMedianFit.run(Window, WindowManager.getCurrentImage(), selectedModel, signalStrength, minDistance, gWindow, pixelSize, minPixelOverBkgrnd, totalGain); // GPU specific call. TODO: change medianfilter ptx output to be organized on per frame and veriy correct input to next function.
+		}
+		else if (sequentialComputation.isSelected()) // linear computation.
+			selectedModel = 1; 
+		if (selectedModel != 2)
+		{
+			BackgroundCorrection.medianFiltering(Window,WindowManager.getCurrentImage(),selectedModel); // correct background.
+			ArrayList<Particle> Results = localizeAndFit.run(signalStrength, minDistance, gWindow, pixelSize,minPixelOverBkgrnd,totalGain,selectedModel);  //locate and fit all particles.
+			TableIO.Store(Results);
+		}
 		boolean[][] include = IncludeParameters();
 		double[][] lb = lbParameters();
 		double[][] ub = ubParameters();
@@ -3144,8 +3151,8 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		double[][] lb = lbParameters();
 		double[][] ub = ubParameters();
 		cleanParticleList.run(lb,ub,include);
-		nearestNeighbour.analyse();
-		//DBClust.Ident(epsilon, minPts,desiredPixelSize,doCluster); // change call to include no loop but checks for number of channels within DBClust.
+	//	nearestNeighbour.analyse();
+		DBClust.Ident(epsilon, minPts,desiredPixelSize,doCluster); // change call to include no loop but checks for number of channels within DBClust.
 	}                                               
 
 	private void driftCorrBinHighCountActionPerformed(java.awt.event.ActionEvent evt) {                                                      

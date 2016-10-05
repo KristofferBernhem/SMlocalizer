@@ -44,22 +44,24 @@ import jcuda.driver.CUdeviceptr;
 import jcuda.driver.CUfunction;
 import jcuda.driver.CUmodule;
 
-
+// TODO removal of duplicates not functional in ptx locate maxima.
 public class localizeAndFit {
 
 	public static ArrayList<Particle> run(int[] MinLevel, double[] sqDistance, int[] gWindow, int[] inputPixelSize, int[] minPosPixels, int[] totalGain , int selectedModel){				
-		int[][][][] inputArray 				= TranslateIm.ReadIm();
+
 		ImagePlus image 					= WindowManager.getCurrentImage();
 		int columns 						= image.getWidth();
 		int rows 							= image.getHeight();
 		
-		int nChannels 						= inputArray[0][0][0].length; 	// Number of channels.
-		int nFrames 						= inputArray[0][0].length;		// Number of frames.
-		
+		int nChannels 						= image.getNChannels(); 	// Number of channels.
+		int nFrames 						= image.getNFrames();
+		if (nFrames == 1)
+			nFrames 						= image.getNSlices();  	
 		ArrayList<Particle> Results 		= new ArrayList<Particle>();		// Fitted results array list.
 
 		if (selectedModel == 1) // sequential
 		{
+			int[][][][] inputArray 				= TranslateIm.ReadIm();
 			ArrayList<Particle> cleanResults = new ArrayList<Particle>();
 			for (int Ch = 1; Ch <= nChannels; Ch++)							// Loop over all channels.
 			{
@@ -115,36 +117,31 @@ public class localizeAndFit {
 				for (int Ch = 1; Ch <= nChannels; Ch++)							// Loop over all channels.
 				{
 					for (int Frame = 1; Frame <= nFrames;Frame++)					// Loop over all frames.
-					{
-						
-						/*int[][] DataArray = new int[inputArray.length][inputArray[0].length];
-						for (int x = 0; x < inputArray.length; x++)
-						{
-							for (int y = 0; y < inputArray[0].length; y++)
-							{
-								DataArray[x][y] = inputArray[x][y][Frame-1][Ch - 1];
-							} // y loop.
-						} // x loop.
-*/						
+					{											
 						image.setPosition(
 								Ch,			// channel.
 								1,			// slice.
 								Frame);		// frame.
-						IP = image.getProcessor();
-						ArrayList<int[]> Center 	= LocalMaxima.FindMaxima(IP.getIntArray(), gWindow[Ch-1], MinLevel[Ch-1], sqDistance[Ch-1], minPosPixels[Ch-1]); 	// Get possibly relevant center coordinates.
-
+						IP = image.getProcessor();					
+						int[][] Arr = IP.getIntArray();
+						
+						ArrayList<int[]> Center 	= LocalMaxima.FindMaxima(Arr, gWindow[Ch-1], MinLevel[Ch-1], sqDistance[Ch-1], minPosPixels[Ch-1]); 	// Get possibly relevant center coordinates.
+						
 						for (int i = 0; i < Center.size(); i++)
 						{
-							int[] dataFit = new int[gWindow[Ch-1]*gWindow[Ch-1]];							// Container for data to be fitted.
+							
+							int[] dataFit = new int[gWindow[Ch-1]*gWindow[Ch-1]];			// Container for data to be fitted.
 							int[] Coord = Center.get(i);									// X and Y coordinates for center pixels to be fitted.
 
 							for (int j = 0; j < gWindow[Ch-1]*gWindow[Ch-1]; j++)
 							{
+								
 								int x =  Coord[0] - Math.round((gWindow[Ch-1])/2) +  (j % gWindow[Ch-1]);
 								int y =  Coord[1] - Math.round((gWindow[Ch-1])/2) +  (j / gWindow[Ch-1]);
-								//dataFit[j] = inputArray[x][y][Frame-1][Ch - 1];
-								dataFit[j] = IP.get(x, y);
+								
+								dataFit[j] = Arr[x][y];	// Faster then pulling from IP.get again.
 							} // pull out data for this fit.
+
 							fitThese.add(new fitParameters(Coord, 
 									dataFit,
 									Ch,
@@ -152,6 +149,7 @@ public class localizeAndFit {
 									inputPixelSize[Ch-1],
 									gWindow[Ch-1],
 									totalGain[Ch-1]));
+
 						} // loop over all located centers from this frame.									
 					} // loop over all frames.					
 				} // loop over all channels.
@@ -234,17 +232,17 @@ public class localizeAndFit {
 					cuModuleGetFunction(findMaximaFcn, moduleLM, "run");	// findMaxima.ptx (run function).
 					for (int Ch = 1; Ch <= nChannels; Ch++)					// Loop over all channels.
 					{						
-						int nCenter =2*(( inputArray.length*inputArray[0].length/(gWindow[Ch-1]*gWindow[Ch-1])) / 2); // ~ 80 possible particles for a 64x64 frame. Lets the program scale with frame size.
+						int nCenter =2*(( columns*rows/(gWindow[Ch-1]*gWindow[Ch-1])) / 2); // ~ 80 possible particles for a 64x64 frame. Lets the program scale with frame size.
 						double gb = 1024*1024*1024;
 						double maxMemoryGPU = 3*gb; // TODO: get size of gpu memory.
-						int nMax = (int) (maxMemoryGPU/(inputArray.length*inputArray[0].length*Sizeof.INT + nCenter*Sizeof.INT)); 	// the localMaxima GPU calculations require: (x*y*frame*(Sizeof.INT ) + frame*nCenters*Sizeof.FLOAT)/gb memory. with known x and y dimensions, determine maximum size of frame for each batch.
+						int nMax = (int) (maxMemoryGPU/(columns*rows*Sizeof.INT + nCenter*Sizeof.INT)); 	// the localMaxima GPU calculations require: (x*y*frame*(Sizeof.INT ) + frame*nCenters*Sizeof.FLOAT)/gb memory. with known x and y dimensions, determine maximum size of frame for each batch.
 						ArrayList<fitParameters> fitThese = new ArrayList<fitParameters>();
 						int dataIdx = 0;
 						int idx = 0;
 
 						if (nMax > nFrames)
 							nMax = nFrames;
-						int[] data = new int[inputArray.length*inputArray[0].length*nMax];
+						int[] data = new int[columns*rows*nMax];
 						int loopStartFrame = 0;
 						boolean processed = true;
 						for (int Frame = 1; Frame <= nFrames; Frame ++)
@@ -263,14 +261,12 @@ public class localizeAndFit {
 							// load as large chunks of data as possible on the gpu at each time.
 							if (dataIdx < nMax)
 							{
-								for (int x = 0; x < inputArray.length; x++)
+								for (int x = 0; x < columns; x++)
 								{									
-									for (int y = 0; y < inputArray[0].length; y++)
+									for (int y = 0; y < rows; y++)
 									{				
-										data[idx] = IP.get(x, y);
-										//data[idx] = inputArray[x][y][Frame-1][Ch - 1];									
+										data[idx] = IP.get(x, y);							
 										idx++;
-
 									} // y loop.
 								} // x loop.
 								dataIdx++; // count up number of added frames this round.		    			
@@ -278,15 +274,16 @@ public class localizeAndFit {
 							if (dataIdx == nMax)
 							{
 								dataIdx = 0; // reset for next round.
-								idx = 0; // reset for next round.															
+								idx = 0; // reset for next round.		
+								
 								CUdeviceptr deviceData 	= CUDA.copyToDevice(data);
 								CUdeviceptr deviceCenter = CUDA.allocateOnDevice((int)(nMax*nCenter));
 
 								Pointer kernelParameters 		= Pointer.to(   
 										Pointer.to(deviceData),
 										Pointer.to(new int[]{data.length}),
-										Pointer.to(new int[]{inputArray.length}),		 				       
-										Pointer.to(new int[]{inputArray[0].length}),
+										Pointer.to(new int[]{columns}),		 				       
+										Pointer.to(new int[]{rows}),
 										Pointer.to(new int[]{gWindow[Ch-1]}),
 										Pointer.to(new int[]{MinLevel[Ch-1]}),
 										Pointer.to(new double[]{sqDistance[Ch-1]}),
@@ -299,6 +296,7 @@ public class localizeAndFit {
 								int blockSizeY 	= 1;				   
 								int gridSizeX 	= (int) Math.ceil((Math.sqrt(nMax)));
 								int gridSizeY 	= gridSizeX;
+								
 								cuLaunchKernel(findMaximaFcn,
 										gridSizeX,  gridSizeY, 1, 	// Grid dimension
 										blockSizeX, blockSizeY, 1,  // Block dimension
@@ -317,26 +315,22 @@ public class localizeAndFit {
 								cuMemFree(deviceData);   
 								cuMemFree(deviceCenter);
 								// add adding of fitThese.
+								
 								int centerIdx = 0;
 
-								while (centerIdx <hostCenter.length)
+								while (centerIdx < hostCenter.length)
 								{
-									/*System.out.print(hostCenter[centerIdx]+  " x " + hostCenter[centerIdx+1]);
-									if (centerIdx%nCenter == 0)
-										System.out.println("");*/
 									if (hostCenter[centerIdx] >  0)
 									{
-										//	System.out.println(hostCenter[centerIdx]+  " x " + hostCenter[centerIdx+1]);
 										int[] coord = {hostCenter[centerIdx],hostCenter[centerIdx+1]};;
 										fitParameters fitObj = new fitParameters();
 										fitObj.Center =  coord;
-										fitObj.frame = loopStartFrame + centerIdx/ nCenter;
+										fitObj.frame  = loopStartFrame + centerIdx/ nCenter;
 										fitObj.pixelsize = inputPixelSize[Ch-1];
 										fitObj.windowWidth = gWindow[Ch-1];
 										fitObj.totalGain = totalGain[Ch-1];
-										fitObj.channel = Ch;										
-										fitThese.add(fitObj);
-										//		System.out.println("frame: "+ fitThese.get(fitThese.size()-1).frame +" "+ fitThese.get(fitThese.size()-1).Center[0]+ " x " +fitThese.get(fitThese.size()-1).Center[1]);
+										fitObj.channel = Ch;																							
+										fitThese.add(fitObj);									
 									}
 									centerIdx += 2;									
 								}
@@ -354,8 +348,8 @@ public class localizeAndFit {
 								Pointer kernelParameters 		= Pointer.to(   
 										Pointer.to(deviceData),
 										Pointer.to(new int[]{data.length}),
-										Pointer.to(new int[]{inputArray.length}),		 				       
-										Pointer.to(new int[]{inputArray[0].length}),
+										Pointer.to(new int[]{columns}),		 				       
+										Pointer.to(new int[]{rows}),
 										Pointer.to(new int[]{gWindow[Ch-1]}),
 										Pointer.to(new int[]{MinLevel[Ch-1]}),
 										Pointer.to(new double[]{sqDistance[Ch-1]}),
@@ -435,14 +429,16 @@ public class localizeAndFit {
 									1,			// slice.
 									fitThese.get(n).frame);		// frame.
 							IP = image.getProcessor();
+							
 							for (int j = 0; j < gWindowSquare; j++ )
 							{
+								
 								int xi = (j % gWindow[Ch-1]) + x0; // step through all points in the area.
 								int yi = (j / gWindow[Ch-1]) + y0; // step through all points in the area.
-								gaussVector[gIdx] = IP.get(xi, yi);
-//								gaussVector[gIdx] = inputArray[xi][yi][fitThese.get(n).frame-1][Ch - 1]; // pull out data.
+									
+								gaussVector[gIdx] = IP.get(xi, yi); // takes correct datapoints.
 								gIdx++;
-							}	
+							}								
 							// start parameters for fit:
 							parameters[n*7] = gaussVector[n*gWindowSquare+ gCenter]; // read in center pixel.
 							parameters[n*7+1] = 2; // x center, will be calculated as weighted centroid on GPU.
@@ -451,7 +447,7 @@ public class localizeAndFit {
 							parameters[n*7+4] = 2.0F; // y sigma.
 							parameters[n*7+5] = 0; // theta.
 							parameters[n*7+6] = 0; // offset.
-							stepSize[n*7] 	= 0.1F; // amplitude
+							stepSize[n*7] 	 = 0.1F; // amplitude
 							stepSize[n*7+1] 	= (float) (0.25*scale); // x
 							stepSize[n*7+2] 	= (float) (0.25*scale); // y
 							stepSize[n*7+3] 	= (float) (0.5*scale); // sigma x
@@ -535,7 +531,7 @@ public class localizeAndFit {
 							cleanResults.add(Results.get(i));
 
 					}
-
+					
 					return cleanResults;
 				} // end GPU computing.
 
