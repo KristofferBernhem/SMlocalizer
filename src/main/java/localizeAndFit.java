@@ -57,7 +57,7 @@ public class localizeAndFit {
 		int nFrames 						= image.getNFrames();
 		if (nFrames == 1)
 			nFrames 						= image.getNSlices();  	
-		System.out.println(nFrames + " " + nChannels + " " + image.getNSlices());
+		
 		ArrayList<Particle> Results 		= new ArrayList<Particle>();		// Fitted results array list.
 
 		if (selectedModel == 1) // sequential

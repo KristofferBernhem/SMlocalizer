@@ -70,20 +70,61 @@ class BackgroundCorrection {
 				float[] MeanFrame = new float[nFrames]; 		// Will include frame mean value.
 				int value = 0;
 				ImageProcessor IP = image.getProcessor();
-		
-				for (int i = 0; i < rows*columns; i++)
-					{
-						int x = i % rows;
-						int y = i / columns;
-						for (int Frame = 1; Frame <= nFrames; Frame++)
-						{			
 
-							if (image.getNFrames() == 1)
-							{
-								image.setPosition(							
+				for (int i = 0; i < rows*columns; i++)
+				{
+					int x = i % rows;
+					int y = i / columns;
+					for (int Frame = 1; Frame <= nFrames; Frame++)
+					{			
+
+						if (image.getNFrames() == 1)
+						{
+							image.setPosition(							
 									Ch,			// channel.
 									Frame,			// slice.
 									1);		// frame.
+						}
+						else
+						{														
+							image.setPosition(
+									Ch,			// channel.
+									1,			// slice.
+									Frame);		// frame.
+						}
+						IP = image.getProcessor();
+						if (i == 0)
+						{
+							ImageStatistics Stat 	= IP.getStatistics();
+							MeanFrame[Frame-1] 		= (float) Stat.mean;							
+							if (Stat.mean == 0)
+							{
+								MeanFrame[Frame-1] = 1;
+							}
+						}
+						else if ( i < rows*columns-1) // if we are not on the final round.
+						{
+
+							value = (int) (IP.get((i-1) % rows, (i-1) / columns)- (timeVector[Frame-1]*MeanFrame[Frame-1]));
+							if (value < 0)
+								value = 0;
+							IP.set((i-1) % rows, (i-1) / columns, value); // store last round of calculations.
+
+						} 
+						timeVector[Frame-1]= IP.getPixel((i-1) % rows, (i-1) / columns)/MeanFrame[Frame - 1]; // load data.
+						image.setProcessor(IP); // store last round.							
+					} // frame loop for mean calculations.
+					timeVector = runningMedian(timeVector, W[Ch]);						// Compute median.
+					if (i == rows*columns-1) // last round.
+					{
+						for (int Frame = 1; Frame <= nFrames; Frame++)
+						{
+							if (image.getNFrames() == 1)
+							{
+								image.setPosition(							
+										Ch,			// channel.
+										Frame,			// slice.
+										1);		// frame.
 							}
 							else
 							{														
@@ -93,55 +134,14 @@ class BackgroundCorrection {
 										Frame);		// frame.
 							}
 							IP = image.getProcessor();
-							if (i == 0)
-							{
-								ImageStatistics Stat 	= IP.getStatistics();
-								MeanFrame[Frame-1] 		= (float) Stat.mean;							
-								if (Stat.mean == 0)
-								{
-									MeanFrame[Frame-1] = 1;
-								}
-							}
-							else if ( i < rows*columns-1) // if we are not on the final round.
-							{
-								
-								value = (int) (IP.get((i-1) % rows, (i-1) / columns)- (timeVector[Frame-1]*MeanFrame[Frame-1]));
-								if (value < 0)
-									value = 0;
-								IP.set((i-1) % rows, (i-1) / columns, value); // store last round of calculations.
-
-							} 
-							timeVector[Frame-1]= IP.getPixel((i-1) % rows, (i-1) / columns)/MeanFrame[Frame - 1]; // load data.
-							image.setProcessor(IP); // store last round.							
-						} // frame loop for mean calculations.
-						timeVector = runningMedian(timeVector, W[Ch]);						// Compute median.
-						if (i == rows*columns-1) // last round.
-						{
-							for (int Frame = 1; Frame <= nFrames; Frame++)
-							{
-								if (image.getNFrames() == 1)
-								{
-									image.setPosition(							
-										Ch,			// channel.
-										Frame,			// slice.
-										1);		// frame.
-								}
-								else
-								{														
-									image.setPosition(
-											Ch,			// channel.
-											1,			// slice.
-											Frame);		// frame.
-								}
-								IP = image.getProcessor();
-								value = (int) (IP.get((i-1) % rows, (i-1) / columns) - (timeVector[Frame-1]*MeanFrame[Frame-1]));
-								if (value < 0)
-									value = 0;
-								IP.set(x, y, value); // store last round of calculations.
-								image.setProcessor(IP); // store last round,	
-							}
+							value = (int) (IP.get((i-1) % rows, (i-1) / columns) - (timeVector[Frame-1]*MeanFrame[Frame-1]));
+							if (value < 0)
+								value = 0;
+							IP.set(x, y, value); // store last round of calculations.
+							image.setProcessor(IP); // store last round,	
 						}
-					} // i loop.
+					}
+				} // i loop.
 				image.updateAndDraw();
 			} // end channel loop.			
 		}else // end sequential. 
@@ -157,9 +157,9 @@ class BackgroundCorrection {
 						if (image.getNFrames() == 1)
 						{
 							image.setPosition(							
-								Ch,			// channel.
-								Frame,			// slice.
-								1);		// frame.
+									Ch,			// channel.
+									Frame,			// slice.
+									1);		// frame.
 						}
 						else
 						{														
@@ -169,11 +169,16 @@ class BackgroundCorrection {
 									Frame);		// frame.
 						}
 						IP 						= image.getProcessor(); 			// Update processor to next slice.
-						ImageStatistics Stat 	= IP.getStatistics();
-						MeanFrame[Frame-1] 		= (float) Stat.mean;
-						if (Stat.mean == 0){
-							MeanFrame[Frame-1] = 1;
+
+
+						for (int i = 0; i < rows*columns; i++)
+						{
+							MeanFrame[Frame-1] += IP.get(i);
 						}
+						MeanFrame[Frame-1] /= rows*columns;
+
+						if (MeanFrame[Frame-1] < 1)
+							MeanFrame[Frame-1] = 1;
 						for (int i = 0; i < rows*columns; i++)
 						{
 							timeVector[i][Frame-1] = (float) (IP.get(i % rows, i / columns)/MeanFrame[Frame-1]); // load data. 
@@ -224,9 +229,9 @@ class BackgroundCorrection {
 						if (image.getNFrames() == 1)
 						{
 							image.setPosition(							
-								Ch,			// channel.
-								Frame,			// slice.
-								1);		// frame.
+									Ch,			// channel.
+									Frame,			// slice.
+									1);		// frame.
 						}
 						else
 						{														
@@ -236,7 +241,7 @@ class BackgroundCorrection {
 									Frame);		// frame.
 						}
 						IP 						= image.getProcessor(); 			// Update processor to next slice.
-						
+
 						for (int i = 0; i < rows*columns; i++)
 						{
 							value = IP.get(i % rows, i / columns) - (int)timeVector[i][Frame-1];
@@ -247,11 +252,10 @@ class BackgroundCorrection {
 					}
 					image.updateAndDraw();
 				} // Channel loop.
-				
+
 			}else // end parallel.
 				if(selectedModel == 2) // GPU.
-				{
-					// TODO look over kernel for errors. Change median from int to float. 
+				{					
 					// Initialize the driver and create a context for the first device.
 					cuInit(0);
 					CUdevice device = new CUdevice();
@@ -264,20 +268,20 @@ class BackgroundCorrection {
 					// Obtain a handle to the kernel function.
 					CUfunction function = new CUfunction();
 					cuModuleGetFunction(function, module, "medianKernel");
-					
+
 					for(int Ch = 1; Ch <= nChannels; Ch++)
 					{
-						int[] timeVector = new int[nFrames * rows * columns];
-						int[] MeanFrame = new int[nFrames]; 		// Will include frame mean value.
+						float[] timeVector = new float[nFrames * rows * columns];
+						float[] MeanFrame = new float[nFrames]; 		// Will include frame mean value.
 						ImageProcessor IP = image.getProcessor();
 						for (int Frame = 1; Frame <= nFrames; Frame++)
 						{			
 							if (image.getNFrames() == 1)
 							{
 								image.setPosition(							
-									Ch,			// channel.
-									Frame,			// slice.
-									1);		// frame.
+										Ch,			// channel.
+										Frame,			// slice.
+										1);		// frame.
 							}
 							else
 							{														
@@ -288,21 +292,17 @@ class BackgroundCorrection {
 							}
 							IP = image.getProcessor();
 
-							ImageStatistics Stat 	= IP.getStatistics();
-							MeanFrame[Frame-1] 		= (int) Stat.mean;							
-							if (Stat.mean == 0)
-							{
-								MeanFrame[Frame-1] = 1;
-							}
 							for (int i = 0; i < rows*columns; i ++)
 							{
-								timeVector[i + i*(nFrames-1)] = IP.get(i);								
+								timeVector[(Frame-1) + nFrames*i] = IP.get(i);			
+								MeanFrame[Frame-1] += IP.get(i);
 							}
-							
-									
+							MeanFrame[Frame-1] /= columns*rows;
+
+
 						} // frame loop for mean calculations.
 
-						CUdeviceptr device_window 		= CUDA.allocateOnDevice((2 * W[Ch] + 1) * rows * columns); // swap vector.
+						CUdeviceptr device_window 		= CUDA.allocateOnDevice((float)((2 * W[Ch] + 1) * rows * columns)); // swap vector.
 						CUdeviceptr device_Data 		= CUDA.copyToDevice(timeVector);
 						CUdeviceptr device_meanVector 	= CUDA.copyToDevice(MeanFrame);
 						CUdeviceptr deviceOutput 		= CUDA.allocateOnDevice((int)timeVector.length);
@@ -344,14 +344,15 @@ class BackgroundCorrection {
 						cuMemFree(device_Data);    
 						cuMemFree(deviceOutput);
 						// return data.
+
 						for (int Frame = 1; Frame <= nFrames; Frame++)
 						{			
 							if (image.getNFrames() == 1)
 							{
 								image.setPosition(							
-									Ch,			// channel.
-									Frame,			// slice.
-									1);		// frame.
+										Ch,			// channel.
+										Frame,			// slice.
+										1);		// frame.
 							}
 							else
 							{														
@@ -360,13 +361,25 @@ class BackgroundCorrection {
 										1,			// slice.
 										Frame);		// frame.
 							}
-							IP = image.getProcessor();						
+							IP = image.getProcessor();		
+
 							for (int i = 0; i < rows*columns; i ++)
 							{																
-								IP.set(i, hostOutput[i + i*(nFrames-1)]);
+								int x = i % rows;
+								int y = i / columns;
+								//int value = hostOutput[(Frame-1) + nFrames*i];
+
+								int value  = hostOutput[(Frame-1)*columns*rows + i];
+
+								if (value < 0)
+									value = 0;
+								IP.set(x,y, value);
+
+								//	System.out.print(hostOutput[(Frame-1) + nFrames*i]);
 							}
+							//	System.out.println("\n");
 							image.setProcessor(IP);
-									
+
 						} // frame loop for mean calculations.
 					} // Channel loop.				
 					image.updateAndDraw();
@@ -374,7 +387,7 @@ class BackgroundCorrection {
 		//return outputArray;
 
 	} // medianfiltering with image output.
-	public static int[][][][] medianFilteringOld(final int[] W,ImagePlus image, int selectedModel){		
+	public static int[][][][] medianFilteringOld2(final int[] W,ImagePlus image, int selectedModel){		
 		int nChannels 	= image.getNChannels();
 		int nFrames 	= image.getNFrames();
 		if (nFrames == 1)
@@ -755,8 +768,7 @@ class BackgroundCorrection {
 	 * float precision version.
 	 */
 	public static float[] runningMedian(float[] Vector, int W){
-		// Preallocate variables.		
-		// TODO add second W long float vector to hold current entries (to replace lack of pointers) so that medianVector does not need to be created. 
+		// Preallocate variables.				
 		float[] medianVector = new float[Vector.length]; // Output vector.
 		float[] V = new float[2*W+1];  // Vector for calculating running median.		
 		for(int i = 0; i < W; i++){ // Transfer first 2xW+1 entries.

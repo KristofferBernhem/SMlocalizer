@@ -63,6 +63,9 @@ public class processMedianFit {
 			cuDeviceGet(device, 0);
 			CUcontext context = new CUcontext();
 			cuCtxCreate(context, 0, device);
+			
+
+			
 			// Load the PTX that contains the kernel.
 			CUmodule moduleMedianFilter = new CUmodule();
 			cuModuleLoad(moduleMedianFilter, "medianFilter.ptx");
@@ -72,50 +75,62 @@ public class processMedianFit {
 
 			for(int Ch = 1; Ch <= nChannels; Ch++)
 			{
-				int[] timeVector = new int[nFrames * rows * columns];
-				int[] MeanFrame = new int[nFrames]; 		// Will include frame mean value.
+				/*****************************************************************************
+				 * 
+				 * 							Correct background
+				 * 
+				 *****************************************************************************/ 
+				
+				float[] timeVector = new float[nFrames * rows * columns];
+				float[] MeanFrame = new float[nFrames]; 		// Will include frame mean value.
 				ImageProcessor IP = image.getProcessor();
 				for (int Frame = 1; Frame <= nFrames; Frame++)
 				{			
-					image.setPosition(
+					if (image.getNFrames() == 1)
+					{
+						image.setPosition(							
 							Ch,			// channel.
-							1,			// slice.
-							Frame);		// frame.
+							Frame,			// slice.
+							1);		// frame.
+					}
+					else
+					{														
+						image.setPosition(
+								Ch,			// channel.
+								1,			// slice.
+								Frame);		// frame.
+					}					
 					IP = image.getProcessor();
 
-					ImageStatistics Stat 	= IP.getStatistics();
-					MeanFrame[Frame-1] 		= (int) Stat.mean;							
-					if (Stat.mean == 0)
-					{
-						MeanFrame[Frame-1] = 1;
-					}
 					for (int i = 0; i < rows*columns; i ++)
 					{
-						timeVector[i + i*(nFrames-1)] = IP.get(i);								
+						timeVector[(Frame-1) + nFrames*i] = IP.get(i);			
+						MeanFrame[Frame-1] += IP.get(i); 
 					}
-
-
+					MeanFrame[Frame-1] /= columns*rows;
+					
+							
 				} // frame loop for mean calculations.
 
-				CUdeviceptr device_window 		= CUDA.allocateOnDevice((2 * W[Ch] + 1) * rows * columns); // swap vector.
+				CUdeviceptr device_window 		= CUDA.allocateOnDevice((float)((2 * W[Ch] + 1) * rows * columns)); // swap vector.
 				CUdeviceptr device_Data 		= CUDA.copyToDevice(timeVector);
 				CUdeviceptr device_meanVector 	= CUDA.copyToDevice(MeanFrame);
-				CUdeviceptr deviceImageStack 		= CUDA.allocateOnDevice((int)timeVector.length);
+				CUdeviceptr deviceMedianFiltImage 		= CUDA.allocateOnDevice((int)timeVector.length);
 
 				int filteWindowLength 		= (2 * W[0] + 1) * rows * columns;
-				int testImageStackLength 			= timeVector.length;
+				int medianFiltImageLength 			= timeVector.length;
 				int meanVectorLength 		= MeanFrame.length;
-				Pointer kernelParametersMedianFilter 	= Pointer.to(   
+				Pointer kernelParameters 	= Pointer.to(   
 						Pointer.to(new int[]{W[Ch]}),
 						Pointer.to(device_window),
 						Pointer.to(new int[]{filteWindowLength}),
 						Pointer.to(new int[]{nFrames}),
 						Pointer.to(device_Data),
-						Pointer.to(new int[]{testImageStackLength}),
+						Pointer.to(new int[]{medianFiltImageLength}),
 						Pointer.to(device_meanVector),
 						Pointer.to(new int[]{meanVectorLength}),
-						Pointer.to(deviceImageStack),
-						Pointer.to(new int[]{testImageStackLength})
+						Pointer.to(deviceMedianFiltImage),
+						Pointer.to(new int[]{medianFiltImageLength})
 						);
 				int blockSizeX 	= 1;
 				int blockSizeY 	= 1;				   
@@ -125,12 +140,28 @@ public class processMedianFit {
 						gridSizeX,  gridSizeY, 1, 	// Grid dimension
 						blockSizeX, blockSizeY, 1,  // Block dimension
 						0, null,               		// Shared memory size and stream
-						kernelParametersMedianFilter, null 		// Kernel- and extra parameters
+						kernelParameters, null 		// Kernel- and extra parameters
 						);
 				cuCtxSynchronize();
 				// Free up memory allocation on device, housekeeping.
 				cuMemFree(device_window);   
 				cuMemFree(device_Data);    
+				
+				/*
+				 * Data already on device will be used for locating maxima.
+				 */
+				
+				/*****************************************************************************
+				 * 
+				 * 						Locate particles and fit
+				 * 
+				 *****************************************************************************/ 
+				
+				
+				
+				// TODO: Change findMaxima to handle new input. Verify that xy does not need to be altered and give output as pixel idx. Create new function to pull out data around center pixels.
+				
+				
 				double convCriteria = 1E-8; // how large improvement from one step to next we require.
 				int maxIterations = 1000;  // stop if an individual fit reaches this number of iterations.
 
@@ -153,30 +184,19 @@ public class processMedianFit {
 				int nCenter =2*(( columns*rows/(gWindow[Ch-1]*gWindow[Ch-1])) / 2); // ~ 80 possible particles for a 64x64 frame. Lets the program scale with frame size.
 				double gb = 1024*1024*1024;
 				double maxMemoryGPU = 3*gb; // TODO: get size of gpu memory.
-			//	int nMax = (int) (maxMemoryGPU/(columns*rows*Sizeof.INT + nCenter*Sizeof.INT)); 	// the localMaxima GPU calculations require: (x*y*frame*(Sizeof.INT ) + frame*nCenters*Sizeof.FLOAT)/gb memory. with known x and y dimensions, determine maximum size of frame for each batch.
+
 				ArrayList<fitParameters> fitThese = new ArrayList<fitParameters>();
 				int dataIdx = 0;
 				int idx = 0;
 
-			//	if (nMax > nFrames)
-			//		nMax = nFrames;
-			//	int[] data = new int[columns*rows*nMax];
 				int loopStartFrame = 0;
 				boolean processed = true;
-				
-			/*	while (idx < data.length)
-				{
-					data[idx] = 0; // remove remaining entries.
-					idx++;
-				}
-				
-				*/
-				//CUdeviceptr deviceData 	= CUDA.copyToDevice(data);
+
 				CUdeviceptr deviceCenter = CUDA.allocateOnDevice((int)(nFrames*nCenter));
 
 				Pointer kernelParametersLocateMaxima 		= Pointer.to(   
-						Pointer.to(deviceImageStack),
-						Pointer.to(new int[]{testImageStackLength}),
+						Pointer.to(deviceMedianFiltImage),
+						Pointer.to(new int[]{medianFiltImageLength}),
 						Pointer.to(new int[]{columns}),		 				       
 						Pointer.to(new int[]{rows}),
 						Pointer.to(new int[]{gWindow[Ch-1]}),
@@ -208,7 +228,7 @@ public class processMedianFit {
 				// Free up memory allocation on device, housekeeping.
 				//cuMemFree(deviceData);   
 				cuMemFree(deviceCenter);
-				cuMemFree(deviceImageStack); // main image list.
+				cuMemFree(deviceMedianFiltImage); // main image list.
 				// add adding of fitThese.
 				int centerIdx = 0;
 				while (centerIdx <hostCenter.length)
