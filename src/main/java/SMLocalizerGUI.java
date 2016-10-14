@@ -26,7 +26,7 @@ import javax.swing.JPanel;
 import ij.WindowManager;
 
 /* PROJECT IMPLEMENTATIONS PRIOR TO RELEASE
- * TODO: GPU implementation. Fitting functional. local maxima requires tweeking. Removal of copies. Medianfiltering non functional.
+ * TODO: GPU implementation. Fitting functional. local maxima requires tweeking. Removal of copies. 
  */
 
 /**
@@ -123,7 +123,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         } finally{
 
         }
-		 
+		
 	}
 
 	/**
@@ -693,7 +693,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         channelId = new javax.swing.JComboBox<>();
         parallelComputation = new javax.swing.JRadioButton();
         GPUcomputation = new javax.swing.JRadioButton();
-        sequentialComputation = new javax.swing.JRadioButton();
+//        sequentialComputation = new javax.swing.JRadioButton();
 
         pixelSizeChList.setText("jMenu1");
 
@@ -3055,10 +3055,9 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         GPUcomputation.setText("GPU computation");
         GPUcomputation.setToolTipText("Transfer bulk of computation to GPU. Not functional on Mac OS.");
 
-        buttonGroup2.add(sequentialComputation);
-        sequentialComputation.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        sequentialComputation.setText("sequential computation");
-
+    //    buttonGroup2.add(sequentialComputation);
+    //    sequentialComputation.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+     
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -3075,8 +3074,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(GPUcomputation)
-                    .addComponent(parallelComputation)
-                    .addComponent(sequentialComputation))
+                    .addComponent(parallelComputation))
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
                 .addGap(0, 5, Short.MAX_VALUE)
@@ -3098,7 +3096,6 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(sequentialComputation)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(Header)
@@ -3168,8 +3165,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		//	ArrayList<Particle> Results = localizeAndFit.run(signalStrength, minDistance, gWindow, pixelSize,minPixelOverBkgrnd,totalGain,selectedModel);  //locate and fit all particles.
 		//	TableIO.Store(Results);
 		}
-		else if (sequentialComputation.isSelected()) // linear computation.
-			selectedModel = 1; 
+		
 		if (selectedModel != 2)
 		{
 			BackgroundCorrection.medianFiltering(Window,WindowManager.getCurrentImage(),selectedModel); // correct background.
@@ -3244,8 +3240,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			selectedModel = 0;
 		else if (GPUcomputation.isSelected()) // GPU accelerated computation.
 			selectedModel = 2;
-		else if (sequentialComputation.isSelected()) // linear computation.
-			selectedModel = 1; 
+	
 		boolean[][] include = IncludeParameters();
 		double[][] lb = lbParameters();
 		double[][] ub = ubParameters();
@@ -3265,8 +3260,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			selectedModel = 0;
 		else if (GPUcomputation.isSelected()) // GPU accelerated computation.
 			selectedModel = 2;
-		else if (sequentialComputation.isSelected()) // linear computation.
-			selectedModel = 1; 
+		
 		boolean[][] include = IncludeParameters();
 		double[][] lb = lbParameters();
 		double[][] ub = ubParameters();
@@ -3397,8 +3391,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			selectedModel = 0;
 		else if (GPUcomputation.isSelected()) // GPU accelerated computation.
 			selectedModel = 2;
-		else if (sequentialComputation.isSelected()) // linear computation.
-			selectedModel = 1; 
+		
 
 		int[] Window = getWindowWidth(); // get user input, (W-1)/2.                
 		BackgroundCorrection.medianFiltering(Window,WindowManager.getCurrentImage(),selectedModel); // correct background.
@@ -3413,8 +3406,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			selectedModel = 0;
 		else if (GPUcomputation.isSelected()) // GPU accelerated computation.
 			selectedModel = 2;
-		else if (sequentialComputation.isSelected()) // linear computation.
-			selectedModel = 1; 
+	
 
 		int[] pixelSize = getPixelSize();
 		int[] totalGain = getTotalGain();        
@@ -5372,7 +5364,6 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
     private javax.swing.JButton renderImage;
     private javax.swing.JButton resetBasicInput;
     private javax.swing.JButton resetParameterRange;
-    private javax.swing.JRadioButton sequentialComputation;
     private javax.swing.JButton storeSettings;
     private javax.swing.JTextField totalGain;
     private javax.swing.JMenu totalGainChList;
