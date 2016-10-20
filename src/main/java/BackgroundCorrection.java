@@ -204,24 +204,26 @@ class BackgroundCorrection {
 				// Obtain a handle to the kernel function.
 				CUfunction function = new CUfunction();
 				cuModuleGetFunction(function, module, "medianKernel");
-				int GB = 1024*1024*1024;
+				long GB = 1024*1024*1024;
 				int frameSize = (2*columns*rows + 1)*Sizeof.FLOAT;
-				
+
 				for(int Ch = 1; Ch <= nChannels; Ch++)
 				{
-					int staticMemory = 2*W[Ch]+1*rows*columns*Sizeof.FLOAT;
-					int framesPerBatch = (3*GB-frameSize)/staticMemory; // 3 GB memory allocation gives this numbers of frames. 
-					int loadedChannels = 0;
+					int staticMemory = (2*W[Ch-1]+1*rows*columns)*Sizeof.FLOAT;
+					long framesPerBatch = (3*GB-frameSize)/staticMemory; // 3 GB memory allocation gives this numbers of frames. 
+					int loadedFrames = 0;
 					int startFrame = 1;
-					int endFrame = framesPerBatch;					
+					int endFrame = (int)framesPerBatch;					
 					if (endFrame > nFrames)
 						endFrame = nFrames;
-					CUdeviceptr device_window 		= CUDA.allocateOnDevice((float)((2 * W[Ch] + 1) * rows * columns)); // swap vector.
-					while (loadedChannels < nFrames-1)
-					{						
-						float[] timeVector = new float[(startFrame-endFrame) * rows * columns];
-						float[] MeanFrame = new float[(startFrame-endFrame)]; 				// Will include frame mean value.
+					CUdeviceptr device_window 		= CUDA.allocateOnDevice((float)((2 * W[Ch-1] + 1) * rows * columns)); // swap vector.
+					while (loadedFrames < nFrames-1)
+					{		
+
+						float[] timeVector = new float[(endFrame-startFrame+1) * rows * columns];
+						float[] MeanFrame = new float[endFrame-startFrame+1]; 				// Will include frame mean value.
 						ImageProcessor IP = image.getProcessor();
+						int frameCounter = 0;
 						for (int Frame = startFrame; Frame <= endFrame; Frame++)
 						{			
 							if (image.getNFrames() == 1)
@@ -242,12 +244,12 @@ class BackgroundCorrection {
 
 							for (int i = 0; i < rows*columns; i ++)
 							{
-								timeVector[(Frame-1) + (startFrame-endFrame)*i] = IP.get(i);			
-								MeanFrame[Frame-1] += IP.get(i);
+								timeVector[frameCounter + (endFrame-startFrame+1)*i] = IP.get(i);			
+								MeanFrame[frameCounter] += IP.get(i);
 							}
-							MeanFrame[Frame-1] /= columns*rows;
-							loadedChannels++;
-
+							MeanFrame[frameCounter] /= (columns*rows);
+							loadedFrames++;
+							frameCounter++;
 						} // frame loop for mean calculations.
 
 						
@@ -255,14 +257,14 @@ class BackgroundCorrection {
 						CUdeviceptr device_meanVector 	= CUDA.copyToDevice(MeanFrame);
 						CUdeviceptr deviceOutput 		= CUDA.allocateOnDevice((int)timeVector.length);
 
-						int filteWindowLength 		= (2 * W[0] + 1) * rows * columns;
+						int filteWindowLength 		= (2 * W[Ch-1] + 1) * rows * columns;
 						int testDataLength 			= timeVector.length;
 						int meanVectorLength 		= MeanFrame.length;
 						Pointer kernelParameters 	= Pointer.to(   
 								Pointer.to(new int[]{W[Ch]}),
 								Pointer.to(device_window),
 								Pointer.to(new int[]{filteWindowLength}),
-								Pointer.to(new int[]{(startFrame-endFrame)}),
+								Pointer.to(new int[]{(meanVectorLength)}),
 								Pointer.to(device_Data),
 								Pointer.to(new int[]{testDataLength}),
 								Pointer.to(device_meanVector),
@@ -291,7 +293,9 @@ class BackgroundCorrection {
 						   
 						cuMemFree(device_Data);    
 						cuMemFree(deviceOutput);
-						// return data.						
+						cuMemFree(device_meanVector);
+						// return data.		
+						int idx = 0;
 						for (int Frame = startFrame; Frame <= endFrame; Frame++)
 						{			
 							if (image.getNFrames() == 1)
@@ -309,20 +313,16 @@ class BackgroundCorrection {
 										Frame);		// frame.
 							}
 							IP = image.getProcessor();		
-
 							for (int i = 0; i < rows*columns; i ++)
-							{																
-								int value  = hostOutput[(Frame-1)*columns*rows + i];
-
-								if (value < 0)
-									value = 0;
-								IP.set(i, value);
+							{																								
+								IP.set(i, hostOutput[idx]);
+								idx++;
 							}
 
 							image.setProcessor(IP);
-						} // frame loop for mean calculations.
+						} // frame loop for data return.
 						
-						startFrame = endFrame-W[Ch]; // include W more frames to ensure that border errors from median calculations dont occur ore often then needed.
+						startFrame = endFrame-W[Ch-1]; // include W more frames to ensure that border errors from median calculations dont occur ore often then needed.
 						endFrame += framesPerBatch;					
 						if (endFrame > nFrames)
 							endFrame = nFrames;
@@ -384,7 +384,6 @@ class BackgroundCorrection {
 			V[idx/skipNr] = Vector[idx];
 			idx += skipNr;
 		}
-
 		quickSort(V,low,high);
 		// V now sorted and populated with first W+1 elements taken from Vector at every skipNr index.
 		high++;
@@ -440,15 +439,15 @@ class BackgroundCorrection {
 			inpIdx+=skipNr;
 		}
 		inpIdx -= skipNr;
-		if (inpIdx != Vector.length+1)
+		if (inpIdx != Vector.length-1)
 		{
 			V = removeEntry(V,Vector[Vector.length-W*skipNr]);
 			medianVector[medianVector.length-1] = (V[V.length/2] + (V.length%2)*V[V.length/2 + 1])/(1+V.length%2);
-			float step = medianVector[medianVector.length-1] - medianVector[inpIdx-2*skipNr];
+			float step = medianVector[medianVector.length-1] - medianVector[inpIdx-skipNr];
 			step /= (medianVector.length-inpIdx);
-			for (int i = 1; i < medianVector.length-inpIdx; i++)
+			for (int i = 1; i < medianVector.length-1-(inpIdx-skipNr); i++)
 			{
-				medianVector[inpIdx-2*skipNr + i] = medianVector[inpIdx-2*skipNr] + i*step;
+				medianVector[inpIdx-skipNr + i] = medianVector[inpIdx-skipNr] + i*step;
 
 			}
 		}

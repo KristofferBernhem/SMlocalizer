@@ -39,7 +39,7 @@ public class GPUtest {
 	    int Ch = 1;
 	    int nFrames = 10;
 	    int[] gWindow = {7,7};
-	    int[] Center = {3,3};
+	//    int[] Center = {3,3};
 	    int[] inputPixelSize = {100,100};
 	    int[] totalGain = {100,100};
 	    
@@ -49,16 +49,16 @@ public class GPUtest {
 	
 
 			
-				int[] dataFit = new int[gWindow[Ch-1]*gWindow[Ch-1]];							// Container for data to be fitted.
+		//		int[] dataFit = new int[gWindow[Ch-1]*gWindow[Ch-1]];							// Container for data to be fitted.
 				int[] Coord = {3,3};
 				
-				for (int j = 0; j < gWindow[Ch-1]*gWindow[Ch-1]; j++)
+	/*			for (int j = 0; j < gWindow[Ch-1]*gWindow[Ch-1]; j++)
 				{
 					int x =  Coord[0] - Math.round((gWindow[Ch-1])/2) +  (j % gWindow[Ch-1]);
 					int y =  Coord[1] - Math.round((gWindow[Ch-1])/2) +  (j / gWindow[Ch-1]);
 					//dataFit[j] = inputArray[x][y][Frame-1][Ch - 1];
 				} // pull out data for this fit.
-				fitParameters fitObj = new fitParameters(Coord, 
+		*/		fitParameters fitObj = new fitParameters(Coord, 
 						testdata,
 						Ch,
 						Frame,

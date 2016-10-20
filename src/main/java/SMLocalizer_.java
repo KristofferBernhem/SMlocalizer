@@ -29,7 +29,6 @@ public class SMLocalizer_ implements PlugIn {
 		final ij.ImageJ ij = new ij.ImageJ();
 		ij.setVisible(true);			
 
-		
 		Class<?> clazz = SMLocalizer_.class;
 		String url = clazz.getResource("/" + clazz.getName().replace('.', '/') + ".class").toString();
 		String pluginsDir = url.substring("file:".length(), url.length() - clazz.getName().length() - ".class".length());

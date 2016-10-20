@@ -23,8 +23,8 @@ public class LocalMaxima {
 		//Results.add(XY);
 	
 		int Border = (Window-1)/2;
-		for (int i = Border; i < Array.length-Border;i++){ // Look through all columns except outer 2.
-			for (int j = Border; j < Array[0].length-Border; j++){ // Look through all rows except outer 2.
+		for (int i = Border; i < Array.length-Border;i++){ // Look through all columns except outer border.
+			for (int j = Border; j < Array[0].length-Border; j++){ // Look through all rows except outer border.
 				if (Array[i][j] >= MinLevel){ // if center pixel is above user threshold.
 					int posPix = 0;
 					for (int W = i-Border;W < i+Border; W++){
@@ -37,7 +37,7 @@ public class LocalMaxima {
 							}
 						}										
 					}
-					if(posPix>minPosPixels){
+					if(posPix>=minPosPixels){
 						int[] coord = {i,j};					
 						Results.add(coord);	
 					}

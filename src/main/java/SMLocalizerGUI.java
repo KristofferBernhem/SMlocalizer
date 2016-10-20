@@ -3144,7 +3144,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		 * Take user settings and run through all analysis steps selected. 
 		 */
 	
-
+		updateList(channelId.getSelectedIndex()-1); // store current settings.
 		int[] pixelSize = getPixelSize();
 		int[] totalGain = getTotalGain();
 		int[] Window = getWindowWidth(); // get user input, (W-1)/2.
@@ -3160,7 +3160,9 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		else if (GPUcomputation.isSelected()) // GPU accelerated computation.
 		{
 			selectedModel = 2;
+			long time = System.nanoTime();
 			processMedianFit.run(Window, WindowManager.getCurrentImage(), selectedModel, signalStrength, minDistance, gWindow, pixelSize, minPixelOverBkgrnd, totalGain); // GPU specific call. TODO: change medianfilter ptx output to be organized on per frame and veriy correct input to next function.
+			System.out.println((System.nanoTime()-time)*1E-6);
 		//	BackgroundCorrection.medianFiltering(Window,WindowManager.getCurrentImage(),selectedModel); // correct background.
 		//	ArrayList<Particle> Results = localizeAndFit.run(signalStrength, minDistance, gWindow, pixelSize,minPixelOverBkgrnd,totalGain,selectedModel);  //locate and fit all particles.
 		//	TableIO.Store(Results);
@@ -3168,9 +3170,11 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		
 		if (selectedModel != 2)
 		{
+			long time = System.nanoTime();
 			BackgroundCorrection.medianFiltering(Window,WindowManager.getCurrentImage(),selectedModel); // correct background.
 			ArrayList<Particle> Results = localizeAndFit.run(signalStrength, minDistance, gWindow, pixelSize,minPixelOverBkgrnd,totalGain,selectedModel);  //locate and fit all particles.
 			TableIO.Store(Results);
+			System.out.println((System.nanoTime()-time)*1E-6);
 		}
 		boolean[][] include = IncludeParameters();
 		double[][] lb = lbParameters();
@@ -3207,7 +3211,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			DBClust.Ident(epsilon, minPts,desiredPixelSize,doCluster); // change call to include no loop but checks for number of channels within DBClust.	
 
 
-		RenderIm.run(getDoRender(),desiredPixelSize,doGaussianSmoothing.isSelected()); // Not 3D yet, how to implement? Need to find out how multi channel images are organized for multi channel functions.
+		RenderIm.run(getDoRender(),desiredPixelSize,doGaussianSmoothing.isSelected()); // Not 3D yet
 
 	}                                       
 

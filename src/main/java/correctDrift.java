@@ -167,7 +167,7 @@ public class correctDrift {
 						}
 						final ArrayList<Particle> Beta = hasNeighbors(A, B, (double) maxDistance[0]);
 						final ArrayList<Particle> Alpha = hasNeighbors(Beta, A, (double) maxDistance[0]);
-						if(Alpha.size() < minParticles[Ch-1] &&
+						if(Alpha.size() < minParticles[Ch-1] ||
 								Beta.size() < minParticles[Ch-1]){
 							ij.IJ.log("not enough particles, no shift correction possible");
 							enoughParticles = false;
@@ -196,20 +196,20 @@ public class correctDrift {
 				for (int i = 1; i <= nBins[Ch-1]; i++)
 				{
 
-					double xStep = lambdax[i] - lambdax[i-1];
+	/*				double xStep = lambdax[i] - lambdax[i-1];
 					xStep /= binSize;
 					double yStep = lambday[i] - lambday[i-1];
 					yStep /= binSize;
 					double zStep = lambdaz[i] - lambdaz[i-1];
 					zStep /= binSize;
-					int stepIdx = 0;
+					int stepIdx = 0;*/
 					while(idx <= binSize*(i+1))
 					{
 						lambda[idx][0] = lambdax[i-1];// + xStep*stepIdx;
 						lambda[idx][1] = lambday[i-1];// + yStep*stepIdx;
 						lambda[idx][2] = lambdaz[i-1];// + zStep*stepIdx;
 						idx++;
-						stepIdx++;
+					//	stepIdx++;
 					}
 					if (i == nBins[Ch-1])
 					{
@@ -219,7 +219,7 @@ public class correctDrift {
 							lambda[idx][1] = lambday[i-1];// + yStep*stepIdx;
 							lambda[idx][2] = lambdaz[i-1];// + zStep*stepIdx;
 							idx++;
-							stepIdx++;
+						//	stepIdx++;
 						}
 					}
 				}
