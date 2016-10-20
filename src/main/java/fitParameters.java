@@ -1,4 +1,3 @@
-
 /* Copyright 2016 Kristoffer Bernhem.
  * This file is part of SMLocalizer.
  *

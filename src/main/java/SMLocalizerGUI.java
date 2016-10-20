@@ -25,9 +25,6 @@ import javax.swing.JPanel;
 
 import ij.WindowManager;
 
-/* PROJECT IMPLEMENTATIONS PRIOR TO RELEASE
- * TODO: GPU implementation. Fitting functional. local maxima requires tweeking. Removal of copies. 
- */
 
 /**
  *

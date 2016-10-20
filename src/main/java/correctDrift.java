@@ -175,15 +175,10 @@ public class correctDrift {
 						} else 
 						{
 							final int[] boundryFinal = {boundry[0][Ch-1], boundry[1][Ch-1]};
-							//	final int[] maxDistanceFinal = maxDistance;
-							//float[] Corr =  DriftCompensation.findDrift (Alpha, Beta, boundryFinal,  maxDistanceFinal);// Actual call for each parallel process.
-							double[] corr2 =  autoCorrelation.maximize(Alpha, Beta, boundryFinal);
-							lambdax[bin+1] = corr2[1] + lambdax[bin];											// Update best guess at x shift.
-							lambday[bin+1] = corr2[2] + lambday[bin];											// Update best guess at y shift.
-							lambdaz[bin+1] = corr2[3] + lambdaz[bin];											// Update best guess at z shift.
-							//lambdax[bin+1] = Corr[1] + lambdax[bin];											// Update best guess at x shift.
-							//lambday[bin+1] = Corr[2] + lambday[bin];											// Update best guess at y shift.
-							//lambdaz[bin+1] = Corr[3] + lambdaz[bin];											// Update best guess at z shift.
+							double[] corr =  autoCorrelation.maximize(Alpha, Beta, boundryFinal);
+							lambdax[bin+1] = corr[1] + lambdax[bin];											// Update best guess at x shift.
+							lambday[bin+1] = corr[2] + lambday[bin];											// Update best guess at y shift.
+							lambdaz[bin+1] = corr[3] + lambdaz[bin];											// Update best guess at z shift.
 						} // calculate drift for this segment. 
 					}						
 					bin++;
@@ -195,21 +190,12 @@ public class correctDrift {
 				int idx = binSize;
 				for (int i = 1; i <= nBins[Ch-1]; i++)
 				{
-
-	/*				double xStep = lambdax[i] - lambdax[i-1];
-					xStep /= binSize;
-					double yStep = lambday[i] - lambday[i-1];
-					yStep /= binSize;
-					double zStep = lambdaz[i] - lambdaz[i-1];
-					zStep /= binSize;
-					int stepIdx = 0;*/
 					while(idx <= binSize*(i+1))
 					{
 						lambda[idx][0] = lambdax[i-1];// + xStep*stepIdx;
 						lambda[idx][1] = lambday[i-1];// + yStep*stepIdx;
 						lambda[idx][2] = lambdaz[i-1];// + zStep*stepIdx;
 						idx++;
-					//	stepIdx++;
 					}
 					if (i == nBins[Ch-1])
 					{
@@ -219,7 +205,6 @@ public class correctDrift {
 							lambda[idx][1] = lambday[i-1];// + yStep*stepIdx;
 							lambda[idx][2] = lambdaz[i-1];// + zStep*stepIdx;
 							idx++;
-						//	stepIdx++;
 						}
 					}
 				}
@@ -382,7 +367,7 @@ public class correctDrift {
 					for (int i = 1; i <= nBins[Ch-1]; i++)
 					{
 
-						double xStep = lambdax[i] - lambdax[i-1];
+					/*	double xStep = lambdax[i] - lambdax[i-1];
 						xStep /= binSize;
 						double yStep = lambday[i] - lambday[i-1];
 						yStep /= binSize;
@@ -407,7 +392,7 @@ public class correctDrift {
 								idx++;
 								stepIdx++;
 							}
-						}
+						}*/
 					}
 
 					bin=0;
@@ -1125,12 +1110,8 @@ public class correctDrift {
 						} // verify that the particles have not been shifted out of bounds.			
 					} // channel loop.
 					TableIO.Store(locatedParticles);
-					ij.IJ.log("Channels aligned.");
-					
-					
+					ij.IJ.log("Channels aligned.");					
 				} // end GPU.
-
-
 	}
 
 	public static double[] interp(double X1, double X2, int n){

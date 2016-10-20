@@ -44,7 +44,6 @@ import jcuda.driver.CUdeviceptr;
 import jcuda.driver.CUfunction;
 import jcuda.driver.CUmodule;
 
-// TODO removal of duplicates not functional in ptx locate maxima.
 public class localizeAndFit {
 
 	public static ArrayList<Particle> run(int[] MinLevel, double[] sqDistance, int[] gWindow, int[] inputPixelSize, int[] minPosPixels, int[] totalGain , int selectedModel){				
@@ -368,7 +367,7 @@ public class localizeAndFit {
 							
 						
 							/*
-							 * 
+							 * This functions is being implemented, reducing computationtime by reducing device to host to device transfers. 
 							 * 
 							CUdeviceptr deviceLocatedCenter = CUDA.copyToDevice(locatedCenter);
 							CUdeviceptr deviceGaussVector 	= CUDA.allocateOnDevice((int)(newN * gWindow[Ch-1] * gWindow[Ch-1])); // gWindow*gWindow entries per found center.
@@ -450,8 +449,6 @@ public class localizeAndFit {
 							// Pull data from device.
 							cuMemcpyDtoH(Pointer.to(hostOutput), deviceP,
 									newN*7 * Sizeof.FLOAT);
-					//		for(int i = 0; i < hostOutput.length; i+=7)
-					//			System.out.println(hostOutput[i]);
 							// Free up memory allocation on device, housekeeping.
 							cuMemFree(deviceGaussVector);   
 							cuMemFree(deviceP);    
@@ -586,6 +583,10 @@ public class localizeAndFit {
 							
 						
 							/*
+							 * 
+							 * This functions is being implemented, reducing computationtime by reducing device to host to device transfers.
+							 * 
+							 * 
 							CUdeviceptr deviceLocatedCenter = CUDA.copyToDevice(locatedCenter);
 							CUdeviceptr deviceGaussVector 	= CUDA.allocateOnDevice((int)(newN * gWindow[Ch-1] * gWindow[Ch-1])); // gWindow*gWindow entries per found center.
 							CUdeviceptr deviceP 			= CUDA.allocateOnDevice((float)(newN * 7)); // 7 entries per found center.
@@ -666,8 +667,6 @@ public class localizeAndFit {
 							// Pull data from device.
 							cuMemcpyDtoH(Pointer.to(hostOutput), deviceP,
 									newN*7 * Sizeof.FLOAT);
-					//		for(int i = 0; i < hostOutput.length; i+=7)
-					//			System.out.println(hostOutput[i]);
 							// Free up memory allocation on device, housekeeping.
 							cuMemFree(deviceGaussVector);   
 							cuMemFree(deviceP);    

@@ -39,8 +39,7 @@ import jcuda.driver.CUmodule;
 
 
 /*
- * ProcessMedianFit is called by the process call button and will in a single load from the imagestack.
- * TODO: Change medianFilter.ptx to yield output organized per frame and not pixel for prepared input to gaussfit. 
+ * ProcessMedianFit is called by the process call button and will in sequence load image data, median filter (background removal), locate events and fit them, returning a result table.
  */
 public class processMedianFit {
 

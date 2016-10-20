@@ -15,13 +15,7 @@
  *  along with SMLocalizer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * Solver sensitive to to small reduction in stepsize. Reasonably stable with regards to guess of parameters.
- */
 
-/*
- * TODO: change loop to GPU version.
- */
 public class GaussSolver {
 
 	int[] data, center;
@@ -70,6 +64,9 @@ public class GaussSolver {
 
 	} // constructor.
 
+	/*
+	 * test function
+	 */
 	public static void main(String[] args) { // testcase
 		int[] testdata ={ // slize 45 SingleBead2
 				3888, 3984,  6192,   4192, 3664,  3472, 3136,

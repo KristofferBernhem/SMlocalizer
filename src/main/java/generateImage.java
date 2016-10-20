@@ -79,7 +79,6 @@ public class generateImage {
 				if (renderCh[ch-1])
 				{
 					ShortProcessor IP  = new ShortProcessor(width,height);					
-	//				ByteProcessor IP = new ByteProcessor(width,height);
 					IP.set(0); // set all pixel values to 0 as default.
 					
 					for (int i = 0; i < ParticleList.size(); i++){
