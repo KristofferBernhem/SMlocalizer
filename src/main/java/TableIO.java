@@ -46,9 +46,13 @@ public class TableIO {
 	
 	public static void Store(ArrayList<Particle> Results){		
 		ij.measure.ResultsTable tab = Analyzer.getResultsTable();
+		double width = tab.getValue("width", 0);
+		double height = tab.getValue("height", 0);
 		tab.reset();		
+
 		for (int i = 0; i < Results.size(); i++){
 			tab.incrementCounter();
+		
 			tab.addValue("x0", Results.get(i).x);
 			tab.addValue("y0", Results.get(i).y);
 			tab.addValue("z0", Results.get(i).z);
@@ -63,7 +67,13 @@ public class TableIO {
 			tab.addValue("r_square", Results.get(i).r_square);
 			tab.addValue("photons", Results.get(i).photons);
 			tab.addValue("include", Results.get(i).include);
+			if (i == 0)
+			{
+				tab.addValue("width", width);
+				tab.addValue("height", height);
+			}
 		}
+		
 		tab.show("Results");
 	}
 }

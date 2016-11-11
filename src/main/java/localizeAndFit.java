@@ -35,6 +35,7 @@ import java.util.concurrent.Future;
 
 import ij.ImagePlus;
 import ij.WindowManager;
+import ij.plugin.filter.Analyzer;
 import ij.process.ImageProcessor;
 import jcuda.Pointer;
 import jcuda.Sizeof;
@@ -161,6 +162,12 @@ public class localizeAndFit {
 					cleanResults.add(Results.get(i));
 
 			}
+			ij.measure.ResultsTable tab = Analyzer.getResultsTable();
+			tab.reset();		
+			tab.incrementCounter();
+			tab.addValue("width", columns*inputPixelSize[0]);
+			tab.addValue("height", rows*inputPixelSize[0]);
+			tab.show("Results");
 			return cleanResults; // end parallel computation by returning results.
 		}else // end parallel. 
 			if (selectedModel == 2) // GPU TODO: Add image loading to GPU bound code. 
@@ -708,10 +715,21 @@ public class localizeAndFit {
 						cleanResults.add(Results.get(i));
 
 				}
+				ij.measure.ResultsTable tab = Analyzer.getResultsTable();
+				tab.reset();		
+				tab.incrementCounter();
+				tab.addValue("width", columns*inputPixelSize[0]);
+				tab.addValue("height", rows*inputPixelSize[0]);
+				tab.show("Results");
 				return cleanResults;
 			} // end GPU computing.
-
-		return Results;
+		ij.measure.ResultsTable tab = Analyzer.getResultsTable();
+		tab.reset();		
+		tab.incrementCounter();
+		tab.addValue("width", columns*inputPixelSize[0]);
+		tab.addValue("height", rows*inputPixelSize[0]);
+		tab.show("Results");
+		return Results;					
 	}
 
 	/*

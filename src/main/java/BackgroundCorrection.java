@@ -210,8 +210,11 @@ class BackgroundCorrection {
 
 				for(int Ch = 1; Ch <= nChannels; Ch++)
 				{
-					int staticMemory = (2*W[Ch-1]+1*rows*columns)*Sizeof.FLOAT;
-					long framesPerBatch = (3*GB-frameSize)/staticMemory; // 3 GB memory allocation gives this numbers of frames. 
+					int staticMemory = (2*W[Ch-1]+1)*rows*columns*Sizeof.FLOAT;
+					long framesPerBatch = (3*GB-staticMemory)/frameSize; // 3 GB memory allocation gives this numbers of frames. 
+					System.out.println(framesPerBatch);
+					if (framesPerBatch > 5000)
+						framesPerBatch = 5000;
 					int loadedFrames = 0;
 					int startFrame = 1;
 					int endFrame = (int)framesPerBatch;					

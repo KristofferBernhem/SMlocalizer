@@ -11,6 +11,7 @@ import static jcuda.driver.JCudaDriver.cuModuleLoad;
 import java.util.ArrayList;
 
 import ij.ImagePlus;
+import ij.plugin.filter.Analyzer;
 import ij.process.ImageProcessor;
 import jcuda.Pointer;
 import jcuda.Sizeof;
@@ -62,9 +63,6 @@ public class processMedianFit {
 			cuDeviceGet(device, 0);
 			CUcontext context = new CUcontext();
 			cuCtxCreate(context, 0, device);
-
-
-
 			// Load the PTX that contains the kernel.
 			CUmodule moduleMedianFilter = new CUmodule();
 			cuModuleLoad(moduleMedianFilter, "medianFilter.ptx");
@@ -383,7 +381,11 @@ public class processMedianFit {
 					cleanResults.add(Results.get(i));
 
 			}
-			
+			ij.measure.ResultsTable tab = Analyzer.getResultsTable();
+			tab.reset();		
+			tab.incrementCounter();
+			tab.addValue("width", columns*inputPixelSize[0]);
+			tab.addValue("height", rows*inputPixelSize[0]);
 			TableIO.Store(cleanResults);
 
 		} // GPU computing.
