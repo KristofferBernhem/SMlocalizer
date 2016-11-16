@@ -84,21 +84,21 @@ public class processMedianFit {
 			// Obtain a handle to the kernel function
 			CUfunction findMaximaFcn = new CUfunction();
 			cuModuleGetFunction(findMaximaFcn, moduleLM, "run");	// findMaxima.ptx (run function).
-			CUmodule modulePrepGauss = new CUmodule();
-			cuModuleLoad(modulePrepGauss, "prepareGaussian.ptx");					
+//			CUmodule modulePrepGauss = new CUmodule();
+//			cuModuleLoad(modulePrepGauss, "prepareGaussian.ptx");					
 			// Obtain a handle to the kernel function
-			CUfunction prepareGaussFcn = new CUfunction();
-			cuModuleGetFunction(prepareGaussFcn, modulePrepGauss, "run");	// prepareGaussian.ptx (run function).
+//			CUfunction prepareGaussFcn = new CUfunction();
+//			cuModuleGetFunction(prepareGaussFcn, modulePrepGauss, "run");	// prepareGaussian.ptx (run function).
 			long GB = 1024*1024*1024;
-			int frameSize = (2*columns*rows + 1)*Sizeof.FLOAT;
+			int frameSize = (3*columns*rows)*Sizeof.FLOAT;
 			for(int Ch = 1; Ch <= nChannels; Ch++)
 			{
 				int nCenter =(( columns*rows/(gWindow[Ch-1]*gWindow[Ch-1])) / 2); // ~ 80 possible particles for a 64x64 frame. Lets the program scale with frame size.
 				int staticMemory = (2*W[Ch-1]+1*rows*columns)*Sizeof.FLOAT;
-				long framesPerBatch = (3*GB-frameSize)/staticMemory; // 3 GB memory allocation gives this numbers of frames. 
+				long framesPerBatch = (3*GB-staticMemory)/frameSize; // 3 GB memory allocation gives this numbers of frames. 					
 				int loadedFrames = 0;
 				int startFrame = 1;
-				int endFrame = (int)framesPerBatch;					
+				int endFrame = (int)framesPerBatch;				
 				if (endFrame > nFrames)
 					endFrame = nFrames;
 				CUdeviceptr device_window 		= CUDA.allocateOnDevice((float)((2 * W[Ch-1] + 1) * rows * columns)); // swap vector.
@@ -358,8 +358,6 @@ public class processMedianFit {
 						Localized.precision_z 	= Localized.sigma_z/Math.sqrt(Localized.photons);
 						Results.add(Localized);
 					}		
-					
-					
 					startFrame = endFrame-W[Ch-1]; // include W more frames to ensure that border errors from median calculations dont occur ore often then needed.
 					endFrame += framesPerBatch;					
 					if (endFrame > nFrames)

@@ -197,11 +197,11 @@ public class localizeAndFit {
 				// Obtain a handle to the kernel function
 				CUfunction findMaximaFcn = new CUfunction();
 				cuModuleGetFunction(findMaximaFcn, moduleLM, "run");	// findMaxima.ptx (run function).
-				CUmodule modulePrepGauss = new CUmodule();
-				cuModuleLoad(modulePrepGauss, "prepareGaussian.ptx");					
+				//CUmodule modulePrepGauss = new CUmodule();
+				//cuModuleLoad(modulePrepGauss, "prepareGaussian.ptx");					
 				// Obtain a handle to the kernel function
-				CUfunction prepareGaussFcn = new CUfunction();
-				cuModuleGetFunction(prepareGaussFcn, modulePrepGauss, "run");	// prepareGaussian.ptx (run function).
+			//	CUfunction prepareGaussFcn = new CUfunction();
+			//	cuModuleGetFunction(prepareGaussFcn, modulePrepGauss, "run");	// prepareGaussian.ptx (run function).
 				
 				
 				
@@ -209,11 +209,12 @@ public class localizeAndFit {
 				{						
 					int nCenter =(( columns*rows/(gWindow[Ch-1]*gWindow[Ch-1])) / 2); // ~ 80 possible particles for a 64x64 frame. Lets the program scale with frame size.
 					long gb = 1024*1024*1024;
-					long maxMemoryGPU = 4*gb; // TODO: get size of gpu memory.
-					int nMax = (int) (maxMemoryGPU/(columns*rows*Sizeof.INT + 4*nCenter*Sizeof.INT)); 	// the localMaxima GPU calculations require: (x*y*frame*(Sizeof.INT ) + frame*nCenters*Sizeof.FLOAT)/gb memory. with known x and y dimensions, determine maximum size of frame for each batch.
+					long maxMemoryGPU = 3*gb; // TODO: get size of gpu memory.
+					int nMax = (int) (maxMemoryGPU/(2*columns*rows*Sizeof.INT + 4*nCenter*Sizeof.INT)); 	// the localMaxima GPU calculations require: (x*y*frame*(Sizeof.INT ) + frame*nCenters*Sizeof.FLOAT)/gb memory. with known x and y dimensions, determine maximum size of frame for each batch.
 					//ArrayList<fitParameters> fitThese = new ArrayList<fitParameters>();
 					int dataIdx = 0;
 					int idx = 0;
+					System.out.println(nMax);
 					float[] bounds = { // bounds for gauss fitting.
 							0.5F			, 1.5F,				// amplitude.
 							1	,(float)(gWindow[Ch-1]-1),			// x.
@@ -224,7 +225,6 @@ public class localizeAndFit {
 							-0.5F		, 0.5F				// offset.
 					};
 					CUdeviceptr deviceBounds 		= CUDA.copyToDevice(bounds);															
-					System.out.println(nMax);
 					if (nMax > nFrames)
 						nMax = nFrames;
 

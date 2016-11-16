@@ -40,6 +40,7 @@ import jcuda.driver.CUdevice;
 import jcuda.driver.CUdeviceptr;
 import jcuda.driver.CUfunction;
 import jcuda.driver.CUmodule;
+import jcuda.driver.JCudaDriver;
 
 
 /* This class contains all relevant algorithms for background corrections. Handles 2D and 3D stacks with single slice per frame.
@@ -193,6 +194,7 @@ class BackgroundCorrection {
 		}else // end parallel.
 			if(selectedModel == 2) // GPU.
 			{					
+				JCudaDriver.setExceptionsEnabled(true);
 				// Initialize the driver and create a context for the first device.
 				cuInit(0);
 				CUdevice device = new CUdevice();
@@ -206,17 +208,16 @@ class BackgroundCorrection {
 				CUfunction function = new CUfunction();
 				cuModuleGetFunction(function, module, "medianKernel");
 				long GB = 1024*1024*1024;
-				int frameSize = (2*columns*rows + 1)*Sizeof.FLOAT;
+				int frameSize = (3*columns*rows)*Sizeof.FLOAT;
 
 				for(int Ch = 1; Ch <= nChannels; Ch++)
 				{
 					int staticMemory = (2*W[Ch-1]+1)*rows*columns*Sizeof.FLOAT;
-					long framesPerBatch = (3*GB-staticMemory)/frameSize; // 3 GB memory allocation gives this numbers of frames. 
-					System.out.println(framesPerBatch);
-					if (framesPerBatch > 5000)
-						framesPerBatch = 5000;
+					long framesPerBatch = (3*GB-staticMemory)/frameSize; // 3 GB memory allocation gives this numbers of frames. 					
+				//	if (framesPerBatch > 5000)
+				//		framesPerBatch = 5000;
 					int loadedFrames = 0;
-					int startFrame = 1;
+					int startFrame = 1;					
 					int endFrame = (int)framesPerBatch;					
 					if (endFrame > nFrames)
 						endFrame = nFrames;
