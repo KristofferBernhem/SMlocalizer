@@ -39,12 +39,11 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 
 		try{			
 			loadParameters(ij.Prefs.get("SMLocalizer.CurrentSetting", "")); // current.
-			outputPixelSize.setText("5");
-			outputPixelSizeZ.setText("10");
 		}catch (NumberFormatException e)
 		{        	
 			outputPixelSize.setText("5");
 			outputPixelSizeZ.setText("10");
+			doChannelAlign.setSelected(false);
 			for (int id = 0; id < 10; id++){ // update list of variables for each ch.
 				/*
 				 *   Basic input settings
@@ -72,15 +71,15 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 				/*
 				 *   Drift and channel correct settings
 				 */
-				driftCorrBinLowCountChList.getItem(id).setText("100");
+				driftCorrBinLowCountChList.getItem(id).setText("500");
 				driftCorrBinHighCountChList.getItem(id).setText("1000");
 				driftCorrShiftXYChList.getItem(id).setText("100");
 				driftCorrShiftZChList.getItem(id).setText("100");
-				numberOfBinsDriftCorrChList.getItem(id).setText("50");
-				chAlignBinLowCountChList.getItem(id).setText("100");
+				numberOfBinsDriftCorrChList.getItem(id).setText("25");
+				chAlignBinLowCountChList.getItem(id).setText("500");
 				chAlignBinHighCountChList.getItem(id).setText("1000");
-				chAlignShiftXYChList.getItem(id).setText("500");
-				chAlignShiftZChList.getItem(id).setText("500");
+				chAlignShiftXYChList.getItem(id).setText("150");
+				chAlignShiftZChList.getItem(id).setText("150");
 
 				/*
 				 *   Parameter settings
@@ -115,8 +114,8 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 				maxFrameChList.getItem(id).setText("100000");
 			}
 
-			int id = 0; // set current ch to 1.
-			updateVisible(id); // update fields that user can see.
+			int id = 0; 		// set current ch to 1.
+			updateVisible(id);  // update fields that user can see.
 			String name = "default";
 			ij.Prefs.set("SMLocalizer.settingsEntries", 1);
 			ij.Prefs.set("SMLocalizer.settingsName"+1, name); // add storename
