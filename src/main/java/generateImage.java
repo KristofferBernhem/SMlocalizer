@@ -40,8 +40,8 @@ public class generateImage {
 		}
 		if (threeD)
 		{
-			width 	= 10;
-			height 	= 10;
+			width = (int) Math.ceil(width/pixelSize[0]);
+			height = (int) Math.ceil(height/pixelSize[0]);		
 			ImageStack imstack = new ImageStack(width,height);
 			int nChannels = ParticleList.get(ParticleList.size()-1).channel; // numnber of channels
 			int zSlice = 0; // counter for number of slizes.
@@ -66,6 +66,11 @@ public class generateImage {
 						int y = (int) Math.round(ParticleList.get(idx).y/pixelSize[0]);						
 						IP.putPixel(x, y, (IP.get(x, y) + 1));
 					}
+				}
+				if(gSmoothing)
+				{
+					IP.multiply(1000);
+					IP.blurGaussian(2);
 				}
 				Ch++;
 				if (Ch > nChannels)
@@ -92,7 +97,7 @@ public class generateImage {
 			cal.setYUnit("nm");
 
 			ImageStatistics ImStats = Image.getStatistics();
-
+			Image.setCalibration(cal);
 			Image.setDisplayRange(ImStats.min, ImStats.max);
 			Image.updateAndDraw();
 			Image.show();

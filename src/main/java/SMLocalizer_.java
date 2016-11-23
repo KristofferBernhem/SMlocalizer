@@ -64,7 +64,7 @@ public class SMLocalizer_ implements PlugIn {
 	public void run(String arg0) {
 		String args[] = null;
 		SMLocalizerGUI.main(args); //call GUI.
-	
+		
 	}
 
 }

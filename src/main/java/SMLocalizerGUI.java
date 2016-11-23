@@ -127,3028 +127,3035 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 
 	}
 
-	private void initComponents() {
-
-		pixelSizeChList = new javax.swing.JMenu();
-		pixelSizeData1 = new javax.swing.JMenuItem();
-		pixelSizeData2 = new javax.swing.JMenuItem();
-		pixelSizeData3 = new javax.swing.JMenuItem();
-		pixelSizeData4 = new javax.swing.JMenuItem();
-		pixelSizeData5 = new javax.swing.JMenuItem();
-		pixelSizeData6 = new javax.swing.JMenuItem();
-		pixelSizeData7 = new javax.swing.JMenuItem();
-		pixelSizeData8 = new javax.swing.JMenuItem();
-		pixelSizeData9 = new javax.swing.JMenuItem();
-		pixelSizeData10 = new javax.swing.JMenuItem();
-		totalGainChList = new javax.swing.JMenu();
-		totalGainData1 = new javax.swing.JMenuItem();
-		totalGainData2 = new javax.swing.JMenuItem();
-		totalGainData3 = new javax.swing.JMenuItem();
-		totalGainData4 = new javax.swing.JMenuItem();
-		totalGainData5 = new javax.swing.JMenuItem();
-		totalGainData6 = new javax.swing.JMenuItem();
-		totalGainData7 = new javax.swing.JMenuItem();
-		totalGainData8 = new javax.swing.JMenuItem();
-		totalGainData9 = new javax.swing.JMenuItem();
-		totalGainData10 = new javax.swing.JMenuItem();
-		minimalSignalChList = new javax.swing.JMenu();
-		minimalSignalData1 = new javax.swing.JMenuItem();
-		minimalSignalData2 = new javax.swing.JMenuItem();
-		minimalSignalData3 = new javax.swing.JMenuItem();
-		minimalSignalData4 = new javax.swing.JMenuItem();
-		minimalSignalData5 = new javax.swing.JMenuItem();
-		minimalSignalData6 = new javax.swing.JMenuItem();
-		minimalSignalData7 = new javax.swing.JMenuItem();
-		minimalSignalData8 = new javax.swing.JMenuItem();
-		minimalSignalData9 = new javax.swing.JMenuItem();
-		minimalSignalData10 = new javax.swing.JMenuItem();
-		minPixelOverBackgroundChList = new javax.swing.JMenu();
-		minPixelOverBackgroundData1 = new javax.swing.JMenuItem();
-		minPixelOverBackgroundData2 = new javax.swing.JMenuItem();
-		minPixelOverBackgroundData3 = new javax.swing.JMenuItem();
-		minPixelOverBackgroundData4 = new javax.swing.JMenuItem();
-		minPixelOverBackgroundData5 = new javax.swing.JMenuItem();
-		minPixelOverBackgroundData6 = new javax.swing.JMenuItem();
-		minPixelOverBackgroundData7 = new javax.swing.JMenuItem();
-		minPixelOverBackgroundData8 = new javax.swing.JMenuItem();
-		minPixelOverBackgroundData9 = new javax.swing.JMenuItem();
-		minPixelOverBackgroundData10 = new javax.swing.JMenuItem();
-		gaussWindowChList = new javax.swing.JMenu();
-		ROIsizeData1 = new javax.swing.JMenuItem();
-		ROIsizeData2 = new javax.swing.JMenuItem();
-		ROIsizeData3 = new javax.swing.JMenuItem();
-		ROIsizeData4 = new javax.swing.JMenuItem();
-		ROIsizeData5 = new javax.swing.JMenuItem();
-		ROIsizeData6 = new javax.swing.JMenuItem();
-		ROIsizeData7 = new javax.swing.JMenuItem();
-		ROIsizeData8 = new javax.swing.JMenuItem();
-		ROIsizeData9 = new javax.swing.JMenuItem();
-		ROIsizeData10 = new javax.swing.JMenuItem();
-		windowWidthChList = new javax.swing.JMenu();
-		windowWidthData1 = new javax.swing.JMenuItem();
-		windowWidthData2 = new javax.swing.JMenuItem();
-		windowWidthData3 = new javax.swing.JMenuItem();
-		windowWidthData4 = new javax.swing.JMenuItem();
-		windowWidthData5 = new javax.swing.JMenuItem();
-		windowWidthData6 = new javax.swing.JMenuItem();
-		windowWidthData7 = new javax.swing.JMenuItem();
-		windowWidthData8 = new javax.swing.JMenuItem();
-		windowWidthData9 = new javax.swing.JMenuItem();
-		windowWidthData10 = new javax.swing.JMenuItem();
-		minPixelDistChList = new javax.swing.JMenu();
-		minPixelDistData1 = new javax.swing.JMenuItem();
-		minPixelDistData2 = new javax.swing.JMenuItem();
-		minPixelDistData3 = new javax.swing.JMenuItem();
-		minPixelDistData4 = new javax.swing.JMenuItem();
-		minPixelDistData5 = new javax.swing.JMenuItem();
-		minPixelDistData6 = new javax.swing.JMenuItem();
-		minPixelDistData7 = new javax.swing.JMenuItem();
-		minPixelDistData8 = new javax.swing.JMenuItem();
-		minPixelDistData9 = new javax.swing.JMenuItem();
-		minPixelDistData10 = new javax.swing.JMenuItem();
-		doClusterAnalysisChList = new javax.swing.JMenu();
-		doClusterAnalysisData1 = new javax.swing.JMenuItem();
-		doClusterAnalysisData2 = new javax.swing.JMenuItem();
-		doClusterAnalysisData3 = new javax.swing.JMenuItem();
-		doClusterAnalysisData4 = new javax.swing.JMenuItem();
-		doClusterAnalysisData5 = new javax.swing.JMenuItem();
-		doClusterAnalysisData6 = new javax.swing.JMenuItem();
-		doClusterAnalysisData7 = new javax.swing.JMenuItem();
-		doClusterAnalysisData8 = new javax.swing.JMenuItem();
-		doClusterAnalysisData9 = new javax.swing.JMenuItem();
-		doClusterAnalysisData10 = new javax.swing.JMenuItem();
-		epsilonChList = new javax.swing.JMenu();
-		epsilonData1 = new javax.swing.JMenuItem();
-		epsilonData2 = new javax.swing.JMenuItem();
-		epsilonData3 = new javax.swing.JMenuItem();
-		epsilonData4 = new javax.swing.JMenuItem();
-		epsilonData5 = new javax.swing.JMenuItem();
-		epsilonData6 = new javax.swing.JMenuItem();
-		epsilonData7 = new javax.swing.JMenuItem();
-		epsilonData8 = new javax.swing.JMenuItem();
-		epsilonData9 = new javax.swing.JMenuItem();
-		epsilonData10 = new javax.swing.JMenuItem();
-		minPtsClusterChList = new javax.swing.JMenu();
-		minPtsClusterData1 = new javax.swing.JMenuItem();
-		minPtsClusterData2 = new javax.swing.JMenuItem();
-		minPtsClusterData3 = new javax.swing.JMenuItem();
-		minPtsClusterData4 = new javax.swing.JMenuItem();
-		minPtsClusterData5 = new javax.swing.JMenuItem();
-		minPtsClusterData6 = new javax.swing.JMenuItem();
-		minPtsClusterData7 = new javax.swing.JMenuItem();
-		minPtsClusterData8 = new javax.swing.JMenuItem();
-		minPtsClusterData9 = new javax.swing.JMenuItem();
-		minPtsClusterData10 = new javax.swing.JMenuItem();
-		outputPixelSizeChList = new javax.swing.JMenu();
-		outputPixelSizeData1 = new javax.swing.JMenuItem();
-		outputPixelSizeData2 = new javax.swing.JMenuItem();
-		outputPixelSizeData3 = new javax.swing.JMenuItem();
-		outputPixelSizeData4 = new javax.swing.JMenuItem();
-		outputPixelSizeData5 = new javax.swing.JMenuItem();
-		outputPixelSizeData6 = new javax.swing.JMenuItem();
-		outputPixelSizeData7 = new javax.swing.JMenuItem();
-		outputPixelSizeData8 = new javax.swing.JMenuItem();
-		outputPixelSizeData9 = new javax.swing.JMenuItem();
-		outputPixelSizeData10 = new javax.swing.JMenuItem();
-		driftCorrBinLowCountChList = new javax.swing.JMenu();
-		driftCorrBinLowCountData1 = new javax.swing.JMenuItem();
-		driftCorrBinLowCountData2 = new javax.swing.JMenuItem();
-		driftCorrBinLowCountData3 = new javax.swing.JMenuItem();
-		driftCorrBinLowCountData4 = new javax.swing.JMenuItem();
-		driftCorrBinLowCountData5 = new javax.swing.JMenuItem();
-		driftCorrBinLowCountData6 = new javax.swing.JMenuItem();
-		driftCorrBinLowCountData7 = new javax.swing.JMenuItem();
-		driftCorrBinLowCountData8 = new javax.swing.JMenuItem();
-		driftCorrBinLowCountData9 = new javax.swing.JMenuItem();
-		driftCorrBinLowCountData10 = new javax.swing.JMenuItem();
-		driftCorrBinHighCountChList = new javax.swing.JMenu();
-		driftCorrBinHighCountData1 = new javax.swing.JMenuItem();
-		driftCorrBinHighCountData2 = new javax.swing.JMenuItem();
-		driftCorrBinHighCountData3 = new javax.swing.JMenuItem();
-		driftCorrBinHighCountData4 = new javax.swing.JMenuItem();
-		driftCorrBinHighCountData5 = new javax.swing.JMenuItem();
-		driftCorrBinHighCountData6 = new javax.swing.JMenuItem();
-		driftCorrBinHighCountData7 = new javax.swing.JMenuItem();
-		driftCorrBinHighCountData8 = new javax.swing.JMenuItem();
-		driftCorrBinHighCountData9 = new javax.swing.JMenuItem();
-		driftCorrBinHighCountData10 = new javax.swing.JMenuItem();
-		numberOfBinsDriftCorrChList = new javax.swing.JMenu();
-		numberOfBinsDriftCorrData1 = new javax.swing.JMenuItem();
-		numberOfBinsDriftCorrData2 = new javax.swing.JMenuItem();
-		numberOfBinsDriftCorrData3 = new javax.swing.JMenuItem();
-		numberOfBinsDriftCorrData4 = new javax.swing.JMenuItem();
-		numberOfBinsDriftCorrData5 = new javax.swing.JMenuItem();
-		numberOfBinsDriftCorrData6 = new javax.swing.JMenuItem();
-		numberOfBinsDriftCorrData7 = new javax.swing.JMenuItem();
-		numberOfBinsDriftCorrData8 = new javax.swing.JMenuItem();
-		numberOfBinsDriftCorrData9 = new javax.swing.JMenuItem();
-		numberOfBinsDriftCorrData10 = new javax.swing.JMenuItem();
-		chAlignBinLowCountChList = new javax.swing.JMenu();
-		chAlignBinLowCountData1 = new javax.swing.JMenuItem();
-		chAlignBinLowCountData2 = new javax.swing.JMenuItem();
-		chAlignBinLowCountData3 = new javax.swing.JMenuItem();
-		chAlignBinLowCountData4 = new javax.swing.JMenuItem();
-		chAlignBinLowCountData5 = new javax.swing.JMenuItem();
-		chAlignBinLowCountData6 = new javax.swing.JMenuItem();
-		chAlignBinLowCountData7 = new javax.swing.JMenuItem();
-		chAlignBinLowCountData8 = new javax.swing.JMenuItem();
-		chAlignBinLowCountData9 = new javax.swing.JMenuItem();
-		chAlignBinLowCountData10 = new javax.swing.JMenuItem();
-		chAlignBinHighCountChList = new javax.swing.JMenu();
-		chAlignBinHighCountData1 = new javax.swing.JMenuItem();
-		chAlignBinHighCountData2 = new javax.swing.JMenuItem();
-		chAlignBinHighCountData3 = new javax.swing.JMenuItem();
-		chAlignBinHighCountData4 = new javax.swing.JMenuItem();
-		chAlignBinHighCountData5 = new javax.swing.JMenuItem();
-		chAlignBinHighCountData6 = new javax.swing.JMenuItem();
-		chAlignBinHighCountData7 = new javax.swing.JMenuItem();
-		chAlignBinHighCountData8 = new javax.swing.JMenuItem();
-		chAlignBinHighCountData9 = new javax.swing.JMenuItem();
-		chAlignBinHighCountData10 = new javax.swing.JMenuItem();
-		doPhotonCountChList = new javax.swing.JMenu();
-		doPhotonCountData1 = new javax.swing.JMenuItem();
-		doPhotonCountData2 = new javax.swing.JMenuItem();
-		doPhotonCountData3 = new javax.swing.JMenuItem();
-		doPhotonCountData4 = new javax.swing.JMenuItem();
-		doPhotonCountData5 = new javax.swing.JMenuItem();
-		doPhotonCountData6 = new javax.swing.JMenuItem();
-		doPhotonCountData7 = new javax.swing.JMenuItem();
-		doPhotonCountData8 = new javax.swing.JMenuItem();
-		doPhotonCountData9 = new javax.swing.JMenuItem();
-		doPhotonCountData10 = new javax.swing.JMenuItem();
-		minPhotonCountChList = new javax.swing.JMenu();
-		minPhotonCountData1 = new javax.swing.JMenuItem();
-		minPhotonCountData2 = new javax.swing.JMenuItem();
-		minPhotonCountData3 = new javax.swing.JMenuItem();
-		minPhotonCountData4 = new javax.swing.JMenuItem();
-		minPhotonCountData5 = new javax.swing.JMenuItem();
-		minPhotonCountData6 = new javax.swing.JMenuItem();
-		minPhotonCountData7 = new javax.swing.JMenuItem();
-		minPhotonCountData8 = new javax.swing.JMenuItem();
-		minPhotonCountData9 = new javax.swing.JMenuItem();
-		minPhotonCountData10 = new javax.swing.JMenuItem();
-		maxPhotonCountChList = new javax.swing.JMenu();
-		maxPhotonCountData1 = new javax.swing.JMenuItem();
-		maxPhotonCountData2 = new javax.swing.JMenuItem();
-		maxPhotonCountData3 = new javax.swing.JMenuItem();
-		maxPhotonCountData4 = new javax.swing.JMenuItem();
-		maxPhotonCountData5 = new javax.swing.JMenuItem();
-		maxPhotonCountData6 = new javax.swing.JMenuItem();
-		maxPhotonCountData7 = new javax.swing.JMenuItem();
-		maxPhotonCountData8 = new javax.swing.JMenuItem();
-		maxPhotonCountData9 = new javax.swing.JMenuItem();
-		maxPhotonCountData10 = new javax.swing.JMenuItem();
-		doSigmaXYChList = new javax.swing.JMenu();
-		doSigmaXYData1 = new javax.swing.JMenuItem();
-		doSigmaXYData2 = new javax.swing.JMenuItem();
-		doSigmaXYData3 = new javax.swing.JMenuItem();
-		doSigmaXYData4 = new javax.swing.JMenuItem();
-		doSigmaXYData5 = new javax.swing.JMenuItem();
-		doSigmaXYData6 = new javax.swing.JMenuItem();
-		doSigmaXYData7 = new javax.swing.JMenuItem();
-		doSigmaXYData8 = new javax.swing.JMenuItem();
-		doSigmaXYData9 = new javax.swing.JMenuItem();
-		doSigmaXYData10 = new javax.swing.JMenuItem();
-		minSigmaXYChList = new javax.swing.JMenu();
-		minSigmaXYData1 = new javax.swing.JMenuItem();
-		minSigmaXYData2 = new javax.swing.JMenuItem();
-		minSigmaXYData3 = new javax.swing.JMenuItem();
-		minSigmaXYData4 = new javax.swing.JMenuItem();
-		minSigmaXYData5 = new javax.swing.JMenuItem();
-		minSigmaXYData6 = new javax.swing.JMenuItem();
-		minSigmaXYData7 = new javax.swing.JMenuItem();
-		minSigmaXYData8 = new javax.swing.JMenuItem();
-		minSigmaXYData9 = new javax.swing.JMenuItem();
-		minSigmaXYData10 = new javax.swing.JMenuItem();
-		maxSigmaXYChList = new javax.swing.JMenu();
-		maxSigmaXYData1 = new javax.swing.JMenuItem();
-		maxSigmaXYData2 = new javax.swing.JMenuItem();
-		maxSigmaXYData3 = new javax.swing.JMenuItem();
-		maxSigmaXYData4 = new javax.swing.JMenuItem();
-		maxSigmaXYData5 = new javax.swing.JMenuItem();
-		maxSigmaXYData6 = new javax.swing.JMenuItem();
-		maxSigmaXYData7 = new javax.swing.JMenuItem();
-		maxSigmaXYData8 = new javax.swing.JMenuItem();
-		maxSigmaXYData9 = new javax.swing.JMenuItem();
-		maxSigmaXYData10 = new javax.swing.JMenuItem();
-		doSigmaZChList = new javax.swing.JMenu();
-		doSigmaZData1 = new javax.swing.JMenuItem();
-		doSigmaZData2 = new javax.swing.JMenuItem();
-		doSigmaZData3 = new javax.swing.JMenuItem();
-		doSigmaZData4 = new javax.swing.JMenuItem();
-		doSigmaZData5 = new javax.swing.JMenuItem();
-		doSigmaZData6 = new javax.swing.JMenuItem();
-		doSigmaZData7 = new javax.swing.JMenuItem();
-		doSigmaZData8 = new javax.swing.JMenuItem();
-		doSigmaZData9 = new javax.swing.JMenuItem();
-		doSigmaZData10 = new javax.swing.JMenuItem();
-		minSigmaZChList = new javax.swing.JMenu();
-		minSigmaZData1 = new javax.swing.JMenuItem();
-		minSigmaZData2 = new javax.swing.JMenuItem();
-		minSigmaZData3 = new javax.swing.JMenuItem();
-		minSigmaZData4 = new javax.swing.JMenuItem();
-		minSigmaZData5 = new javax.swing.JMenuItem();
-		minSigmaZData6 = new javax.swing.JMenuItem();
-		minSigmaZData7 = new javax.swing.JMenuItem();
-		minSigmaZData8 = new javax.swing.JMenuItem();
-		minSigmaZData9 = new javax.swing.JMenuItem();
-		minSigmaZData10 = new javax.swing.JMenuItem();
-		maxSigmaZChList = new javax.swing.JMenu();
-		maxSigmaZData1 = new javax.swing.JMenuItem();
-		maxSigmaZData2 = new javax.swing.JMenuItem();
-		maxSigmaZData3 = new javax.swing.JMenuItem();
-		maxSigmaZData4 = new javax.swing.JMenuItem();
-		maxSigmaZData5 = new javax.swing.JMenuItem();
-		maxSigmaZData6 = new javax.swing.JMenuItem();
-		maxSigmaZData7 = new javax.swing.JMenuItem();
-		maxSigmaZData8 = new javax.swing.JMenuItem();
-		maxSigmaZData9 = new javax.swing.JMenuItem();
-		maxSigmaZData10 = new javax.swing.JMenuItem();
-		doRsquareChList = new javax.swing.JMenu();
-		doRsquareData1 = new javax.swing.JMenuItem();
-		doRsquareData2 = new javax.swing.JMenuItem();
-		doRsquareData3 = new javax.swing.JMenuItem();
-		doRsquareData4 = new javax.swing.JMenuItem();
-		doRsquareData5 = new javax.swing.JMenuItem();
-		doRsquareData6 = new javax.swing.JMenuItem();
-		doRsquareData7 = new javax.swing.JMenuItem();
-		doRsquareData8 = new javax.swing.JMenuItem();
-		doRsquareData9 = new javax.swing.JMenuItem();
-		doRsquareData10 = new javax.swing.JMenuItem();
-		minRsquareChList = new javax.swing.JMenu();
-		minRsquareData1 = new javax.swing.JMenuItem();
-		minRsquareData2 = new javax.swing.JMenuItem();
-		minRsquareData3 = new javax.swing.JMenuItem();
-		minRsquareData4 = new javax.swing.JMenuItem();
-		minRsquareData5 = new javax.swing.JMenuItem();
-		minRsquareData6 = new javax.swing.JMenuItem();
-		minRsquareData7 = new javax.swing.JMenuItem();
-		minRsquareData8 = new javax.swing.JMenuItem();
-		minRsquareData9 = new javax.swing.JMenuItem();
-		minRsquareData10 = new javax.swing.JMenuItem();
-		maxRsquareChList = new javax.swing.JMenu();
-		maxRsquareData1 = new javax.swing.JMenuItem();
-		maxRsquareData2 = new javax.swing.JMenuItem();
-		maxRsquareData3 = new javax.swing.JMenuItem();
-		maxRsquareData4 = new javax.swing.JMenuItem();
-		maxRsquareData5 = new javax.swing.JMenuItem();
-		maxRsquareData6 = new javax.swing.JMenuItem();
-		maxRsquareData7 = new javax.swing.JMenuItem();
-		maxRsquareData8 = new javax.swing.JMenuItem();
-		maxRsquareData9 = new javax.swing.JMenuItem();
-		maxRsquareData10 = new javax.swing.JMenuItem();
-		doPrecisionXYChList = new javax.swing.JMenu();
-		doPrecisionXYData1 = new javax.swing.JMenuItem();
-		doPrecisionXYData2 = new javax.swing.JMenuItem();
-		doPrecisionXYData3 = new javax.swing.JMenuItem();
-		doPrecisionXYData4 = new javax.swing.JMenuItem();
-		doPrecisionXYData5 = new javax.swing.JMenuItem();
-		doPrecisionXYData6 = new javax.swing.JMenuItem();
-		doPrecisionXYData7 = new javax.swing.JMenuItem();
-		doPrecisionXYData8 = new javax.swing.JMenuItem();
-		doPrecisionXYData9 = new javax.swing.JMenuItem();
-		doPrecisionXYData10 = new javax.swing.JMenuItem();
-		minPrecisionXYChList = new javax.swing.JMenu();
-		minPrecisionXYData1 = new javax.swing.JMenuItem();
-		minPrecisionXYData2 = new javax.swing.JMenuItem();
-		minPrecisionXYData3 = new javax.swing.JMenuItem();
-		minPrecisionXYData4 = new javax.swing.JMenuItem();
-		minPrecisionXYData5 = new javax.swing.JMenuItem();
-		minPrecisionXYData6 = new javax.swing.JMenuItem();
-		minPrecisionXYData7 = new javax.swing.JMenuItem();
-		minPrecisionXYData8 = new javax.swing.JMenuItem();
-		minPrecisionXYData9 = new javax.swing.JMenuItem();
-		minPrecisionXYData10 = new javax.swing.JMenuItem();
-		maxPrecisionXYChList = new javax.swing.JMenu();
-		maxPrecisionXYData1 = new javax.swing.JMenuItem();
-		maxPrecisionXYData2 = new javax.swing.JMenuItem();
-		maxPrecisionXYData3 = new javax.swing.JMenuItem();
-		maxPrecisionXYData4 = new javax.swing.JMenuItem();
-		maxPrecisionXYData5 = new javax.swing.JMenuItem();
-		maxPrecisionXYData6 = new javax.swing.JMenuItem();
-		maxPrecisionXYData7 = new javax.swing.JMenuItem();
-		maxPrecisionXYData8 = new javax.swing.JMenuItem();
-		maxPrecisionXYData9 = new javax.swing.JMenuItem();
-		maxPrecisionXYData10 = new javax.swing.JMenuItem();
-		doPrecisionZChList = new javax.swing.JMenu();
-		doPrecisionZData1 = new javax.swing.JMenuItem();
-		doPrecisionZData2 = new javax.swing.JMenuItem();
-		doPrecisionZData3 = new javax.swing.JMenuItem();
-		doPrecisionZData4 = new javax.swing.JMenuItem();
-		doPrecisionZData5 = new javax.swing.JMenuItem();
-		doPrecisionZData6 = new javax.swing.JMenuItem();
-		doPrecisionZData7 = new javax.swing.JMenuItem();
-		doPrecisionZData8 = new javax.swing.JMenuItem();
-		doPrecisionZData9 = new javax.swing.JMenuItem();
-		doPrecisionZData10 = new javax.swing.JMenuItem();
-		minPrecisionZChList = new javax.swing.JMenu();
-		minPrecisionZData1 = new javax.swing.JMenuItem();
-		minPrecisionZData2 = new javax.swing.JMenuItem();
-		minPrecisionZData3 = new javax.swing.JMenuItem();
-		minPrecisionZData4 = new javax.swing.JMenuItem();
-		minPrecisionZData5 = new javax.swing.JMenuItem();
-		minPrecisionZData6 = new javax.swing.JMenuItem();
-		minPrecisionZData7 = new javax.swing.JMenuItem();
-		minPrecisionZData8 = new javax.swing.JMenuItem();
-		minPrecisionZData9 = new javax.swing.JMenuItem();
-		minPrecisionZData10 = new javax.swing.JMenuItem();
-		maxPrecisionZChList = new javax.swing.JMenu();
-		maxPrecisionZData1 = new javax.swing.JMenuItem();
-		maxPrecisionZData2 = new javax.swing.JMenuItem();
-		maxPrecisionZData3 = new javax.swing.JMenuItem();
-		maxPrecisionZData4 = new javax.swing.JMenuItem();
-		maxPrecisionZData5 = new javax.swing.JMenuItem();
-		maxPrecisionZData6 = new javax.swing.JMenuItem();
-		maxPrecisionZData7 = new javax.swing.JMenuItem();
-		maxPrecisionZData8 = new javax.swing.JMenuItem();
-		maxPrecisionZData9 = new javax.swing.JMenuItem();
-		maxPrecisionZData10 = new javax.swing.JMenuItem();
-		driftCorrShiftXYChList = new javax.swing.JMenu();
-		driftCorrShiftXYData1 = new javax.swing.JMenuItem();
-		driftCorrShiftXYData2 = new javax.swing.JMenuItem();
-		driftCorrShiftXYData3 = new javax.swing.JMenuItem();
-		driftCorrShiftXYData4 = new javax.swing.JMenuItem();
-		driftCorrShiftXYData5 = new javax.swing.JMenuItem();
-		driftCorrShiftXYData6 = new javax.swing.JMenuItem();
-		driftCorrShiftXYData7 = new javax.swing.JMenuItem();
-		driftCorrShiftXYData8 = new javax.swing.JMenuItem();
-		driftCorrShiftXYData9 = new javax.swing.JMenuItem();
-		driftCorrShiftXYData10 = new javax.swing.JMenuItem();
-		driftCorrShiftZChList = new javax.swing.JMenu();
-		driftCorrShiftZData1 = new javax.swing.JMenuItem();
-		driftCorrShiftZData2 = new javax.swing.JMenuItem();
-		driftCorrShiftZData3 = new javax.swing.JMenuItem();
-		driftCorrShiftZData4 = new javax.swing.JMenuItem();
-		driftCorrShiftZData5 = new javax.swing.JMenuItem();
-		driftCorrShiftZData6 = new javax.swing.JMenuItem();
-		driftCorrShiftZData7 = new javax.swing.JMenuItem();
-		driftCorrShiftZData8 = new javax.swing.JMenuItem();
-		driftCorrShiftZData9 = new javax.swing.JMenuItem();
-		driftCorrShiftZData10 = new javax.swing.JMenuItem();
-		chAlignShiftXYChList = new javax.swing.JMenu();
-		chAlignShiftXYData1 = new javax.swing.JMenuItem();
-		chAlignShiftXYData2 = new javax.swing.JMenuItem();
-		chAlignShiftXYData3 = new javax.swing.JMenuItem();
-		chAlignShiftXYData4 = new javax.swing.JMenuItem();
-		chAlignShiftXYData5 = new javax.swing.JMenuItem();
-		chAlignShiftXYData6 = new javax.swing.JMenuItem();
-		chAlignShiftXYData7 = new javax.swing.JMenuItem();
-		chAlignShiftXYData8 = new javax.swing.JMenuItem();
-		chAlignShiftXYData9 = new javax.swing.JMenuItem();
-		chAlignShiftXYData10 = new javax.swing.JMenuItem();
-		chAlignShiftZChList = new javax.swing.JMenu();
-		chAlignShiftZData1 = new javax.swing.JMenuItem();
-		chAlignShiftZData2 = new javax.swing.JMenuItem();
-		chAlignShiftZData3 = new javax.swing.JMenuItem();
-		chAlignShiftZData4 = new javax.swing.JMenuItem();
-		chAlignShiftZData5 = new javax.swing.JMenuItem();
-		chAlignShiftZData6 = new javax.swing.JMenuItem();
-		chAlignShiftZData7 = new javax.swing.JMenuItem();
-		chAlignShiftZData8 = new javax.swing.JMenuItem();
-		chAlignShiftZData9 = new javax.swing.JMenuItem();
-		chAlignShiftZData10 = new javax.swing.JMenuItem();
-		buttonGroup2 = new javax.swing.ButtonGroup();
-		doFrameChList = new javax.swing.JMenu();
-		doFrameData1 = new javax.swing.JMenuItem();
-		doFrameData2 = new javax.swing.JMenuItem();
-		doFrameData3 = new javax.swing.JMenuItem();
-		doFrameData4 = new javax.swing.JMenuItem();
-		doFrameData5 = new javax.swing.JMenuItem();
-		doFrameData6 = new javax.swing.JMenuItem();
-		doFrameData7 = new javax.swing.JMenuItem();
-		doFrameData8 = new javax.swing.JMenuItem();
-		doFrameData9 = new javax.swing.JMenuItem();
-		doFrameData10 = new javax.swing.JMenuItem();
-		minFrameChList = new javax.swing.JMenu();
-		minFrameData1 = new javax.swing.JMenuItem();
-		minFrameData2 = new javax.swing.JMenuItem();
-		minFrameData3 = new javax.swing.JMenuItem();
-		minFrameData4 = new javax.swing.JMenuItem();
-		minFrameData5 = new javax.swing.JMenuItem();
-		minFrameData6 = new javax.swing.JMenuItem();
-		minFrameData7 = new javax.swing.JMenuItem();
-		minFrameData8 = new javax.swing.JMenuItem();
-		minFrameData9 = new javax.swing.JMenuItem();
-		minFrameData10 = new javax.swing.JMenuItem();
-		maxFrameChList = new javax.swing.JMenu();
-		maxFrameData1 = new javax.swing.JMenuItem();
-		maxFrameData2 = new javax.swing.JMenuItem();
-		maxFrameData3 = new javax.swing.JMenuItem();
-		maxFrameData4 = new javax.swing.JMenuItem();
-		maxFrameData5 = new javax.swing.JMenuItem();
-		maxFrameData6 = new javax.swing.JMenuItem();
-		maxFrameData7 = new javax.swing.JMenuItem();
-		maxFrameData8 = new javax.swing.JMenuItem();
-		maxFrameData9 = new javax.swing.JMenuItem();
-		maxFrameData10 = new javax.swing.JMenuItem();
-		doRenderImageChList = new javax.swing.JMenu();
-		doRenderImageData1 = new javax.swing.JMenuItem();
-		doRenderImageData2 = new javax.swing.JMenuItem();
-		doRenderImageData3 = new javax.swing.JMenuItem();
-		doRenderImageData4 = new javax.swing.JMenuItem();
-		doRenderImageData5 = new javax.swing.JMenuItem();
-		doRenderImageData6 = new javax.swing.JMenuItem();
-		doRenderImageData7 = new javax.swing.JMenuItem();
-		doRenderImageData8 = new javax.swing.JMenuItem();
-		doRenderImageData9 = new javax.swing.JMenuItem();
-		doRenderImageData10 = new javax.swing.JMenuItem();
-		Header = new javax.swing.JLabel();
-		BasicInp = new javax.swing.JPanel();
-		basicInput = new javax.swing.JLabel();
-		inputPixelSizeLabel = new javax.swing.JLabel();
-		inputPixelSize = new javax.swing.JTextField();
-		totalGainLabel = new javax.swing.JLabel();
-		totalGain = new javax.swing.JTextField();
-		ROIsizeLabel = new javax.swing.JLabel();
-		ROIsize = new javax.swing.JComboBox<>();
-		minimalSignalLabel = new javax.swing.JLabel();
-		PixelsOverBackgroundLabel = new javax.swing.JLabel();
-		minimalSignal = new javax.swing.JTextField();
-		minPixelOverBackground = new javax.swing.JTextField();
-		windowWidthLabel = new javax.swing.JLabel();
-		windowWidth = new javax.swing.JTextField();
-		Process = new javax.swing.JButton();
-		minPixelDistLabel = new javax.swing.JLabel();
-		minPixelDist = new javax.swing.JTextField();
-		resetBasicInput = new javax.swing.JButton();
-		ParameterRange = new javax.swing.JPanel();
-		ParameterLabel = new javax.swing.JLabel();
-		doPhotonCount = new javax.swing.JCheckBox();
-		doSigmaXY = new javax.swing.JCheckBox();
-		doSigmaZ = new javax.swing.JCheckBox();
-		doRsquare = new javax.swing.JCheckBox();
-		doPrecisionXY = new javax.swing.JCheckBox();
-		doPrecisionZ = new javax.swing.JCheckBox();
-		cleanTable = new javax.swing.JButton();
-		minPrecisionXY = new javax.swing.JTextField();
-		maxPrecisionXY = new javax.swing.JTextField();
-		minRsquare = new javax.swing.JTextField();
-		maxRsquare = new javax.swing.JTextField();
-		minSigmaZ = new javax.swing.JTextField();
-		maxSigmaZ = new javax.swing.JTextField();
-		minSigmaXY = new javax.swing.JTextField();
-		maxSigmaXY = new javax.swing.JTextField();
-		minPhotonCount = new javax.swing.JTextField();
-		maxPhotonCount = new javax.swing.JTextField();
-		minPrecisionZ = new javax.swing.JTextField();
-		maxPrecisionZ = new javax.swing.JTextField();
-		resetParameterRange = new javax.swing.JButton();
-		maxLabel3 = new javax.swing.JLabel();
-		minLabel3 = new javax.swing.JLabel();
-		doFrame = new javax.swing.JCheckBox();
-		minFrame = new javax.swing.JTextField();
-		maxFrame = new javax.swing.JTextField();
-		Analysis = new javax.swing.JPanel();
-		doClusterAnalysis = new javax.swing.JCheckBox();
-		epsilonLabel = new javax.swing.JLabel();
-		minPtsLabel = new javax.swing.JLabel();
-		epsilon = new javax.swing.JTextField();
-		minPtsCluster = new javax.swing.JTextField();
-		clusterAnalysis = new javax.swing.JButton();
-		jPanel1 = new javax.swing.JPanel();
-		particlesPerBinLabel = new javax.swing.JLabel();
-		driftCorrBinLowCount = new javax.swing.JTextField();
-		driftCorrBinHighCount = new javax.swing.JTextField();
-		numberOfBinsLabel = new javax.swing.JLabel();
-		doDriftCorrect = new javax.swing.JCheckBox();
-		driftCorrect = new javax.swing.JButton();
-		doChannelAlign = new javax.swing.JCheckBox();
-		alignChannels = new javax.swing.JButton();
-		particlesPerBinLabelchAlign = new javax.swing.JLabel();
-		chAlignBinLowCount = new javax.swing.JTextField();
-		chAlignBinHighCount = new javax.swing.JTextField();
-		numberOfBinsDriftCorr = new javax.swing.JTextField();
-		minLabel = new javax.swing.JLabel();
-		maxLabel = new javax.swing.JLabel();
-		maxLabel1 = new javax.swing.JLabel();
-		minLabel1 = new javax.swing.JLabel();
-		particlesPerBinLabel1 = new javax.swing.JLabel();
-		driftCorrShiftXY = new javax.swing.JTextField();
-		driftCorrShiftZ = new javax.swing.JTextField();
-		minLabel2 = new javax.swing.JLabel();
-		maxLabel2 = new javax.swing.JLabel();
-		minLabel4 = new javax.swing.JLabel();
-		maxLabel4 = new javax.swing.JLabel();
-		chAlignShiftZ = new javax.swing.JTextField();
-		chAlignShiftXY = new javax.swing.JTextField();
-		particlesPerBinLabel2 = new javax.swing.JLabel();
-		jPanel2 = new javax.swing.JPanel();
-		correctBackground = new javax.swing.JButton();
-		localize_Fit = new javax.swing.JButton();
-		loadSettings = new javax.swing.JButton();
-		storeSettings = new javax.swing.JButton();
-		jPanel3 = new javax.swing.JPanel();
-		renderImage = new javax.swing.JButton();
-		doRenderImage = new javax.swing.JCheckBox();
-		outputPixelSizeLabel = new javax.swing.JLabel();
-		outputPixelSize = new javax.swing.JTextField();
-		doGaussianSmoothing = new javax.swing.JCheckBox();
-		outputPixelSizeZ = new javax.swing.JTextField();
-		XYrenderLabel = new javax.swing.JLabel();
-		ZrenderLabel = new javax.swing.JLabel();
-		channelId = new javax.swing.JComboBox<>();
-		parallelComputation = new javax.swing.JRadioButton();
-		GPUcomputation = new javax.swing.JRadioButton();
-
-		pixelSizeChList.setText("jMenu1");
-
-		pixelSizeData1.setText("100");
-		pixelSizeData1.setToolTipText("");
-		pixelSizeChList.add(pixelSizeData1);
-
-		pixelSizeData2.setText("100");
-		pixelSizeData2.setToolTipText("");
-		pixelSizeChList.add(pixelSizeData2);
-
-		pixelSizeData3.setText("100");
-		pixelSizeData3.setToolTipText("");
-		pixelSizeChList.add(pixelSizeData3);
-
-		pixelSizeData4.setText("100");
-		pixelSizeData4.setToolTipText("");
-		pixelSizeChList.add(pixelSizeData4);
-
-		pixelSizeData5.setText("100");
-		pixelSizeData5.setToolTipText("");
-		pixelSizeChList.add(pixelSizeData5);
-
-		pixelSizeData6.setText("100");
-		pixelSizeData6.setToolTipText("");
-		pixelSizeChList.add(pixelSizeData6);
-
-		pixelSizeData7.setText("100");
-		pixelSizeData7.setToolTipText("");
-		pixelSizeChList.add(pixelSizeData7);
-
-		pixelSizeData8.setText("100");
-		pixelSizeData8.setToolTipText("");
-		pixelSizeChList.add(pixelSizeData8);
-
-		pixelSizeData9.setText("100");
-		pixelSizeData9.setToolTipText("");
-		pixelSizeChList.add(pixelSizeData9);
-
-		pixelSizeData10.setText("100");
-		pixelSizeData10.setToolTipText("");
-		pixelSizeChList.add(pixelSizeData10);
-
-		totalGainChList.setText("jMenu1");
-
-		totalGainData1.setText("100");
-		totalGainData1.setToolTipText("");
-		totalGainChList.add(totalGainData1);
-
-		totalGainData2.setText("100");
-		totalGainData2.setToolTipText("");
-		totalGainChList.add(totalGainData2);
-
-		totalGainData3.setText("100");
-		totalGainData3.setToolTipText("");
-		totalGainChList.add(totalGainData3);
-
-		totalGainData4.setText("100");
-		totalGainData4.setToolTipText("");
-		totalGainChList.add(totalGainData4);
-
-		totalGainData5.setText("100");
-		totalGainData5.setToolTipText("");
-		totalGainChList.add(totalGainData5);
-
-		totalGainData6.setText("100");
-		totalGainData6.setToolTipText("");
-		totalGainChList.add(totalGainData6);
-
-		totalGainData7.setText("100");
-		totalGainData7.setToolTipText("");
-		totalGainChList.add(totalGainData7);
-
-		totalGainData8.setText("100");
-		totalGainData8.setToolTipText("");
-		totalGainChList.add(totalGainData8);
-
-		totalGainData9.setText("100");
-		totalGainData9.setToolTipText("");
-		totalGainChList.add(totalGainData9);
-
-		totalGainData10.setText("100");
-		totalGainData10.setToolTipText("");
-		totalGainChList.add(totalGainData10);
-
-		minimalSignalChList.setText("jMenu1");
-
-		minimalSignalData1.setText("100");
-		minimalSignalData1.setToolTipText("");
-		minimalSignalChList.add(minimalSignalData1);
-
-		minimalSignalData2.setText("100");
-		minimalSignalData2.setToolTipText("");
-		minimalSignalChList.add(minimalSignalData2);
-
-		minimalSignalData3.setText("100");
-		minimalSignalData3.setToolTipText("");
-		minimalSignalChList.add(minimalSignalData3);
-
-		minimalSignalData4.setText("100");
-		minimalSignalData4.setToolTipText("");
-		minimalSignalChList.add(minimalSignalData4);
-
-		minimalSignalData5.setText("100");
-		minimalSignalData5.setToolTipText("");
-		minimalSignalChList.add(minimalSignalData5);
-
-		minimalSignalData6.setText("100");
-		minimalSignalData6.setToolTipText("");
-		minimalSignalChList.add(minimalSignalData6);
-
-		minimalSignalData7.setText("100");
-		minimalSignalData7.setToolTipText("");
-		minimalSignalChList.add(minimalSignalData7);
-
-		minimalSignalData8.setText("100");
-		minimalSignalData8.setToolTipText("");
-		minimalSignalChList.add(minimalSignalData8);
-
-		minimalSignalData9.setText("100");
-		minimalSignalData9.setToolTipText("");
-		minimalSignalChList.add(minimalSignalData9);
-
-		minimalSignalData10.setText("100");
-		minimalSignalData10.setToolTipText("");
-		minimalSignalChList.add(minimalSignalData10);
-
-		minPixelOverBackgroundChList.setText("jMenu1");
-
-		minPixelOverBackgroundData1.setText("100");
-		minPixelOverBackgroundData1.setToolTipText("");
-		minPixelOverBackgroundChList.add(minPixelOverBackgroundData1);
-
-		minPixelOverBackgroundData2.setText("100");
-		minPixelOverBackgroundData2.setToolTipText("");
-		minPixelOverBackgroundChList.add(minPixelOverBackgroundData2);
-
-		minPixelOverBackgroundData3.setText("100");
-		minPixelOverBackgroundData3.setToolTipText("");
-		minPixelOverBackgroundChList.add(minPixelOverBackgroundData3);
-
-		minPixelOverBackgroundData4.setText("100");
-		minPixelOverBackgroundData4.setToolTipText("");
-		minPixelOverBackgroundChList.add(minPixelOverBackgroundData4);
-
-		minPixelOverBackgroundData5.setText("100");
-		minPixelOverBackgroundData5.setToolTipText("");
-		minPixelOverBackgroundChList.add(minPixelOverBackgroundData5);
-
-		minPixelOverBackgroundData6.setText("100");
-		minPixelOverBackgroundData6.setToolTipText("");
-		minPixelOverBackgroundChList.add(minPixelOverBackgroundData6);
-
-		minPixelOverBackgroundData7.setText("100");
-		minPixelOverBackgroundData7.setToolTipText("");
-		minPixelOverBackgroundChList.add(minPixelOverBackgroundData7);
-
-		minPixelOverBackgroundData8.setText("100");
-		minPixelOverBackgroundData8.setToolTipText("");
-		minPixelOverBackgroundChList.add(minPixelOverBackgroundData8);
-
-		minPixelOverBackgroundData9.setText("100");
-		minPixelOverBackgroundData9.setToolTipText("");
-		minPixelOverBackgroundChList.add(minPixelOverBackgroundData9);
-
-		minPixelOverBackgroundData10.setText("100");
-		minPixelOverBackgroundData10.setToolTipText("");
-		minPixelOverBackgroundChList.add(minPixelOverBackgroundData10);
-
-		gaussWindowChList.setText("jMenu1");
-
-		ROIsizeData1.setText("100");
-		ROIsizeData1.setToolTipText("");
-		gaussWindowChList.add(ROIsizeData1);
-
-		ROIsizeData2.setText("100");
-		ROIsizeData2.setToolTipText("");
-		gaussWindowChList.add(ROIsizeData2);
-
-		ROIsizeData3.setText("100");
-		ROIsizeData3.setToolTipText("");
-		gaussWindowChList.add(ROIsizeData3);
-
-		ROIsizeData4.setText("100");
-		ROIsizeData4.setToolTipText("");
-		gaussWindowChList.add(ROIsizeData4);
-
-		ROIsizeData5.setText("100");
-		ROIsizeData5.setToolTipText("");
-		gaussWindowChList.add(ROIsizeData5);
-
-		ROIsizeData6.setText("100");
-		ROIsizeData6.setToolTipText("");
-		gaussWindowChList.add(ROIsizeData6);
-
-		ROIsizeData7.setText("100");
-		ROIsizeData7.setToolTipText("");
-		gaussWindowChList.add(ROIsizeData7);
-
-		ROIsizeData8.setText("100");
-		ROIsizeData8.setToolTipText("");
-		gaussWindowChList.add(ROIsizeData8);
-
-		ROIsizeData9.setText("100");
-		ROIsizeData9.setToolTipText("");
-		gaussWindowChList.add(ROIsizeData9);
-
-		ROIsizeData10.setText("100");
-		ROIsizeData10.setToolTipText("");
-		gaussWindowChList.add(ROIsizeData10);
-
-		windowWidthChList.setText("jMenu1");
-
-		windowWidthData1.setText("jMenuItem1");
-		windowWidthChList.add(windowWidthData1);
-
-		windowWidthData2.setText("jMenuItem1");
-		windowWidthChList.add(windowWidthData2);
-
-		windowWidthData3.setText("jMenuItem1");
-		windowWidthChList.add(windowWidthData3);
-
-		windowWidthData4.setText("jMenuItem1");
-		windowWidthChList.add(windowWidthData4);
-
-		windowWidthData5.setText("jMenuItem1");
-		windowWidthChList.add(windowWidthData5);
-
-		windowWidthData6.setText("jMenuItem1");
-		windowWidthChList.add(windowWidthData6);
-
-		windowWidthData7.setText("jMenuItem1");
-		windowWidthChList.add(windowWidthData7);
-
-		windowWidthData8.setText("jMenuItem1");
-		windowWidthChList.add(windowWidthData8);
-
-		windowWidthData9.setText("jMenuItem1");
-		windowWidthChList.add(windowWidthData9);
-
-		windowWidthData10.setText("jMenuItem1");
-		windowWidthChList.add(windowWidthData10);
-
-		minPixelDistChList.setText("jMenu1");
-
-		minPixelDistData1.setText("jMenuItem1");
-		minPixelDistChList.add(minPixelDistData1);
-
-		minPixelDistData2.setText("jMenuItem1");
-		minPixelDistChList.add(minPixelDistData2);
-
-		minPixelDistData3.setText("jMenuItem1");
-		minPixelDistChList.add(minPixelDistData3);
-
-		minPixelDistData4.setText("jMenuItem1");
-		minPixelDistChList.add(minPixelDistData4);
-
-		minPixelDistData5.setText("jMenuItem1");
-		minPixelDistChList.add(minPixelDistData5);
-
-		minPixelDistData6.setText("jMenuItem1");
-		minPixelDistChList.add(minPixelDistData6);
-
-		minPixelDistData7.setText("jMenuItem1");
-		minPixelDistChList.add(minPixelDistData7);
-
-		minPixelDistData8.setText("jMenuItem1");
-		minPixelDistChList.add(minPixelDistData8);
-
-		minPixelDistData9.setText("jMenuItem1");
-		minPixelDistChList.add(minPixelDistData9);
-
-		minPixelDistData10.setText("jMenuItem1");
-		minPixelDistChList.add(minPixelDistData10);
-
-		doClusterAnalysisChList.setText("jMenu1");
-
-		doClusterAnalysisData1.setText("jMenuItem1");
-		doClusterAnalysisChList.add(doClusterAnalysisData1);
-
-		doClusterAnalysisData2.setText("jMenuItem1");
-		doClusterAnalysisChList.add(doClusterAnalysisData2);
-
-		doClusterAnalysisData3.setText("jMenuItem1");
-		doClusterAnalysisChList.add(doClusterAnalysisData3);
-
-		doClusterAnalysisData4.setText("jMenuItem1");
-		doClusterAnalysisChList.add(doClusterAnalysisData4);
-
-		doClusterAnalysisData5.setText("jMenuItem1");
-		doClusterAnalysisChList.add(doClusterAnalysisData5);
-
-		doClusterAnalysisData6.setText("jMenuItem1");
-		doClusterAnalysisChList.add(doClusterAnalysisData6);
-
-		doClusterAnalysisData7.setText("jMenuItem1");
-		doClusterAnalysisChList.add(doClusterAnalysisData7);
-
-		doClusterAnalysisData8.setText("jMenuItem1");
-		doClusterAnalysisChList.add(doClusterAnalysisData8);
-
-		doClusterAnalysisData9.setText("jMenuItem1");
-		doClusterAnalysisChList.add(doClusterAnalysisData9);
-
-		doClusterAnalysisData10.setText("jMenuItem1");
-		doClusterAnalysisChList.add(doClusterAnalysisData10);
-
-		epsilonChList.setText("jMenu1");
-
-		epsilonData1.setText("jMenuItem1");
-		epsilonChList.add(epsilonData1);
-
-		epsilonData2.setText("jMenuItem1");
-		epsilonChList.add(epsilonData2);
-
-		epsilonData3.setText("jMenuItem1");
-		epsilonChList.add(epsilonData3);
-
-		epsilonData4.setText("jMenuItem1");
-		epsilonChList.add(epsilonData4);
-
-		epsilonData5.setText("jMenuItem1");
-		epsilonChList.add(epsilonData5);
-
-		epsilonData6.setText("jMenuItem1");
-		epsilonChList.add(epsilonData6);
-
-		epsilonData7.setText("jMenuItem1");
-		epsilonChList.add(epsilonData7);
-
-		epsilonData8.setText("jMenuItem1");
-		epsilonChList.add(epsilonData8);
-
-		epsilonData9.setText("jMenuItem1");
-		epsilonChList.add(epsilonData9);
-
-		epsilonData10.setText("jMenuItem1");
-		epsilonChList.add(epsilonData10);
-
-		minPtsClusterChList.setText("jMenu1");
-
-		minPtsClusterData1.setText("jMenuItem1");
-		minPtsClusterChList.add(minPtsClusterData1);
-
-		minPtsClusterData2.setText("jMenuItem1");
-		minPtsClusterChList.add(minPtsClusterData2);
-
-		minPtsClusterData3.setText("jMenuItem1");
-		minPtsClusterChList.add(minPtsClusterData3);
-
-		minPtsClusterData4.setText("jMenuItem1");
-		minPtsClusterChList.add(minPtsClusterData4);
-
-		minPtsClusterData5.setText("jMenuItem1");
-		minPtsClusterChList.add(minPtsClusterData5);
-
-		minPtsClusterData6.setText("jMenuItem1");
-		minPtsClusterChList.add(minPtsClusterData6);
-
-		minPtsClusterData7.setText("jMenuItem1");
-		minPtsClusterChList.add(minPtsClusterData7);
-
-		minPtsClusterData8.setText("jMenuItem1");
-		minPtsClusterChList.add(minPtsClusterData8);
-
-		minPtsClusterData9.setText("jMenuItem1");
-		minPtsClusterChList.add(minPtsClusterData9);
-
-		minPtsClusterData10.setText("jMenuItem1");
-		minPtsClusterChList.add(minPtsClusterData10);
-
-		outputPixelSizeChList.setText("jMenu1");
-
-		outputPixelSizeData1.setText("jMenuItem1");
-		outputPixelSizeChList.add(outputPixelSizeData1);
-
-		outputPixelSizeData2.setText("jMenuItem1");
-		outputPixelSizeChList.add(outputPixelSizeData2);
-
-		outputPixelSizeData3.setText("jMenuItem1");
-		outputPixelSizeChList.add(outputPixelSizeData3);
-
-		outputPixelSizeData4.setText("jMenuItem1");
-		outputPixelSizeChList.add(outputPixelSizeData4);
-
-		outputPixelSizeData5.setText("jMenuItem1");
-		outputPixelSizeChList.add(outputPixelSizeData5);
-
-		outputPixelSizeData6.setText("jMenuItem1");
-		outputPixelSizeChList.add(outputPixelSizeData6);
-
-		outputPixelSizeData7.setText("jMenuItem1");
-		outputPixelSizeChList.add(outputPixelSizeData7);
-
-		outputPixelSizeData8.setText("jMenuItem1");
-		outputPixelSizeChList.add(outputPixelSizeData8);
-
-		outputPixelSizeData9.setText("jMenuItem1");
-		outputPixelSizeChList.add(outputPixelSizeData9);
-
-		outputPixelSizeData10.setText("jMenuItem1");
-		outputPixelSizeChList.add(outputPixelSizeData10);
-
-		driftCorrBinLowCountChList.setText("jMenu1");
-
-		driftCorrBinLowCountData1.setText("jMenuItem1");
-		driftCorrBinLowCountChList.add(driftCorrBinLowCountData1);
-
-		driftCorrBinLowCountData2.setText("jMenuItem1");
-		driftCorrBinLowCountChList.add(driftCorrBinLowCountData2);
-
-		driftCorrBinLowCountData3.setText("jMenuItem1");
-		driftCorrBinLowCountChList.add(driftCorrBinLowCountData3);
-
-		driftCorrBinLowCountData4.setText("jMenuItem1");
-		driftCorrBinLowCountChList.add(driftCorrBinLowCountData4);
-
-		driftCorrBinLowCountData5.setText("jMenuItem1");
-		driftCorrBinLowCountChList.add(driftCorrBinLowCountData5);
-
-		driftCorrBinLowCountData6.setText("jMenuItem1");
-		driftCorrBinLowCountChList.add(driftCorrBinLowCountData6);
-
-		driftCorrBinLowCountData7.setText("jMenuItem1");
-		driftCorrBinLowCountChList.add(driftCorrBinLowCountData7);
-
-		driftCorrBinLowCountData8.setText("jMenuItem1");
-		driftCorrBinLowCountChList.add(driftCorrBinLowCountData8);
-
-		driftCorrBinLowCountData9.setText("jMenuItem1");
-		driftCorrBinLowCountChList.add(driftCorrBinLowCountData9);
-
-		driftCorrBinLowCountData10.setText("jMenuItem1");
-		driftCorrBinLowCountChList.add(driftCorrBinLowCountData10);
-
-		driftCorrBinHighCountChList.setText("jMenu1");
-
-		driftCorrBinHighCountData1.setText("jMenuItem1");
-		driftCorrBinHighCountChList.add(driftCorrBinHighCountData1);
-
-		driftCorrBinHighCountData2.setText("jMenuItem1");
-		driftCorrBinHighCountChList.add(driftCorrBinHighCountData2);
-
-		driftCorrBinHighCountData3.setText("jMenuItem1");
-		driftCorrBinHighCountChList.add(driftCorrBinHighCountData3);
-
-		driftCorrBinHighCountData4.setText("jMenuItem1");
-		driftCorrBinHighCountChList.add(driftCorrBinHighCountData4);
-
-		driftCorrBinHighCountData5.setText("jMenuItem1");
-		driftCorrBinHighCountChList.add(driftCorrBinHighCountData5);
-
-		driftCorrBinHighCountData6.setText("jMenuItem1");
-		driftCorrBinHighCountChList.add(driftCorrBinHighCountData6);
-
-		driftCorrBinHighCountData7.setText("jMenuItem1");
-		driftCorrBinHighCountChList.add(driftCorrBinHighCountData7);
-
-		driftCorrBinHighCountData8.setText("jMenuItem1");
-		driftCorrBinHighCountChList.add(driftCorrBinHighCountData8);
-
-		driftCorrBinHighCountData9.setText("jMenuItem1");
-		driftCorrBinHighCountChList.add(driftCorrBinHighCountData9);
-
-		driftCorrBinHighCountData10.setText("jMenuItem1");
-		driftCorrBinHighCountChList.add(driftCorrBinHighCountData10);
-
-		numberOfBinsDriftCorrChList.setText("jMenu1");
-
-		numberOfBinsDriftCorrData1.setText("jMenuItem1");
-		numberOfBinsDriftCorrChList.add(numberOfBinsDriftCorrData1);
-
-		numberOfBinsDriftCorrData2.setText("jMenuItem1");
-		numberOfBinsDriftCorrChList.add(numberOfBinsDriftCorrData2);
-
-		numberOfBinsDriftCorrData3.setText("jMenuItem1");
-		numberOfBinsDriftCorrChList.add(numberOfBinsDriftCorrData3);
-
-		numberOfBinsDriftCorrData4.setText("jMenuItem1");
-		numberOfBinsDriftCorrChList.add(numberOfBinsDriftCorrData4);
-
-		numberOfBinsDriftCorrData5.setText("jMenuItem1");
-		numberOfBinsDriftCorrChList.add(numberOfBinsDriftCorrData5);
-
-		numberOfBinsDriftCorrData6.setText("jMenuItem1");
-		numberOfBinsDriftCorrChList.add(numberOfBinsDriftCorrData6);
-
-		numberOfBinsDriftCorrData7.setText("jMenuItem1");
-		numberOfBinsDriftCorrChList.add(numberOfBinsDriftCorrData7);
-
-		numberOfBinsDriftCorrData8.setText("jMenuItem1");
-		numberOfBinsDriftCorrChList.add(numberOfBinsDriftCorrData8);
-
-		numberOfBinsDriftCorrData9.setText("jMenuItem1");
-		numberOfBinsDriftCorrChList.add(numberOfBinsDriftCorrData9);
-
-		numberOfBinsDriftCorrData10.setText("jMenuItem1");
-		numberOfBinsDriftCorrChList.add(numberOfBinsDriftCorrData10);
-
-		chAlignBinLowCountChList.setText("jMenu1");
-
-		chAlignBinLowCountData1.setText("jMenuItem1");
-		chAlignBinLowCountChList.add(chAlignBinLowCountData1);
-
-		chAlignBinLowCountData2.setText("jMenuItem1");
-		chAlignBinLowCountChList.add(chAlignBinLowCountData2);
-
-		chAlignBinLowCountData3.setText("jMenuItem1");
-		chAlignBinLowCountChList.add(chAlignBinLowCountData3);
-
-		chAlignBinLowCountData4.setText("jMenuItem1");
-		chAlignBinLowCountChList.add(chAlignBinLowCountData4);
-
-		chAlignBinLowCountData5.setText("jMenuItem1");
-		chAlignBinLowCountChList.add(chAlignBinLowCountData5);
-
-		chAlignBinLowCountData6.setText("jMenuItem1");
-		chAlignBinLowCountChList.add(chAlignBinLowCountData6);
-
-		chAlignBinLowCountData7.setText("jMenuItem1");
-		chAlignBinLowCountChList.add(chAlignBinLowCountData7);
-
-		chAlignBinLowCountData8.setText("jMenuItem1");
-		chAlignBinLowCountChList.add(chAlignBinLowCountData8);
-
-		chAlignBinLowCountData9.setText("jMenuItem1");
-		chAlignBinLowCountChList.add(chAlignBinLowCountData9);
-
-		chAlignBinLowCountData10.setText("jMenuItem1");
-		chAlignBinLowCountChList.add(chAlignBinLowCountData10);
-
-		chAlignBinHighCountChList.setText("jMenu1");
-
-		chAlignBinHighCountData1.setText("jMenuItem1");
-		chAlignBinHighCountChList.add(chAlignBinHighCountData1);
-
-		chAlignBinHighCountData2.setText("jMenuItem1");
-		chAlignBinHighCountChList.add(chAlignBinHighCountData2);
-
-		chAlignBinHighCountData3.setText("jMenuItem1");
-		chAlignBinHighCountChList.add(chAlignBinHighCountData3);
-
-		chAlignBinHighCountData4.setText("jMenuItem1");
-		chAlignBinHighCountChList.add(chAlignBinHighCountData4);
-
-		chAlignBinHighCountData5.setText("jMenuItem1");
-		chAlignBinHighCountChList.add(chAlignBinHighCountData5);
-
-		chAlignBinHighCountData6.setText("jMenuItem1");
-		chAlignBinHighCountChList.add(chAlignBinHighCountData6);
-
-		chAlignBinHighCountData7.setText("jMenuItem1");
-		chAlignBinHighCountChList.add(chAlignBinHighCountData7);
-
-		chAlignBinHighCountData8.setText("jMenuItem1");
-		chAlignBinHighCountChList.add(chAlignBinHighCountData8);
-
-		chAlignBinHighCountData9.setText("jMenuItem1");
-		chAlignBinHighCountChList.add(chAlignBinHighCountData9);
-
-		chAlignBinHighCountData10.setText("jMenuItem1");
-		chAlignBinHighCountChList.add(chAlignBinHighCountData10);
-
-		doPhotonCountChList.setText("jMenu1");
-
-		doPhotonCountData1.setText("jMenuItem1");
-		doPhotonCountChList.add(doPhotonCountData1);
-
-		doPhotonCountData2.setText("jMenuItem1");
-		doPhotonCountChList.add(doPhotonCountData2);
-
-		doPhotonCountData3.setText("jMenuItem1");
-		doPhotonCountChList.add(doPhotonCountData3);
-
-		doPhotonCountData4.setText("jMenuItem1");
-		doPhotonCountChList.add(doPhotonCountData4);
-
-		doPhotonCountData5.setText("jMenuItem1");
-		doPhotonCountChList.add(doPhotonCountData5);
-
-		doPhotonCountData6.setText("jMenuItem1");
-		doPhotonCountChList.add(doPhotonCountData6);
-
-		doPhotonCountData7.setText("jMenuItem1");
-		doPhotonCountChList.add(doPhotonCountData7);
-
-		doPhotonCountData8.setText("jMenuItem1");
-		doPhotonCountChList.add(doPhotonCountData8);
-
-		doPhotonCountData9.setText("jMenuItem1");
-		doPhotonCountChList.add(doPhotonCountData9);
-
-		doPhotonCountData10.setText("jMenuItem1");
-		doPhotonCountChList.add(doPhotonCountData10);
-
-		minPhotonCountChList.setText("jMenu1");
-
-		minPhotonCountData1.setText("jMenuItem1");
-		minPhotonCountChList.add(minPhotonCountData1);
-
-		minPhotonCountData2.setText("jMenuItem1");
-		minPhotonCountChList.add(minPhotonCountData2);
-
-		minPhotonCountData3.setText("jMenuItem1");
-		minPhotonCountChList.add(minPhotonCountData3);
-
-		minPhotonCountData4.setText("jMenuItem1");
-		minPhotonCountChList.add(minPhotonCountData4);
-
-		minPhotonCountData5.setText("jMenuItem1");
-		minPhotonCountChList.add(minPhotonCountData5);
-
-		minPhotonCountData6.setText("jMenuItem1");
-		minPhotonCountChList.add(minPhotonCountData6);
-
-		minPhotonCountData7.setText("jMenuItem1");
-		minPhotonCountChList.add(minPhotonCountData7);
-
-		minPhotonCountData8.setText("jMenuItem1");
-		minPhotonCountChList.add(minPhotonCountData8);
-
-		minPhotonCountData9.setText("jMenuItem1");
-		minPhotonCountChList.add(minPhotonCountData9);
-
-		minPhotonCountData10.setText("jMenuItem1");
-		minPhotonCountChList.add(minPhotonCountData10);
-
-		maxPhotonCountChList.setText("jMenu1");
-
-		maxPhotonCountData1.setText("jMenuItem1");
-		maxPhotonCountChList.add(maxPhotonCountData1);
-
-		maxPhotonCountData2.setText("jMenuItem1");
-		maxPhotonCountChList.add(maxPhotonCountData2);
-
-		maxPhotonCountData3.setText("jMenuItem1");
-		maxPhotonCountChList.add(maxPhotonCountData3);
-
-		maxPhotonCountData4.setText("jMenuItem1");
-		maxPhotonCountChList.add(maxPhotonCountData4);
-
-		maxPhotonCountData5.setText("jMenuItem1");
-		maxPhotonCountChList.add(maxPhotonCountData5);
-
-		maxPhotonCountData6.setText("jMenuItem1");
-		maxPhotonCountChList.add(maxPhotonCountData6);
-
-		maxPhotonCountData7.setText("jMenuItem1");
-		maxPhotonCountChList.add(maxPhotonCountData7);
-
-		maxPhotonCountData8.setText("jMenuItem1");
-		maxPhotonCountChList.add(maxPhotonCountData8);
-
-		maxPhotonCountData9.setText("jMenuItem1");
-		maxPhotonCountChList.add(maxPhotonCountData9);
-
-		maxPhotonCountData10.setText("jMenuItem1");
-		maxPhotonCountChList.add(maxPhotonCountData10);
-
-		doSigmaXYChList.setText("jMenu1");
-
-		doSigmaXYData1.setText("jMenuItem1");
-		doSigmaXYChList.add(doSigmaXYData1);
-
-		doSigmaXYData2.setText("jMenuItem1");
-		doSigmaXYChList.add(doSigmaXYData2);
-
-		doSigmaXYData3.setText("jMenuItem1");
-		doSigmaXYChList.add(doSigmaXYData3);
-
-		doSigmaXYData4.setText("jMenuItem1");
-		doSigmaXYChList.add(doSigmaXYData4);
-
-		doSigmaXYData5.setText("jMenuItem1");
-		doSigmaXYChList.add(doSigmaXYData5);
-
-		doSigmaXYData6.setText("jMenuItem1");
-		doSigmaXYChList.add(doSigmaXYData6);
-
-		doSigmaXYData7.setText("jMenuItem1");
-		doSigmaXYChList.add(doSigmaXYData7);
-
-		doSigmaXYData8.setText("jMenuItem1");
-		doSigmaXYChList.add(doSigmaXYData8);
-
-		doSigmaXYData9.setText("jMenuItem1");
-		doSigmaXYChList.add(doSigmaXYData9);
-
-		doSigmaXYData10.setText("jMenuItem1");
-		doSigmaXYChList.add(doSigmaXYData10);
-
-		minSigmaXYChList.setText("jMenu1");
-
-		minSigmaXYData1.setText("jMenuItem1");
-		minSigmaXYChList.add(minSigmaXYData1);
-
-		minSigmaXYData2.setText("jMenuItem1");
-		minSigmaXYChList.add(minSigmaXYData2);
-
-		minSigmaXYData3.setText("jMenuItem1");
-		minSigmaXYChList.add(minSigmaXYData3);
-
-		minSigmaXYData4.setText("jMenuItem1");
-		minSigmaXYChList.add(minSigmaXYData4);
-
-		minSigmaXYData5.setText("jMenuItem1");
-		minSigmaXYChList.add(minSigmaXYData5);
-
-		minSigmaXYData6.setText("jMenuItem1");
-		minSigmaXYChList.add(minSigmaXYData6);
-
-		minSigmaXYData7.setText("jMenuItem1");
-		minSigmaXYChList.add(minSigmaXYData7);
-
-		minSigmaXYData8.setText("jMenuItem1");
-		minSigmaXYChList.add(minSigmaXYData8);
-
-		minSigmaXYData9.setText("jMenuItem1");
-		minSigmaXYChList.add(minSigmaXYData9);
-
-		minSigmaXYData10.setText("jMenuItem1");
-		minSigmaXYChList.add(minSigmaXYData10);
-
-		maxSigmaXYChList.setText("jMenu1");
-
-		maxSigmaXYData1.setText("jMenuItem1");
-		maxSigmaXYChList.add(maxSigmaXYData1);
-
-		maxSigmaXYData2.setText("jMenuItem1");
-		maxSigmaXYChList.add(maxSigmaXYData2);
-
-		maxSigmaXYData3.setText("jMenuItem1");
-		maxSigmaXYChList.add(maxSigmaXYData3);
-
-		maxSigmaXYData4.setText("jMenuItem1");
-		maxSigmaXYChList.add(maxSigmaXYData4);
-
-		maxSigmaXYData5.setText("jMenuItem1");
-		maxSigmaXYChList.add(maxSigmaXYData5);
-
-		maxSigmaXYData6.setText("jMenuItem1");
-		maxSigmaXYChList.add(maxSigmaXYData6);
-
-		maxSigmaXYData7.setText("jMenuItem1");
-		maxSigmaXYChList.add(maxSigmaXYData7);
-
-		maxSigmaXYData8.setText("jMenuItem1");
-		maxSigmaXYChList.add(maxSigmaXYData8);
-
-		maxSigmaXYData9.setText("jMenuItem1");
-		maxSigmaXYChList.add(maxSigmaXYData9);
-
-		maxSigmaXYData10.setText("jMenuItem1");
-		maxSigmaXYChList.add(maxSigmaXYData10);
-
-		doSigmaZChList.setText("jMenu1");
-
-		doSigmaZData1.setText("jMenuItem1");
-		doSigmaZChList.add(doSigmaZData1);
-
-		doSigmaZData2.setText("jMenuItem1");
-		doSigmaZChList.add(doSigmaZData2);
-
-		doSigmaZData3.setText("jMenuItem1");
-		doSigmaZChList.add(doSigmaZData3);
-
-		doSigmaZData4.setText("jMenuItem1");
-		doSigmaZChList.add(doSigmaZData4);
-
-		doSigmaZData5.setText("jMenuItem1");
-		doSigmaZChList.add(doSigmaZData5);
-
-		doSigmaZData6.setText("jMenuItem1");
-		doSigmaZChList.add(doSigmaZData6);
-
-		doSigmaZData7.setText("jMenuItem1");
-		doSigmaZChList.add(doSigmaZData7);
-
-		doSigmaZData8.setText("jMenuItem1");
-		doSigmaZChList.add(doSigmaZData8);
-
-		doSigmaZData9.setText("jMenuItem1");
-		doSigmaZChList.add(doSigmaZData9);
-
-		doSigmaZData10.setText("jMenuItem1");
-		doSigmaZChList.add(doSigmaZData10);
-
-		minSigmaZChList.setText("jMenu1");
-
-		minSigmaZData1.setText("jMenuItem1");
-		minSigmaZChList.add(minSigmaZData1);
-
-		minSigmaZData2.setText("jMenuItem1");
-		minSigmaZChList.add(minSigmaZData2);
-
-		minSigmaZData3.setText("jMenuItem1");
-		minSigmaZChList.add(minSigmaZData3);
-
-		minSigmaZData4.setText("jMenuItem1");
-		minSigmaZChList.add(minSigmaZData4);
-
-		minSigmaZData5.setText("jMenuItem1");
-		minSigmaZChList.add(minSigmaZData5);
-
-		minSigmaZData6.setText("jMenuItem1");
-		minSigmaZChList.add(minSigmaZData6);
-
-		minSigmaZData7.setText("jMenuItem1");
-		minSigmaZChList.add(minSigmaZData7);
-
-		minSigmaZData8.setText("jMenuItem1");
-		minSigmaZChList.add(minSigmaZData8);
-
-		minSigmaZData9.setText("jMenuItem1");
-		minSigmaZChList.add(minSigmaZData9);
-
-		minSigmaZData10.setText("jMenuItem1");
-		minSigmaZChList.add(minSigmaZData10);
-
-		maxSigmaZChList.setText("jMenu1");
-
-		maxSigmaZData1.setText("jMenuItem1");
-		maxSigmaZChList.add(maxSigmaZData1);
-
-		maxSigmaZData2.setText("jMenuItem1");
-		maxSigmaZChList.add(maxSigmaZData2);
-
-		maxSigmaZData3.setText("jMenuItem1");
-		maxSigmaZChList.add(maxSigmaZData3);
-
-		maxSigmaZData4.setText("jMenuItem1");
-		maxSigmaZChList.add(maxSigmaZData4);
-
-		maxSigmaZData5.setText("jMenuItem1");
-		maxSigmaZChList.add(maxSigmaZData5);
-
-		maxSigmaZData6.setText("jMenuItem1");
-		maxSigmaZChList.add(maxSigmaZData6);
-
-		maxSigmaZData7.setText("jMenuItem1");
-		maxSigmaZChList.add(maxSigmaZData7);
-
-		maxSigmaZData8.setText("jMenuItem1");
-		maxSigmaZChList.add(maxSigmaZData8);
-
-		maxSigmaZData9.setText("jMenuItem1");
-		maxSigmaZChList.add(maxSigmaZData9);
-
-		maxSigmaZData10.setText("jMenuItem1");
-		maxSigmaZChList.add(maxSigmaZData10);
-
-		doRsquareChList.setText("jMenu1");
-
-		doRsquareData1.setText("jMenuItem1");
-		doRsquareChList.add(doRsquareData1);
-
-		doRsquareData2.setText("jMenuItem1");
-		doRsquareChList.add(doRsquareData2);
-
-		doRsquareData3.setText("jMenuItem1");
-		doRsquareChList.add(doRsquareData3);
-
-		doRsquareData4.setText("jMenuItem1");
-		doRsquareChList.add(doRsquareData4);
-
-		doRsquareData5.setText("jMenuItem1");
-		doRsquareChList.add(doRsquareData5);
-
-		doRsquareData6.setText("jMenuItem1");
-		doRsquareChList.add(doRsquareData6);
-
-		doRsquareData7.setText("jMenuItem1");
-		doRsquareChList.add(doRsquareData7);
-
-		doRsquareData8.setText("jMenuItem1");
-		doRsquareChList.add(doRsquareData8);
-
-		doRsquareData9.setText("jMenuItem1");
-		doRsquareChList.add(doRsquareData9);
-
-		doRsquareData10.setText("jMenuItem1");
-		doRsquareChList.add(doRsquareData10);
-
-		minRsquareChList.setText("jMenu1");
-
-		minRsquareData1.setText("jMenuItem1");
-		minRsquareChList.add(minRsquareData1);
-
-		minRsquareData2.setText("jMenuItem1");
-		minRsquareChList.add(minRsquareData2);
-
-		minRsquareData3.setText("jMenuItem1");
-		minRsquareChList.add(minRsquareData3);
-
-		minRsquareData4.setText("jMenuItem1");
-		minRsquareChList.add(minRsquareData4);
-
-		minRsquareData5.setText("jMenuItem1");
-		minRsquareChList.add(minRsquareData5);
-
-		minRsquareData6.setText("jMenuItem1");
-		minRsquareChList.add(minRsquareData6);
-
-		minRsquareData7.setText("jMenuItem1");
-		minRsquareChList.add(minRsquareData7);
-
-		minRsquareData8.setText("jMenuItem1");
-		minRsquareChList.add(minRsquareData8);
-
-		minRsquareData9.setText("jMenuItem1");
-		minRsquareChList.add(minRsquareData9);
-
-		minRsquareData10.setText("jMenuItem1");
-		minRsquareChList.add(minRsquareData10);
-
-		maxRsquareChList.setText("jMenu1");
-
-		maxRsquareData1.setText("jMenuItem1");
-		maxRsquareChList.add(maxRsquareData1);
-
-		maxRsquareData2.setText("jMenuItem1");
-		maxRsquareChList.add(maxRsquareData2);
-
-		maxRsquareData3.setText("jMenuItem1");
-		maxRsquareChList.add(maxRsquareData3);
-
-		maxRsquareData4.setText("jMenuItem1");
-		maxRsquareChList.add(maxRsquareData4);
-
-		maxRsquareData5.setText("jMenuItem1");
-		maxRsquareChList.add(maxRsquareData5);
-
-		maxRsquareData6.setText("jMenuItem1");
-		maxRsquareChList.add(maxRsquareData6);
-
-		maxRsquareData7.setText("jMenuItem1");
-		maxRsquareChList.add(maxRsquareData7);
-
-		maxRsquareData8.setText("jMenuItem1");
-		maxRsquareChList.add(maxRsquareData8);
-
-		maxRsquareData9.setText("jMenuItem1");
-		maxRsquareChList.add(maxRsquareData9);
-
-		maxRsquareData10.setText("jMenuItem1");
-		maxRsquareChList.add(maxRsquareData10);
-
-		doPrecisionXYChList.setText("jMenu1");
-
-		doPrecisionXYData1.setText("jMenuItem1");
-		doPrecisionXYChList.add(doPrecisionXYData1);
-
-		doPrecisionXYData2.setText("jMenuItem1");
-		doPrecisionXYChList.add(doPrecisionXYData2);
-
-		doPrecisionXYData3.setText("jMenuItem1");
-		doPrecisionXYChList.add(doPrecisionXYData3);
-
-		doPrecisionXYData4.setText("jMenuItem1");
-		doPrecisionXYChList.add(doPrecisionXYData4);
-
-		doPrecisionXYData5.setText("jMenuItem1");
-		doPrecisionXYChList.add(doPrecisionXYData5);
-
-		doPrecisionXYData6.setText("jMenuItem1");
-		doPrecisionXYChList.add(doPrecisionXYData6);
-
-		doPrecisionXYData7.setText("jMenuItem1");
-		doPrecisionXYChList.add(doPrecisionXYData7);
-
-		doPrecisionXYData8.setText("jMenuItem1");
-		doPrecisionXYChList.add(doPrecisionXYData8);
-
-		doPrecisionXYData9.setText("jMenuItem1");
-		doPrecisionXYChList.add(doPrecisionXYData9);
-
-		doPrecisionXYData10.setText("jMenuItem1");
-		doPrecisionXYChList.add(doPrecisionXYData10);
-
-		minPrecisionXYChList.setText("jMenu1");
-
-		minPrecisionXYData1.setText("jMenuItem1");
-		minPrecisionXYChList.add(minPrecisionXYData1);
-
-		minPrecisionXYData2.setText("jMenuItem1");
-		minPrecisionXYChList.add(minPrecisionXYData2);
-
-		minPrecisionXYData3.setText("jMenuItem1");
-		minPrecisionXYChList.add(minPrecisionXYData3);
-
-		minPrecisionXYData4.setText("jMenuItem1");
-		minPrecisionXYChList.add(minPrecisionXYData4);
-
-		minPrecisionXYData5.setText("jMenuItem1");
-		minPrecisionXYChList.add(minPrecisionXYData5);
-
-		minPrecisionXYData6.setText("jMenuItem1");
-		minPrecisionXYChList.add(minPrecisionXYData6);
-
-		minPrecisionXYData7.setText("jMenuItem1");
-		minPrecisionXYChList.add(minPrecisionXYData7);
-
-		minPrecisionXYData8.setText("jMenuItem1");
-		minPrecisionXYChList.add(minPrecisionXYData8);
-
-		minPrecisionXYData9.setText("jMenuItem1");
-		minPrecisionXYChList.add(minPrecisionXYData9);
-
-		minPrecisionXYData10.setText("jMenuItem1");
-		minPrecisionXYChList.add(minPrecisionXYData10);
-
-		maxPrecisionXYChList.setText("jMenu1");
-
-		maxPrecisionXYData1.setText("jMenuItem1");
-		maxPrecisionXYChList.add(maxPrecisionXYData1);
-
-		maxPrecisionXYData2.setText("jMenuItem1");
-		maxPrecisionXYChList.add(maxPrecisionXYData2);
-
-		maxPrecisionXYData3.setText("jMenuItem1");
-		maxPrecisionXYChList.add(maxPrecisionXYData3);
-
-		maxPrecisionXYData4.setText("jMenuItem1");
-		maxPrecisionXYChList.add(maxPrecisionXYData4);
-
-		maxPrecisionXYData5.setText("jMenuItem1");
-		maxPrecisionXYChList.add(maxPrecisionXYData5);
-
-		maxPrecisionXYData6.setText("jMenuItem1");
-		maxPrecisionXYChList.add(maxPrecisionXYData6);
-
-		maxPrecisionXYData7.setText("jMenuItem1");
-		maxPrecisionXYChList.add(maxPrecisionXYData7);
-
-		maxPrecisionXYData8.setText("jMenuItem1");
-		maxPrecisionXYChList.add(maxPrecisionXYData8);
-
-		maxPrecisionXYData9.setText("jMenuItem1");
-		maxPrecisionXYChList.add(maxPrecisionXYData9);
-
-		maxPrecisionXYData10.setText("jMenuItem1");
-		maxPrecisionXYChList.add(maxPrecisionXYData10);
-
-		doPrecisionZChList.setText("jMenu1");
-
-		doPrecisionZData1.setText("jMenuItem1");
-		doPrecisionZChList.add(doPrecisionZData1);
-
-		doPrecisionZData2.setText("jMenuItem1");
-		doPrecisionZChList.add(doPrecisionZData2);
-
-		doPrecisionZData3.setText("jMenuItem1");
-		doPrecisionZChList.add(doPrecisionZData3);
-
-		doPrecisionZData4.setText("jMenuItem1");
-		doPrecisionZChList.add(doPrecisionZData4);
-
-		doPrecisionZData5.setText("jMenuItem1");
-		doPrecisionZChList.add(doPrecisionZData5);
-
-		doPrecisionZData6.setText("jMenuItem1");
-		doPrecisionZChList.add(doPrecisionZData6);
-
-		doPrecisionZData7.setText("jMenuItem1");
-		doPrecisionZChList.add(doPrecisionZData7);
-
-		doPrecisionZData8.setText("jMenuItem1");
-		doPrecisionZChList.add(doPrecisionZData8);
-
-		doPrecisionZData9.setText("jMenuItem1");
-		doPrecisionZChList.add(doPrecisionZData9);
-
-		doPrecisionZData10.setText("jMenuItem1");
-		doPrecisionZChList.add(doPrecisionZData10);
-
-		minPrecisionZChList.setText("jMenu1");
-
-		minPrecisionZData1.setText("jMenuItem1");
-		minPrecisionZChList.add(minPrecisionZData1);
-
-		minPrecisionZData2.setText("jMenuItem1");
-		minPrecisionZChList.add(minPrecisionZData2);
-
-		minPrecisionZData3.setText("jMenuItem1");
-		minPrecisionZChList.add(minPrecisionZData3);
-
-		minPrecisionZData4.setText("jMenuItem1");
-		minPrecisionZChList.add(minPrecisionZData4);
-
-		minPrecisionZData5.setText("jMenuItem1");
-		minPrecisionZChList.add(minPrecisionZData5);
-
-		minPrecisionZData6.setText("jMenuItem1");
-		minPrecisionZChList.add(minPrecisionZData6);
-
-		minPrecisionZData7.setText("jMenuItem1");
-		minPrecisionZChList.add(minPrecisionZData7);
-
-		minPrecisionZData8.setText("jMenuItem1");
-		minPrecisionZChList.add(minPrecisionZData8);
-
-		minPrecisionZData9.setText("jMenuItem1");
-		minPrecisionZChList.add(minPrecisionZData9);
-
-		minPrecisionZData10.setText("jMenuItem1");
-		minPrecisionZChList.add(minPrecisionZData10);
-
-		maxPrecisionZChList.setText("jMenu1");
-
-		maxPrecisionZData1.setText("jMenuItem1");
-		maxPrecisionZChList.add(maxPrecisionZData1);
-
-		maxPrecisionZData2.setText("jMenuItem1");
-		maxPrecisionZChList.add(maxPrecisionZData2);
-
-		maxPrecisionZData3.setText("jMenuItem1");
-		maxPrecisionZChList.add(maxPrecisionZData3);
-
-		maxPrecisionZData4.setText("jMenuItem1");
-		maxPrecisionZChList.add(maxPrecisionZData4);
-
-		maxPrecisionZData5.setText("jMenuItem1");
-		maxPrecisionZChList.add(maxPrecisionZData5);
-
-		maxPrecisionZData6.setText("jMenuItem1");
-		maxPrecisionZChList.add(maxPrecisionZData6);
-
-		maxPrecisionZData7.setText("jMenuItem1");
-		maxPrecisionZChList.add(maxPrecisionZData7);
-
-		maxPrecisionZData8.setText("jMenuItem1");
-		maxPrecisionZChList.add(maxPrecisionZData8);
-
-		maxPrecisionZData9.setText("jMenuItem1");
-		maxPrecisionZChList.add(maxPrecisionZData9);
-
-		maxPrecisionZData10.setText("jMenuItem1");
-		maxPrecisionZChList.add(maxPrecisionZData10);
-
-		driftCorrShiftXYChList.setText("jMenu1");
-
-		driftCorrShiftXYData1.setText("jMenuItem1");
-		driftCorrShiftXYChList.add(driftCorrShiftXYData1);
-
-		driftCorrShiftXYData2.setText("jMenuItem1");
-		driftCorrShiftXYChList.add(driftCorrShiftXYData2);
-
-		driftCorrShiftXYData3.setText("jMenuItem1");
-		driftCorrShiftXYChList.add(driftCorrShiftXYData3);
-
-		driftCorrShiftXYData4.setText("jMenuItem1");
-		driftCorrShiftXYChList.add(driftCorrShiftXYData4);
-
-		driftCorrShiftXYData5.setText("jMenuItem1");
-		driftCorrShiftXYChList.add(driftCorrShiftXYData5);
-
-		driftCorrShiftXYData6.setText("jMenuItem1");
-		driftCorrShiftXYChList.add(driftCorrShiftXYData6);
-
-		driftCorrShiftXYData7.setText("jMenuItem1");
-		driftCorrShiftXYChList.add(driftCorrShiftXYData7);
-
-		driftCorrShiftXYData8.setText("jMenuItem1");
-		driftCorrShiftXYChList.add(driftCorrShiftXYData8);
-
-		driftCorrShiftXYData9.setText("jMenuItem1");
-		driftCorrShiftXYChList.add(driftCorrShiftXYData9);
-
-		driftCorrShiftXYData10.setText("jMenuItem1");
-		driftCorrShiftXYChList.add(driftCorrShiftXYData10);
-
-		driftCorrShiftZChList.setText("jMenu1");
-
-		driftCorrShiftZData1.setText("jMenuItem1");
-		driftCorrShiftZChList.add(driftCorrShiftZData1);
-
-		driftCorrShiftZData2.setText("jMenuItem1");
-		driftCorrShiftZChList.add(driftCorrShiftZData2);
-
-		driftCorrShiftZData3.setText("jMenuItem1");
-		driftCorrShiftZChList.add(driftCorrShiftZData3);
-
-		driftCorrShiftZData4.setText("jMenuItem1");
-		driftCorrShiftZChList.add(driftCorrShiftZData4);
-
-		driftCorrShiftZData5.setText("jMenuItem1");
-		driftCorrShiftZChList.add(driftCorrShiftZData5);
-
-		driftCorrShiftZData6.setText("jMenuItem1");
-		driftCorrShiftZChList.add(driftCorrShiftZData6);
-
-		driftCorrShiftZData7.setText("jMenuItem1");
-		driftCorrShiftZChList.add(driftCorrShiftZData7);
-
-		driftCorrShiftZData8.setText("jMenuItem1");
-		driftCorrShiftZChList.add(driftCorrShiftZData8);
-
-		driftCorrShiftZData9.setText("jMenuItem1");
-		driftCorrShiftZChList.add(driftCorrShiftZData9);
-
-		driftCorrShiftZData10.setText("jMenuItem1");
-		driftCorrShiftZChList.add(driftCorrShiftZData10);
-
-		chAlignShiftXYChList.setText("jMenu1");
-
-		chAlignShiftXYData1.setText("jMenuItem1");
-		chAlignShiftXYChList.add(chAlignShiftXYData1);
-
-		chAlignShiftXYData2.setText("jMenuItem1");
-		chAlignShiftXYChList.add(chAlignShiftXYData2);
-
-		chAlignShiftXYData3.setText("jMenuItem1");
-		chAlignShiftXYChList.add(chAlignShiftXYData3);
-
-		chAlignShiftXYData4.setText("jMenuItem1");
-		chAlignShiftXYChList.add(chAlignShiftXYData4);
-
-		chAlignShiftXYData5.setText("jMenuItem1");
-		chAlignShiftXYChList.add(chAlignShiftXYData5);
-
-		chAlignShiftXYData6.setText("jMenuItem1");
-		chAlignShiftXYChList.add(chAlignShiftXYData6);
-
-		chAlignShiftXYData7.setText("jMenuItem1");
-		chAlignShiftXYChList.add(chAlignShiftXYData7);
-
-		chAlignShiftXYData8.setText("jMenuItem1");
-		chAlignShiftXYChList.add(chAlignShiftXYData8);
-
-		chAlignShiftXYData9.setText("jMenuItem1");
-		chAlignShiftXYChList.add(chAlignShiftXYData9);
-
-		chAlignShiftXYData10.setText("jMenuItem1");
-		chAlignShiftXYChList.add(chAlignShiftXYData10);
-
-		chAlignShiftZChList.setText("jMenu1");
-
-		chAlignShiftZData1.setText("jMenuItem2");
-		chAlignShiftZChList.add(chAlignShiftZData1);
-
-		chAlignShiftZData2.setText("jMenuItem2");
-		chAlignShiftZChList.add(chAlignShiftZData2);
-
-		chAlignShiftZData3.setText("jMenuItem2");
-		chAlignShiftZChList.add(chAlignShiftZData3);
-
-		chAlignShiftZData4.setText("jMenuItem2");
-		chAlignShiftZChList.add(chAlignShiftZData4);
-
-		chAlignShiftZData5.setText("jMenuItem2");
-		chAlignShiftZChList.add(chAlignShiftZData5);
-
-		chAlignShiftZData6.setText("jMenuItem2");
-		chAlignShiftZChList.add(chAlignShiftZData6);
-
-		chAlignShiftZData7.setText("jMenuItem2");
-		chAlignShiftZChList.add(chAlignShiftZData7);
-
-		chAlignShiftZData8.setText("jMenuItem2");
-		chAlignShiftZChList.add(chAlignShiftZData8);
-
-		chAlignShiftZData9.setText("jMenuItem2");
-		chAlignShiftZChList.add(chAlignShiftZData9);
-
-		chAlignShiftZData10.setText("jMenuItem2");
-		chAlignShiftZChList.add(chAlignShiftZData10);
-
-		doFrameChList.setText("jMenu1");
-
-		doFrameData1.setText("jMenuItem1");
-		doFrameChList.add(doFrameData1);
-
-		doFrameData2.setText("jMenuItem1");
-		doFrameChList.add(doFrameData2);
-
-		doFrameData3.setText("jMenuItem1");
-		doFrameChList.add(doFrameData3);
-
-		doFrameData4.setText("jMenuItem1");
-		doFrameChList.add(doFrameData4);
-
-		doFrameData5.setText("jMenuItem1");
-		doFrameChList.add(doFrameData5);
-
-		doFrameData6.setText("jMenuItem1");
-		doFrameChList.add(doFrameData6);
-
-		doFrameData7.setText("jMenuItem1");
-		doFrameChList.add(doFrameData7);
-
-		doFrameData8.setText("jMenuItem1");
-		doFrameChList.add(doFrameData8);
-
-		doFrameData9.setText("jMenuItem1");
-		doFrameChList.add(doFrameData9);
-
-		doFrameData10.setText("jMenuItem1");
-		doFrameChList.add(doFrameData10);
-
-		minFrameChList.setText("jMenu1");
-
-		minFrameData1.setText("jMenuItem1");
-		minFrameChList.add(minFrameData1);
-
-		minFrameData2.setText("jMenuItem1");
-		minFrameChList.add(minFrameData2);
-
-		minFrameData3.setText("jMenuItem1");
-		minFrameChList.add(minFrameData3);
-
-		minFrameData4.setText("jMenuItem1");
-		minFrameChList.add(minFrameData4);
-
-		minFrameData5.setText("jMenuItem1");
-		minFrameChList.add(minFrameData5);
-
-		minFrameData6.setText("jMenuItem1");
-		minFrameChList.add(minFrameData6);
-
-		minFrameData7.setText("jMenuItem1");
-		minFrameChList.add(minFrameData7);
-
-		minFrameData8.setText("jMenuItem1");
-		minFrameChList.add(minFrameData8);
-
-		minFrameData9.setText("jMenuItem1");
-		minFrameChList.add(minFrameData9);
-
-		minFrameData10.setText("jMenuItem1");
-		minFrameChList.add(minFrameData10);
-
-		maxFrameChList.setText("jMenu1");
-
-		maxFrameData1.setText("jMenuItem1");
-		maxFrameChList.add(maxFrameData1);
-
-		maxFrameData2.setText("jMenuItem1");
-		maxFrameChList.add(maxFrameData2);
-
-		maxFrameData3.setText("jMenuItem1");
-		maxFrameChList.add(maxFrameData3);
-
-		maxFrameData4.setText("jMenuItem1");
-		maxFrameChList.add(maxFrameData4);
-
-		maxFrameData5.setText("jMenuItem1");
-		maxFrameChList.add(maxFrameData5);
-
-		maxFrameData6.setText("jMenuItem1");
-		maxFrameChList.add(maxFrameData6);
-
-		maxFrameData7.setText("jMenuItem1");
-		maxFrameChList.add(maxFrameData7);
-
-		maxFrameData8.setText("jMenuItem1");
-		maxFrameChList.add(maxFrameData8);
-
-		maxFrameData9.setText("jMenuItem1");
-		maxFrameChList.add(maxFrameData9);
-
-		maxFrameData10.setText("jMenuItem1");
-		maxFrameChList.add(maxFrameData10);
-
-		doRenderImageChList.setText("jMenu1");
-
-		doRenderImageData1.setText("jMenuItem1");
-		doRenderImageChList.add(doRenderImageData1);
-
-		doRenderImageData2.setText("jMenuItem1");
-		doRenderImageChList.add(doRenderImageData2);
-
-		doRenderImageData3.setText("jMenuItem1");
-		doRenderImageChList.add(doRenderImageData3);
-
-		doRenderImageData4.setText("jMenuItem1");
-		doRenderImageChList.add(doRenderImageData4);
-
-		doRenderImageData5.setText("jMenuItem1");
-		doRenderImageChList.add(doRenderImageData5);
-
-		doRenderImageData6.setText("jMenuItem1");
-		doRenderImageChList.add(doRenderImageData6);
-
-		doRenderImageData7.setText("jMenuItem1");
-		doRenderImageChList.add(doRenderImageData7);
-
-		doRenderImageData8.setText("jMenuItem1");
-		doRenderImageChList.add(doRenderImageData8);
-
-		doRenderImageData9.setText("jMenuItem1");
-		doRenderImageChList.add(doRenderImageData9);
-
-		doRenderImageData10.setText("jMenuItem1");
-		doRenderImageChList.add(doRenderImageData10);
-
-		setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-		setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-
-		Header.setFont(new java.awt.Font("Times New Roman", 3, 24)); // NOI18N
-		Header.setText("SMlocalizer");
-
-		BasicInp.setBackground(new java.awt.Color(204, 204, 204));
-		BasicInp.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, null, null, new java.awt.Color(153, 153, 153), new java.awt.Color(204, 204, 204)));
-		BasicInp.setForeground(new java.awt.Color(153, 153, 153));
-		BasicInp.setToolTipText("Minimum required settings for running SMLocalizer");
-
-		basicInput.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
-		basicInput.setText("Basic input");
-		basicInput.setToolTipText("Minimum required settings for running SMLocalizer");
-
-		inputPixelSizeLabel.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
-		inputPixelSizeLabel.setText("Image pixel size [nm]");
-		inputPixelSizeLabel.setToolTipText("Input pixel size of images");
-
-		inputPixelSize.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		inputPixelSize.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-		inputPixelSize.setText("100");
-		inputPixelSize.setToolTipText("Input pixel size of images");
-
-		totalGainLabel.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
-		totalGainLabel.setText("Total gain");
-		totalGainLabel.setToolTipText("Camera specific settings. Total gain from photon to image intensity.");
-
-		totalGain.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		totalGain.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-		totalGain.setText("100");
-		totalGain.setToolTipText("Camera specific settings. Total gain from photon to image intensity.");
-		totalGain.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				totalGainActionPerformed(evt);
-			}
-		});
-
-		ROIsizeLabel.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
-		ROIsizeLabel.setText("ROI size");
-		ROIsizeLabel.setToolTipText("Size of ROI for gaussian fitting.");
-
-		ROIsize.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		ROIsize.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "3x3", "5x5", "7x7" }));
-		ROIsize.setSelectedIndex(1);
-		ROIsize.setToolTipText("Size of ROI for gaussian fitting.");
-
-		minimalSignalLabel.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
-		minimalSignalLabel.setText("Minimal signal");
-		minimalSignalLabel.setToolTipText("Miinimal intensity from center pixel required for fitting.");
-
-		PixelsOverBackgroundLabel.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
-		PixelsOverBackgroundLabel.setText("Pixels > background");
-		PixelsOverBackgroundLabel.setToolTipText("Number of pixels in the ROI that needs to be above background.");
-
-		minimalSignal.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		minimalSignal.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-		minimalSignal.setText("2000");
-		minimalSignal.setToolTipText("Miinimal intensity from center pixel required for fitting.");
-		minimalSignal.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				minimalSignalActionPerformed(evt);
-			}
-		});
-
-		minPixelOverBackground.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		minPixelOverBackground.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-		minPixelOverBackground.setText("12");
-		minPixelOverBackground.setToolTipText("Number of pixels in the ROI that needs to be above background.");
-		minPixelOverBackground.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				minPixelOverBackgroundActionPerformed(evt);
-			}
-		});
-
-		windowWidthLabel.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
-		windowWidthLabel.setText("Filter width [frames]");
-		windowWidthLabel.setToolTipText("Filter window width in frames for time median background filtering.");
-
-		windowWidth.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		windowWidth.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-		windowWidth.setText("101");
-		windowWidth.setToolTipText("Filter window width in frames for time median background filtering.");
-		windowWidth.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				windowWidthActionPerformed(evt);
-			}
-		});
-
-		Process.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
-		Process.setText("Process");
-		Process.setToolTipText("Process current image stack including checked algorithms (Render Image, Drift Correct, Align Channels or Cluster analysis). Uses parameter range.");
-		Process.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				ProcessActionPerformed(evt);
-			}
-		});
-
-		minPixelDistLabel.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
-		minPixelDistLabel.setText("Min distance [pixel]");
-		minPixelDistLabel.setToolTipText("Minimum  distance (center pixel to center pixel) seperating potential particles for gaussian fitting.");
-
-		minPixelDist.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		minPixelDist.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-		minPixelDist.setText("7");
-		minPixelDist.setToolTipText("Minimum  distance (center pixel to center pixel) seperating potential particles for gaussian fitting.");
-
-		resetBasicInput.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
-		resetBasicInput.setText("Reset");
-		resetBasicInput.setToolTipText("Reset Basic input parameters to default.");
-		resetBasicInput.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				resetBasicInputActionPerformed(evt);
-			}
-		});
-
-		javax.swing.GroupLayout BasicInpLayout = new javax.swing.GroupLayout(BasicInp);
-		BasicInp.setLayout(BasicInpLayout);
-		BasicInpLayout.setHorizontalGroup(
-				BasicInpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, BasicInpLayout.createSequentialGroup()
-						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(basicInput)
-						.addGap(50, 50, 50))
-				.addGroup(BasicInpLayout.createSequentialGroup()
-						.addContainerGap()
-						.addGroup(BasicInpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-								.addComponent(inputPixelSizeLabel)
-								.addComponent(totalGainLabel)
-								.addComponent(ROIsizeLabel)
-								.addComponent(PixelsOverBackgroundLabel)
-								.addComponent(minimalSignalLabel)
-								.addComponent(windowWidthLabel)
-								.addComponent(minPixelDistLabel))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addGroup(BasicInpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-								.addComponent(minPixelOverBackground)
-								.addComponent(totalGain)
-								.addComponent(inputPixelSize)
-								.addComponent(minimalSignal, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(windowWidth, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)
-								.addComponent(minPixelDist))
-						.addContainerGap())
-				.addGroup(BasicInpLayout.createSequentialGroup()
-						.addGap(139, 139, 139)
-						.addComponent(ROIsize, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-				.addGroup(BasicInpLayout.createSequentialGroup()
-						.addGap(10, 10, 10)
-						.addComponent(Process)
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(resetBasicInput, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-				);
-
-		BasicInpLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {inputPixelSize, minPixelDist, minPixelOverBackground, minimalSignal, totalGain, windowWidth});
-
-		BasicInpLayout.setVerticalGroup(
-				BasicInpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(BasicInpLayout.createSequentialGroup()
-						.addContainerGap()
-						.addComponent(basicInput)
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addGroup(BasicInpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-								.addComponent(inputPixelSizeLabel)
-								.addComponent(inputPixelSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addGroup(BasicInpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-								.addComponent(totalGainLabel)
-								.addComponent(totalGain, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addGroup(BasicInpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-								.addComponent(ROIsizeLabel)
-								.addComponent(ROIsize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addGroup(BasicInpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-								.addComponent(minPixelOverBackground, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(PixelsOverBackgroundLabel))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addGroup(BasicInpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-								.addComponent(minimalSignal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(minimalSignalLabel))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addGroup(BasicInpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-								.addComponent(windowWidth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(windowWidthLabel))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addGroup(BasicInpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-								.addComponent(minPixelDistLabel)
-								.addComponent(minPixelDist, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addGroup(BasicInpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-								.addComponent(Process)
-								.addComponent(resetBasicInput))
-						.addContainerGap())
-				);
-
-		ParameterRange.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, null, null, new java.awt.Color(204, 204, 204), new java.awt.Color(204, 204, 204)));
-		ParameterRange.setToolTipText("Set the range of selected parameters to include in analysis.");
-
-		ParameterLabel.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
-		ParameterLabel.setText("Parameter range");
-		ParameterLabel.setToolTipText("Set the range of selected parameters to include in analysis.");
-
-		doPhotonCount.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
-		doPhotonCount.setText("Photon count");
-		doPhotonCount.setToolTipText("Include photon count parameter range in selection of what particles from result list to include in analysis.");
-		doPhotonCount.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				doPhotonCountActionPerformed(evt);
-			}
-		});
-
-		doSigmaXY.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
-		doSigmaXY.setSelected(true);
-		doSigmaXY.setText("Sigma x y [nm]");
-		doSigmaXY.setToolTipText("Include sigma x-y parameter range in selection of what particles from result list to include in analysis.");
-
-		doSigmaZ.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
-		doSigmaZ.setText("Sigma z [nm]");
-		doSigmaZ.setToolTipText("Include sigma z parameter range in selection of what particles from result list to include in analysis.");
-
-		doRsquare.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
-		doRsquare.setSelected(true);
-		doRsquare.setText("R^2");
-		doRsquare.setToolTipText("Include R^2 (goodness of fit)  parameter range in selection of what particles from result list to include in analysis.");
-
-		doPrecisionXY.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
-		doPrecisionXY.setText("Precision x y [nm]");
-		doPrecisionXY.setToolTipText("Include precision x-y parameter range in selection of what particles from result list to include in analysis.");
-
-		doPrecisionZ.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
-		doPrecisionZ.setText("Precision z [nm]");
-		doPrecisionZ.setToolTipText("Include precision z parameter range in selection of what particles from result list to include in analysis.");
-
-		cleanTable.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
-		cleanTable.setText("Clean table");
-		cleanTable.setToolTipText("Destructively clean out result table based on selected parameter ranges.");
-		cleanTable.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				cleanTableActionPerformed(evt);
-			}
-		});
-
-		minPrecisionXY.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		minPrecisionXY.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-		minPrecisionXY.setText("5");
-		minPrecisionXY.setToolTipText("Include precision x-y parameter range in selection of what particles from result list to include in analysis.");
-		minPrecisionXY.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				minPrecisionXYActionPerformed(evt);
-			}
-		});
-
-		maxPrecisionXY.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		maxPrecisionXY.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-		maxPrecisionXY.setText("50");
-		maxPrecisionXY.setToolTipText("Include precision x-y parameter range in selection of what particles from result list to include in analysis.");
-
-		minRsquare.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		minRsquare.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-		minRsquare.setText("0.9");
-		minRsquare.setToolTipText("Include R^2 (goodness of fit)  parameter range in selection of what particles from result list to include in analysis.");
-		minRsquare.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				minRsquareActionPerformed(evt);
-			}
-		});
-
-		maxRsquare.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		maxRsquare.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-		maxRsquare.setText("1.0");
-		maxRsquare.setToolTipText("Include R^2 (goodness of fit)  parameter range in selection of what particles from result list to include in analysis.");
-
-		minSigmaZ.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		minSigmaZ.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-		minSigmaZ.setText("100");
-		minSigmaZ.setToolTipText("Include sigma z parameter range in selection of what particles from result list to include in analysis.");
-		minSigmaZ.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				minSigmaZActionPerformed(evt);
-			}
-		});
-
-		maxSigmaZ.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		maxSigmaZ.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-		maxSigmaZ.setText("300");
-		maxSigmaZ.setToolTipText("Include sigma z parameter range in selection of what particles from result list to include in analysis.");
-
-		minSigmaXY.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		minSigmaXY.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-		minSigmaXY.setText("100");
-		minSigmaXY.setToolTipText("Include sigma x-y parameter range in selection of what particles from result list to include in analysis.");
-		minSigmaXY.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				minSigmaXYActionPerformed(evt);
-			}
-		});
-
-		maxSigmaXY.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		maxSigmaXY.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-		maxSigmaXY.setText("200");
-		maxSigmaXY.setToolTipText("Include sigma x-y parameter range in selection of what particles from result list to include in analysis.");
-
-		minPhotonCount.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		minPhotonCount.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-		minPhotonCount.setText("100");
-		minPhotonCount.setToolTipText("Include photon count parameter range in selection of what particles from result list to include in analysis.");
-		minPhotonCount.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				minPhotonCountActionPerformed(evt);
-			}
-		});
-
-		maxPhotonCount.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		maxPhotonCount.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-		maxPhotonCount.setText("5000");
-		maxPhotonCount.setToolTipText("Include photon count parameter range in selection of what particles from result list to include in analysis.");
-
-		minPrecisionZ.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		minPrecisionZ.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-		minPrecisionZ.setText("5");
-		minPrecisionZ.setToolTipText("Include precision z parameter range in selection of what particles from result list to include in analysis.");
-		minPrecisionZ.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				minPrecisionZActionPerformed(evt);
-			}
-		});
-
-		maxPrecisionZ.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		maxPrecisionZ.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-		maxPrecisionZ.setText("75");
-		maxPrecisionZ.setToolTipText("Include precision z parameter range in selection of what particles from result list to include in analysis.");
-
-		resetParameterRange.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
-		resetParameterRange.setText("Reset");
-		resetParameterRange.setToolTipText("Reset parameter range to default values.");
-		resetParameterRange.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				resetParameterRangeActionPerformed(evt);
-			}
-		});
-
-		maxLabel3.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		maxLabel3.setText("max");
-
-		minLabel3.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		minLabel3.setText("min");
-
-		doFrame.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
-		doFrame.setText("Frame");
-		doFrame.setToolTipText("Include frames within range in selection of what particles from result list to include in analysis.");
-		doFrame.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				doFrameActionPerformed(evt);
-			}
-		});
-
-		minFrame.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		minFrame.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-		minFrame.setText("1");
-		minFrame.setToolTipText("Include frames within range in selection of what particles from result list to include in analysis.");
-		minFrame.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				minFrameActionPerformed(evt);
-			}
-		});
-
-		maxFrame.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		maxFrame.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-		maxFrame.setText("100000");
-		maxFrame.setToolTipText("Include frames within range in selection of what particles from result list to include in analysis.");
-
-		javax.swing.GroupLayout ParameterRangeLayout = new javax.swing.GroupLayout(ParameterRange);
-		ParameterRange.setLayout(ParameterRangeLayout);
-		ParameterRangeLayout.setHorizontalGroup(
-				ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(ParameterRangeLayout.createSequentialGroup()
-						.addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-								.addComponent(doSigmaZ)
-								.addComponent(doPhotonCount)
-								.addComponent(doSigmaXY)
-								.addComponent(doRsquare)
-								.addComponent(doPrecisionXY)
-								.addComponent(doPrecisionZ)
-								.addComponent(doFrame))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-								.addComponent(minPhotonCount, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(minSigmaXY, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(minSigmaZ, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(minRsquare, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(minPrecisionXY, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(minPrecisionZ, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(minFrame, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(minLabel3))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-								.addComponent(maxFrame, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(maxPrecisionZ, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(maxPrecisionXY, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(maxRsquare, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(maxSigmaZ, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(maxSigmaXY, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(maxPhotonCount, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
-						.addContainerGap())
-				.addGroup(ParameterRangeLayout.createSequentialGroup()
-						.addComponent(cleanTable)
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-						.addComponent(resetParameterRange, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addGap(48, 48, 48))
-				.addGroup(ParameterRangeLayout.createSequentialGroup()
-						.addContainerGap()
-						.addComponent(ParameterLabel)
-						.addGap(111, 111, 111)
-						.addComponent(maxLabel3)
-						.addContainerGap(27, Short.MAX_VALUE))
-				);
-		ParameterRangeLayout.setVerticalGroup(
-				ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(ParameterRangeLayout.createSequentialGroup()
-						.addGap(12, 12, 12)
-						.addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-								.addComponent(minLabel3)
-								.addComponent(maxLabel3)
-								.addComponent(ParameterLabel))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-						.addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-								.addComponent(minPhotonCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(maxPhotonCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(doPhotonCount))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-								.addComponent(minSigmaXY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(maxSigmaXY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(doSigmaXY))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-								.addComponent(minSigmaZ, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(maxSigmaZ, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(doSigmaZ))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-								.addComponent(minRsquare, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(maxRsquare, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(doRsquare))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-								.addComponent(minPrecisionXY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(maxPrecisionXY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(doPrecisionXY))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-								.addComponent(minPrecisionZ, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(maxPrecisionZ, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(doPrecisionZ))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-								.addComponent(minFrame, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(maxFrame, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(doFrame))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-								.addComponent(cleanTable)
-								.addComponent(resetParameterRange))
-						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-				);
-
-		Analysis.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, null, null, new java.awt.Color(153, 153, 153), new java.awt.Color(204, 204, 204)));
-
-		doClusterAnalysis.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		doClusterAnalysis.setToolTipText("Perform cluster analysis during Process execution.");
-		doClusterAnalysis.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				doClusterAnalysisActionPerformed(evt);
-			}
-		});
-
-		epsilonLabel.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
-		epsilonLabel.setText("Epsilon [nm]");
-		epsilonLabel.setToolTipText("Search radius between particles for cluster analysis.");
-
-		minPtsLabel.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
-		minPtsLabel.setText("Minimum connections");
-		minPtsLabel.setToolTipText("Minimum number of connected particles considered a cluster.");
-
-		epsilon.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		epsilon.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-		epsilon.setText("10");
-		epsilon.setToolTipText("Search radius between particles for cluster analysis.");
-
-		minPtsCluster.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		minPtsCluster.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-		minPtsCluster.setText("5");
-		minPtsCluster.setToolTipText("Minimum number of connected particles considered a cluster.");
-
-		clusterAnalysis.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
-		clusterAnalysis.setText("Cluster analysis");
-		clusterAnalysis.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				clusterAnalysisActionPerformed(evt);
-			}
-		});
-
-		javax.swing.GroupLayout AnalysisLayout = new javax.swing.GroupLayout(Analysis);
-		Analysis.setLayout(AnalysisLayout);
-		AnalysisLayout.setHorizontalGroup(
-				AnalysisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(AnalysisLayout.createSequentialGroup()
-						.addContainerGap()
-						.addGroup(AnalysisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-								.addGroup(AnalysisLayout.createSequentialGroup()
-										.addComponent(doClusterAnalysis)
-										.addGap(18, 18, 18)
-										.addComponent(clusterAnalysis))
-								.addGroup(AnalysisLayout.createSequentialGroup()
-										.addGroup(AnalysisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-												.addComponent(minPtsLabel)
-												.addComponent(epsilonLabel))
-										.addGap(18, 18, 18)
-										.addGroup(AnalysisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-												.addComponent(epsilon, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-												.addComponent(minPtsCluster, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))))
-						.addGap(0, 0, Short.MAX_VALUE))
-				);
-		AnalysisLayout.setVerticalGroup(
-				AnalysisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(AnalysisLayout.createSequentialGroup()
-						.addGap(3, 3, 3)
-						.addGroup(AnalysisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-								.addComponent(doClusterAnalysis)
-								.addComponent(clusterAnalysis))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addGroup(AnalysisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-								.addComponent(epsilonLabel)
-								.addComponent(epsilon, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addGroup(AnalysisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-								.addComponent(minPtsLabel)
-								.addComponent(minPtsCluster, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-				);
-
-		jPanel1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, null, null, new java.awt.Color(153, 153, 153), new java.awt.Color(204, 204, 204)));
-
-		particlesPerBinLabel.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
-		particlesPerBinLabel.setText("Particles per bin");
-		particlesPerBinLabel.setToolTipText("Particles per bin for drift correction.");
-
-		driftCorrBinLowCount.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		driftCorrBinLowCount.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-		driftCorrBinLowCount.setText("100");
-		driftCorrBinLowCount.setToolTipText("Particles per bin for drift correction.");
-
-		driftCorrBinHighCount.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		driftCorrBinHighCount.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-		driftCorrBinHighCount.setText("1000");
-		driftCorrBinHighCount.setToolTipText("Particles per bin for drift correction.");
-		driftCorrBinHighCount.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				driftCorrBinHighCountActionPerformed(evt);
-			}
-		});
-
-		numberOfBinsLabel.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
-		numberOfBinsLabel.setText("Number of bins");
-		numberOfBinsLabel.setToolTipText("Number of bins to divide the particles in for drift correction.");
-
-		doDriftCorrect.setSelected(true);
-		doDriftCorrect.setToolTipText("Drift correct particles during Process execution.");
-		doDriftCorrect.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				doDriftCorrectActionPerformed(evt);
-			}
-		});
-
-		driftCorrect.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
-		driftCorrect.setText("Drift correct");
-		driftCorrect.setToolTipText("Drift correct particles in result tabel using parameter range for which to include.");
-		driftCorrect.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				driftCorrectActionPerformed(evt);
-			}
-		});
-
-		doChannelAlign.setToolTipText("Align channels (chromatic shifts) during Process execution.");
-		doChannelAlign.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				doChannelAlignActionPerformed(evt);
-			}
-		});
-
-		alignChannels.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
-		alignChannels.setText("Align channels");
-		alignChannels.setToolTipText("Align channels (chromatic shifts) using the particles included wihtin selected parameter ranges.");
-		alignChannels.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				alignChannelsActionPerformed(evt);
-			}
-		});
-
-		particlesPerBinLabelchAlign.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
-		particlesPerBinLabelchAlign.setText("Particles per bin");
-		particlesPerBinLabelchAlign.setToolTipText("Particles per bin from each chanel for channel alignment.");
-
-		chAlignBinLowCount.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		chAlignBinLowCount.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-		chAlignBinLowCount.setText("100");
-		chAlignBinLowCount.setToolTipText("Particles per bin from each chanel for channel alignment.");
-
-		chAlignBinHighCount.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		chAlignBinHighCount.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-		chAlignBinHighCount.setText("1000");
-		chAlignBinHighCount.setToolTipText("Particles per bin from each chanel for channel alignment.");
-		chAlignBinHighCount.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				chAlignBinHighCountActionPerformed(evt);
-			}
-		});
-
-		numberOfBinsDriftCorr.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		numberOfBinsDriftCorr.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-		numberOfBinsDriftCorr.setText("50");
-		numberOfBinsDriftCorr.setToolTipText("Number of bins to divide the particles in for drift correction.");
-
-		minLabel.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		minLabel.setText("min");
-
-		maxLabel.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		maxLabel.setText("max");
-
-		maxLabel1.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		maxLabel1.setText("max");
-
-		minLabel1.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		minLabel1.setText("min");
-
-		particlesPerBinLabel1.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
-		particlesPerBinLabel1.setText("Max drift [nm]");
-		particlesPerBinLabel1.setToolTipText("Max drift between two bins. Larger values increase computational time!");
-
-		driftCorrShiftXY.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		driftCorrShiftXY.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-		driftCorrShiftXY.setText("250");
-		driftCorrShiftXY.setToolTipText("Max drift between two bins. Larger values increase computational time!");
-		driftCorrShiftXY.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				driftCorrShiftXYActionPerformed(evt);
-			}
-		});
-
-		driftCorrShiftZ.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		driftCorrShiftZ.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-		driftCorrShiftZ.setText("250");
-		driftCorrShiftZ.setToolTipText("Max drift between two bins. Larger values increase computational time!");
-		driftCorrShiftZ.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				driftCorrShiftZActionPerformed(evt);
-			}
-		});
-
-		minLabel2.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		minLabel2.setText("XY");
-
-		maxLabel2.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		maxLabel2.setText("Z");
-
-		minLabel4.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		minLabel4.setText("XY");
-
-		maxLabel4.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		maxLabel4.setText("Z");
-
-		chAlignShiftZ.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		chAlignShiftZ.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-		chAlignShiftZ.setText("250");
-		chAlignShiftZ.setToolTipText("Maximal allowed shift between channels. Larger values increase computational time!");
-		chAlignShiftZ.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				chAlignShiftZActionPerformed(evt);
-			}
-		});
-
-		chAlignShiftXY.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		chAlignShiftXY.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-		chAlignShiftXY.setText("250");
-		chAlignShiftXY.setToolTipText("Maximal allowed shift between channels. Larger values increase computational time!");
-
-		particlesPerBinLabel2.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
-		particlesPerBinLabel2.setText("Max shift [nm]");
-		particlesPerBinLabel2.setToolTipText("Maximal allowed shift between channels. Larger values increase computational time!");
-
-		javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-		jPanel1.setLayout(jPanel1Layout);
-		jPanel1Layout.setHorizontalGroup(
-				jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(jPanel1Layout.createSequentialGroup()
-						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-								.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-										.addContainerGap()
-										.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-												.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-														.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-																.addGroup(jPanel1Layout.createSequentialGroup()
-																		.addGap(0, 0, Short.MAX_VALUE)
-																		.addComponent(minLabel2))
-																.addGroup(jPanel1Layout.createSequentialGroup()
-																		.addComponent(particlesPerBinLabel)
-																		.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-																		.addComponent(minLabel)))
-														.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-														.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-																.addComponent(driftCorrShiftXY, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-																.addComponent(driftCorrBinLowCount, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-																.addComponent(numberOfBinsDriftCorr, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-														.addGap(18, 18, 18)
-														.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-																.addComponent(maxLabel)
-																.addComponent(maxLabel2))
-														.addGap(6, 6, 6))
-												.addGroup(jPanel1Layout.createSequentialGroup()
-														.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-																.addGroup(jPanel1Layout.createSequentialGroup()
-																		.addComponent(doDriftCorrect)
-																		.addGap(18, 18, 18)
-																		.addComponent(driftCorrect, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
-																.addComponent(particlesPerBinLabel1))
-														.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-										.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-												.addComponent(driftCorrShiftZ, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-												.addComponent(driftCorrBinHighCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-								.addGroup(jPanel1Layout.createSequentialGroup()
-										.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-												.addGroup(jPanel1Layout.createSequentialGroup()
-														.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-																.addGroup(jPanel1Layout.createSequentialGroup()
-																		.addGap(10, 10, 10)
-																		.addComponent(particlesPerBinLabelchAlign)
-																		.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-																		.addComponent(minLabel1))
-																.addGroup(jPanel1Layout.createSequentialGroup()
-																		.addContainerGap()
-																		.addComponent(particlesPerBinLabel2)
-																		.addGap(34, 34, 34)
-																		.addComponent(minLabel4)))
-														.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-														.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-																.addComponent(chAlignShiftXY, javax.swing.GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE)
-																.addComponent(chAlignBinLowCount))
-														.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-																.addGroup(jPanel1Layout.createSequentialGroup()
-																		.addGap(29, 29, 29)
-																		.addComponent(maxLabel4))
-																.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-																		.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-																		.addComponent(maxLabel1)))
-														.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-														.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-																.addComponent(chAlignBinHighCount, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
-																.addComponent(chAlignShiftZ)))
-												.addGroup(jPanel1Layout.createSequentialGroup()
-														.addGap(10, 10, 10)
-														.addComponent(doChannelAlign)
-														.addGap(18, 18, 18)
-														.addComponent(alignChannels)))
-										.addGap(0, 0, Short.MAX_VALUE)))
-						.addContainerGap())
-				.addGroup(jPanel1Layout.createSequentialGroup()
-						.addContainerGap()
-						.addComponent(numberOfBinsLabel)
-						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-				);
-
-		jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {driftCorrBinHighCount, driftCorrBinLowCount, driftCorrShiftXY, driftCorrShiftZ, numberOfBinsDriftCorr});
-
-		jPanel1Layout.setVerticalGroup(
-				jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(jPanel1Layout.createSequentialGroup()
-						.addGap(4, 4, 4)
-						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-								.addComponent(doDriftCorrect)
-								.addComponent(driftCorrect))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-								.addComponent(particlesPerBinLabel)
-								.addComponent(driftCorrBinLowCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(driftCorrBinHighCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(minLabel)
-								.addComponent(maxLabel))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-								.addComponent(particlesPerBinLabel1)
-								.addComponent(driftCorrShiftXY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(driftCorrShiftZ, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(minLabel2)
-								.addComponent(maxLabel2))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-								.addComponent(numberOfBinsLabel)
-								.addComponent(numberOfBinsDriftCorr, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-								.addComponent(alignChannels)
-								.addComponent(doChannelAlign))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-								.addComponent(particlesPerBinLabelchAlign)
-								.addComponent(chAlignBinHighCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(minLabel1)
-								.addComponent(maxLabel1)
-								.addComponent(chAlignBinLowCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-								.addComponent(chAlignShiftXY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(chAlignShiftZ, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(minLabel4)
-								.addComponent(maxLabel4)
-								.addComponent(particlesPerBinLabel2))
-						.addContainerGap())
-				);
-
-		jPanel2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, null, null, new java.awt.Color(153, 153, 153), new java.awt.Color(204, 204, 204)));
-
-		correctBackground.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
-		correctBackground.setText("Correct backgound");
-		correctBackground.setToolTipText("Correct background using pixel by pixel time median. Median window set by Filter width in Basic input.");
-		correctBackground.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				correctBackgroundActionPerformed(evt);
-			}
-		});
-
-		localize_Fit.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
-		localize_Fit.setText("Localize");
-		localize_Fit.setToolTipText("Extract regions of interest and fit against 2D gaussian function. ROI size, minimal signal for inclusion, translation of pixel intensity to photons, minimal number of pixels above background and minimum distance between particles in a frame is set in Basic input.");
-		localize_Fit.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				localize_FitActionPerformed(evt);
-			}
-		});
-
-		loadSettings.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
-		loadSettings.setText("Load settings");
-		loadSettings.setToolTipText("Load previously stored settings (or default to restart).");
-		loadSettings.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				loadSettingsActionPerformed(evt);
-			}
-		});
-
-		storeSettings.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
-		storeSettings.setText("Store settings");
-		storeSettings.setToolTipText("Store the current settings for future processing.");
-		storeSettings.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				storeSettingsActionPerformed(evt);
-			}
-		});
-
-		javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-		jPanel2.setLayout(jPanel2Layout);
-		jPanel2Layout.setHorizontalGroup(
-				jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(jPanel2Layout.createSequentialGroup()
-						.addContainerGap()
-						.addComponent(correctBackground)
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addComponent(localize_Fit, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addComponent(storeSettings)
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addComponent(loadSettings, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
-				);
-		jPanel2Layout.setVerticalGroup(
-				jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(jPanel2Layout.createSequentialGroup()
-						.addContainerGap()
-						.addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-								.addComponent(correctBackground)
-								.addComponent(localize_Fit)
-								.addComponent(storeSettings)
-								.addComponent(loadSettings))
-						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-				);
-
-		jPanel3.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, null, null, null, new java.awt.Color(153, 153, 153)));
-		jPanel3.setToolTipText("");
-
-		renderImage.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
-		renderImage.setText("Render image");
-		renderImage.setToolTipText("Render image based on fitted particle result table and selected Parameter ranges.");
-		renderImage.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				renderImageActionPerformed(evt);
-			}
-		});
-
-		doRenderImage.setSelected(true);
-		doRenderImage.setToolTipText("Render image during Process execution.");
-
-		outputPixelSizeLabel.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
-		outputPixelSizeLabel.setText("Pixel size [nm]");
-		outputPixelSizeLabel.setToolTipText("Rendered image pixel size.");
-
-		outputPixelSize.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		outputPixelSize.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-		outputPixelSize.setText("5");
-		outputPixelSize.setToolTipText("Rendered image pixel size.");
-
-		doGaussianSmoothing.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		doGaussianSmoothing.setText("Gaussian smoothing");
-		doGaussianSmoothing.setToolTipText("Add a 2 pixel radius gaussian smoothing of the rendered image.");
-		doGaussianSmoothing.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				doGaussianSmoothingActionPerformed(evt);
-			}
-		});
-
-		outputPixelSizeZ.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		outputPixelSizeZ.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-		outputPixelSizeZ.setText("5");
-		outputPixelSizeZ.setToolTipText("Rendered image pixel size.");
-		outputPixelSizeZ.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				outputPixelSizeZActionPerformed(evt);
-			}
-		});
-
-		XYrenderLabel.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		XYrenderLabel.setText("XY");
-
-		ZrenderLabel.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-		ZrenderLabel.setText("Z");
-
-		javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-		jPanel3.setLayout(jPanel3Layout);
-		jPanel3Layout.setHorizontalGroup(
-				jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(jPanel3Layout.createSequentialGroup()
-						.addContainerGap()
-						.addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-								.addGroup(jPanel3Layout.createSequentialGroup()
-										.addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-												.addComponent(doGaussianSmoothing)
-												.addGroup(jPanel3Layout.createSequentialGroup()
-														.addGap(8, 8, 8)
-														.addComponent(outputPixelSizeLabel)))
-										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-										.addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-												.addComponent(XYrenderLabel)
-												.addComponent(outputPixelSize, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
-										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-										.addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-												.addComponent(ZrenderLabel)
-												.addComponent(outputPixelSizeZ, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)))
-								.addGroup(jPanel3Layout.createSequentialGroup()
-										.addComponent(doRenderImage)
-										.addGap(18, 18, 18)
-										.addComponent(renderImage, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)))
-						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-				);
-		jPanel3Layout.setVerticalGroup(
-				jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(jPanel3Layout.createSequentialGroup()
-						.addContainerGap()
-						.addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-								.addComponent(doRenderImage)
-								.addComponent(renderImage))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-								.addComponent(doGaussianSmoothing)
-								.addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-										.addComponent(XYrenderLabel)
-										.addComponent(ZrenderLabel)))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-								.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-										.addComponent(outputPixelSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addComponent(outputPixelSizeLabel))
-								.addComponent(outputPixelSizeZ, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-						.addGap(32, 32, 32))
-				);
-
-		channelId.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
-		channelId.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Add channel", "Channel 1" }));
-		channelId.setSelectedIndex(1);
-		channelId.setToolTipText("Select or add new channel for channel specifc settings");
-		channelId.addMouseListener(new java.awt.event.MouseAdapter() {
-			public void mouseClicked(java.awt.event.MouseEvent evt) {
-				channelIdMouseClicked(evt);
-			}
-		});
-		channelId.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				channelIdActionPerformed(evt);
-			}
-		});
-
-		buttonGroup2.add(parallelComputation);
-		parallelComputation.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-		parallelComputation.setSelected(true);
-		parallelComputation.setText("parallel computation");
-		parallelComputation.setToolTipText("Only CPU bound computation");
-
-		buttonGroup2.add(GPUcomputation);
-		GPUcomputation.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-		GPUcomputation.setText("GPU computation");
-		GPUcomputation.setToolTipText("Transfer bulk of computation to GPU. Not functional on Mac OS.");
-
-		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-		getContentPane().setLayout(layout);
-		layout.setHorizontalGroup(
-				layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-						.addContainerGap(14, Short.MAX_VALUE)
-						.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-								.addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addGroup(layout.createSequentialGroup()
-										.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-												.addGroup(layout.createSequentialGroup()
-														.addGap(188, 188, 188)
-														.addComponent(Header))
-												.addComponent(channelId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-										.addGap(46, 46, 46)
-										.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-												.addComponent(GPUcomputation)
-												.addComponent(parallelComputation)))
-								.addGroup(layout.createSequentialGroup()
-										.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-												.addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-												.addComponent(Analysis, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-												.addComponent(BasicInp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-										.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-												.addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-												.addComponent(ParameterRange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-				);
-		layout.setVerticalGroup(
-				layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(layout.createSequentialGroup()
-						.addContainerGap(32, Short.MAX_VALUE)
-						.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-								.addComponent(Header)
-								.addComponent(parallelComputation))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-								.addComponent(GPUcomputation)
-								.addComponent(channelId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-								.addComponent(ParameterRange, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(BasicInp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-								.addGroup(layout.createSequentialGroup()
-										.addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-										.addComponent(Analysis, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-								.addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-				);
-
-		pack();
-	}// </editor-fold>                        
+	 private void initComponents() {
+
+	        pixelSizeChList = new javax.swing.JMenu();
+	        pixelSizeData1 = new javax.swing.JMenuItem();
+	        pixelSizeData2 = new javax.swing.JMenuItem();
+	        pixelSizeData3 = new javax.swing.JMenuItem();
+	        pixelSizeData4 = new javax.swing.JMenuItem();
+	        pixelSizeData5 = new javax.swing.JMenuItem();
+	        pixelSizeData6 = new javax.swing.JMenuItem();
+	        pixelSizeData7 = new javax.swing.JMenuItem();
+	        pixelSizeData8 = new javax.swing.JMenuItem();
+	        pixelSizeData9 = new javax.swing.JMenuItem();
+	        pixelSizeData10 = new javax.swing.JMenuItem();
+	        totalGainChList = new javax.swing.JMenu();
+	        totalGainData1 = new javax.swing.JMenuItem();
+	        totalGainData2 = new javax.swing.JMenuItem();
+	        totalGainData3 = new javax.swing.JMenuItem();
+	        totalGainData4 = new javax.swing.JMenuItem();
+	        totalGainData5 = new javax.swing.JMenuItem();
+	        totalGainData6 = new javax.swing.JMenuItem();
+	        totalGainData7 = new javax.swing.JMenuItem();
+	        totalGainData8 = new javax.swing.JMenuItem();
+	        totalGainData9 = new javax.swing.JMenuItem();
+	        totalGainData10 = new javax.swing.JMenuItem();
+	        minimalSignalChList = new javax.swing.JMenu();
+	        minimalSignalData1 = new javax.swing.JMenuItem();
+	        minimalSignalData2 = new javax.swing.JMenuItem();
+	        minimalSignalData3 = new javax.swing.JMenuItem();
+	        minimalSignalData4 = new javax.swing.JMenuItem();
+	        minimalSignalData5 = new javax.swing.JMenuItem();
+	        minimalSignalData6 = new javax.swing.JMenuItem();
+	        minimalSignalData7 = new javax.swing.JMenuItem();
+	        minimalSignalData8 = new javax.swing.JMenuItem();
+	        minimalSignalData9 = new javax.swing.JMenuItem();
+	        minimalSignalData10 = new javax.swing.JMenuItem();
+	        minPixelOverBackgroundChList = new javax.swing.JMenu();
+	        minPixelOverBackgroundData1 = new javax.swing.JMenuItem();
+	        minPixelOverBackgroundData2 = new javax.swing.JMenuItem();
+	        minPixelOverBackgroundData3 = new javax.swing.JMenuItem();
+	        minPixelOverBackgroundData4 = new javax.swing.JMenuItem();
+	        minPixelOverBackgroundData5 = new javax.swing.JMenuItem();
+	        minPixelOverBackgroundData6 = new javax.swing.JMenuItem();
+	        minPixelOverBackgroundData7 = new javax.swing.JMenuItem();
+	        minPixelOverBackgroundData8 = new javax.swing.JMenuItem();
+	        minPixelOverBackgroundData9 = new javax.swing.JMenuItem();
+	        minPixelOverBackgroundData10 = new javax.swing.JMenuItem();
+	        gaussWindowChList = new javax.swing.JMenu();
+	        ROIsizeData1 = new javax.swing.JMenuItem();
+	        ROIsizeData2 = new javax.swing.JMenuItem();
+	        ROIsizeData3 = new javax.swing.JMenuItem();
+	        ROIsizeData4 = new javax.swing.JMenuItem();
+	        ROIsizeData5 = new javax.swing.JMenuItem();
+	        ROIsizeData6 = new javax.swing.JMenuItem();
+	        ROIsizeData7 = new javax.swing.JMenuItem();
+	        ROIsizeData8 = new javax.swing.JMenuItem();
+	        ROIsizeData9 = new javax.swing.JMenuItem();
+	        ROIsizeData10 = new javax.swing.JMenuItem();
+	        windowWidthChList = new javax.swing.JMenu();
+	        windowWidthData1 = new javax.swing.JMenuItem();
+	        windowWidthData2 = new javax.swing.JMenuItem();
+	        windowWidthData3 = new javax.swing.JMenuItem();
+	        windowWidthData4 = new javax.swing.JMenuItem();
+	        windowWidthData5 = new javax.swing.JMenuItem();
+	        windowWidthData6 = new javax.swing.JMenuItem();
+	        windowWidthData7 = new javax.swing.JMenuItem();
+	        windowWidthData8 = new javax.swing.JMenuItem();
+	        windowWidthData9 = new javax.swing.JMenuItem();
+	        windowWidthData10 = new javax.swing.JMenuItem();
+	        minPixelDistChList = new javax.swing.JMenu();
+	        minPixelDistData1 = new javax.swing.JMenuItem();
+	        minPixelDistData2 = new javax.swing.JMenuItem();
+	        minPixelDistData3 = new javax.swing.JMenuItem();
+	        minPixelDistData4 = new javax.swing.JMenuItem();
+	        minPixelDistData5 = new javax.swing.JMenuItem();
+	        minPixelDistData6 = new javax.swing.JMenuItem();
+	        minPixelDistData7 = new javax.swing.JMenuItem();
+	        minPixelDistData8 = new javax.swing.JMenuItem();
+	        minPixelDistData9 = new javax.swing.JMenuItem();
+	        minPixelDistData10 = new javax.swing.JMenuItem();
+	        doClusterAnalysisChList = new javax.swing.JMenu();
+	        doClusterAnalysisData1 = new javax.swing.JMenuItem();
+	        doClusterAnalysisData2 = new javax.swing.JMenuItem();
+	        doClusterAnalysisData3 = new javax.swing.JMenuItem();
+	        doClusterAnalysisData4 = new javax.swing.JMenuItem();
+	        doClusterAnalysisData5 = new javax.swing.JMenuItem();
+	        doClusterAnalysisData6 = new javax.swing.JMenuItem();
+	        doClusterAnalysisData7 = new javax.swing.JMenuItem();
+	        doClusterAnalysisData8 = new javax.swing.JMenuItem();
+	        doClusterAnalysisData9 = new javax.swing.JMenuItem();
+	        doClusterAnalysisData10 = new javax.swing.JMenuItem();
+	        epsilonChList = new javax.swing.JMenu();
+	        epsilonData1 = new javax.swing.JMenuItem();
+	        epsilonData2 = new javax.swing.JMenuItem();
+	        epsilonData3 = new javax.swing.JMenuItem();
+	        epsilonData4 = new javax.swing.JMenuItem();
+	        epsilonData5 = new javax.swing.JMenuItem();
+	        epsilonData6 = new javax.swing.JMenuItem();
+	        epsilonData7 = new javax.swing.JMenuItem();
+	        epsilonData8 = new javax.swing.JMenuItem();
+	        epsilonData9 = new javax.swing.JMenuItem();
+	        epsilonData10 = new javax.swing.JMenuItem();
+	        minPtsClusterChList = new javax.swing.JMenu();
+	        minPtsClusterData1 = new javax.swing.JMenuItem();
+	        minPtsClusterData2 = new javax.swing.JMenuItem();
+	        minPtsClusterData3 = new javax.swing.JMenuItem();
+	        minPtsClusterData4 = new javax.swing.JMenuItem();
+	        minPtsClusterData5 = new javax.swing.JMenuItem();
+	        minPtsClusterData6 = new javax.swing.JMenuItem();
+	        minPtsClusterData7 = new javax.swing.JMenuItem();
+	        minPtsClusterData8 = new javax.swing.JMenuItem();
+	        minPtsClusterData9 = new javax.swing.JMenuItem();
+	        minPtsClusterData10 = new javax.swing.JMenuItem();
+	        outputPixelSizeChList = new javax.swing.JMenu();
+	        outputPixelSizeData1 = new javax.swing.JMenuItem();
+	        outputPixelSizeData2 = new javax.swing.JMenuItem();
+	        outputPixelSizeData3 = new javax.swing.JMenuItem();
+	        outputPixelSizeData4 = new javax.swing.JMenuItem();
+	        outputPixelSizeData5 = new javax.swing.JMenuItem();
+	        outputPixelSizeData6 = new javax.swing.JMenuItem();
+	        outputPixelSizeData7 = new javax.swing.JMenuItem();
+	        outputPixelSizeData8 = new javax.swing.JMenuItem();
+	        outputPixelSizeData9 = new javax.swing.JMenuItem();
+	        outputPixelSizeData10 = new javax.swing.JMenuItem();
+	        driftCorrBinLowCountChList = new javax.swing.JMenu();
+	        driftCorrBinLowCountData1 = new javax.swing.JMenuItem();
+	        driftCorrBinLowCountData2 = new javax.swing.JMenuItem();
+	        driftCorrBinLowCountData3 = new javax.swing.JMenuItem();
+	        driftCorrBinLowCountData4 = new javax.swing.JMenuItem();
+	        driftCorrBinLowCountData5 = new javax.swing.JMenuItem();
+	        driftCorrBinLowCountData6 = new javax.swing.JMenuItem();
+	        driftCorrBinLowCountData7 = new javax.swing.JMenuItem();
+	        driftCorrBinLowCountData8 = new javax.swing.JMenuItem();
+	        driftCorrBinLowCountData9 = new javax.swing.JMenuItem();
+	        driftCorrBinLowCountData10 = new javax.swing.JMenuItem();
+	        driftCorrBinHighCountChList = new javax.swing.JMenu();
+	        driftCorrBinHighCountData1 = new javax.swing.JMenuItem();
+	        driftCorrBinHighCountData2 = new javax.swing.JMenuItem();
+	        driftCorrBinHighCountData3 = new javax.swing.JMenuItem();
+	        driftCorrBinHighCountData4 = new javax.swing.JMenuItem();
+	        driftCorrBinHighCountData5 = new javax.swing.JMenuItem();
+	        driftCorrBinHighCountData6 = new javax.swing.JMenuItem();
+	        driftCorrBinHighCountData7 = new javax.swing.JMenuItem();
+	        driftCorrBinHighCountData8 = new javax.swing.JMenuItem();
+	        driftCorrBinHighCountData9 = new javax.swing.JMenuItem();
+	        driftCorrBinHighCountData10 = new javax.swing.JMenuItem();
+	        numberOfBinsDriftCorrChList = new javax.swing.JMenu();
+	        numberOfBinsDriftCorrData1 = new javax.swing.JMenuItem();
+	        numberOfBinsDriftCorrData2 = new javax.swing.JMenuItem();
+	        numberOfBinsDriftCorrData3 = new javax.swing.JMenuItem();
+	        numberOfBinsDriftCorrData4 = new javax.swing.JMenuItem();
+	        numberOfBinsDriftCorrData5 = new javax.swing.JMenuItem();
+	        numberOfBinsDriftCorrData6 = new javax.swing.JMenuItem();
+	        numberOfBinsDriftCorrData7 = new javax.swing.JMenuItem();
+	        numberOfBinsDriftCorrData8 = new javax.swing.JMenuItem();
+	        numberOfBinsDriftCorrData9 = new javax.swing.JMenuItem();
+	        numberOfBinsDriftCorrData10 = new javax.swing.JMenuItem();
+	        chAlignBinLowCountChList = new javax.swing.JMenu();
+	        chAlignBinLowCountData1 = new javax.swing.JMenuItem();
+	        chAlignBinLowCountData2 = new javax.swing.JMenuItem();
+	        chAlignBinLowCountData3 = new javax.swing.JMenuItem();
+	        chAlignBinLowCountData4 = new javax.swing.JMenuItem();
+	        chAlignBinLowCountData5 = new javax.swing.JMenuItem();
+	        chAlignBinLowCountData6 = new javax.swing.JMenuItem();
+	        chAlignBinLowCountData7 = new javax.swing.JMenuItem();
+	        chAlignBinLowCountData8 = new javax.swing.JMenuItem();
+	        chAlignBinLowCountData9 = new javax.swing.JMenuItem();
+	        chAlignBinLowCountData10 = new javax.swing.JMenuItem();
+	        chAlignBinHighCountChList = new javax.swing.JMenu();
+	        chAlignBinHighCountData1 = new javax.swing.JMenuItem();
+	        chAlignBinHighCountData2 = new javax.swing.JMenuItem();
+	        chAlignBinHighCountData3 = new javax.swing.JMenuItem();
+	        chAlignBinHighCountData4 = new javax.swing.JMenuItem();
+	        chAlignBinHighCountData5 = new javax.swing.JMenuItem();
+	        chAlignBinHighCountData6 = new javax.swing.JMenuItem();
+	        chAlignBinHighCountData7 = new javax.swing.JMenuItem();
+	        chAlignBinHighCountData8 = new javax.swing.JMenuItem();
+	        chAlignBinHighCountData9 = new javax.swing.JMenuItem();
+	        chAlignBinHighCountData10 = new javax.swing.JMenuItem();
+	        doPhotonCountChList = new javax.swing.JMenu();
+	        doPhotonCountData1 = new javax.swing.JMenuItem();
+	        doPhotonCountData2 = new javax.swing.JMenuItem();
+	        doPhotonCountData3 = new javax.swing.JMenuItem();
+	        doPhotonCountData4 = new javax.swing.JMenuItem();
+	        doPhotonCountData5 = new javax.swing.JMenuItem();
+	        doPhotonCountData6 = new javax.swing.JMenuItem();
+	        doPhotonCountData7 = new javax.swing.JMenuItem();
+	        doPhotonCountData8 = new javax.swing.JMenuItem();
+	        doPhotonCountData9 = new javax.swing.JMenuItem();
+	        doPhotonCountData10 = new javax.swing.JMenuItem();
+	        minPhotonCountChList = new javax.swing.JMenu();
+	        minPhotonCountData1 = new javax.swing.JMenuItem();
+	        minPhotonCountData2 = new javax.swing.JMenuItem();
+	        minPhotonCountData3 = new javax.swing.JMenuItem();
+	        minPhotonCountData4 = new javax.swing.JMenuItem();
+	        minPhotonCountData5 = new javax.swing.JMenuItem();
+	        minPhotonCountData6 = new javax.swing.JMenuItem();
+	        minPhotonCountData7 = new javax.swing.JMenuItem();
+	        minPhotonCountData8 = new javax.swing.JMenuItem();
+	        minPhotonCountData9 = new javax.swing.JMenuItem();
+	        minPhotonCountData10 = new javax.swing.JMenuItem();
+	        maxPhotonCountChList = new javax.swing.JMenu();
+	        maxPhotonCountData1 = new javax.swing.JMenuItem();
+	        maxPhotonCountData2 = new javax.swing.JMenuItem();
+	        maxPhotonCountData3 = new javax.swing.JMenuItem();
+	        maxPhotonCountData4 = new javax.swing.JMenuItem();
+	        maxPhotonCountData5 = new javax.swing.JMenuItem();
+	        maxPhotonCountData6 = new javax.swing.JMenuItem();
+	        maxPhotonCountData7 = new javax.swing.JMenuItem();
+	        maxPhotonCountData8 = new javax.swing.JMenuItem();
+	        maxPhotonCountData9 = new javax.swing.JMenuItem();
+	        maxPhotonCountData10 = new javax.swing.JMenuItem();
+	        doSigmaXYChList = new javax.swing.JMenu();
+	        doSigmaXYData1 = new javax.swing.JMenuItem();
+	        doSigmaXYData2 = new javax.swing.JMenuItem();
+	        doSigmaXYData3 = new javax.swing.JMenuItem();
+	        doSigmaXYData4 = new javax.swing.JMenuItem();
+	        doSigmaXYData5 = new javax.swing.JMenuItem();
+	        doSigmaXYData6 = new javax.swing.JMenuItem();
+	        doSigmaXYData7 = new javax.swing.JMenuItem();
+	        doSigmaXYData8 = new javax.swing.JMenuItem();
+	        doSigmaXYData9 = new javax.swing.JMenuItem();
+	        doSigmaXYData10 = new javax.swing.JMenuItem();
+	        minSigmaXYChList = new javax.swing.JMenu();
+	        minSigmaXYData1 = new javax.swing.JMenuItem();
+	        minSigmaXYData2 = new javax.swing.JMenuItem();
+	        minSigmaXYData3 = new javax.swing.JMenuItem();
+	        minSigmaXYData4 = new javax.swing.JMenuItem();
+	        minSigmaXYData5 = new javax.swing.JMenuItem();
+	        minSigmaXYData6 = new javax.swing.JMenuItem();
+	        minSigmaXYData7 = new javax.swing.JMenuItem();
+	        minSigmaXYData8 = new javax.swing.JMenuItem();
+	        minSigmaXYData9 = new javax.swing.JMenuItem();
+	        minSigmaXYData10 = new javax.swing.JMenuItem();
+	        maxSigmaXYChList = new javax.swing.JMenu();
+	        maxSigmaXYData1 = new javax.swing.JMenuItem();
+	        maxSigmaXYData2 = new javax.swing.JMenuItem();
+	        maxSigmaXYData3 = new javax.swing.JMenuItem();
+	        maxSigmaXYData4 = new javax.swing.JMenuItem();
+	        maxSigmaXYData5 = new javax.swing.JMenuItem();
+	        maxSigmaXYData6 = new javax.swing.JMenuItem();
+	        maxSigmaXYData7 = new javax.swing.JMenuItem();
+	        maxSigmaXYData8 = new javax.swing.JMenuItem();
+	        maxSigmaXYData9 = new javax.swing.JMenuItem();
+	        maxSigmaXYData10 = new javax.swing.JMenuItem();
+	        doSigmaZChList = new javax.swing.JMenu();
+	        doSigmaZData1 = new javax.swing.JMenuItem();
+	        doSigmaZData2 = new javax.swing.JMenuItem();
+	        doSigmaZData3 = new javax.swing.JMenuItem();
+	        doSigmaZData4 = new javax.swing.JMenuItem();
+	        doSigmaZData5 = new javax.swing.JMenuItem();
+	        doSigmaZData6 = new javax.swing.JMenuItem();
+	        doSigmaZData7 = new javax.swing.JMenuItem();
+	        doSigmaZData8 = new javax.swing.JMenuItem();
+	        doSigmaZData9 = new javax.swing.JMenuItem();
+	        doSigmaZData10 = new javax.swing.JMenuItem();
+	        minSigmaZChList = new javax.swing.JMenu();
+	        minSigmaZData1 = new javax.swing.JMenuItem();
+	        minSigmaZData2 = new javax.swing.JMenuItem();
+	        minSigmaZData3 = new javax.swing.JMenuItem();
+	        minSigmaZData4 = new javax.swing.JMenuItem();
+	        minSigmaZData5 = new javax.swing.JMenuItem();
+	        minSigmaZData6 = new javax.swing.JMenuItem();
+	        minSigmaZData7 = new javax.swing.JMenuItem();
+	        minSigmaZData8 = new javax.swing.JMenuItem();
+	        minSigmaZData9 = new javax.swing.JMenuItem();
+	        minSigmaZData10 = new javax.swing.JMenuItem();
+	        maxSigmaZChList = new javax.swing.JMenu();
+	        maxSigmaZData1 = new javax.swing.JMenuItem();
+	        maxSigmaZData2 = new javax.swing.JMenuItem();
+	        maxSigmaZData3 = new javax.swing.JMenuItem();
+	        maxSigmaZData4 = new javax.swing.JMenuItem();
+	        maxSigmaZData5 = new javax.swing.JMenuItem();
+	        maxSigmaZData6 = new javax.swing.JMenuItem();
+	        maxSigmaZData7 = new javax.swing.JMenuItem();
+	        maxSigmaZData8 = new javax.swing.JMenuItem();
+	        maxSigmaZData9 = new javax.swing.JMenuItem();
+	        maxSigmaZData10 = new javax.swing.JMenuItem();
+	        doRsquareChList = new javax.swing.JMenu();
+	        doRsquareData1 = new javax.swing.JMenuItem();
+	        doRsquareData2 = new javax.swing.JMenuItem();
+	        doRsquareData3 = new javax.swing.JMenuItem();
+	        doRsquareData4 = new javax.swing.JMenuItem();
+	        doRsquareData5 = new javax.swing.JMenuItem();
+	        doRsquareData6 = new javax.swing.JMenuItem();
+	        doRsquareData7 = new javax.swing.JMenuItem();
+	        doRsquareData8 = new javax.swing.JMenuItem();
+	        doRsquareData9 = new javax.swing.JMenuItem();
+	        doRsquareData10 = new javax.swing.JMenuItem();
+	        minRsquareChList = new javax.swing.JMenu();
+	        minRsquareData1 = new javax.swing.JMenuItem();
+	        minRsquareData2 = new javax.swing.JMenuItem();
+	        minRsquareData3 = new javax.swing.JMenuItem();
+	        minRsquareData4 = new javax.swing.JMenuItem();
+	        minRsquareData5 = new javax.swing.JMenuItem();
+	        minRsquareData6 = new javax.swing.JMenuItem();
+	        minRsquareData7 = new javax.swing.JMenuItem();
+	        minRsquareData8 = new javax.swing.JMenuItem();
+	        minRsquareData9 = new javax.swing.JMenuItem();
+	        minRsquareData10 = new javax.swing.JMenuItem();
+	        maxRsquareChList = new javax.swing.JMenu();
+	        maxRsquareData1 = new javax.swing.JMenuItem();
+	        maxRsquareData2 = new javax.swing.JMenuItem();
+	        maxRsquareData3 = new javax.swing.JMenuItem();
+	        maxRsquareData4 = new javax.swing.JMenuItem();
+	        maxRsquareData5 = new javax.swing.JMenuItem();
+	        maxRsquareData6 = new javax.swing.JMenuItem();
+	        maxRsquareData7 = new javax.swing.JMenuItem();
+	        maxRsquareData8 = new javax.swing.JMenuItem();
+	        maxRsquareData9 = new javax.swing.JMenuItem();
+	        maxRsquareData10 = new javax.swing.JMenuItem();
+	        doPrecisionXYChList = new javax.swing.JMenu();
+	        doPrecisionXYData1 = new javax.swing.JMenuItem();
+	        doPrecisionXYData2 = new javax.swing.JMenuItem();
+	        doPrecisionXYData3 = new javax.swing.JMenuItem();
+	        doPrecisionXYData4 = new javax.swing.JMenuItem();
+	        doPrecisionXYData5 = new javax.swing.JMenuItem();
+	        doPrecisionXYData6 = new javax.swing.JMenuItem();
+	        doPrecisionXYData7 = new javax.swing.JMenuItem();
+	        doPrecisionXYData8 = new javax.swing.JMenuItem();
+	        doPrecisionXYData9 = new javax.swing.JMenuItem();
+	        doPrecisionXYData10 = new javax.swing.JMenuItem();
+	        minPrecisionXYChList = new javax.swing.JMenu();
+	        minPrecisionXYData1 = new javax.swing.JMenuItem();
+	        minPrecisionXYData2 = new javax.swing.JMenuItem();
+	        minPrecisionXYData3 = new javax.swing.JMenuItem();
+	        minPrecisionXYData4 = new javax.swing.JMenuItem();
+	        minPrecisionXYData5 = new javax.swing.JMenuItem();
+	        minPrecisionXYData6 = new javax.swing.JMenuItem();
+	        minPrecisionXYData7 = new javax.swing.JMenuItem();
+	        minPrecisionXYData8 = new javax.swing.JMenuItem();
+	        minPrecisionXYData9 = new javax.swing.JMenuItem();
+	        minPrecisionXYData10 = new javax.swing.JMenuItem();
+	        maxPrecisionXYChList = new javax.swing.JMenu();
+	        maxPrecisionXYData1 = new javax.swing.JMenuItem();
+	        maxPrecisionXYData2 = new javax.swing.JMenuItem();
+	        maxPrecisionXYData3 = new javax.swing.JMenuItem();
+	        maxPrecisionXYData4 = new javax.swing.JMenuItem();
+	        maxPrecisionXYData5 = new javax.swing.JMenuItem();
+	        maxPrecisionXYData6 = new javax.swing.JMenuItem();
+	        maxPrecisionXYData7 = new javax.swing.JMenuItem();
+	        maxPrecisionXYData8 = new javax.swing.JMenuItem();
+	        maxPrecisionXYData9 = new javax.swing.JMenuItem();
+	        maxPrecisionXYData10 = new javax.swing.JMenuItem();
+	        doPrecisionZChList = new javax.swing.JMenu();
+	        doPrecisionZData1 = new javax.swing.JMenuItem();
+	        doPrecisionZData2 = new javax.swing.JMenuItem();
+	        doPrecisionZData3 = new javax.swing.JMenuItem();
+	        doPrecisionZData4 = new javax.swing.JMenuItem();
+	        doPrecisionZData5 = new javax.swing.JMenuItem();
+	        doPrecisionZData6 = new javax.swing.JMenuItem();
+	        doPrecisionZData7 = new javax.swing.JMenuItem();
+	        doPrecisionZData8 = new javax.swing.JMenuItem();
+	        doPrecisionZData9 = new javax.swing.JMenuItem();
+	        doPrecisionZData10 = new javax.swing.JMenuItem();
+	        minPrecisionZChList = new javax.swing.JMenu();
+	        minPrecisionZData1 = new javax.swing.JMenuItem();
+	        minPrecisionZData2 = new javax.swing.JMenuItem();
+	        minPrecisionZData3 = new javax.swing.JMenuItem();
+	        minPrecisionZData4 = new javax.swing.JMenuItem();
+	        minPrecisionZData5 = new javax.swing.JMenuItem();
+	        minPrecisionZData6 = new javax.swing.JMenuItem();
+	        minPrecisionZData7 = new javax.swing.JMenuItem();
+	        minPrecisionZData8 = new javax.swing.JMenuItem();
+	        minPrecisionZData9 = new javax.swing.JMenuItem();
+	        minPrecisionZData10 = new javax.swing.JMenuItem();
+	        maxPrecisionZChList = new javax.swing.JMenu();
+	        maxPrecisionZData1 = new javax.swing.JMenuItem();
+	        maxPrecisionZData2 = new javax.swing.JMenuItem();
+	        maxPrecisionZData3 = new javax.swing.JMenuItem();
+	        maxPrecisionZData4 = new javax.swing.JMenuItem();
+	        maxPrecisionZData5 = new javax.swing.JMenuItem();
+	        maxPrecisionZData6 = new javax.swing.JMenuItem();
+	        maxPrecisionZData7 = new javax.swing.JMenuItem();
+	        maxPrecisionZData8 = new javax.swing.JMenuItem();
+	        maxPrecisionZData9 = new javax.swing.JMenuItem();
+	        maxPrecisionZData10 = new javax.swing.JMenuItem();
+	        driftCorrShiftXYChList = new javax.swing.JMenu();
+	        driftCorrShiftXYData1 = new javax.swing.JMenuItem();
+	        driftCorrShiftXYData2 = new javax.swing.JMenuItem();
+	        driftCorrShiftXYData3 = new javax.swing.JMenuItem();
+	        driftCorrShiftXYData4 = new javax.swing.JMenuItem();
+	        driftCorrShiftXYData5 = new javax.swing.JMenuItem();
+	        driftCorrShiftXYData6 = new javax.swing.JMenuItem();
+	        driftCorrShiftXYData7 = new javax.swing.JMenuItem();
+	        driftCorrShiftXYData8 = new javax.swing.JMenuItem();
+	        driftCorrShiftXYData9 = new javax.swing.JMenuItem();
+	        driftCorrShiftXYData10 = new javax.swing.JMenuItem();
+	        driftCorrShiftZChList = new javax.swing.JMenu();
+	        driftCorrShiftZData1 = new javax.swing.JMenuItem();
+	        driftCorrShiftZData2 = new javax.swing.JMenuItem();
+	        driftCorrShiftZData3 = new javax.swing.JMenuItem();
+	        driftCorrShiftZData4 = new javax.swing.JMenuItem();
+	        driftCorrShiftZData5 = new javax.swing.JMenuItem();
+	        driftCorrShiftZData6 = new javax.swing.JMenuItem();
+	        driftCorrShiftZData7 = new javax.swing.JMenuItem();
+	        driftCorrShiftZData8 = new javax.swing.JMenuItem();
+	        driftCorrShiftZData9 = new javax.swing.JMenuItem();
+	        driftCorrShiftZData10 = new javax.swing.JMenuItem();
+	        chAlignShiftXYChList = new javax.swing.JMenu();
+	        chAlignShiftXYData1 = new javax.swing.JMenuItem();
+	        chAlignShiftXYData2 = new javax.swing.JMenuItem();
+	        chAlignShiftXYData3 = new javax.swing.JMenuItem();
+	        chAlignShiftXYData4 = new javax.swing.JMenuItem();
+	        chAlignShiftXYData5 = new javax.swing.JMenuItem();
+	        chAlignShiftXYData6 = new javax.swing.JMenuItem();
+	        chAlignShiftXYData7 = new javax.swing.JMenuItem();
+	        chAlignShiftXYData8 = new javax.swing.JMenuItem();
+	        chAlignShiftXYData9 = new javax.swing.JMenuItem();
+	        chAlignShiftXYData10 = new javax.swing.JMenuItem();
+	        chAlignShiftZChList = new javax.swing.JMenu();
+	        chAlignShiftZData1 = new javax.swing.JMenuItem();
+	        chAlignShiftZData2 = new javax.swing.JMenuItem();
+	        chAlignShiftZData3 = new javax.swing.JMenuItem();
+	        chAlignShiftZData4 = new javax.swing.JMenuItem();
+	        chAlignShiftZData5 = new javax.swing.JMenuItem();
+	        chAlignShiftZData6 = new javax.swing.JMenuItem();
+	        chAlignShiftZData7 = new javax.swing.JMenuItem();
+	        chAlignShiftZData8 = new javax.swing.JMenuItem();
+	        chAlignShiftZData9 = new javax.swing.JMenuItem();
+	        chAlignShiftZData10 = new javax.swing.JMenuItem();
+	        buttonGroup2 = new javax.swing.ButtonGroup();
+	        doFrameChList = new javax.swing.JMenu();
+	        doFrameData1 = new javax.swing.JMenuItem();
+	        doFrameData2 = new javax.swing.JMenuItem();
+	        doFrameData3 = new javax.swing.JMenuItem();
+	        doFrameData4 = new javax.swing.JMenuItem();
+	        doFrameData5 = new javax.swing.JMenuItem();
+	        doFrameData6 = new javax.swing.JMenuItem();
+	        doFrameData7 = new javax.swing.JMenuItem();
+	        doFrameData8 = new javax.swing.JMenuItem();
+	        doFrameData9 = new javax.swing.JMenuItem();
+	        doFrameData10 = new javax.swing.JMenuItem();
+	        minFrameChList = new javax.swing.JMenu();
+	        minFrameData1 = new javax.swing.JMenuItem();
+	        minFrameData2 = new javax.swing.JMenuItem();
+	        minFrameData3 = new javax.swing.JMenuItem();
+	        minFrameData4 = new javax.swing.JMenuItem();
+	        minFrameData5 = new javax.swing.JMenuItem();
+	        minFrameData6 = new javax.swing.JMenuItem();
+	        minFrameData7 = new javax.swing.JMenuItem();
+	        minFrameData8 = new javax.swing.JMenuItem();
+	        minFrameData9 = new javax.swing.JMenuItem();
+	        minFrameData10 = new javax.swing.JMenuItem();
+	        maxFrameChList = new javax.swing.JMenu();
+	        maxFrameData1 = new javax.swing.JMenuItem();
+	        maxFrameData2 = new javax.swing.JMenuItem();
+	        maxFrameData3 = new javax.swing.JMenuItem();
+	        maxFrameData4 = new javax.swing.JMenuItem();
+	        maxFrameData5 = new javax.swing.JMenuItem();
+	        maxFrameData6 = new javax.swing.JMenuItem();
+	        maxFrameData7 = new javax.swing.JMenuItem();
+	        maxFrameData8 = new javax.swing.JMenuItem();
+	        maxFrameData9 = new javax.swing.JMenuItem();
+	        maxFrameData10 = new javax.swing.JMenuItem();
+	        doRenderImageChList = new javax.swing.JMenu();
+	        doRenderImageData1 = new javax.swing.JMenuItem();
+	        doRenderImageData2 = new javax.swing.JMenuItem();
+	        doRenderImageData3 = new javax.swing.JMenuItem();
+	        doRenderImageData4 = new javax.swing.JMenuItem();
+	        doRenderImageData5 = new javax.swing.JMenuItem();
+	        doRenderImageData6 = new javax.swing.JMenuItem();
+	        doRenderImageData7 = new javax.swing.JMenuItem();
+	        doRenderImageData8 = new javax.swing.JMenuItem();
+	        doRenderImageData9 = new javax.swing.JMenuItem();
+	        doRenderImageData10 = new javax.swing.JMenuItem();
+	        Header = new javax.swing.JLabel();
+	        BasicInp = new javax.swing.JPanel();
+	        basicInput = new javax.swing.JLabel();
+	        inputPixelSizeLabel = new javax.swing.JLabel();
+	        inputPixelSize = new javax.swing.JTextField();
+	        totalGainLabel = new javax.swing.JLabel();
+	        totalGain = new javax.swing.JTextField();
+	        ROIsizeLabel = new javax.swing.JLabel();
+	        ROIsize = new javax.swing.JComboBox<>();
+	        minimalSignalLabel = new javax.swing.JLabel();
+	        PixelsOverBackgroundLabel = new javax.swing.JLabel();
+	        minimalSignal = new javax.swing.JTextField();
+	        minPixelOverBackground = new javax.swing.JTextField();
+	        windowWidthLabel = new javax.swing.JLabel();
+	        windowWidth = new javax.swing.JTextField();
+	        Process = new javax.swing.JButton();
+	        minPixelDistLabel = new javax.swing.JLabel();
+	        minPixelDist = new javax.swing.JTextField();
+	        resetBasicInput = new javax.swing.JButton();
+	        ParameterRange = new javax.swing.JPanel();
+	        ParameterLabel = new javax.swing.JLabel();
+	        doPhotonCount = new javax.swing.JCheckBox();
+	        doSigmaXY = new javax.swing.JCheckBox();
+	        doSigmaZ = new javax.swing.JCheckBox();
+	        doRsquare = new javax.swing.JCheckBox();
+	        doPrecisionXY = new javax.swing.JCheckBox();
+	        doPrecisionZ = new javax.swing.JCheckBox();
+	        cleanTable = new javax.swing.JButton();
+	        minPrecisionXY = new javax.swing.JTextField();
+	        maxPrecisionXY = new javax.swing.JTextField();
+	        minRsquare = new javax.swing.JTextField();
+	        maxRsquare = new javax.swing.JTextField();
+	        minSigmaZ = new javax.swing.JTextField();
+	        maxSigmaZ = new javax.swing.JTextField();
+	        minSigmaXY = new javax.swing.JTextField();
+	        maxSigmaXY = new javax.swing.JTextField();
+	        minPhotonCount = new javax.swing.JTextField();
+	        maxPhotonCount = new javax.swing.JTextField();
+	        minPrecisionZ = new javax.swing.JTextField();
+	        maxPrecisionZ = new javax.swing.JTextField();
+	        resetParameterRange = new javax.swing.JButton();
+	        maxLabel3 = new javax.swing.JLabel();
+	        minLabel3 = new javax.swing.JLabel();
+	        doFrame = new javax.swing.JCheckBox();
+	        minFrame = new javax.swing.JTextField();
+	        maxFrame = new javax.swing.JTextField();
+	        Analysis = new javax.swing.JPanel();
+	        doClusterAnalysis = new javax.swing.JCheckBox();
+	        epsilonLabel = new javax.swing.JLabel();
+	        minPtsLabel = new javax.swing.JLabel();
+	        epsilon = new javax.swing.JTextField();
+	        minPtsCluster = new javax.swing.JTextField();
+	        clusterAnalysis = new javax.swing.JButton();
+	        jPanel1 = new javax.swing.JPanel();
+	        particlesPerBinLabel = new javax.swing.JLabel();
+	        driftCorrBinLowCount = new javax.swing.JTextField();
+	        driftCorrBinHighCount = new javax.swing.JTextField();
+	        numberOfBinsLabel = new javax.swing.JLabel();
+	        doDriftCorrect = new javax.swing.JCheckBox();
+	        driftCorrect = new javax.swing.JButton();
+	        doChannelAlign = new javax.swing.JCheckBox();
+	        alignChannels = new javax.swing.JButton();
+	        particlesPerBinLabelchAlign = new javax.swing.JLabel();
+	        chAlignBinLowCount = new javax.swing.JTextField();
+	        chAlignBinHighCount = new javax.swing.JTextField();
+	        numberOfBinsDriftCorr = new javax.swing.JTextField();
+	        minLabel = new javax.swing.JLabel();
+	        maxLabel = new javax.swing.JLabel();
+	        maxLabel1 = new javax.swing.JLabel();
+	        minLabel1 = new javax.swing.JLabel();
+	        particlesPerBinLabel1 = new javax.swing.JLabel();
+	        driftCorrShiftXY = new javax.swing.JTextField();
+	        driftCorrShiftZ = new javax.swing.JTextField();
+	        minLabel2 = new javax.swing.JLabel();
+	        maxLabel2 = new javax.swing.JLabel();
+	        minLabel4 = new javax.swing.JLabel();
+	        maxLabel4 = new javax.swing.JLabel();
+	        chAlignShiftZ = new javax.swing.JTextField();
+	        chAlignShiftXY = new javax.swing.JTextField();
+	        particlesPerBinLabel2 = new javax.swing.JLabel();
+	        jPanel2 = new javax.swing.JPanel();
+	        correctBackground = new javax.swing.JButton();
+	        localize_Fit = new javax.swing.JButton();
+	        loadSettings = new javax.swing.JButton();
+	        storeSettings = new javax.swing.JButton();
+	        jPanel3 = new javax.swing.JPanel();
+	        renderImage = new javax.swing.JButton();
+	        doRenderImage = new javax.swing.JCheckBox();
+	        outputPixelSizeLabel = new javax.swing.JLabel();
+	        outputPixelSize = new javax.swing.JTextField();
+	        doGaussianSmoothing = new javax.swing.JCheckBox();
+	        outputPixelSizeZ = new javax.swing.JTextField();
+	        XYrenderLabel = new javax.swing.JLabel();
+	        ZrenderLabel = new javax.swing.JLabel();
+	        channelId = new javax.swing.JComboBox<>();
+	        parallelComputation = new javax.swing.JRadioButton();
+	        GPUcomputation = new javax.swing.JRadioButton();
+
+	        pixelSizeChList.setText("jMenu1");
+
+	        pixelSizeData1.setText("100");
+	        pixelSizeData1.setToolTipText("");
+	        pixelSizeChList.add(pixelSizeData1);
+
+	        pixelSizeData2.setText("100");
+	        pixelSizeData2.setToolTipText("");
+	        pixelSizeChList.add(pixelSizeData2);
+
+	        pixelSizeData3.setText("100");
+	        pixelSizeData3.setToolTipText("");
+	        pixelSizeChList.add(pixelSizeData3);
+
+	        pixelSizeData4.setText("100");
+	        pixelSizeData4.setToolTipText("");
+	        pixelSizeChList.add(pixelSizeData4);
+
+	        pixelSizeData5.setText("100");
+	        pixelSizeData5.setToolTipText("");
+	        pixelSizeChList.add(pixelSizeData5);
+
+	        pixelSizeData6.setText("100");
+	        pixelSizeData6.setToolTipText("");
+	        pixelSizeChList.add(pixelSizeData6);
+
+	        pixelSizeData7.setText("100");
+	        pixelSizeData7.setToolTipText("");
+	        pixelSizeChList.add(pixelSizeData7);
+
+	        pixelSizeData8.setText("100");
+	        pixelSizeData8.setToolTipText("");
+	        pixelSizeChList.add(pixelSizeData8);
+
+	        pixelSizeData9.setText("100");
+	        pixelSizeData9.setToolTipText("");
+	        pixelSizeChList.add(pixelSizeData9);
+
+	        pixelSizeData10.setText("100");
+	        pixelSizeData10.setToolTipText("");
+	        pixelSizeChList.add(pixelSizeData10);
+
+	        totalGainChList.setText("jMenu1");
+
+	        totalGainData1.setText("100");
+	        totalGainData1.setToolTipText("");
+	        totalGainChList.add(totalGainData1);
+
+	        totalGainData2.setText("100");
+	        totalGainData2.setToolTipText("");
+	        totalGainChList.add(totalGainData2);
+
+	        totalGainData3.setText("100");
+	        totalGainData3.setToolTipText("");
+	        totalGainChList.add(totalGainData3);
+
+	        totalGainData4.setText("100");
+	        totalGainData4.setToolTipText("");
+	        totalGainChList.add(totalGainData4);
+
+	        totalGainData5.setText("100");
+	        totalGainData5.setToolTipText("");
+	        totalGainChList.add(totalGainData5);
+
+	        totalGainData6.setText("100");
+	        totalGainData6.setToolTipText("");
+	        totalGainChList.add(totalGainData6);
+
+	        totalGainData7.setText("100");
+	        totalGainData7.setToolTipText("");
+	        totalGainChList.add(totalGainData7);
+
+	        totalGainData8.setText("100");
+	        totalGainData8.setToolTipText("");
+	        totalGainChList.add(totalGainData8);
+
+	        totalGainData9.setText("100");
+	        totalGainData9.setToolTipText("");
+	        totalGainChList.add(totalGainData9);
+
+	        totalGainData10.setText("100");
+	        totalGainData10.setToolTipText("");
+	        totalGainChList.add(totalGainData10);
+
+	        minimalSignalChList.setText("jMenu1");
+
+	        minimalSignalData1.setText("100");
+	        minimalSignalData1.setToolTipText("");
+	        minimalSignalChList.add(minimalSignalData1);
+
+	        minimalSignalData2.setText("100");
+	        minimalSignalData2.setToolTipText("");
+	        minimalSignalChList.add(minimalSignalData2);
+
+	        minimalSignalData3.setText("100");
+	        minimalSignalData3.setToolTipText("");
+	        minimalSignalChList.add(minimalSignalData3);
+
+	        minimalSignalData4.setText("100");
+	        minimalSignalData4.setToolTipText("");
+	        minimalSignalChList.add(minimalSignalData4);
+
+	        minimalSignalData5.setText("100");
+	        minimalSignalData5.setToolTipText("");
+	        minimalSignalChList.add(minimalSignalData5);
+
+	        minimalSignalData6.setText("100");
+	        minimalSignalData6.setToolTipText("");
+	        minimalSignalChList.add(minimalSignalData6);
+
+	        minimalSignalData7.setText("100");
+	        minimalSignalData7.setToolTipText("");
+	        minimalSignalChList.add(minimalSignalData7);
+
+	        minimalSignalData8.setText("100");
+	        minimalSignalData8.setToolTipText("");
+	        minimalSignalChList.add(minimalSignalData8);
+
+	        minimalSignalData9.setText("100");
+	        minimalSignalData9.setToolTipText("");
+	        minimalSignalChList.add(minimalSignalData9);
+
+	        minimalSignalData10.setText("100");
+	        minimalSignalData10.setToolTipText("");
+	        minimalSignalChList.add(minimalSignalData10);
+
+	        minPixelOverBackgroundChList.setText("jMenu1");
+
+	        minPixelOverBackgroundData1.setText("100");
+	        minPixelOverBackgroundData1.setToolTipText("");
+	        minPixelOverBackgroundChList.add(minPixelOverBackgroundData1);
+
+	        minPixelOverBackgroundData2.setText("100");
+	        minPixelOverBackgroundData2.setToolTipText("");
+	        minPixelOverBackgroundChList.add(minPixelOverBackgroundData2);
+
+	        minPixelOverBackgroundData3.setText("100");
+	        minPixelOverBackgroundData3.setToolTipText("");
+	        minPixelOverBackgroundChList.add(minPixelOverBackgroundData3);
+
+	        minPixelOverBackgroundData4.setText("100");
+	        minPixelOverBackgroundData4.setToolTipText("");
+	        minPixelOverBackgroundChList.add(minPixelOverBackgroundData4);
+
+	        minPixelOverBackgroundData5.setText("100");
+	        minPixelOverBackgroundData5.setToolTipText("");
+	        minPixelOverBackgroundChList.add(minPixelOverBackgroundData5);
+
+	        minPixelOverBackgroundData6.setText("100");
+	        minPixelOverBackgroundData6.setToolTipText("");
+	        minPixelOverBackgroundChList.add(minPixelOverBackgroundData6);
+
+	        minPixelOverBackgroundData7.setText("100");
+	        minPixelOverBackgroundData7.setToolTipText("");
+	        minPixelOverBackgroundChList.add(minPixelOverBackgroundData7);
+
+	        minPixelOverBackgroundData8.setText("100");
+	        minPixelOverBackgroundData8.setToolTipText("");
+	        minPixelOverBackgroundChList.add(minPixelOverBackgroundData8);
+
+	        minPixelOverBackgroundData9.setText("100");
+	        minPixelOverBackgroundData9.setToolTipText("");
+	        minPixelOverBackgroundChList.add(minPixelOverBackgroundData9);
+
+	        minPixelOverBackgroundData10.setText("100");
+	        minPixelOverBackgroundData10.setToolTipText("");
+	        minPixelOverBackgroundChList.add(minPixelOverBackgroundData10);
+
+	        gaussWindowChList.setText("jMenu1");
+
+	        ROIsizeData1.setText("100");
+	        ROIsizeData1.setToolTipText("");
+	        gaussWindowChList.add(ROIsizeData1);
+
+	        ROIsizeData2.setText("100");
+	        ROIsizeData2.setToolTipText("");
+	        gaussWindowChList.add(ROIsizeData2);
+
+	        ROIsizeData3.setText("100");
+	        ROIsizeData3.setToolTipText("");
+	        gaussWindowChList.add(ROIsizeData3);
+
+	        ROIsizeData4.setText("100");
+	        ROIsizeData4.setToolTipText("");
+	        gaussWindowChList.add(ROIsizeData4);
+
+	        ROIsizeData5.setText("100");
+	        ROIsizeData5.setToolTipText("");
+	        gaussWindowChList.add(ROIsizeData5);
+
+	        ROIsizeData6.setText("100");
+	        ROIsizeData6.setToolTipText("");
+	        gaussWindowChList.add(ROIsizeData6);
+
+	        ROIsizeData7.setText("100");
+	        ROIsizeData7.setToolTipText("");
+	        gaussWindowChList.add(ROIsizeData7);
+
+	        ROIsizeData8.setText("100");
+	        ROIsizeData8.setToolTipText("");
+	        gaussWindowChList.add(ROIsizeData8);
+
+	        ROIsizeData9.setText("100");
+	        ROIsizeData9.setToolTipText("");
+	        gaussWindowChList.add(ROIsizeData9);
+
+	        ROIsizeData10.setText("100");
+	        ROIsizeData10.setToolTipText("");
+	        gaussWindowChList.add(ROIsizeData10);
+
+	        windowWidthChList.setText("jMenu1");
+
+	        windowWidthData1.setText("jMenuItem1");
+	        windowWidthChList.add(windowWidthData1);
+
+	        windowWidthData2.setText("jMenuItem1");
+	        windowWidthChList.add(windowWidthData2);
+
+	        windowWidthData3.setText("jMenuItem1");
+	        windowWidthChList.add(windowWidthData3);
+
+	        windowWidthData4.setText("jMenuItem1");
+	        windowWidthChList.add(windowWidthData4);
+
+	        windowWidthData5.setText("jMenuItem1");
+	        windowWidthChList.add(windowWidthData5);
+
+	        windowWidthData6.setText("jMenuItem1");
+	        windowWidthChList.add(windowWidthData6);
+
+	        windowWidthData7.setText("jMenuItem1");
+	        windowWidthChList.add(windowWidthData7);
+
+	        windowWidthData8.setText("jMenuItem1");
+	        windowWidthChList.add(windowWidthData8);
+
+	        windowWidthData9.setText("jMenuItem1");
+	        windowWidthChList.add(windowWidthData9);
+
+	        windowWidthData10.setText("jMenuItem1");
+	        windowWidthChList.add(windowWidthData10);
+
+	        minPixelDistChList.setText("jMenu1");
+
+	        minPixelDistData1.setText("jMenuItem1");
+	        minPixelDistChList.add(minPixelDistData1);
+
+	        minPixelDistData2.setText("jMenuItem1");
+	        minPixelDistChList.add(minPixelDistData2);
+
+	        minPixelDistData3.setText("jMenuItem1");
+	        minPixelDistChList.add(minPixelDistData3);
+
+	        minPixelDistData4.setText("jMenuItem1");
+	        minPixelDistChList.add(minPixelDistData4);
+
+	        minPixelDistData5.setText("jMenuItem1");
+	        minPixelDistChList.add(minPixelDistData5);
+
+	        minPixelDistData6.setText("jMenuItem1");
+	        minPixelDistChList.add(minPixelDistData6);
+
+	        minPixelDistData7.setText("jMenuItem1");
+	        minPixelDistChList.add(minPixelDistData7);
+
+	        minPixelDistData8.setText("jMenuItem1");
+	        minPixelDistChList.add(minPixelDistData8);
+
+	        minPixelDistData9.setText("jMenuItem1");
+	        minPixelDistChList.add(minPixelDistData9);
+
+	        minPixelDistData10.setText("jMenuItem1");
+	        minPixelDistChList.add(minPixelDistData10);
+
+	        doClusterAnalysisChList.setText("jMenu1");
+
+	        doClusterAnalysisData1.setText("jMenuItem1");
+	        doClusterAnalysisChList.add(doClusterAnalysisData1);
+
+	        doClusterAnalysisData2.setText("jMenuItem1");
+	        doClusterAnalysisChList.add(doClusterAnalysisData2);
+
+	        doClusterAnalysisData3.setText("jMenuItem1");
+	        doClusterAnalysisChList.add(doClusterAnalysisData3);
+
+	        doClusterAnalysisData4.setText("jMenuItem1");
+	        doClusterAnalysisChList.add(doClusterAnalysisData4);
+
+	        doClusterAnalysisData5.setText("jMenuItem1");
+	        doClusterAnalysisChList.add(doClusterAnalysisData5);
+
+	        doClusterAnalysisData6.setText("jMenuItem1");
+	        doClusterAnalysisChList.add(doClusterAnalysisData6);
+
+	        doClusterAnalysisData7.setText("jMenuItem1");
+	        doClusterAnalysisChList.add(doClusterAnalysisData7);
+
+	        doClusterAnalysisData8.setText("jMenuItem1");
+	        doClusterAnalysisChList.add(doClusterAnalysisData8);
+
+	        doClusterAnalysisData9.setText("jMenuItem1");
+	        doClusterAnalysisChList.add(doClusterAnalysisData9);
+
+	        doClusterAnalysisData10.setText("jMenuItem1");
+	        doClusterAnalysisChList.add(doClusterAnalysisData10);
+
+	        epsilonChList.setText("jMenu1");
+
+	        epsilonData1.setText("jMenuItem1");
+	        epsilonChList.add(epsilonData1);
+
+	        epsilonData2.setText("jMenuItem1");
+	        epsilonChList.add(epsilonData2);
+
+	        epsilonData3.setText("jMenuItem1");
+	        epsilonChList.add(epsilonData3);
+
+	        epsilonData4.setText("jMenuItem1");
+	        epsilonChList.add(epsilonData4);
+
+	        epsilonData5.setText("jMenuItem1");
+	        epsilonChList.add(epsilonData5);
+
+	        epsilonData6.setText("jMenuItem1");
+	        epsilonChList.add(epsilonData6);
+
+	        epsilonData7.setText("jMenuItem1");
+	        epsilonChList.add(epsilonData7);
+
+	        epsilonData8.setText("jMenuItem1");
+	        epsilonChList.add(epsilonData8);
+
+	        epsilonData9.setText("jMenuItem1");
+	        epsilonChList.add(epsilonData9);
+
+	        epsilonData10.setText("jMenuItem1");
+	        epsilonChList.add(epsilonData10);
+
+	        minPtsClusterChList.setText("jMenu1");
+
+	        minPtsClusterData1.setText("jMenuItem1");
+	        minPtsClusterChList.add(minPtsClusterData1);
+
+	        minPtsClusterData2.setText("jMenuItem1");
+	        minPtsClusterChList.add(minPtsClusterData2);
+
+	        minPtsClusterData3.setText("jMenuItem1");
+	        minPtsClusterChList.add(minPtsClusterData3);
+
+	        minPtsClusterData4.setText("jMenuItem1");
+	        minPtsClusterChList.add(minPtsClusterData4);
+
+	        minPtsClusterData5.setText("jMenuItem1");
+	        minPtsClusterChList.add(minPtsClusterData5);
+
+	        minPtsClusterData6.setText("jMenuItem1");
+	        minPtsClusterChList.add(minPtsClusterData6);
+
+	        minPtsClusterData7.setText("jMenuItem1");
+	        minPtsClusterChList.add(minPtsClusterData7);
+
+	        minPtsClusterData8.setText("jMenuItem1");
+	        minPtsClusterChList.add(minPtsClusterData8);
+
+	        minPtsClusterData9.setText("jMenuItem1");
+	        minPtsClusterChList.add(minPtsClusterData9);
+
+	        minPtsClusterData10.setText("jMenuItem1");
+	        minPtsClusterChList.add(minPtsClusterData10);
+
+	        outputPixelSizeChList.setText("jMenu1");
+
+	        outputPixelSizeData1.setText("jMenuItem1");
+	        outputPixelSizeChList.add(outputPixelSizeData1);
+
+	        outputPixelSizeData2.setText("jMenuItem1");
+	        outputPixelSizeChList.add(outputPixelSizeData2);
+
+	        outputPixelSizeData3.setText("jMenuItem1");
+	        outputPixelSizeChList.add(outputPixelSizeData3);
+
+	        outputPixelSizeData4.setText("jMenuItem1");
+	        outputPixelSizeChList.add(outputPixelSizeData4);
+
+	        outputPixelSizeData5.setText("jMenuItem1");
+	        outputPixelSizeChList.add(outputPixelSizeData5);
+
+	        outputPixelSizeData6.setText("jMenuItem1");
+	        outputPixelSizeChList.add(outputPixelSizeData6);
+
+	        outputPixelSizeData7.setText("jMenuItem1");
+	        outputPixelSizeChList.add(outputPixelSizeData7);
+
+	        outputPixelSizeData8.setText("jMenuItem1");
+	        outputPixelSizeChList.add(outputPixelSizeData8);
+
+	        outputPixelSizeData9.setText("jMenuItem1");
+	        outputPixelSizeChList.add(outputPixelSizeData9);
+
+	        outputPixelSizeData10.setText("jMenuItem1");
+	        outputPixelSizeChList.add(outputPixelSizeData10);
+
+	        driftCorrBinLowCountChList.setText("jMenu1");
+
+	        driftCorrBinLowCountData1.setText("jMenuItem1");
+	        driftCorrBinLowCountChList.add(driftCorrBinLowCountData1);
+
+	        driftCorrBinLowCountData2.setText("jMenuItem1");
+	        driftCorrBinLowCountChList.add(driftCorrBinLowCountData2);
+
+	        driftCorrBinLowCountData3.setText("jMenuItem1");
+	        driftCorrBinLowCountChList.add(driftCorrBinLowCountData3);
+
+	        driftCorrBinLowCountData4.setText("jMenuItem1");
+	        driftCorrBinLowCountChList.add(driftCorrBinLowCountData4);
+
+	        driftCorrBinLowCountData5.setText("jMenuItem1");
+	        driftCorrBinLowCountChList.add(driftCorrBinLowCountData5);
+
+	        driftCorrBinLowCountData6.setText("jMenuItem1");
+	        driftCorrBinLowCountChList.add(driftCorrBinLowCountData6);
+
+	        driftCorrBinLowCountData7.setText("jMenuItem1");
+	        driftCorrBinLowCountChList.add(driftCorrBinLowCountData7);
+
+	        driftCorrBinLowCountData8.setText("jMenuItem1");
+	        driftCorrBinLowCountChList.add(driftCorrBinLowCountData8);
+
+	        driftCorrBinLowCountData9.setText("jMenuItem1");
+	        driftCorrBinLowCountChList.add(driftCorrBinLowCountData9);
+
+	        driftCorrBinLowCountData10.setText("jMenuItem1");
+	        driftCorrBinLowCountChList.add(driftCorrBinLowCountData10);
+
+	        driftCorrBinHighCountChList.setText("jMenu1");
+
+	        driftCorrBinHighCountData1.setText("jMenuItem1");
+	        driftCorrBinHighCountChList.add(driftCorrBinHighCountData1);
+
+	        driftCorrBinHighCountData2.setText("jMenuItem1");
+	        driftCorrBinHighCountChList.add(driftCorrBinHighCountData2);
+
+	        driftCorrBinHighCountData3.setText("jMenuItem1");
+	        driftCorrBinHighCountChList.add(driftCorrBinHighCountData3);
+
+	        driftCorrBinHighCountData4.setText("jMenuItem1");
+	        driftCorrBinHighCountChList.add(driftCorrBinHighCountData4);
+
+	        driftCorrBinHighCountData5.setText("jMenuItem1");
+	        driftCorrBinHighCountChList.add(driftCorrBinHighCountData5);
+
+	        driftCorrBinHighCountData6.setText("jMenuItem1");
+	        driftCorrBinHighCountChList.add(driftCorrBinHighCountData6);
+
+	        driftCorrBinHighCountData7.setText("jMenuItem1");
+	        driftCorrBinHighCountChList.add(driftCorrBinHighCountData7);
+
+	        driftCorrBinHighCountData8.setText("jMenuItem1");
+	        driftCorrBinHighCountChList.add(driftCorrBinHighCountData8);
+
+	        driftCorrBinHighCountData9.setText("jMenuItem1");
+	        driftCorrBinHighCountChList.add(driftCorrBinHighCountData9);
+
+	        driftCorrBinHighCountData10.setText("jMenuItem1");
+	        driftCorrBinHighCountChList.add(driftCorrBinHighCountData10);
+
+	        numberOfBinsDriftCorrChList.setText("jMenu1");
+
+	        numberOfBinsDriftCorrData1.setText("jMenuItem1");
+	        numberOfBinsDriftCorrChList.add(numberOfBinsDriftCorrData1);
+
+	        numberOfBinsDriftCorrData2.setText("jMenuItem1");
+	        numberOfBinsDriftCorrChList.add(numberOfBinsDriftCorrData2);
+
+	        numberOfBinsDriftCorrData3.setText("jMenuItem1");
+	        numberOfBinsDriftCorrChList.add(numberOfBinsDriftCorrData3);
+
+	        numberOfBinsDriftCorrData4.setText("jMenuItem1");
+	        numberOfBinsDriftCorrChList.add(numberOfBinsDriftCorrData4);
+
+	        numberOfBinsDriftCorrData5.setText("jMenuItem1");
+	        numberOfBinsDriftCorrChList.add(numberOfBinsDriftCorrData5);
+
+	        numberOfBinsDriftCorrData6.setText("jMenuItem1");
+	        numberOfBinsDriftCorrChList.add(numberOfBinsDriftCorrData6);
+
+	        numberOfBinsDriftCorrData7.setText("jMenuItem1");
+	        numberOfBinsDriftCorrChList.add(numberOfBinsDriftCorrData7);
+
+	        numberOfBinsDriftCorrData8.setText("jMenuItem1");
+	        numberOfBinsDriftCorrChList.add(numberOfBinsDriftCorrData8);
+
+	        numberOfBinsDriftCorrData9.setText("jMenuItem1");
+	        numberOfBinsDriftCorrChList.add(numberOfBinsDriftCorrData9);
+
+	        numberOfBinsDriftCorrData10.setText("jMenuItem1");
+	        numberOfBinsDriftCorrChList.add(numberOfBinsDriftCorrData10);
+
+	        chAlignBinLowCountChList.setText("jMenu1");
+
+	        chAlignBinLowCountData1.setText("jMenuItem1");
+	        chAlignBinLowCountChList.add(chAlignBinLowCountData1);
+
+	        chAlignBinLowCountData2.setText("jMenuItem1");
+	        chAlignBinLowCountChList.add(chAlignBinLowCountData2);
+
+	        chAlignBinLowCountData3.setText("jMenuItem1");
+	        chAlignBinLowCountChList.add(chAlignBinLowCountData3);
+
+	        chAlignBinLowCountData4.setText("jMenuItem1");
+	        chAlignBinLowCountChList.add(chAlignBinLowCountData4);
+
+	        chAlignBinLowCountData5.setText("jMenuItem1");
+	        chAlignBinLowCountChList.add(chAlignBinLowCountData5);
+
+	        chAlignBinLowCountData6.setText("jMenuItem1");
+	        chAlignBinLowCountChList.add(chAlignBinLowCountData6);
+
+	        chAlignBinLowCountData7.setText("jMenuItem1");
+	        chAlignBinLowCountChList.add(chAlignBinLowCountData7);
+
+	        chAlignBinLowCountData8.setText("jMenuItem1");
+	        chAlignBinLowCountChList.add(chAlignBinLowCountData8);
+
+	        chAlignBinLowCountData9.setText("jMenuItem1");
+	        chAlignBinLowCountChList.add(chAlignBinLowCountData9);
+
+	        chAlignBinLowCountData10.setText("jMenuItem1");
+	        chAlignBinLowCountChList.add(chAlignBinLowCountData10);
+
+	        chAlignBinHighCountChList.setText("jMenu1");
+
+	        chAlignBinHighCountData1.setText("jMenuItem1");
+	        chAlignBinHighCountChList.add(chAlignBinHighCountData1);
+
+	        chAlignBinHighCountData2.setText("jMenuItem1");
+	        chAlignBinHighCountChList.add(chAlignBinHighCountData2);
+
+	        chAlignBinHighCountData3.setText("jMenuItem1");
+	        chAlignBinHighCountChList.add(chAlignBinHighCountData3);
+
+	        chAlignBinHighCountData4.setText("jMenuItem1");
+	        chAlignBinHighCountChList.add(chAlignBinHighCountData4);
+
+	        chAlignBinHighCountData5.setText("jMenuItem1");
+	        chAlignBinHighCountChList.add(chAlignBinHighCountData5);
+
+	        chAlignBinHighCountData6.setText("jMenuItem1");
+	        chAlignBinHighCountChList.add(chAlignBinHighCountData6);
+
+	        chAlignBinHighCountData7.setText("jMenuItem1");
+	        chAlignBinHighCountChList.add(chAlignBinHighCountData7);
+
+	        chAlignBinHighCountData8.setText("jMenuItem1");
+	        chAlignBinHighCountChList.add(chAlignBinHighCountData8);
+
+	        chAlignBinHighCountData9.setText("jMenuItem1");
+	        chAlignBinHighCountChList.add(chAlignBinHighCountData9);
+
+	        chAlignBinHighCountData10.setText("jMenuItem1");
+	        chAlignBinHighCountChList.add(chAlignBinHighCountData10);
+
+	        doPhotonCountChList.setText("jMenu1");
+
+	        doPhotonCountData1.setText("jMenuItem1");
+	        doPhotonCountChList.add(doPhotonCountData1);
+
+	        doPhotonCountData2.setText("jMenuItem1");
+	        doPhotonCountChList.add(doPhotonCountData2);
+
+	        doPhotonCountData3.setText("jMenuItem1");
+	        doPhotonCountChList.add(doPhotonCountData3);
+
+	        doPhotonCountData4.setText("jMenuItem1");
+	        doPhotonCountChList.add(doPhotonCountData4);
+
+	        doPhotonCountData5.setText("jMenuItem1");
+	        doPhotonCountChList.add(doPhotonCountData5);
+
+	        doPhotonCountData6.setText("jMenuItem1");
+	        doPhotonCountChList.add(doPhotonCountData6);
+
+	        doPhotonCountData7.setText("jMenuItem1");
+	        doPhotonCountChList.add(doPhotonCountData7);
+
+	        doPhotonCountData8.setText("jMenuItem1");
+	        doPhotonCountChList.add(doPhotonCountData8);
+
+	        doPhotonCountData9.setText("jMenuItem1");
+	        doPhotonCountChList.add(doPhotonCountData9);
+
+	        doPhotonCountData10.setText("jMenuItem1");
+	        doPhotonCountChList.add(doPhotonCountData10);
+
+	        minPhotonCountChList.setText("jMenu1");
+
+	        minPhotonCountData1.setText("jMenuItem1");
+	        minPhotonCountChList.add(minPhotonCountData1);
+
+	        minPhotonCountData2.setText("jMenuItem1");
+	        minPhotonCountChList.add(minPhotonCountData2);
+
+	        minPhotonCountData3.setText("jMenuItem1");
+	        minPhotonCountChList.add(minPhotonCountData3);
+
+	        minPhotonCountData4.setText("jMenuItem1");
+	        minPhotonCountChList.add(minPhotonCountData4);
+
+	        minPhotonCountData5.setText("jMenuItem1");
+	        minPhotonCountChList.add(minPhotonCountData5);
+
+	        minPhotonCountData6.setText("jMenuItem1");
+	        minPhotonCountChList.add(minPhotonCountData6);
+
+	        minPhotonCountData7.setText("jMenuItem1");
+	        minPhotonCountChList.add(minPhotonCountData7);
+
+	        minPhotonCountData8.setText("jMenuItem1");
+	        minPhotonCountChList.add(minPhotonCountData8);
+
+	        minPhotonCountData9.setText("jMenuItem1");
+	        minPhotonCountChList.add(minPhotonCountData9);
+
+	        minPhotonCountData10.setText("jMenuItem1");
+	        minPhotonCountChList.add(minPhotonCountData10);
+
+	        maxPhotonCountChList.setText("jMenu1");
+
+	        maxPhotonCountData1.setText("jMenuItem1");
+	        maxPhotonCountChList.add(maxPhotonCountData1);
+
+	        maxPhotonCountData2.setText("jMenuItem1");
+	        maxPhotonCountChList.add(maxPhotonCountData2);
+
+	        maxPhotonCountData3.setText("jMenuItem1");
+	        maxPhotonCountChList.add(maxPhotonCountData3);
+
+	        maxPhotonCountData4.setText("jMenuItem1");
+	        maxPhotonCountChList.add(maxPhotonCountData4);
+
+	        maxPhotonCountData5.setText("jMenuItem1");
+	        maxPhotonCountChList.add(maxPhotonCountData5);
+
+	        maxPhotonCountData6.setText("jMenuItem1");
+	        maxPhotonCountChList.add(maxPhotonCountData6);
+
+	        maxPhotonCountData7.setText("jMenuItem1");
+	        maxPhotonCountChList.add(maxPhotonCountData7);
+
+	        maxPhotonCountData8.setText("jMenuItem1");
+	        maxPhotonCountChList.add(maxPhotonCountData8);
+
+	        maxPhotonCountData9.setText("jMenuItem1");
+	        maxPhotonCountChList.add(maxPhotonCountData9);
+
+	        maxPhotonCountData10.setText("jMenuItem1");
+	        maxPhotonCountChList.add(maxPhotonCountData10);
+
+	        doSigmaXYChList.setText("jMenu1");
+
+	        doSigmaXYData1.setText("jMenuItem1");
+	        doSigmaXYChList.add(doSigmaXYData1);
+
+	        doSigmaXYData2.setText("jMenuItem1");
+	        doSigmaXYChList.add(doSigmaXYData2);
+
+	        doSigmaXYData3.setText("jMenuItem1");
+	        doSigmaXYChList.add(doSigmaXYData3);
+
+	        doSigmaXYData4.setText("jMenuItem1");
+	        doSigmaXYChList.add(doSigmaXYData4);
+
+	        doSigmaXYData5.setText("jMenuItem1");
+	        doSigmaXYChList.add(doSigmaXYData5);
+
+	        doSigmaXYData6.setText("jMenuItem1");
+	        doSigmaXYChList.add(doSigmaXYData6);
+
+	        doSigmaXYData7.setText("jMenuItem1");
+	        doSigmaXYChList.add(doSigmaXYData7);
+
+	        doSigmaXYData8.setText("jMenuItem1");
+	        doSigmaXYChList.add(doSigmaXYData8);
+
+	        doSigmaXYData9.setText("jMenuItem1");
+	        doSigmaXYChList.add(doSigmaXYData9);
+
+	        doSigmaXYData10.setText("jMenuItem1");
+	        doSigmaXYChList.add(doSigmaXYData10);
+
+	        minSigmaXYChList.setText("jMenu1");
+
+	        minSigmaXYData1.setText("jMenuItem1");
+	        minSigmaXYChList.add(minSigmaXYData1);
+
+	        minSigmaXYData2.setText("jMenuItem1");
+	        minSigmaXYChList.add(minSigmaXYData2);
+
+	        minSigmaXYData3.setText("jMenuItem1");
+	        minSigmaXYChList.add(minSigmaXYData3);
+
+	        minSigmaXYData4.setText("jMenuItem1");
+	        minSigmaXYChList.add(minSigmaXYData4);
+
+	        minSigmaXYData5.setText("jMenuItem1");
+	        minSigmaXYChList.add(minSigmaXYData5);
+
+	        minSigmaXYData6.setText("jMenuItem1");
+	        minSigmaXYChList.add(minSigmaXYData6);
+
+	        minSigmaXYData7.setText("jMenuItem1");
+	        minSigmaXYChList.add(minSigmaXYData7);
+
+	        minSigmaXYData8.setText("jMenuItem1");
+	        minSigmaXYChList.add(minSigmaXYData8);
+
+	        minSigmaXYData9.setText("jMenuItem1");
+	        minSigmaXYChList.add(minSigmaXYData9);
+
+	        minSigmaXYData10.setText("jMenuItem1");
+	        minSigmaXYChList.add(minSigmaXYData10);
+
+	        maxSigmaXYChList.setText("jMenu1");
+
+	        maxSigmaXYData1.setText("jMenuItem1");
+	        maxSigmaXYChList.add(maxSigmaXYData1);
+
+	        maxSigmaXYData2.setText("jMenuItem1");
+	        maxSigmaXYChList.add(maxSigmaXYData2);
+
+	        maxSigmaXYData3.setText("jMenuItem1");
+	        maxSigmaXYChList.add(maxSigmaXYData3);
+
+	        maxSigmaXYData4.setText("jMenuItem1");
+	        maxSigmaXYChList.add(maxSigmaXYData4);
+
+	        maxSigmaXYData5.setText("jMenuItem1");
+	        maxSigmaXYChList.add(maxSigmaXYData5);
+
+	        maxSigmaXYData6.setText("jMenuItem1");
+	        maxSigmaXYChList.add(maxSigmaXYData6);
+
+	        maxSigmaXYData7.setText("jMenuItem1");
+	        maxSigmaXYChList.add(maxSigmaXYData7);
+
+	        maxSigmaXYData8.setText("jMenuItem1");
+	        maxSigmaXYChList.add(maxSigmaXYData8);
+
+	        maxSigmaXYData9.setText("jMenuItem1");
+	        maxSigmaXYChList.add(maxSigmaXYData9);
+
+	        maxSigmaXYData10.setText("jMenuItem1");
+	        maxSigmaXYChList.add(maxSigmaXYData10);
+
+	        doSigmaZChList.setText("jMenu1");
+
+	        doSigmaZData1.setText("jMenuItem1");
+	        doSigmaZChList.add(doSigmaZData1);
+
+	        doSigmaZData2.setText("jMenuItem1");
+	        doSigmaZChList.add(doSigmaZData2);
+
+	        doSigmaZData3.setText("jMenuItem1");
+	        doSigmaZChList.add(doSigmaZData3);
+
+	        doSigmaZData4.setText("jMenuItem1");
+	        doSigmaZChList.add(doSigmaZData4);
+
+	        doSigmaZData5.setText("jMenuItem1");
+	        doSigmaZChList.add(doSigmaZData5);
+
+	        doSigmaZData6.setText("jMenuItem1");
+	        doSigmaZChList.add(doSigmaZData6);
+
+	        doSigmaZData7.setText("jMenuItem1");
+	        doSigmaZChList.add(doSigmaZData7);
+
+	        doSigmaZData8.setText("jMenuItem1");
+	        doSigmaZChList.add(doSigmaZData8);
+
+	        doSigmaZData9.setText("jMenuItem1");
+	        doSigmaZChList.add(doSigmaZData9);
+
+	        doSigmaZData10.setText("jMenuItem1");
+	        doSigmaZChList.add(doSigmaZData10);
+
+	        minSigmaZChList.setText("jMenu1");
+
+	        minSigmaZData1.setText("jMenuItem1");
+	        minSigmaZChList.add(minSigmaZData1);
+
+	        minSigmaZData2.setText("jMenuItem1");
+	        minSigmaZChList.add(minSigmaZData2);
+
+	        minSigmaZData3.setText("jMenuItem1");
+	        minSigmaZChList.add(minSigmaZData3);
+
+	        minSigmaZData4.setText("jMenuItem1");
+	        minSigmaZChList.add(minSigmaZData4);
+
+	        minSigmaZData5.setText("jMenuItem1");
+	        minSigmaZChList.add(minSigmaZData5);
+
+	        minSigmaZData6.setText("jMenuItem1");
+	        minSigmaZChList.add(minSigmaZData6);
+
+	        minSigmaZData7.setText("jMenuItem1");
+	        minSigmaZChList.add(minSigmaZData7);
+
+	        minSigmaZData8.setText("jMenuItem1");
+	        minSigmaZChList.add(minSigmaZData8);
+
+	        minSigmaZData9.setText("jMenuItem1");
+	        minSigmaZChList.add(minSigmaZData9);
+
+	        minSigmaZData10.setText("jMenuItem1");
+	        minSigmaZChList.add(minSigmaZData10);
+
+	        maxSigmaZChList.setText("jMenu1");
+
+	        maxSigmaZData1.setText("jMenuItem1");
+	        maxSigmaZChList.add(maxSigmaZData1);
+
+	        maxSigmaZData2.setText("jMenuItem1");
+	        maxSigmaZChList.add(maxSigmaZData2);
+
+	        maxSigmaZData3.setText("jMenuItem1");
+	        maxSigmaZChList.add(maxSigmaZData3);
+
+	        maxSigmaZData4.setText("jMenuItem1");
+	        maxSigmaZChList.add(maxSigmaZData4);
+
+	        maxSigmaZData5.setText("jMenuItem1");
+	        maxSigmaZChList.add(maxSigmaZData5);
+
+	        maxSigmaZData6.setText("jMenuItem1");
+	        maxSigmaZChList.add(maxSigmaZData6);
+
+	        maxSigmaZData7.setText("jMenuItem1");
+	        maxSigmaZChList.add(maxSigmaZData7);
+
+	        maxSigmaZData8.setText("jMenuItem1");
+	        maxSigmaZChList.add(maxSigmaZData8);
+
+	        maxSigmaZData9.setText("jMenuItem1");
+	        maxSigmaZChList.add(maxSigmaZData9);
+
+	        maxSigmaZData10.setText("jMenuItem1");
+	        maxSigmaZChList.add(maxSigmaZData10);
+
+	        doRsquareChList.setText("jMenu1");
+
+	        doRsquareData1.setText("jMenuItem1");
+	        doRsquareChList.add(doRsquareData1);
+
+	        doRsquareData2.setText("jMenuItem1");
+	        doRsquareChList.add(doRsquareData2);
+
+	        doRsquareData3.setText("jMenuItem1");
+	        doRsquareChList.add(doRsquareData3);
+
+	        doRsquareData4.setText("jMenuItem1");
+	        doRsquareChList.add(doRsquareData4);
+
+	        doRsquareData5.setText("jMenuItem1");
+	        doRsquareChList.add(doRsquareData5);
+
+	        doRsquareData6.setText("jMenuItem1");
+	        doRsquareChList.add(doRsquareData6);
+
+	        doRsquareData7.setText("jMenuItem1");
+	        doRsquareChList.add(doRsquareData7);
+
+	        doRsquareData8.setText("jMenuItem1");
+	        doRsquareChList.add(doRsquareData8);
+
+	        doRsquareData9.setText("jMenuItem1");
+	        doRsquareChList.add(doRsquareData9);
+
+	        doRsquareData10.setText("jMenuItem1");
+	        doRsquareChList.add(doRsquareData10);
+
+	        minRsquareChList.setText("jMenu1");
+
+	        minRsquareData1.setText("jMenuItem1");
+	        minRsquareChList.add(minRsquareData1);
+
+	        minRsquareData2.setText("jMenuItem1");
+	        minRsquareChList.add(minRsquareData2);
+
+	        minRsquareData3.setText("jMenuItem1");
+	        minRsquareChList.add(minRsquareData3);
+
+	        minRsquareData4.setText("jMenuItem1");
+	        minRsquareChList.add(minRsquareData4);
+
+	        minRsquareData5.setText("jMenuItem1");
+	        minRsquareChList.add(minRsquareData5);
+
+	        minRsquareData6.setText("jMenuItem1");
+	        minRsquareChList.add(minRsquareData6);
+
+	        minRsquareData7.setText("jMenuItem1");
+	        minRsquareChList.add(minRsquareData7);
+
+	        minRsquareData8.setText("jMenuItem1");
+	        minRsquareChList.add(minRsquareData8);
+
+	        minRsquareData9.setText("jMenuItem1");
+	        minRsquareChList.add(minRsquareData9);
+
+	        minRsquareData10.setText("jMenuItem1");
+	        minRsquareChList.add(minRsquareData10);
+
+	        maxRsquareChList.setText("jMenu1");
+
+	        maxRsquareData1.setText("jMenuItem1");
+	        maxRsquareChList.add(maxRsquareData1);
+
+	        maxRsquareData2.setText("jMenuItem1");
+	        maxRsquareChList.add(maxRsquareData2);
+
+	        maxRsquareData3.setText("jMenuItem1");
+	        maxRsquareChList.add(maxRsquareData3);
+
+	        maxRsquareData4.setText("jMenuItem1");
+	        maxRsquareChList.add(maxRsquareData4);
+
+	        maxRsquareData5.setText("jMenuItem1");
+	        maxRsquareChList.add(maxRsquareData5);
+
+	        maxRsquareData6.setText("jMenuItem1");
+	        maxRsquareChList.add(maxRsquareData6);
+
+	        maxRsquareData7.setText("jMenuItem1");
+	        maxRsquareChList.add(maxRsquareData7);
+
+	        maxRsquareData8.setText("jMenuItem1");
+	        maxRsquareChList.add(maxRsquareData8);
+
+	        maxRsquareData9.setText("jMenuItem1");
+	        maxRsquareChList.add(maxRsquareData9);
+
+	        maxRsquareData10.setText("jMenuItem1");
+	        maxRsquareChList.add(maxRsquareData10);
+
+	        doPrecisionXYChList.setText("jMenu1");
+
+	        doPrecisionXYData1.setText("jMenuItem1");
+	        doPrecisionXYChList.add(doPrecisionXYData1);
+
+	        doPrecisionXYData2.setText("jMenuItem1");
+	        doPrecisionXYChList.add(doPrecisionXYData2);
+
+	        doPrecisionXYData3.setText("jMenuItem1");
+	        doPrecisionXYChList.add(doPrecisionXYData3);
+
+	        doPrecisionXYData4.setText("jMenuItem1");
+	        doPrecisionXYChList.add(doPrecisionXYData4);
+
+	        doPrecisionXYData5.setText("jMenuItem1");
+	        doPrecisionXYChList.add(doPrecisionXYData5);
+
+	        doPrecisionXYData6.setText("jMenuItem1");
+	        doPrecisionXYChList.add(doPrecisionXYData6);
+
+	        doPrecisionXYData7.setText("jMenuItem1");
+	        doPrecisionXYChList.add(doPrecisionXYData7);
+
+	        doPrecisionXYData8.setText("jMenuItem1");
+	        doPrecisionXYChList.add(doPrecisionXYData8);
+
+	        doPrecisionXYData9.setText("jMenuItem1");
+	        doPrecisionXYChList.add(doPrecisionXYData9);
+
+	        doPrecisionXYData10.setText("jMenuItem1");
+	        doPrecisionXYChList.add(doPrecisionXYData10);
+
+	        minPrecisionXYChList.setText("jMenu1");
+
+	        minPrecisionXYData1.setText("jMenuItem1");
+	        minPrecisionXYChList.add(minPrecisionXYData1);
+
+	        minPrecisionXYData2.setText("jMenuItem1");
+	        minPrecisionXYChList.add(minPrecisionXYData2);
+
+	        minPrecisionXYData3.setText("jMenuItem1");
+	        minPrecisionXYChList.add(minPrecisionXYData3);
+
+	        minPrecisionXYData4.setText("jMenuItem1");
+	        minPrecisionXYChList.add(minPrecisionXYData4);
+
+	        minPrecisionXYData5.setText("jMenuItem1");
+	        minPrecisionXYChList.add(minPrecisionXYData5);
+
+	        minPrecisionXYData6.setText("jMenuItem1");
+	        minPrecisionXYChList.add(minPrecisionXYData6);
+
+	        minPrecisionXYData7.setText("jMenuItem1");
+	        minPrecisionXYChList.add(minPrecisionXYData7);
+
+	        minPrecisionXYData8.setText("jMenuItem1");
+	        minPrecisionXYChList.add(minPrecisionXYData8);
+
+	        minPrecisionXYData9.setText("jMenuItem1");
+	        minPrecisionXYChList.add(minPrecisionXYData9);
+
+	        minPrecisionXYData10.setText("jMenuItem1");
+	        minPrecisionXYChList.add(minPrecisionXYData10);
+
+	        maxPrecisionXYChList.setText("jMenu1");
+
+	        maxPrecisionXYData1.setText("jMenuItem1");
+	        maxPrecisionXYChList.add(maxPrecisionXYData1);
+
+	        maxPrecisionXYData2.setText("jMenuItem1");
+	        maxPrecisionXYChList.add(maxPrecisionXYData2);
+
+	        maxPrecisionXYData3.setText("jMenuItem1");
+	        maxPrecisionXYChList.add(maxPrecisionXYData3);
+
+	        maxPrecisionXYData4.setText("jMenuItem1");
+	        maxPrecisionXYChList.add(maxPrecisionXYData4);
+
+	        maxPrecisionXYData5.setText("jMenuItem1");
+	        maxPrecisionXYChList.add(maxPrecisionXYData5);
+
+	        maxPrecisionXYData6.setText("jMenuItem1");
+	        maxPrecisionXYChList.add(maxPrecisionXYData6);
+
+	        maxPrecisionXYData7.setText("jMenuItem1");
+	        maxPrecisionXYChList.add(maxPrecisionXYData7);
+
+	        maxPrecisionXYData8.setText("jMenuItem1");
+	        maxPrecisionXYChList.add(maxPrecisionXYData8);
+
+	        maxPrecisionXYData9.setText("jMenuItem1");
+	        maxPrecisionXYChList.add(maxPrecisionXYData9);
+
+	        maxPrecisionXYData10.setText("jMenuItem1");
+	        maxPrecisionXYChList.add(maxPrecisionXYData10);
+
+	        doPrecisionZChList.setText("jMenu1");
+
+	        doPrecisionZData1.setText("jMenuItem1");
+	        doPrecisionZChList.add(doPrecisionZData1);
+
+	        doPrecisionZData2.setText("jMenuItem1");
+	        doPrecisionZChList.add(doPrecisionZData2);
+
+	        doPrecisionZData3.setText("jMenuItem1");
+	        doPrecisionZChList.add(doPrecisionZData3);
+
+	        doPrecisionZData4.setText("jMenuItem1");
+	        doPrecisionZChList.add(doPrecisionZData4);
+
+	        doPrecisionZData5.setText("jMenuItem1");
+	        doPrecisionZChList.add(doPrecisionZData5);
+
+	        doPrecisionZData6.setText("jMenuItem1");
+	        doPrecisionZChList.add(doPrecisionZData6);
+
+	        doPrecisionZData7.setText("jMenuItem1");
+	        doPrecisionZChList.add(doPrecisionZData7);
+
+	        doPrecisionZData8.setText("jMenuItem1");
+	        doPrecisionZChList.add(doPrecisionZData8);
+
+	        doPrecisionZData9.setText("jMenuItem1");
+	        doPrecisionZChList.add(doPrecisionZData9);
+
+	        doPrecisionZData10.setText("jMenuItem1");
+	        doPrecisionZChList.add(doPrecisionZData10);
+
+	        minPrecisionZChList.setText("jMenu1");
+
+	        minPrecisionZData1.setText("jMenuItem1");
+	        minPrecisionZChList.add(minPrecisionZData1);
+
+	        minPrecisionZData2.setText("jMenuItem1");
+	        minPrecisionZChList.add(minPrecisionZData2);
+
+	        minPrecisionZData3.setText("jMenuItem1");
+	        minPrecisionZChList.add(minPrecisionZData3);
+
+	        minPrecisionZData4.setText("jMenuItem1");
+	        minPrecisionZChList.add(minPrecisionZData4);
+
+	        minPrecisionZData5.setText("jMenuItem1");
+	        minPrecisionZChList.add(minPrecisionZData5);
+
+	        minPrecisionZData6.setText("jMenuItem1");
+	        minPrecisionZChList.add(minPrecisionZData6);
+
+	        minPrecisionZData7.setText("jMenuItem1");
+	        minPrecisionZChList.add(minPrecisionZData7);
+
+	        minPrecisionZData8.setText("jMenuItem1");
+	        minPrecisionZChList.add(minPrecisionZData8);
+
+	        minPrecisionZData9.setText("jMenuItem1");
+	        minPrecisionZChList.add(minPrecisionZData9);
+
+	        minPrecisionZData10.setText("jMenuItem1");
+	        minPrecisionZChList.add(minPrecisionZData10);
+
+	        maxPrecisionZChList.setText("jMenu1");
+
+	        maxPrecisionZData1.setText("jMenuItem1");
+	        maxPrecisionZChList.add(maxPrecisionZData1);
+
+	        maxPrecisionZData2.setText("jMenuItem1");
+	        maxPrecisionZChList.add(maxPrecisionZData2);
+
+	        maxPrecisionZData3.setText("jMenuItem1");
+	        maxPrecisionZChList.add(maxPrecisionZData3);
+
+	        maxPrecisionZData4.setText("jMenuItem1");
+	        maxPrecisionZChList.add(maxPrecisionZData4);
+
+	        maxPrecisionZData5.setText("jMenuItem1");
+	        maxPrecisionZChList.add(maxPrecisionZData5);
+
+	        maxPrecisionZData6.setText("jMenuItem1");
+	        maxPrecisionZChList.add(maxPrecisionZData6);
+
+	        maxPrecisionZData7.setText("jMenuItem1");
+	        maxPrecisionZChList.add(maxPrecisionZData7);
+
+	        maxPrecisionZData8.setText("jMenuItem1");
+	        maxPrecisionZChList.add(maxPrecisionZData8);
+
+	        maxPrecisionZData9.setText("jMenuItem1");
+	        maxPrecisionZChList.add(maxPrecisionZData9);
+
+	        maxPrecisionZData10.setText("jMenuItem1");
+	        maxPrecisionZChList.add(maxPrecisionZData10);
+
+	        driftCorrShiftXYChList.setText("jMenu1");
+
+	        driftCorrShiftXYData1.setText("jMenuItem1");
+	        driftCorrShiftXYChList.add(driftCorrShiftXYData1);
+
+	        driftCorrShiftXYData2.setText("jMenuItem1");
+	        driftCorrShiftXYChList.add(driftCorrShiftXYData2);
+
+	        driftCorrShiftXYData3.setText("jMenuItem1");
+	        driftCorrShiftXYChList.add(driftCorrShiftXYData3);
+
+	        driftCorrShiftXYData4.setText("jMenuItem1");
+	        driftCorrShiftXYChList.add(driftCorrShiftXYData4);
+
+	        driftCorrShiftXYData5.setText("jMenuItem1");
+	        driftCorrShiftXYChList.add(driftCorrShiftXYData5);
+
+	        driftCorrShiftXYData6.setText("jMenuItem1");
+	        driftCorrShiftXYChList.add(driftCorrShiftXYData6);
+
+	        driftCorrShiftXYData7.setText("jMenuItem1");
+	        driftCorrShiftXYChList.add(driftCorrShiftXYData7);
+
+	        driftCorrShiftXYData8.setText("jMenuItem1");
+	        driftCorrShiftXYChList.add(driftCorrShiftXYData8);
+
+	        driftCorrShiftXYData9.setText("jMenuItem1");
+	        driftCorrShiftXYChList.add(driftCorrShiftXYData9);
+
+	        driftCorrShiftXYData10.setText("jMenuItem1");
+	        driftCorrShiftXYChList.add(driftCorrShiftXYData10);
+
+	        driftCorrShiftZChList.setText("jMenu1");
+
+	        driftCorrShiftZData1.setText("jMenuItem1");
+	        driftCorrShiftZChList.add(driftCorrShiftZData1);
+
+	        driftCorrShiftZData2.setText("jMenuItem1");
+	        driftCorrShiftZChList.add(driftCorrShiftZData2);
+
+	        driftCorrShiftZData3.setText("jMenuItem1");
+	        driftCorrShiftZChList.add(driftCorrShiftZData3);
+
+	        driftCorrShiftZData4.setText("jMenuItem1");
+	        driftCorrShiftZChList.add(driftCorrShiftZData4);
+
+	        driftCorrShiftZData5.setText("jMenuItem1");
+	        driftCorrShiftZChList.add(driftCorrShiftZData5);
+
+	        driftCorrShiftZData6.setText("jMenuItem1");
+	        driftCorrShiftZChList.add(driftCorrShiftZData6);
+
+	        driftCorrShiftZData7.setText("jMenuItem1");
+	        driftCorrShiftZChList.add(driftCorrShiftZData7);
+
+	        driftCorrShiftZData8.setText("jMenuItem1");
+	        driftCorrShiftZChList.add(driftCorrShiftZData8);
+
+	        driftCorrShiftZData9.setText("jMenuItem1");
+	        driftCorrShiftZChList.add(driftCorrShiftZData9);
+
+	        driftCorrShiftZData10.setText("jMenuItem1");
+	        driftCorrShiftZChList.add(driftCorrShiftZData10);
+
+	        chAlignShiftXYChList.setText("jMenu1");
+
+	        chAlignShiftXYData1.setText("jMenuItem1");
+	        chAlignShiftXYChList.add(chAlignShiftXYData1);
+
+	        chAlignShiftXYData2.setText("jMenuItem1");
+	        chAlignShiftXYChList.add(chAlignShiftXYData2);
+
+	        chAlignShiftXYData3.setText("jMenuItem1");
+	        chAlignShiftXYChList.add(chAlignShiftXYData3);
+
+	        chAlignShiftXYData4.setText("jMenuItem1");
+	        chAlignShiftXYChList.add(chAlignShiftXYData4);
+
+	        chAlignShiftXYData5.setText("jMenuItem1");
+	        chAlignShiftXYChList.add(chAlignShiftXYData5);
+
+	        chAlignShiftXYData6.setText("jMenuItem1");
+	        chAlignShiftXYChList.add(chAlignShiftXYData6);
+
+	        chAlignShiftXYData7.setText("jMenuItem1");
+	        chAlignShiftXYChList.add(chAlignShiftXYData7);
+
+	        chAlignShiftXYData8.setText("jMenuItem1");
+	        chAlignShiftXYChList.add(chAlignShiftXYData8);
+
+	        chAlignShiftXYData9.setText("jMenuItem1");
+	        chAlignShiftXYChList.add(chAlignShiftXYData9);
+
+	        chAlignShiftXYData10.setText("jMenuItem1");
+	        chAlignShiftXYChList.add(chAlignShiftXYData10);
+
+	        chAlignShiftZChList.setText("jMenu1");
+
+	        chAlignShiftZData1.setText("jMenuItem2");
+	        chAlignShiftZChList.add(chAlignShiftZData1);
+
+	        chAlignShiftZData2.setText("jMenuItem2");
+	        chAlignShiftZChList.add(chAlignShiftZData2);
+
+	        chAlignShiftZData3.setText("jMenuItem2");
+	        chAlignShiftZChList.add(chAlignShiftZData3);
+
+	        chAlignShiftZData4.setText("jMenuItem2");
+	        chAlignShiftZChList.add(chAlignShiftZData4);
+
+	        chAlignShiftZData5.setText("jMenuItem2");
+	        chAlignShiftZChList.add(chAlignShiftZData5);
+
+	        chAlignShiftZData6.setText("jMenuItem2");
+	        chAlignShiftZChList.add(chAlignShiftZData6);
+
+	        chAlignShiftZData7.setText("jMenuItem2");
+	        chAlignShiftZChList.add(chAlignShiftZData7);
+
+	        chAlignShiftZData8.setText("jMenuItem2");
+	        chAlignShiftZChList.add(chAlignShiftZData8);
+
+	        chAlignShiftZData9.setText("jMenuItem2");
+	        chAlignShiftZChList.add(chAlignShiftZData9);
+
+	        chAlignShiftZData10.setText("jMenuItem2");
+	        chAlignShiftZChList.add(chAlignShiftZData10);
+
+	        doFrameChList.setText("jMenu1");
+
+	        doFrameData1.setText("jMenuItem1");
+	        doFrameChList.add(doFrameData1);
+
+	        doFrameData2.setText("jMenuItem1");
+	        doFrameChList.add(doFrameData2);
+
+	        doFrameData3.setText("jMenuItem1");
+	        doFrameChList.add(doFrameData3);
+
+	        doFrameData4.setText("jMenuItem1");
+	        doFrameChList.add(doFrameData4);
+
+	        doFrameData5.setText("jMenuItem1");
+	        doFrameChList.add(doFrameData5);
+
+	        doFrameData6.setText("jMenuItem1");
+	        doFrameChList.add(doFrameData6);
+
+	        doFrameData7.setText("jMenuItem1");
+	        doFrameChList.add(doFrameData7);
+
+	        doFrameData8.setText("jMenuItem1");
+	        doFrameChList.add(doFrameData8);
+
+	        doFrameData9.setText("jMenuItem1");
+	        doFrameChList.add(doFrameData9);
+
+	        doFrameData10.setText("jMenuItem1");
+	        doFrameChList.add(doFrameData10);
+
+	        minFrameChList.setText("jMenu1");
+
+	        minFrameData1.setText("jMenuItem1");
+	        minFrameChList.add(minFrameData1);
+
+	        minFrameData2.setText("jMenuItem1");
+	        minFrameChList.add(minFrameData2);
+
+	        minFrameData3.setText("jMenuItem1");
+	        minFrameChList.add(minFrameData3);
+
+	        minFrameData4.setText("jMenuItem1");
+	        minFrameChList.add(minFrameData4);
+
+	        minFrameData5.setText("jMenuItem1");
+	        minFrameChList.add(minFrameData5);
+
+	        minFrameData6.setText("jMenuItem1");
+	        minFrameChList.add(minFrameData6);
+
+	        minFrameData7.setText("jMenuItem1");
+	        minFrameChList.add(minFrameData7);
+
+	        minFrameData8.setText("jMenuItem1");
+	        minFrameChList.add(minFrameData8);
+
+	        minFrameData9.setText("jMenuItem1");
+	        minFrameChList.add(minFrameData9);
+
+	        minFrameData10.setText("jMenuItem1");
+	        minFrameChList.add(minFrameData10);
+
+	        maxFrameChList.setText("jMenu1");
+
+	        maxFrameData1.setText("jMenuItem1");
+	        maxFrameChList.add(maxFrameData1);
+
+	        maxFrameData2.setText("jMenuItem1");
+	        maxFrameChList.add(maxFrameData2);
+
+	        maxFrameData3.setText("jMenuItem1");
+	        maxFrameChList.add(maxFrameData3);
+
+	        maxFrameData4.setText("jMenuItem1");
+	        maxFrameChList.add(maxFrameData4);
+
+	        maxFrameData5.setText("jMenuItem1");
+	        maxFrameChList.add(maxFrameData5);
+
+	        maxFrameData6.setText("jMenuItem1");
+	        maxFrameChList.add(maxFrameData6);
+
+	        maxFrameData7.setText("jMenuItem1");
+	        maxFrameChList.add(maxFrameData7);
+
+	        maxFrameData8.setText("jMenuItem1");
+	        maxFrameChList.add(maxFrameData8);
+
+	        maxFrameData9.setText("jMenuItem1");
+	        maxFrameChList.add(maxFrameData9);
+
+	        maxFrameData10.setText("jMenuItem1");
+	        maxFrameChList.add(maxFrameData10);
+
+	        doRenderImageChList.setText("jMenu1");
+
+	        doRenderImageData1.setText("jMenuItem1");
+	        doRenderImageChList.add(doRenderImageData1);
+
+	        doRenderImageData2.setText("jMenuItem1");
+	        doRenderImageChList.add(doRenderImageData2);
+
+	        doRenderImageData3.setText("jMenuItem1");
+	        doRenderImageChList.add(doRenderImageData3);
+
+	        doRenderImageData4.setText("jMenuItem1");
+	        doRenderImageChList.add(doRenderImageData4);
+
+	        doRenderImageData5.setText("jMenuItem1");
+	        doRenderImageChList.add(doRenderImageData5);
+
+	        doRenderImageData6.setText("jMenuItem1");
+	        doRenderImageChList.add(doRenderImageData6);
+
+	        doRenderImageData7.setText("jMenuItem1");
+	        doRenderImageChList.add(doRenderImageData7);
+
+	        doRenderImageData8.setText("jMenuItem1");
+	        doRenderImageChList.add(doRenderImageData8);
+
+	        doRenderImageData9.setText("jMenuItem1");
+	        doRenderImageChList.add(doRenderImageData9);
+
+	        doRenderImageData10.setText("jMenuItem1");
+	        doRenderImageChList.add(doRenderImageData10);
+
+	       // setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+	        setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+
+	        Header.setFont(new java.awt.Font("Times New Roman", 3, 24)); // NOI18N
+	        Header.setText("SMlocalizer");
+
+	        BasicInp.setBackground(new java.awt.Color(204, 204, 204));
+	        BasicInp.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, null, null, new java.awt.Color(153, 153, 153), new java.awt.Color(204, 204, 204)));
+	        BasicInp.setForeground(new java.awt.Color(153, 153, 153));
+	        BasicInp.setToolTipText("Minimum required settings for running SMLocalizer");
+
+	        basicInput.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
+	        basicInput.setText("Basic input");
+	        basicInput.setToolTipText("Minimum required settings for running SMLocalizer");
+
+	        inputPixelSizeLabel.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+	        inputPixelSizeLabel.setText("Image pixel size [nm]");
+	        inputPixelSizeLabel.setToolTipText("Input pixel size of images");
+
+	        inputPixelSize.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        inputPixelSize.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+	        inputPixelSize.setText("100");
+	        inputPixelSize.setToolTipText("Input pixel size of images");
+
+	        totalGainLabel.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+	        totalGainLabel.setText("Total gain");
+	        totalGainLabel.setToolTipText("Camera specific settings. Total gain from photon to image intensity.");
+
+	        totalGain.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        totalGain.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+	        totalGain.setText("100");
+	        totalGain.setToolTipText("Camera specific settings. Total gain from photon to image intensity.");
+	        totalGain.addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                totalGainActionPerformed(evt);
+	            }
+	        });
+
+	        ROIsizeLabel.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+	        ROIsizeLabel.setText("ROI size");
+	        ROIsizeLabel.setToolTipText("Size of ROI for gaussian fitting.");
+
+	        ROIsize.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        ROIsize.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "3x3", "5x5", "7x7" }));
+	        ROIsize.setSelectedIndex(1);
+	        ROIsize.setToolTipText("Size of ROI for gaussian fitting.");
+
+	        minimalSignalLabel.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+	        minimalSignalLabel.setText("Minimal signal");
+	        minimalSignalLabel.setToolTipText("Miinimal intensity from center pixel required for fitting.");
+
+	        PixelsOverBackgroundLabel.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+	        PixelsOverBackgroundLabel.setText("Pixels > background");
+	        PixelsOverBackgroundLabel.setToolTipText("Number of pixels in the ROI that needs to be above background.");
+
+	        minimalSignal.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        minimalSignal.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+	        minimalSignal.setText("2000");
+	        minimalSignal.setToolTipText("Miinimal intensity from center pixel required for fitting.");
+	        minimalSignal.addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                minimalSignalActionPerformed(evt);
+	            }
+	        });
+
+	        minPixelOverBackground.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        minPixelOverBackground.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+	        minPixelOverBackground.setText("12");
+	        minPixelOverBackground.setToolTipText("Number of pixels in the ROI that needs to be above background.");
+	        minPixelOverBackground.addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                minPixelOverBackgroundActionPerformed(evt);
+	            }
+	        });
+
+	        windowWidthLabel.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+	        windowWidthLabel.setText("Filter width [frames]");
+	        windowWidthLabel.setToolTipText("Filter window width in frames for time median background filtering.");
+
+	        windowWidth.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        windowWidth.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+	        windowWidth.setText("101");
+	        windowWidth.setToolTipText("Filter window width in frames for time median background filtering.");
+	        windowWidth.addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                windowWidthActionPerformed(evt);
+	            }
+	        });
+
+	        Process.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
+	        Process.setText("Process");
+	        Process.setToolTipText("Process current image stack including checked algorithms (Render Image, Drift Correct, Align Channels or Cluster analysis). Uses parameter range.");
+	        Process.addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                ProcessActionPerformed(evt);
+	            }
+	        });
+
+	        minPixelDistLabel.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+	        minPixelDistLabel.setText("Min distance [pixel]");
+	        minPixelDistLabel.setToolTipText("Minimum  distance (center pixel to center pixel) seperating potential particles for gaussian fitting.");
+
+	        minPixelDist.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        minPixelDist.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+	        minPixelDist.setText("7");
+	        minPixelDist.setToolTipText("Minimum  distance (center pixel to center pixel) seperating potential particles for gaussian fitting.");
+
+	        resetBasicInput.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
+	        resetBasicInput.setText("Reset");
+	        resetBasicInput.setToolTipText("Reset Basic input parameters to default.");
+	        resetBasicInput.addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                resetBasicInputActionPerformed(evt);
+	            }
+	        });
+
+	        javax.swing.GroupLayout BasicInpLayout = new javax.swing.GroupLayout(BasicInp);
+	        BasicInp.setLayout(BasicInpLayout);
+	        BasicInpLayout.setHorizontalGroup(
+	            BasicInpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, BasicInpLayout.createSequentialGroup()
+	                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+	                .addComponent(basicInput)
+	                .addGap(50, 50, 50))
+	            .addGroup(BasicInpLayout.createSequentialGroup()
+	                .addContainerGap()
+	                .addGroup(BasicInpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	                    .addComponent(inputPixelSizeLabel)
+	                    .addComponent(totalGainLabel)
+	                    .addComponent(ROIsizeLabel)
+	                    .addComponent(PixelsOverBackgroundLabel)
+	                    .addComponent(minimalSignalLabel)
+	                    .addComponent(windowWidthLabel)
+	                    .addComponent(minPixelDistLabel))
+	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
+	                .addGroup(BasicInpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+	                    .addComponent(minPixelOverBackground)
+	                    .addComponent(totalGain)
+	                    .addComponent(inputPixelSize)
+	                    .addComponent(minimalSignal, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                    .addComponent(windowWidth, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)
+	                    .addComponent(minPixelDist))
+	                .addContainerGap())
+	            .addGroup(BasicInpLayout.createSequentialGroup()
+	                .addGap(10, 10, 10)
+	                .addComponent(Process)
+	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+	                .addComponent(resetBasicInput, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+	            .addGroup(BasicInpLayout.createSequentialGroup()
+	                .addGap(139, 139, 139)
+	                .addComponent(ROIsize, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+	                .addContainerGap())
+	        );
+
+	        BasicInpLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {inputPixelSize, minPixelDist, minPixelOverBackground, minimalSignal, totalGain, windowWidth});
+
+	        BasicInpLayout.setVerticalGroup(
+	            BasicInpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	            .addGroup(BasicInpLayout.createSequentialGroup()
+	                .addContainerGap()
+	                .addComponent(basicInput)
+	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+	                .addGroup(BasicInpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+	                    .addComponent(inputPixelSizeLabel)
+	                    .addComponent(inputPixelSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+	                .addGroup(BasicInpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+	                    .addComponent(totalGainLabel)
+	                    .addComponent(totalGain, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+	                .addGroup(BasicInpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+	                    .addComponent(ROIsizeLabel)
+	                    .addComponent(ROIsize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+	                .addGroup(BasicInpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+	                    .addComponent(minPixelOverBackground, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                    .addComponent(PixelsOverBackgroundLabel))
+	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+	                .addGroup(BasicInpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+	                    .addComponent(minimalSignal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                    .addComponent(minimalSignalLabel))
+	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+	                .addGroup(BasicInpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+	                    .addComponent(windowWidth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                    .addComponent(windowWidthLabel))
+	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+	                .addGroup(BasicInpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+	                    .addComponent(minPixelDistLabel)
+	                    .addComponent(minPixelDist, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, 12, Short.MAX_VALUE)
+	                .addGroup(BasicInpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+	                    .addComponent(Process)
+	                    .addComponent(resetBasicInput))
+	                .addContainerGap())
+	        );
+
+	        ParameterRange.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, null, null, new java.awt.Color(204, 204, 204), new java.awt.Color(204, 204, 204)));
+	        ParameterRange.setToolTipText("Set the range of selected parameters to include in analysis.");
+
+	        ParameterLabel.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
+	        ParameterLabel.setText("Parameter range");
+	        ParameterLabel.setToolTipText("Set the range of selected parameters to include in analysis.");
+
+	        doPhotonCount.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+	        doPhotonCount.setText("Photon count");
+	        doPhotonCount.setToolTipText("Include photon count parameter range in selection of what particles from result list to include in analysis.");
+	        doPhotonCount.addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                doPhotonCountActionPerformed(evt);
+	            }
+	        });
+
+	        doSigmaXY.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+	        doSigmaXY.setSelected(true);
+	        doSigmaXY.setText("Sigma x y [nm]");
+	        doSigmaXY.setToolTipText("Include sigma x-y parameter range in selection of what particles from result list to include in analysis.");
+
+	        doSigmaZ.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+	        doSigmaZ.setText("Sigma z [nm]");
+	        doSigmaZ.setToolTipText("Include sigma z parameter range in selection of what particles from result list to include in analysis.");
+
+	        doRsquare.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+	        doRsquare.setSelected(true);
+	        doRsquare.setText("R^2");
+	        doRsquare.setToolTipText("Include R^2 (goodness of fit)  parameter range in selection of what particles from result list to include in analysis.");
+
+	        doPrecisionXY.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+	        doPrecisionXY.setText("Precision x y [nm]");
+	        doPrecisionXY.setToolTipText("Include precision x-y parameter range in selection of what particles from result list to include in analysis.");
+
+	        doPrecisionZ.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+	        doPrecisionZ.setText("Precision z [nm]");
+	        doPrecisionZ.setToolTipText("Include precision z parameter range in selection of what particles from result list to include in analysis.");
+
+	        cleanTable.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
+	        cleanTable.setText("Clean table");
+	        cleanTable.setToolTipText("Destructively clean out result table based on selected parameter ranges.");
+	        cleanTable.addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                cleanTableActionPerformed(evt);
+	            }
+	        });
+
+	        minPrecisionXY.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        minPrecisionXY.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+	        minPrecisionXY.setText("5");
+	        minPrecisionXY.setToolTipText("Include precision x-y parameter range in selection of what particles from result list to include in analysis.");
+	        minPrecisionXY.addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                minPrecisionXYActionPerformed(evt);
+	            }
+	        });
+
+	        maxPrecisionXY.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        maxPrecisionXY.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+	        maxPrecisionXY.setText("50");
+	        maxPrecisionXY.setToolTipText("Include precision x-y parameter range in selection of what particles from result list to include in analysis.");
+
+	        minRsquare.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        minRsquare.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+	        minRsquare.setText("0.9");
+	        minRsquare.setToolTipText("Include R^2 (goodness of fit)  parameter range in selection of what particles from result list to include in analysis.");
+	        minRsquare.addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                minRsquareActionPerformed(evt);
+	            }
+	        });
+
+	        maxRsquare.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        maxRsquare.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+	        maxRsquare.setText("1.0");
+	        maxRsquare.setToolTipText("Include R^2 (goodness of fit)  parameter range in selection of what particles from result list to include in analysis.");
+
+	        minSigmaZ.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        minSigmaZ.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+	        minSigmaZ.setText("100");
+	        minSigmaZ.setToolTipText("Include sigma z parameter range in selection of what particles from result list to include in analysis.");
+	        minSigmaZ.addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                minSigmaZActionPerformed(evt);
+	            }
+	        });
+
+	        maxSigmaZ.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        maxSigmaZ.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+	        maxSigmaZ.setText("300");
+	        maxSigmaZ.setToolTipText("Include sigma z parameter range in selection of what particles from result list to include in analysis.");
+
+	        minSigmaXY.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        minSigmaXY.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+	        minSigmaXY.setText("100");
+	        minSigmaXY.setToolTipText("Include sigma x-y parameter range in selection of what particles from result list to include in analysis.");
+	        minSigmaXY.addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                minSigmaXYActionPerformed(evt);
+	            }
+	        });
+
+	        maxSigmaXY.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        maxSigmaXY.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+	        maxSigmaXY.setText("200");
+	        maxSigmaXY.setToolTipText("Include sigma x-y parameter range in selection of what particles from result list to include in analysis.");
+
+	        minPhotonCount.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        minPhotonCount.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+	        minPhotonCount.setText("100");
+	        minPhotonCount.setToolTipText("Include photon count parameter range in selection of what particles from result list to include in analysis.");
+	        minPhotonCount.addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                minPhotonCountActionPerformed(evt);
+	            }
+	        });
+
+	        maxPhotonCount.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        maxPhotonCount.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+	        maxPhotonCount.setText("5000");
+	        maxPhotonCount.setToolTipText("Include photon count parameter range in selection of what particles from result list to include in analysis.");
+
+	        minPrecisionZ.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        minPrecisionZ.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+	        minPrecisionZ.setText("5");
+	        minPrecisionZ.setToolTipText("Include precision z parameter range in selection of what particles from result list to include in analysis.");
+	        minPrecisionZ.addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                minPrecisionZActionPerformed(evt);
+	            }
+	        });
+
+	        maxPrecisionZ.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        maxPrecisionZ.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+	        maxPrecisionZ.setText("75");
+	        maxPrecisionZ.setToolTipText("Include precision z parameter range in selection of what particles from result list to include in analysis.");
+
+	        resetParameterRange.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
+	        resetParameterRange.setText("Reset");
+	        resetParameterRange.setToolTipText("Reset parameter range to default values.");
+	        resetParameterRange.addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                resetParameterRangeActionPerformed(evt);
+	            }
+	        });
+
+	        maxLabel3.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        maxLabel3.setText("max");
+
+	        minLabel3.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        minLabel3.setText("min");
+
+	        doFrame.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+	        doFrame.setText("Frame");
+	        doFrame.setToolTipText("Include frames within range in selection of what particles from result list to include in analysis.");
+	        doFrame.addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                doFrameActionPerformed(evt);
+	            }
+	        });
+
+	        minFrame.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        minFrame.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+	        minFrame.setText("1");
+	        minFrame.setToolTipText("Include frames within range in selection of what particles from result list to include in analysis.");
+	        minFrame.addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                minFrameActionPerformed(evt);
+	            }
+	        });
+
+	        maxFrame.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        maxFrame.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+	        maxFrame.setText("100000");
+	        maxFrame.setToolTipText("Include frames within range in selection of what particles from result list to include in analysis.");
+
+	        javax.swing.GroupLayout ParameterRangeLayout = new javax.swing.GroupLayout(ParameterRange);
+	        ParameterRange.setLayout(ParameterRangeLayout);
+	        ParameterRangeLayout.setHorizontalGroup(
+	            ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	            .addGroup(ParameterRangeLayout.createSequentialGroup()
+	                .addContainerGap()
+	                .addComponent(ParameterLabel)
+	                .addGap(111, 111, 111)
+	                .addComponent(maxLabel3)
+	                .addContainerGap(27, Short.MAX_VALUE))
+	            .addGroup(ParameterRangeLayout.createSequentialGroup()
+	                .addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	                    .addGroup(ParameterRangeLayout.createSequentialGroup()
+	                        .addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	                            .addComponent(doSigmaZ)
+	                            .addComponent(doPhotonCount)
+	                            .addComponent(doSigmaXY)
+	                            .addComponent(doRsquare)
+	                            .addComponent(doPrecisionXY)
+	                            .addComponent(doPrecisionZ)
+	                            .addComponent(doFrame))
+	                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+	                        .addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+	                            .addComponent(minPhotonCount, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                            .addComponent(minSigmaXY, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                            .addComponent(minSigmaZ, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                            .addComponent(minRsquare, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                            .addComponent(minPrecisionXY, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                            .addComponent(minPrecisionZ, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                            .addComponent(minFrame, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                            .addComponent(minLabel3))
+	                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+	                        .addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+	                            .addComponent(maxFrame, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                            .addComponent(maxPrecisionZ, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                            .addComponent(maxPrecisionXY, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                            .addComponent(maxRsquare, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                            .addComponent(maxSigmaZ, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                            .addComponent(maxSigmaXY, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                            .addComponent(maxPhotonCount, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)))
+	                    .addGroup(ParameterRangeLayout.createSequentialGroup()
+	                        .addGap(21, 21, 21)
+	                        .addComponent(cleanTable)
+	                        .addGap(27, 27, 27)
+	                        .addComponent(resetParameterRange, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+	                .addContainerGap())
+	        );
+	        ParameterRangeLayout.setVerticalGroup(
+	            ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	            .addGroup(ParameterRangeLayout.createSequentialGroup()
+	                .addGap(12, 12, 12)
+	                .addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+	                    .addComponent(minLabel3)
+	                    .addComponent(maxLabel3)
+	                    .addComponent(ParameterLabel))
+	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+	                .addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+	                    .addComponent(minPhotonCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                    .addComponent(maxPhotonCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                    .addComponent(doPhotonCount))
+	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+	                .addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+	                    .addComponent(minSigmaXY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                    .addComponent(maxSigmaXY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                    .addComponent(doSigmaXY))
+	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+	                .addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+	                    .addComponent(minSigmaZ, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                    .addComponent(maxSigmaZ, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                    .addComponent(doSigmaZ))
+	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+	                .addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+	                    .addComponent(minRsquare, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                    .addComponent(maxRsquare, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                    .addComponent(doRsquare))
+	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+	                .addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+	                    .addComponent(minPrecisionXY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                    .addComponent(maxPrecisionXY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                    .addComponent(doPrecisionXY))
+	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+	                .addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+	                    .addComponent(minPrecisionZ, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                    .addComponent(maxPrecisionZ, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                    .addComponent(doPrecisionZ))
+	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+	                .addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+	                    .addComponent(minFrame, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                    .addComponent(maxFrame, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                    .addComponent(doFrame))
+	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+	                .addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+	                    .addComponent(cleanTable)
+	                    .addComponent(resetParameterRange))
+	                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+	        );
+
+	        Analysis.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, null, null, new java.awt.Color(153, 153, 153), new java.awt.Color(204, 204, 204)));
+
+	        doClusterAnalysis.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        doClusterAnalysis.setToolTipText("Perform cluster analysis during Process execution.");
+	        doClusterAnalysis.addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                doClusterAnalysisActionPerformed(evt);
+	            }
+	        });
+
+	        epsilonLabel.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+	        epsilonLabel.setText("Epsilon [nm]");
+	        epsilonLabel.setToolTipText("Search radius between particles for cluster analysis.");
+
+	        minPtsLabel.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+	        minPtsLabel.setText("Minimum connections");
+	        minPtsLabel.setToolTipText("Minimum number of connected particles considered a cluster.");
+
+	        epsilon.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        epsilon.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+	        epsilon.setText("10");
+	        epsilon.setToolTipText("Search radius between particles for cluster analysis.");
+
+	        minPtsCluster.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        minPtsCluster.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+	        minPtsCluster.setText("5");
+	        minPtsCluster.setToolTipText("Minimum number of connected particles considered a cluster.");
+
+	        clusterAnalysis.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
+	        clusterAnalysis.setText("Cluster analysis");
+	        clusterAnalysis.addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                clusterAnalysisActionPerformed(evt);
+	            }
+	        });
+
+	        javax.swing.GroupLayout AnalysisLayout = new javax.swing.GroupLayout(Analysis);
+	        Analysis.setLayout(AnalysisLayout);
+	        AnalysisLayout.setHorizontalGroup(
+	            AnalysisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	            .addGroup(AnalysisLayout.createSequentialGroup()
+	                .addContainerGap()
+	                .addGroup(AnalysisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	                    .addGroup(AnalysisLayout.createSequentialGroup()
+	                        .addComponent(doClusterAnalysis)
+	                        .addGap(18, 18, 18)
+	                        .addComponent(clusterAnalysis))
+	                    .addGroup(AnalysisLayout.createSequentialGroup()
+	                        .addGroup(AnalysisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	                            .addComponent(minPtsLabel)
+	                            .addComponent(epsilonLabel))
+	                        .addGap(18, 18, 18)
+	                        .addGroup(AnalysisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	                            .addComponent(epsilon, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                            .addComponent(minPtsCluster, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))))
+	                .addGap(0, 11, Short.MAX_VALUE))
+	        );
+	        AnalysisLayout.setVerticalGroup(
+	            AnalysisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	            .addGroup(AnalysisLayout.createSequentialGroup()
+	                .addGap(3, 3, 3)
+	                .addGroup(AnalysisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+	                    .addComponent(doClusterAnalysis)
+	                    .addComponent(clusterAnalysis))
+	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+	                .addGroup(AnalysisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+	                    .addComponent(epsilonLabel)
+	                    .addComponent(epsilon, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+	                .addGroup(AnalysisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+	                    .addComponent(minPtsLabel)
+	                    .addComponent(minPtsCluster, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+	                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+	        );
+
+	        jPanel1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, null, null, new java.awt.Color(153, 153, 153), new java.awt.Color(204, 204, 204)));
+
+	        particlesPerBinLabel.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+	        particlesPerBinLabel.setText("Particles per bin");
+	        particlesPerBinLabel.setToolTipText("Particles per bin for drift correction.");
+
+	        driftCorrBinLowCount.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        driftCorrBinLowCount.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+	        driftCorrBinLowCount.setText("100");
+	        driftCorrBinLowCount.setToolTipText("Particles per bin for drift correction.");
+
+	        driftCorrBinHighCount.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        driftCorrBinHighCount.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+	        driftCorrBinHighCount.setText("1000");
+	        driftCorrBinHighCount.setToolTipText("Particles per bin for drift correction.");
+	        driftCorrBinHighCount.addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                driftCorrBinHighCountActionPerformed(evt);
+	            }
+	        });
+
+	        numberOfBinsLabel.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+	        numberOfBinsLabel.setText("Number of bins");
+	        numberOfBinsLabel.setToolTipText("Number of bins to divide the particles in for drift correction.");
+
+	        doDriftCorrect.setSelected(true);
+	        doDriftCorrect.setToolTipText("Drift correct particles during Process execution.");
+	        doDriftCorrect.addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                doDriftCorrectActionPerformed(evt);
+	            }
+	        });
+
+	        driftCorrect.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
+	        driftCorrect.setText("Drift correct");
+	        driftCorrect.setToolTipText("Drift correct particles in result tabel using parameter range for which to include.");
+	        driftCorrect.addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                driftCorrectActionPerformed(evt);
+	            }
+	        });
+
+	        doChannelAlign.setToolTipText("Align channels (chromatic shifts) during Process execution.");
+	        doChannelAlign.addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                doChannelAlignActionPerformed(evt);
+	            }
+	        });
+
+	        alignChannels.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
+	        alignChannels.setText("Align channels");
+	        alignChannels.setToolTipText("Align channels (chromatic shifts) using the particles included wihtin selected parameter ranges.");
+	        alignChannels.addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                alignChannelsActionPerformed(evt);
+	            }
+	        });
+
+	        particlesPerBinLabelchAlign.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+	        particlesPerBinLabelchAlign.setText("Particles per bin");
+	        particlesPerBinLabelchAlign.setToolTipText("Particles per bin from each chanel for channel alignment.");
+
+	        chAlignBinLowCount.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        chAlignBinLowCount.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+	        chAlignBinLowCount.setText("100");
+	        chAlignBinLowCount.setToolTipText("Particles per bin from each chanel for channel alignment.");
+
+	        chAlignBinHighCount.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        chAlignBinHighCount.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+	        chAlignBinHighCount.setText("1000");
+	        chAlignBinHighCount.setToolTipText("Particles per bin from each chanel for channel alignment.");
+	        chAlignBinHighCount.addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                chAlignBinHighCountActionPerformed(evt);
+	            }
+	        });
+
+	        numberOfBinsDriftCorr.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        numberOfBinsDriftCorr.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+	        numberOfBinsDriftCorr.setText("50");
+	        numberOfBinsDriftCorr.setToolTipText("Number of bins to divide the particles in for drift correction.");
+
+	        minLabel.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        minLabel.setText("min");
+
+	        maxLabel.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        maxLabel.setText("max");
+
+	        maxLabel1.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        maxLabel1.setText("max");
+
+	        minLabel1.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        minLabel1.setText("min");
+
+	        particlesPerBinLabel1.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+	        particlesPerBinLabel1.setText("Max drift [nm]");
+	        particlesPerBinLabel1.setToolTipText("Max drift between two bins. Larger values increase computational time!");
+
+	        driftCorrShiftXY.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        driftCorrShiftXY.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+	        driftCorrShiftXY.setText("250");
+	        driftCorrShiftXY.setToolTipText("Max drift between two bins. Larger values increase computational time!");
+	        driftCorrShiftXY.addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                driftCorrShiftXYActionPerformed(evt);
+	            }
+	        });
+
+	        driftCorrShiftZ.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        driftCorrShiftZ.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+	        driftCorrShiftZ.setText("250");
+	        driftCorrShiftZ.setToolTipText("Max drift between two bins. Larger values increase computational time!");
+	        driftCorrShiftZ.addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                driftCorrShiftZActionPerformed(evt);
+	            }
+	        });
+
+	        minLabel2.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        minLabel2.setText("XY");
+
+	        maxLabel2.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        maxLabel2.setText("Z");
+
+	        minLabel4.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        minLabel4.setText("XY");
+
+	        maxLabel4.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        maxLabel4.setText("Z");
+
+	        chAlignShiftZ.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        chAlignShiftZ.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+	        chAlignShiftZ.setText("250");
+	        chAlignShiftZ.setToolTipText("Maximal allowed shift between channels. Larger values increase computational time!");
+	        chAlignShiftZ.addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                chAlignShiftZActionPerformed(evt);
+	            }
+	        });
+
+	        chAlignShiftXY.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        chAlignShiftXY.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+	        chAlignShiftXY.setText("250");
+	        chAlignShiftXY.setToolTipText("Maximal allowed shift between channels. Larger values increase computational time!");
+
+	        particlesPerBinLabel2.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+	        particlesPerBinLabel2.setText("Max shift [nm]");
+	        particlesPerBinLabel2.setToolTipText("Maximal allowed shift between channels. Larger values increase computational time!");
+
+	        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+	        jPanel1.setLayout(jPanel1Layout);
+	        jPanel1Layout.setHorizontalGroup(
+	            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	            .addGroup(jPanel1Layout.createSequentialGroup()
+	                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+	                        .addContainerGap()
+	                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+	                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+	                                    .addGroup(jPanel1Layout.createSequentialGroup()
+	                                        .addGap(0, 0, Short.MAX_VALUE)
+	                                        .addComponent(minLabel2))
+	                                    .addGroup(jPanel1Layout.createSequentialGroup()
+	                                        .addComponent(particlesPerBinLabel)
+	                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+	                                        .addComponent(minLabel)))
+	                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+	                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	                                    .addComponent(driftCorrShiftXY, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                                    .addComponent(driftCorrBinLowCount, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                                    .addComponent(numberOfBinsDriftCorr, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+	                                .addGap(18, 18, 18)
+	                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	                                    .addComponent(maxLabel)
+	                                    .addComponent(maxLabel2))
+	                                .addGap(6, 6, 6))
+	                            .addGroup(jPanel1Layout.createSequentialGroup()
+	                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	                                    .addGroup(jPanel1Layout.createSequentialGroup()
+	                                        .addComponent(doDriftCorrect)
+	                                        .addGap(18, 18, 18)
+	                                        .addComponent(driftCorrect, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
+	                                    .addComponent(particlesPerBinLabel1))
+	                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+	                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	                            .addComponent(driftCorrShiftZ, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                            .addComponent(driftCorrBinHighCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+	                    .addGroup(jPanel1Layout.createSequentialGroup()
+	                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	                            .addGroup(jPanel1Layout.createSequentialGroup()
+	                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+	                                    .addGroup(jPanel1Layout.createSequentialGroup()
+	                                        .addGap(10, 10, 10)
+	                                        .addComponent(particlesPerBinLabelchAlign)
+	                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+	                                        .addComponent(minLabel1))
+	                                    .addGroup(jPanel1Layout.createSequentialGroup()
+	                                        .addContainerGap()
+	                                        .addComponent(particlesPerBinLabel2)
+	                                        .addGap(34, 34, 34)
+	                                        .addComponent(minLabel4)))
+	                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+	                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+	                                    .addComponent(chAlignShiftXY, javax.swing.GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE)
+	                                    .addComponent(chAlignBinLowCount))
+	                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	                                    .addGroup(jPanel1Layout.createSequentialGroup()
+	                                        .addGap(29, 29, 29)
+	                                        .addComponent(maxLabel4))
+	                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+	                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+	                                        .addComponent(maxLabel1)))
+	                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+	                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+	                                    .addComponent(chAlignBinHighCount, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
+	                                    .addComponent(chAlignShiftZ)))
+	                            .addGroup(jPanel1Layout.createSequentialGroup()
+	                                .addGap(10, 10, 10)
+	                                .addComponent(doChannelAlign)
+	                                .addGap(18, 18, 18)
+	                                .addComponent(alignChannels)))
+	                        .addGap(0, 2, Short.MAX_VALUE)))
+	                .addContainerGap())
+	            .addGroup(jPanel1Layout.createSequentialGroup()
+	                .addContainerGap()
+	                .addComponent(numberOfBinsLabel)
+	                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+	        );
+
+	        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {driftCorrBinHighCount, driftCorrBinLowCount, driftCorrShiftXY, driftCorrShiftZ, numberOfBinsDriftCorr});
+
+	        jPanel1Layout.setVerticalGroup(
+	            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	            .addGroup(jPanel1Layout.createSequentialGroup()
+	                .addGap(4, 4, 4)
+	                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+	                    .addComponent(doDriftCorrect)
+	                    .addComponent(driftCorrect))
+	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+	                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+	                    .addComponent(particlesPerBinLabel)
+	                    .addComponent(driftCorrBinLowCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                    .addComponent(driftCorrBinHighCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                    .addComponent(minLabel)
+	                    .addComponent(maxLabel))
+	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+	                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+	                    .addComponent(particlesPerBinLabel1)
+	                    .addComponent(driftCorrShiftXY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                    .addComponent(driftCorrShiftZ, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                    .addComponent(minLabel2)
+	                    .addComponent(maxLabel2))
+	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+	                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+	                    .addComponent(numberOfBinsLabel)
+	                    .addComponent(numberOfBinsDriftCorr, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+	                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+	                    .addComponent(alignChannels)
+	                    .addComponent(doChannelAlign))
+	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+	                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+	                    .addComponent(particlesPerBinLabelchAlign)
+	                    .addComponent(chAlignBinHighCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                    .addComponent(minLabel1)
+	                    .addComponent(maxLabel1)
+	                    .addComponent(chAlignBinLowCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+	                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+	                    .addComponent(chAlignShiftXY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                    .addComponent(chAlignShiftZ, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                    .addComponent(minLabel4)
+	                    .addComponent(maxLabel4)
+	                    .addComponent(particlesPerBinLabel2))
+	                .addContainerGap())
+	        );
+
+	        jPanel2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, null, null, new java.awt.Color(153, 153, 153), new java.awt.Color(204, 204, 204)));
+
+	        correctBackground.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
+	        correctBackground.setText("Correct backgound");
+	        correctBackground.setToolTipText("Correct background using pixel by pixel time median. Median window set by Filter width in Basic input.");
+	        correctBackground.addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                correctBackgroundActionPerformed(evt);
+	            }
+	        });
+
+	        localize_Fit.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
+	        localize_Fit.setText("Localize");
+	        localize_Fit.setToolTipText("Extract regions of interest and fit against 2D gaussian function. ROI size, minimal signal for inclusion, translation of pixel intensity to photons, minimal number of pixels above background and minimum distance between particles in a frame is set in Basic input.");
+	        localize_Fit.addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                localize_FitActionPerformed(evt);
+	            }
+	        });
+
+	        loadSettings.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
+	        loadSettings.setText("Load settings");
+	        loadSettings.setToolTipText("Load previously stored settings (or default to restart).");
+	        loadSettings.addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                loadSettingsActionPerformed(evt);
+	            }
+	        });
+
+	        storeSettings.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
+	        storeSettings.setText("Store settings");
+	        storeSettings.setToolTipText("Store the current settings for future processing.");
+	        storeSettings.addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                storeSettingsActionPerformed(evt);
+	            }
+	        });
+
+	        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+	        jPanel2.setLayout(jPanel2Layout);
+	        jPanel2Layout.setHorizontalGroup(
+	            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	            .addGroup(jPanel2Layout.createSequentialGroup()
+	                .addContainerGap()
+	                .addComponent(correctBackground)
+	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+	                .addComponent(localize_Fit, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
+	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+	                .addComponent(storeSettings)
+	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+	                .addComponent(loadSettings, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
+	        );
+	        jPanel2Layout.setVerticalGroup(
+	            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	            .addGroup(jPanel2Layout.createSequentialGroup()
+	                .addContainerGap()
+	                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+	                    .addComponent(correctBackground)
+	                    .addComponent(localize_Fit)
+	                    .addComponent(storeSettings)
+	                    .addComponent(loadSettings))
+	                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+	        );
+
+	        jPanel3.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, null, null, null, new java.awt.Color(153, 153, 153)));
+	        jPanel3.setToolTipText("");
+
+	        renderImage.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
+	        renderImage.setText("Render image");
+	        renderImage.setToolTipText("Render image based on fitted particle result table and selected Parameter ranges.");
+	        renderImage.addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                renderImageActionPerformed(evt);
+	            }
+	        });
+
+	        doRenderImage.setSelected(true);
+	        doRenderImage.setToolTipText("Render image during Process execution.");
+
+	        outputPixelSizeLabel.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+	        outputPixelSizeLabel.setText("Pixel size [nm]");
+	        outputPixelSizeLabel.setToolTipText("Rendered image pixel size.");
+
+	        outputPixelSize.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        outputPixelSize.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+	        outputPixelSize.setText("5");
+	        outputPixelSize.setToolTipText("Rendered image pixel size.");
+
+	        doGaussianSmoothing.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        doGaussianSmoothing.setText("Gaussian smoothing");
+	        doGaussianSmoothing.setToolTipText("Add a 2 pixel radius gaussian smoothing of the rendered image.");
+	        doGaussianSmoothing.addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                doGaussianSmoothingActionPerformed(evt);
+	            }
+	        });
+
+	        outputPixelSizeZ.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        outputPixelSizeZ.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+	        outputPixelSizeZ.setText("5");
+	        outputPixelSizeZ.setToolTipText("Rendered image pixel size.");
+	        outputPixelSizeZ.addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                outputPixelSizeZActionPerformed(evt);
+	            }
+	        });
+
+	        XYrenderLabel.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        XYrenderLabel.setText("XY");
+
+	        ZrenderLabel.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+	        ZrenderLabel.setText("Z");
+
+	        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+	        jPanel3.setLayout(jPanel3Layout);
+	        jPanel3Layout.setHorizontalGroup(
+	            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	            .addGroup(jPanel3Layout.createSequentialGroup()
+	                .addContainerGap()
+	                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	                    .addGroup(jPanel3Layout.createSequentialGroup()
+	                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	                            .addComponent(doGaussianSmoothing)
+	                            .addGroup(jPanel3Layout.createSequentialGroup()
+	                                .addGap(8, 8, 8)
+	                                .addComponent(outputPixelSizeLabel)))
+	                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+	                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+	                            .addComponent(XYrenderLabel)
+	                            .addComponent(outputPixelSize, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+	                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+	                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+	                            .addComponent(ZrenderLabel)
+	                            .addComponent(outputPixelSizeZ, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)))
+	                    .addGroup(jPanel3Layout.createSequentialGroup()
+	                        .addComponent(doRenderImage)
+	                        .addGap(18, 18, 18)
+	                        .addComponent(renderImage, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)))
+	                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+	        );
+	        jPanel3Layout.setVerticalGroup(
+	            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	            .addGroup(jPanel3Layout.createSequentialGroup()
+	                .addContainerGap()
+	                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+	                    .addComponent(doRenderImage)
+	                    .addComponent(renderImage))
+	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+	                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+	                    .addComponent(doGaussianSmoothing)
+	                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+	                        .addComponent(XYrenderLabel)
+	                        .addComponent(ZrenderLabel)))
+	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+	                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+	                        .addComponent(outputPixelSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                        .addComponent(outputPixelSizeLabel))
+	                    .addComponent(outputPixelSizeZ, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+	                .addGap(32, 32, 32))
+	        );
+
+	        channelId.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
+	        channelId.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Add channel", "Channel 1" }));
+	        channelId.setSelectedIndex(1);
+	        channelId.setToolTipText("Select or add new channel for channel specifc settings");
+	        channelId.addMouseListener(new java.awt.event.MouseAdapter() {
+	            public void mouseClicked(java.awt.event.MouseEvent evt) {
+	                channelIdMouseClicked(evt);
+	            }
+	        });
+	        channelId.addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                channelIdActionPerformed(evt);
+	            }
+	        });
+
+	        buttonGroup2.add(parallelComputation);
+	        parallelComputation.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+	        parallelComputation.setSelected(true);
+	        parallelComputation.setText("parallel computation");
+	        parallelComputation.setToolTipText("Only CPU bound computation");
+
+	        buttonGroup2.add(GPUcomputation);
+	        GPUcomputation.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+	        GPUcomputation.setText("GPU computation");
+	        GPUcomputation.setToolTipText("Transfer bulk of computation to GPU. Not functional on Mac OS.");
+
+	        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+	        getContentPane().setLayout(layout);
+	        layout.setHorizontalGroup(
+	            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	            .addGroup(layout.createSequentialGroup()
+	                .addGap(18, 18, 18)
+	                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	                    .addGroup(layout.createSequentialGroup()
+	                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	                            .addComponent(BasicInp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                            .addComponent(GPUcomputation))
+	                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+	                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	                            .addComponent(channelId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                            .addGroup(layout.createSequentialGroup()
+	                                .addComponent(ParameterRange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+	                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	                                    .addGroup(layout.createSequentialGroup()
+	                                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+	                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	                                            .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                                            .addComponent(Analysis, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+	                                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+	                    .addGroup(layout.createSequentialGroup()
+	                        .addComponent(parallelComputation)
+	                        .addGap(288, 288, 288)
+	                        .addComponent(Header)))
+	                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+	        );
+	        layout.setVerticalGroup(
+	            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+	            .addGroup(layout.createSequentialGroup()
+	                .addContainerGap()
+	                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+	                    .addComponent(parallelComputation)
+	                    .addComponent(Header))
+	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+	                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+	                    .addComponent(channelId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                    .addComponent(GPUcomputation))
+	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+	                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+	                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+	                        .addComponent(ParameterRange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                        .addComponent(BasicInp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+	                    .addGroup(layout.createSequentialGroup()
+	                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+	                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                            .addGroup(layout.createSequentialGroup()
+	                                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+	                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+	                                .addComponent(Analysis, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+	                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+	                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+	                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+	        );
+
+	        pack();
+	    }// </editor-fold>                      
 
 	private void minimalSignalActionPerformed(java.awt.event.ActionEvent evt) {                                              
 
