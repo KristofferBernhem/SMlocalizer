@@ -28,6 +28,7 @@ import ij.WindowManager;
 
 /**
  * TODO: Add z rendering, remove multichannel render options.
+ * TODO: Add storage of gauss filter for render image.
  * @author kristoffer.bernhem
  */
 @SuppressWarnings("serial")
@@ -44,6 +45,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			outputPixelSize.setText("5");
 			outputPixelSizeZ.setText("10");
 			doChannelAlign.setSelected(false);
+			doDriftCorrect.setSelected(true);
 			for (int id = 0; id < 10; id++){ // update list of variables for each ch.
 				/*
 				 *   Basic input settings
@@ -65,8 +67,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 				/*
 				 *       Render image settings.
 				 */
-				doRenderImageChList.getItem(id).setText("1");
-			//	outputPixelSizeChList.getItem(id).setText("5");
+				doRenderImageChList.getItem(id).setText("1");	
 
 				/*
 				 *   Drift and channel correct settings
@@ -120,6 +121,8 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			ij.Prefs.set("SMLocalizer.settingsEntries", 1);
 			ij.Prefs.set("SMLocalizer.settingsName"+1, name); // add storename
 			setParameters(name);
+
+			
 		} finally{
 
 		}
@@ -3178,7 +3181,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		updateList(channelId.getSelectedIndex()-1); // store current settings.
 		int[] pixelSize = getPixelSize();
 		int[] totalGain = getTotalGain();
-		int[] Window = getWindowWidth(); // get user input, (W-1)/2.
+		int[] window = getWindowWidth(); // get user input, (W-1)/2.
 		int[] gWindow = getGaussWindowsize();
 		int[] minPixelOverBkgrnd = getMinPixelOverBackground();
 		int[] signalStrength = getMinSignal();
@@ -3188,14 +3191,14 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		if (parallelComputation.isSelected()) // parallel computation.
 		{
 			selectedModel = 0;			
-			BackgroundCorrection.medianFiltering(Window,WindowManager.getCurrentImage(),selectedModel); // correct background.
+			BackgroundCorrection.medianFiltering(window,WindowManager.getCurrentImage(),selectedModel); // correct background.
 			ArrayList<Particle> Results = localizeAndFit.run(signalStrength, minDistance, gWindow, pixelSize,minPixelOverBkgrnd,totalGain,selectedModel);  //locate and fit all particles.
 			TableIO.Store(Results);			
 		}
 		else if (GPUcomputation.isSelected()) // GPU accelerated computation.
 		{
 			selectedModel = 2;
-			processMedianFit.run(Window, WindowManager.getCurrentImage(), selectedModel, signalStrength, minDistance, gWindow, pixelSize, minPixelOverBkgrnd, totalGain); // GPU specific call. 
+			processMedianFit.run(window, WindowManager.getCurrentImage(), signalStrength, minDistance, gWindow, pixelSize, minPixelOverBkgrnd, totalGain); // GPU specific call. 
 		}
 		
 		boolean[][] include = IncludeParameters();
@@ -4473,11 +4476,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 					ij.Prefs.get("SMLocalizer.settings."+storeName+
 							".doRenderImage."+Ch, 
 							""));			
-			// pixel size
-			outputPixelSizeChList.getItem(Ch).setText( 
-					ij.Prefs.get("SMLocalizer.settings."+storeName+
-							".outputPixelSize."+Ch, 
-							""));  		    
+	    
 			/*
 			 * store parameter settings:
 			 */		    		   					
@@ -4644,7 +4643,9 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		 * non channel unique variables.
 		 */
 
-
+		ij.Prefs.set("SMLocalizer.CurrentSetting",storeName);
+		
+		
 		if (doDriftCorrect.isSelected())
 			ij.Prefs.set("SMLocalizer.settings."+storeName+
 					".doDriftCorrect.",1);
@@ -4723,11 +4724,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 					".doRenderImage."+Ch,
 					doRenderImageChList.getItem(Ch).getText());		
 
-			// pixel size.
-			ij.Prefs.set("SMLocalizer.settings."+storeName+
-					".outputPixelSize."+Ch, 
-					outputPixelSizeChList.getItem(Ch).getText());		    
-
+		
 			/*
 			 * store parameter settings:
 			 */		    		   					

@@ -153,7 +153,10 @@ public class localizeAndFit {
 			ArrayList<Particle> cleanResults = new ArrayList<Particle>();
 			for (int i = 0; i < Results.size(); i++)
 			{
-				if (Results.get(i).sigma_x > 0 &&
+				if (Results.get(i).x > 0 &&
+						Results.get(i).y > 0 &&
+						Results.get(i).y >= 0 &&
+						Results.get(i).sigma_x > 0 &&
 						Results.get(i).sigma_y > 0 &&
 						Results.get(i).precision_x > 0 &&
 						Results.get(i).precision_y > 0 &&
@@ -209,12 +212,11 @@ public class localizeAndFit {
 				{						
 					int nCenter =(( columns*rows/(gWindow[Ch-1]*gWindow[Ch-1])) / 2); // ~ 80 possible particles for a 64x64 frame. Lets the program scale with frame size.
 					long gb = 1024*1024*1024;
-					long maxMemoryGPU = 3*gb; // TODO: get size of gpu memory.
+					long maxMemoryGPU = 2*gb; // TODO: get size of gpu memory.
 					int nMax = (int) (maxMemoryGPU/(2*columns*rows*Sizeof.INT + 4*nCenter*Sizeof.INT)); 	// the localMaxima GPU calculations require: (x*y*frame*(Sizeof.INT ) + frame*nCenters*Sizeof.FLOAT)/gb memory. with known x and y dimensions, determine maximum size of frame for each batch.
 					//ArrayList<fitParameters> fitThese = new ArrayList<fitParameters>();
 					int dataIdx = 0;
-					int idx = 0;
-					System.out.println(nMax);
+					int idx = 0;					
 					float[] bounds = { // bounds for gauss fitting.
 							0.5F			, 1.5F,				// amplitude.
 							1	,(float)(gWindow[Ch-1]-1),			// x.
@@ -585,8 +587,8 @@ public class localizeAndFit {
 				                } // data pulled.
 							}
 							CUdeviceptr deviceGaussVector 	= 		CUDA.copyToDevice(gaussVector);					
-							CUdeviceptr deviceP 	= 		CUDA.copyToDevice(P);
-							CUdeviceptr deviceStepSize 	= 		CUDA.copyToDevice(stepSize);							
+							CUdeviceptr deviceP 			= 		CUDA.copyToDevice(P);
+							CUdeviceptr deviceStepSize 		= 		CUDA.copyToDevice(stepSize);							
 							
 						
 							/*
@@ -706,7 +708,10 @@ public class localizeAndFit {
 				ArrayList<Particle> cleanResults = new ArrayList<Particle>();
 				for (int i = 0; i < Results.size(); i++)
 				{
-					if (Results.get(i).sigma_x > 0 &&
+					if (Results.get(i).x > 0 &&
+							Results.get(i).y > 0 &&
+							Results.get(i).y >= 0 &&
+							Results.get(i).sigma_x > 0 &&
 							Results.get(i).sigma_y > 0 &&
 							Results.get(i).precision_x > 0 &&
 							Results.get(i).precision_y > 0 &&

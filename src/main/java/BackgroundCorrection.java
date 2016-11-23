@@ -213,7 +213,7 @@ class BackgroundCorrection {
 				for(int Ch = 1; Ch <= nChannels; Ch++)
 				{
 					int staticMemory = (2*W[Ch-1]+1)*rows*columns*Sizeof.FLOAT;
-					long framesPerBatch = (3*GB-staticMemory)/frameSize; // 3 GB memory allocation gives this numbers of frames. 					
+					long framesPerBatch = (2*GB-staticMemory)/frameSize; // 3 GB memory allocation gives this numbers of frames. 					
 				//	if (framesPerBatch > 5000)
 				//		framesPerBatch = 5000;
 					int loadedFrames = 0;
