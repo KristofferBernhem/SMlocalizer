@@ -40,7 +40,62 @@ public class generateImage {
 		}
 		if (threeD)
 		{
-			
+			width 	= 10;
+			height 	= 10;
+			ImageStack imstack = new ImageStack(width,height);
+			int nChannels = ParticleList.get(ParticleList.size()-1).channel; // numnber of channels
+			int zSlice = 0; // counter for number of slizes.
+			int particleCounter = 0;
+			/*
+			 * Loop over all particles, add the ones that has the correct channel and z-range. Increase channel until all channels are done then update z-range
+			 */
+			int Ch = 1;
+			while (particleCounter < ParticleList.size())
+			{
+				ShortProcessor IP  = new ShortProcessor(width,height);					
+				IP.set(0); // set all pixel values to 0 as default.
+				int lowZ = zSlice*pixelSize[1]; // low limit
+				int highZ = (zSlice+1)*pixelSize[1]; // high limit
+				for (idx = 0; idx < ParticleList.size(); idx++)
+				{
+					if (ParticleList.get(idx).channel == Ch &&
+							ParticleList.get(idx).z >= lowZ &&
+							ParticleList.get(idx).z < highZ)
+					{
+						int x = (int) Math.round(ParticleList.get(idx).x/pixelSize[0]);
+						int y = (int) Math.round(ParticleList.get(idx).y/pixelSize[0]);						
+						IP.putPixel(x, y, (IP.get(x, y) + 1));
+					}
+				}
+				Ch++;
+				if (Ch > nChannels)
+				{
+					Ch = 1;
+					zSlice++;
+				}
+				particleCounter++; // keep track of number of added particles.
+				imstack.addSlice(IP);
+			}
+
+			ImagePlus Image = ij.IJ.createHyperStack(Imtitle, 
+					width, 
+					height, 
+					nChannels, 
+					zSlice, 
+					1, 
+					16);
+			Image.setStack(imstack);
+			Calibration cal = new Calibration(Image);
+			cal.pixelHeight = pixelSize[0]; 
+			cal.pixelWidth 	= pixelSize[0];
+			cal.setXUnit("nm");
+			cal.setYUnit("nm");
+
+			ImageStatistics ImStats = Image.getStatistics();
+
+			Image.setDisplayRange(ImStats.min, ImStats.max);
+			Image.updateAndDraw();
+			Image.show();
 		} // 3D images end
 		else // if user wants to render 2D data.
 		{
@@ -110,10 +165,10 @@ public class generateImage {
 						(int) ParticleList.get(ParticleList.size()-1).channel, 
 						1, 
 						1, 
-						8);
+						16);
 				Image.setStack(imstack);
 				Calibration cal = new Calibration(Image);
-				cal.pixelHeight = pixelSize[0];// TODO: check if possible to add calibartion to each slize. 
+				cal.pixelHeight = pixelSize[0]; 
 				cal.pixelWidth 	= pixelSize[0];
 				cal.setXUnit("nm");
 				cal.setYUnit("nm");

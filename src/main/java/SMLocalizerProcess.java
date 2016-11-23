@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 
 import ij.WindowManager;
 
@@ -190,11 +189,11 @@ public class SMLocalizerProcess {
 			else
 				include[0][Ch] = false;
 
-			lb[0][Ch] = Integer.parseInt( 
+			lb[0][Ch] = Double.parseDouble( 
 					ij.Prefs.get("SMLocalizer.settings."+storeName+
 							".minPotonCount."+Ch, 
 							""));  
-			ub[0][Ch] = Integer.parseInt( 
+			ub[0][Ch] = Double.parseDouble( 
 					ij.Prefs.get("SMLocalizer.settings."+storeName+
 							".maxPotonCount."+Ch, 
 							""));  		    
@@ -206,11 +205,11 @@ public class SMLocalizerProcess {
 			else
 				include[1][Ch] = false;
 
-			lb[1][Ch] = Integer.parseInt( 
+			lb[1][Ch] = Double.parseDouble( 
 					ij.Prefs.get("SMLocalizer.settings."+storeName+
 							".minSigmaXY."+Ch, 
 							""));  
-			ub[1][Ch] = Integer.parseInt( 
+			ub[1][Ch] = Double.parseDouble( 
 					ij.Prefs.get("SMLocalizer.settings."+storeName+
 							".maxSigmaXY."+Ch, 
 							"")); 
@@ -223,11 +222,11 @@ public class SMLocalizerProcess {
 			else
 				include[2][Ch] = false;
 
-			lb[2][Ch] = Integer.parseInt( 
+			lb[2][Ch] = Double.parseDouble( 
 					ij.Prefs.get("SMLocalizer.settings."+storeName+
 							".minSigmaZ."+Ch, 
 							""));  
-			ub[2][Ch] = Integer.parseInt( 
+			ub[2][Ch] = Double.parseDouble( 
 					ij.Prefs.get("SMLocalizer.settings."+storeName+
 							".maxSigmaZ."+Ch, 
 							"")); 
@@ -239,11 +238,11 @@ public class SMLocalizerProcess {
 			else
 				include[3][Ch] = false;
 
-			lb[3][Ch] = Integer.parseInt( 
+			lb[3][Ch] = Double.parseDouble( 
 					ij.Prefs.get("SMLocalizer.settings."+storeName+
 							".minRsquare."+Ch, 
 							""));  
-			ub[3][Ch] = Integer.parseInt( 
+			ub[3][Ch] = Double.parseDouble( 
 					ij.Prefs.get("SMLocalizer.settings."+storeName+
 							".maxRsquare."+Ch, 
 							"")); 
@@ -256,11 +255,11 @@ public class SMLocalizerProcess {
 			else
 				include[4][Ch] = false;
 
-			lb[4][Ch] = Integer.parseInt( 
+			lb[4][Ch] = Double.parseDouble( 
 					ij.Prefs.get("SMLocalizer.settings."+storeName+
 							".minPrecisionXY."+Ch, 
 							""));  
-			ub[4][Ch] = Integer.parseInt( 
+			ub[4][Ch] = Double.parseDouble( 
 					ij.Prefs.get("SMLocalizer.settings."+storeName+
 							".maxPrecisionXY."+Ch, 
 							""));
@@ -273,11 +272,11 @@ public class SMLocalizerProcess {
 			else
 				include[5][Ch] = false;
 
-			lb[5][Ch] = Integer.parseInt( 
+			lb[5][Ch] = Double.parseDouble(  
 					ij.Prefs.get("SMLocalizer.settings."+storeName+
 							".minPrecisionZ."+Ch, 
 							""));  
-			ub[5][Ch] = Integer.parseInt( 
+			ub[5][Ch] = Double.parseDouble( 
 					ij.Prefs.get("SMLocalizer.settings."+storeName+
 							".maxPrecisionZ."+Ch, 
 							""));
@@ -290,11 +289,11 @@ public class SMLocalizerProcess {
 			else
 				include[6][Ch] = false;
 
-			lb[6][Ch] = Integer.parseInt( 
+			lb[6][Ch] = Double.parseDouble( 
 					ij.Prefs.get("SMLocalizer.settings."+storeName+
 							".minFrame."+Ch, 
 							""));  
-			ub[6][Ch] = Integer.parseInt( 
+			ub[6][Ch] = Double.parseDouble(  
 					ij.Prefs.get("SMLocalizer.settings."+storeName+
 							".maxFrame."+Ch, 
 							""));
@@ -353,13 +352,15 @@ public class SMLocalizerProcess {
 							""));	 
 
 		} // end Ch loop for variable loading.
+		
+	
 		int selectedModel = 0;
 		if (CPU) // CPU processing
 		{
 			BackgroundCorrection.medianFiltering(window,WindowManager.getCurrentImage(),0); // correct background.
-			ArrayList<Particle> Results = localizeAndFit.run(signalStrength, minDistance, gWindow, pixelSize,minPixelOverBkgrnd,totalGain,selectedModel);  //locate and fit all particles.
-			TableIO.Store(Results);	
-
+			ij.IJ.log("background ok");
+			localizeAndFit.run(signalStrength, minDistance, gWindow, pixelSize,minPixelOverBkgrnd,totalGain,selectedModel);  //locate and fit all particles.
+			ij.IJ.log("localize ok");
 		} // end CPU processing
 		else // GPU processing 
 		{
@@ -367,7 +368,8 @@ public class SMLocalizerProcess {
 			processMedianFit.run(window, WindowManager.getCurrentImage(), signalStrength, minDistance, gWindow, pixelSize, minPixelOverBkgrnd, totalGain); // GPU specific call.
 		} // end GPU processing
 		cleanParticleList.run(lb,ub,include);
-
+		ij.IJ.log("clean list ok ok");
+		
 		if (doDfriftCorr)
 		{	         
 			correctDrift.run(driftCorrshift, driftCorrBins, driftCorrHighCount, driftCorrLowCount, selectedModel); // drift correct all channels.

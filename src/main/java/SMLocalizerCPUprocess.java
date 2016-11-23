@@ -17,7 +17,7 @@
 
 import ij.plugin.PlugIn;
 
-public class SMLocalizerCPUprocess_ implements PlugIn {
+public class SMLocalizerCPUprocess implements PlugIn {
 
 	public void run(String arg0)
 	{

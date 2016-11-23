@@ -59,8 +59,6 @@ public class localizeAndFit {
 			nFrames 						= image.getNSlices();  	
 
 		ArrayList<Particle> Results 		= new ArrayList<Particle>();		// Fitted results array list.
-
-
 		if (selectedModel == 0) // parallel
 		{
 			ImageProcessor IP = image.getProcessor();
@@ -155,7 +153,7 @@ public class localizeAndFit {
 			{
 				if (Results.get(i).x > 0 &&
 						Results.get(i).y > 0 &&
-						Results.get(i).y >= 0 &&
+						Results.get(i).z >= 0 &&
 						Results.get(i).sigma_x > 0 &&
 						Results.get(i).sigma_y > 0 &&
 						Results.get(i).precision_x > 0 &&
@@ -171,9 +169,10 @@ public class localizeAndFit {
 			tab.addValue("width", columns*inputPixelSize[0]);
 			tab.addValue("height", rows*inputPixelSize[0]);
 			tab.show("Results");
+			TableIO.Store(cleanResults);
 			return cleanResults; // end parallel computation by returning results.
 		}else // end parallel. 
-			if (selectedModel == 2) // GPU TODO: Add image loading to GPU bound code. 
+			if (selectedModel == 2) // GPU
 			{			
 				double convCriteria = 1E-8; // how large improvement from one step to next we require.
 				int maxIterations = 1000;  // stop if an individual fit reaches this number of iterations.
@@ -371,8 +370,8 @@ public class localizeAndFit {
 				                } // data pulled.
 							}
 							CUdeviceptr deviceGaussVector 	= 		CUDA.copyToDevice(gaussVector);					
-							CUdeviceptr deviceP 	= 		CUDA.copyToDevice(P);
-							CUdeviceptr deviceStepSize 	= 		CUDA.copyToDevice(stepSize);							
+							CUdeviceptr deviceP 			= 		CUDA.copyToDevice(P);
+							CUdeviceptr deviceStepSize 		= 		CUDA.copyToDevice(stepSize);							
 							
 						
 							/*
@@ -710,7 +709,7 @@ public class localizeAndFit {
 				{
 					if (Results.get(i).x > 0 &&
 							Results.get(i).y > 0 &&
-							Results.get(i).y >= 0 &&
+							Results.get(i).z >= 0 &&
 							Results.get(i).sigma_x > 0 &&
 							Results.get(i).sigma_y > 0 &&
 							Results.get(i).precision_x > 0 &&
@@ -726,14 +725,15 @@ public class localizeAndFit {
 				tab.addValue("width", columns*inputPixelSize[0]);
 				tab.addValue("height", rows*inputPixelSize[0]);
 				tab.show("Results");
+				TableIO.Store(cleanResults);
 				return cleanResults;
 			} // end GPU computing.
-		ij.measure.ResultsTable tab = Analyzer.getResultsTable();
+	/*	ij.measure.ResultsTable tab = Analyzer.getResultsTable();
 		tab.reset();		
 		tab.incrementCounter();
 		tab.addValue("width", columns*inputPixelSize[0]);
 		tab.addValue("height", rows*inputPixelSize[0]);
-		tab.show("Results");
+		tab.show("Results");*/
 		return Results;					
 	}
 

@@ -16,7 +16,7 @@ import ij.plugin.PlugIn;
  *  You should have received a copy of the GNU General Public License
  *  along with SMLocalizer.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class SMLocalizerGPUprocess_  implements PlugIn {
+public class SMLocalizerGPUprocess  implements PlugIn {
 
 	public void run(String arg0)
 	{

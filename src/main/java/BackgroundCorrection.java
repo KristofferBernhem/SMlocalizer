@@ -221,10 +221,10 @@ class BackgroundCorrection {
 					int endFrame = (int)framesPerBatch;					
 					if (endFrame > nFrames)
 						endFrame = nFrames;
+
 					CUdeviceptr device_window 		= CUDA.allocateOnDevice((float)((2 * W[Ch-1] + 1) * rows * columns)); // swap vector.
 					while (loadedFrames < nFrames-1)
 					{		
-
 						float[] timeVector = new float[(endFrame-startFrame+1) * rows * columns];
 						float[] MeanFrame = new float[endFrame-startFrame+1]; 				// Will include frame mean value.
 						ImageProcessor IP = image.getProcessor();
@@ -256,24 +256,28 @@ class BackgroundCorrection {
 							loadedFrames++;
 							frameCounter++;
 						} // frame loop for mean calculations.
-
-
+						int stepLength = nFrames/30;
+						if (stepLength > 10)
+							stepLength = 10;
+						if(nFrames < 500)
+							stepLength = 1;
 						CUdeviceptr device_Data 		= CUDA.copyToDevice(timeVector);
 						CUdeviceptr device_meanVector 	= CUDA.copyToDevice(MeanFrame);
 						CUdeviceptr deviceOutput 		= CUDA.allocateOnDevice((int)timeVector.length);
 
-						int filteWindowLength 		= (2 * W[Ch-1] + 1) * rows * columns;
+						int filterWindowLength 		= (2 * W[Ch-1] + 1) * rows * columns;
 						int testDataLength 			= timeVector.length;
 						int meanVectorLength 		= MeanFrame.length;
 						Pointer kernelParameters 	= Pointer.to(   
 								Pointer.to(new int[]{W[Ch]}),
 								Pointer.to(device_window),
-								Pointer.to(new int[]{filteWindowLength}),
+								Pointer.to(new int[]{filterWindowLength}),
 								Pointer.to(new int[]{(meanVectorLength)}),
 								Pointer.to(device_Data),
 								Pointer.to(new int[]{testDataLength}),
 								Pointer.to(device_meanVector),
 								Pointer.to(new int[]{meanVectorLength}),
+								Pointer.to(new int[]{stepLength}),
 								Pointer.to(deviceOutput),
 								Pointer.to(new int[]{testDataLength})
 								);

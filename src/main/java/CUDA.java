@@ -25,6 +25,11 @@ import jcuda.driver.CUdeviceptr;
  */
 public class CUDA {
 	
+	public static void main(final String... args)
+	{
+		
+	}
+	
 	static CUdeviceptr copyToDevice(float hostData[])
 	{
 	    CUdeviceptr deviceData = new CUdeviceptr();

@@ -1,4 +1,3 @@
-
 /* Copyright 2016 Kristoffer Bernhem.
  * This file is part of SMLocalizer.
  *
@@ -26,9 +25,7 @@ import javax.swing.JPanel;
 import ij.WindowManager;
 
 
-/**
- * TODO: Add z rendering, remove multichannel render options.
- * TODO: Add storage of gauss filter for render image.
+/*
  * @author kristoffer.bernhem
  */
 @SuppressWarnings("serial")
@@ -46,6 +43,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			outputPixelSizeZ.setText("10");
 			doChannelAlign.setSelected(false);
 			doDriftCorrect.setSelected(true);
+			doGaussianSmoothing.setSelected(false); 
 			for (int id = 0; id < 10; id++){ // update list of variables for each ch.
 				/*
 				 *   Basic input settings
@@ -122,7 +120,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			ij.Prefs.set("SMLocalizer.settingsName"+1, name); // add storename
 			setParameters(name);
 
-			
+
 		} finally{
 
 		}
@@ -2635,521 +2633,521 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		particlesPerBinLabel.setText("Particles per bin");
 		particlesPerBinLabel.setToolTipText("Particles per bin for drift correction.");
 
-				driftCorrBinLowCount.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-				driftCorrBinLowCount.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-				driftCorrBinLowCount.setText("100");
-				driftCorrBinLowCount.setToolTipText("Particles per bin for drift correction.");
+		driftCorrBinLowCount.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+		driftCorrBinLowCount.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+		driftCorrBinLowCount.setText("100");
+		driftCorrBinLowCount.setToolTipText("Particles per bin for drift correction.");
 
-				driftCorrBinHighCount.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-				driftCorrBinHighCount.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-				driftCorrBinHighCount.setText("1000");
-				driftCorrBinHighCount.setToolTipText("Particles per bin for drift correction.");
-				driftCorrBinHighCount.addActionListener(new java.awt.event.ActionListener() {
-					public void actionPerformed(java.awt.event.ActionEvent evt) {
-						driftCorrBinHighCountActionPerformed(evt);
-					}
-				});
+		driftCorrBinHighCount.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+		driftCorrBinHighCount.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+		driftCorrBinHighCount.setText("1000");
+		driftCorrBinHighCount.setToolTipText("Particles per bin for drift correction.");
+		driftCorrBinHighCount.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				driftCorrBinHighCountActionPerformed(evt);
+			}
+		});
 
-				numberOfBinsLabel.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
-				numberOfBinsLabel.setText("Number of bins");
-				numberOfBinsLabel.setToolTipText("Number of bins to divide the particles in for drift correction.");
+		numberOfBinsLabel.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+		numberOfBinsLabel.setText("Number of bins");
+		numberOfBinsLabel.setToolTipText("Number of bins to divide the particles in for drift correction.");
 
-				doDriftCorrect.setSelected(true);
-				doDriftCorrect.setToolTipText("Drift correct particles during Process execution.");
-				doDriftCorrect.addActionListener(new java.awt.event.ActionListener() {
-					public void actionPerformed(java.awt.event.ActionEvent evt) {
-						doDriftCorrectActionPerformed(evt);
-					}
-				});
+		doDriftCorrect.setSelected(true);
+		doDriftCorrect.setToolTipText("Drift correct particles during Process execution.");
+		doDriftCorrect.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				doDriftCorrectActionPerformed(evt);
+			}
+		});
 
-				driftCorrect.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
-				driftCorrect.setText("Drift correct");
-				driftCorrect.setToolTipText("Drift correct particles in result tabel using parameter range for which to include.");
-				driftCorrect.addActionListener(new java.awt.event.ActionListener() {
-					public void actionPerformed(java.awt.event.ActionEvent evt) {
-						driftCorrectActionPerformed(evt);
-					}
-				});
+		driftCorrect.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
+		driftCorrect.setText("Drift correct");
+		driftCorrect.setToolTipText("Drift correct particles in result tabel using parameter range for which to include.");
+		driftCorrect.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				driftCorrectActionPerformed(evt);
+			}
+		});
 
-				doChannelAlign.setToolTipText("Align channels (chromatic shifts) during Process execution.");
-				doChannelAlign.addActionListener(new java.awt.event.ActionListener() {
-					public void actionPerformed(java.awt.event.ActionEvent evt) {
-						doChannelAlignActionPerformed(evt);
-					}
-				});
+		doChannelAlign.setToolTipText("Align channels (chromatic shifts) during Process execution.");
+		doChannelAlign.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				doChannelAlignActionPerformed(evt);
+			}
+		});
 
-				alignChannels.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
-				alignChannels.setText("Align channels");
-				alignChannels.setToolTipText("Align channels (chromatic shifts) using the particles included wihtin selected parameter ranges.");
-				alignChannels.addActionListener(new java.awt.event.ActionListener() {
-					public void actionPerformed(java.awt.event.ActionEvent evt) {
-						alignChannelsActionPerformed(evt);
-					}
-				});
+		alignChannels.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
+		alignChannels.setText("Align channels");
+		alignChannels.setToolTipText("Align channels (chromatic shifts) using the particles included wihtin selected parameter ranges.");
+		alignChannels.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				alignChannelsActionPerformed(evt);
+			}
+		});
 
-				particlesPerBinLabelchAlign.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
-				particlesPerBinLabelchAlign.setText("Particles per bin");
-				particlesPerBinLabelchAlign.setToolTipText("Particles per bin from each chanel for channel alignment.");
+		particlesPerBinLabelchAlign.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+		particlesPerBinLabelchAlign.setText("Particles per bin");
+		particlesPerBinLabelchAlign.setToolTipText("Particles per bin from each chanel for channel alignment.");
 
-				chAlignBinLowCount.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-				chAlignBinLowCount.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-				chAlignBinLowCount.setText("100");
-				chAlignBinLowCount.setToolTipText("Particles per bin from each chanel for channel alignment.");
+		chAlignBinLowCount.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+		chAlignBinLowCount.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+		chAlignBinLowCount.setText("100");
+		chAlignBinLowCount.setToolTipText("Particles per bin from each chanel for channel alignment.");
 
-				chAlignBinHighCount.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-				chAlignBinHighCount.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-				chAlignBinHighCount.setText("1000");
-				chAlignBinHighCount.setToolTipText("Particles per bin from each chanel for channel alignment.");
-				chAlignBinHighCount.addActionListener(new java.awt.event.ActionListener() {
-					public void actionPerformed(java.awt.event.ActionEvent evt) {
-						chAlignBinHighCountActionPerformed(evt);
-					}
-				});
+		chAlignBinHighCount.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+		chAlignBinHighCount.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+		chAlignBinHighCount.setText("1000");
+		chAlignBinHighCount.setToolTipText("Particles per bin from each chanel for channel alignment.");
+		chAlignBinHighCount.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				chAlignBinHighCountActionPerformed(evt);
+			}
+		});
 
-				numberOfBinsDriftCorr.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-				numberOfBinsDriftCorr.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-				numberOfBinsDriftCorr.setText("50");
-				numberOfBinsDriftCorr.setToolTipText("Number of bins to divide the particles in for drift correction.");
+		numberOfBinsDriftCorr.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+		numberOfBinsDriftCorr.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+		numberOfBinsDriftCorr.setText("50");
+		numberOfBinsDriftCorr.setToolTipText("Number of bins to divide the particles in for drift correction.");
 
-				minLabel.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-				minLabel.setText("min");
+		minLabel.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+		minLabel.setText("min");
 
-				maxLabel.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-				maxLabel.setText("max");
+		maxLabel.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+		maxLabel.setText("max");
 
-				maxLabel1.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-				maxLabel1.setText("max");
+		maxLabel1.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+		maxLabel1.setText("max");
 
-				minLabel1.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-				minLabel1.setText("min");
+		minLabel1.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+		minLabel1.setText("min");
 
-				particlesPerBinLabel1.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
-				particlesPerBinLabel1.setText("Max drift [nm]");
-				particlesPerBinLabel1.setToolTipText("Max drift between two bins. Larger values increase computational time!");
+		particlesPerBinLabel1.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+		particlesPerBinLabel1.setText("Max drift [nm]");
+		particlesPerBinLabel1.setToolTipText("Max drift between two bins. Larger values increase computational time!");
 
-				driftCorrShiftXY.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-				driftCorrShiftXY.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-				driftCorrShiftXY.setText("250");
-				driftCorrShiftXY.setToolTipText("Max drift between two bins. Larger values increase computational time!");
-				driftCorrShiftXY.addActionListener(new java.awt.event.ActionListener() {
-					public void actionPerformed(java.awt.event.ActionEvent evt) {
-						driftCorrShiftXYActionPerformed(evt);
-					}
-				});
+		driftCorrShiftXY.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+		driftCorrShiftXY.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+		driftCorrShiftXY.setText("250");
+		driftCorrShiftXY.setToolTipText("Max drift between two bins. Larger values increase computational time!");
+		driftCorrShiftXY.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				driftCorrShiftXYActionPerformed(evt);
+			}
+		});
 
-				driftCorrShiftZ.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-				driftCorrShiftZ.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-				driftCorrShiftZ.setText("250");
-				driftCorrShiftZ.setToolTipText("Max drift between two bins. Larger values increase computational time!");
-				driftCorrShiftZ.addActionListener(new java.awt.event.ActionListener() {
-					public void actionPerformed(java.awt.event.ActionEvent evt) {
-						driftCorrShiftZActionPerformed(evt);
-					}
-				});
+		driftCorrShiftZ.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+		driftCorrShiftZ.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+		driftCorrShiftZ.setText("250");
+		driftCorrShiftZ.setToolTipText("Max drift between two bins. Larger values increase computational time!");
+		driftCorrShiftZ.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				driftCorrShiftZActionPerformed(evt);
+			}
+		});
 
-				minLabel2.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-				minLabel2.setText("XY");
+		minLabel2.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+		minLabel2.setText("XY");
 
-				maxLabel2.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-				maxLabel2.setText("Z");
+		maxLabel2.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+		maxLabel2.setText("Z");
 
-				minLabel4.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-				minLabel4.setText("XY");
+		minLabel4.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+		minLabel4.setText("XY");
 
-				maxLabel4.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-				maxLabel4.setText("Z");
+		maxLabel4.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+		maxLabel4.setText("Z");
 
-				chAlignShiftZ.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-				chAlignShiftZ.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-				chAlignShiftZ.setText("250");
-				chAlignShiftZ.setToolTipText("Maximal allowed shift between channels. Larger values increase computational time!");
-				chAlignShiftZ.addActionListener(new java.awt.event.ActionListener() {
-					public void actionPerformed(java.awt.event.ActionEvent evt) {
-						chAlignShiftZActionPerformed(evt);
-					}
-				});
+		chAlignShiftZ.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+		chAlignShiftZ.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+		chAlignShiftZ.setText("250");
+		chAlignShiftZ.setToolTipText("Maximal allowed shift between channels. Larger values increase computational time!");
+		chAlignShiftZ.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				chAlignShiftZActionPerformed(evt);
+			}
+		});
 
-				chAlignShiftXY.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-				chAlignShiftXY.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-				chAlignShiftXY.setText("250");
-				chAlignShiftXY.setToolTipText("Maximal allowed shift between channels. Larger values increase computational time!");
+		chAlignShiftXY.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+		chAlignShiftXY.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+		chAlignShiftXY.setText("250");
+		chAlignShiftXY.setToolTipText("Maximal allowed shift between channels. Larger values increase computational time!");
 
-				particlesPerBinLabel2.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
-				particlesPerBinLabel2.setText("Max shift [nm]");
-				particlesPerBinLabel2.setToolTipText("Maximal allowed shift between channels. Larger values increase computational time!");
+		particlesPerBinLabel2.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+		particlesPerBinLabel2.setText("Max shift [nm]");
+		particlesPerBinLabel2.setToolTipText("Maximal allowed shift between channels. Larger values increase computational time!");
 
-				javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-				jPanel1.setLayout(jPanel1Layout);
-				jPanel1Layout.setHorizontalGroup(
-						jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(jPanel1Layout.createSequentialGroup()
-								.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-										.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-												.addContainerGap()
-												.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-														.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-																.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-																		.addGroup(jPanel1Layout.createSequentialGroup()
-																				.addGap(0, 0, Short.MAX_VALUE)
-																				.addComponent(minLabel2))
-																		.addGroup(jPanel1Layout.createSequentialGroup()
-																				.addComponent(particlesPerBinLabel)
-																				.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-																				.addComponent(minLabel)))
-																.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-																.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-																		.addComponent(driftCorrShiftXY, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-																		.addComponent(driftCorrBinLowCount, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-																		.addComponent(numberOfBinsDriftCorr, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-																.addGap(18, 18, 18)
-																.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-																		.addComponent(maxLabel)
-																		.addComponent(maxLabel2))
-																.addGap(6, 6, 6))
-														.addGroup(jPanel1Layout.createSequentialGroup()
-																.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-																		.addGroup(jPanel1Layout.createSequentialGroup()
-																				.addComponent(doDriftCorrect)
-																				.addGap(18, 18, 18)
-																				.addComponent(driftCorrect, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
-																		.addComponent(particlesPerBinLabel1))
-																.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-												.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-														.addComponent(driftCorrShiftZ, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-														.addComponent(driftCorrBinHighCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-										.addGroup(jPanel1Layout.createSequentialGroup()
-												.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-														.addGroup(jPanel1Layout.createSequentialGroup()
-																.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-																		.addGroup(jPanel1Layout.createSequentialGroup()
-																				.addGap(10, 10, 10)
-																				.addComponent(particlesPerBinLabelchAlign)
-																				.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-																				.addComponent(minLabel1))
-																		.addGroup(jPanel1Layout.createSequentialGroup()
-																				.addContainerGap()
-																				.addComponent(particlesPerBinLabel2)
-																				.addGap(34, 34, 34)
-																				.addComponent(minLabel4)))
-																.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-																.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-																		.addComponent(chAlignShiftXY, javax.swing.GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE)
-																		.addComponent(chAlignBinLowCount))
-																.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-																		.addGroup(jPanel1Layout.createSequentialGroup()
-																				.addGap(29, 29, 29)
-																				.addComponent(maxLabel4))
-																		.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-																				.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-																				.addComponent(maxLabel1)))
-																.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-																.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-																		.addComponent(chAlignBinHighCount, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
-																		.addComponent(chAlignShiftZ)))
-														.addGroup(jPanel1Layout.createSequentialGroup()
-																.addGap(10, 10, 10)
-																.addComponent(doChannelAlign)
-																.addGap(18, 18, 18)
-																.addComponent(alignChannels)))
-												.addGap(0, 0, Short.MAX_VALUE)))
-								.addContainerGap())
-						.addGroup(jPanel1Layout.createSequentialGroup()
-								.addContainerGap()
+		javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+		jPanel1.setLayout(jPanel1Layout);
+		jPanel1Layout.setHorizontalGroup(
+				jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(jPanel1Layout.createSequentialGroup()
+						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+								.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+										.addContainerGap()
+										.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+												.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+														.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+																.addGroup(jPanel1Layout.createSequentialGroup()
+																		.addGap(0, 0, Short.MAX_VALUE)
+																		.addComponent(minLabel2))
+																.addGroup(jPanel1Layout.createSequentialGroup()
+																		.addComponent(particlesPerBinLabel)
+																		.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+																		.addComponent(minLabel)))
+														.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+														.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+																.addComponent(driftCorrShiftXY, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+																.addComponent(driftCorrBinLowCount, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+																.addComponent(numberOfBinsDriftCorr, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+														.addGap(18, 18, 18)
+														.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+																.addComponent(maxLabel)
+																.addComponent(maxLabel2))
+														.addGap(6, 6, 6))
+												.addGroup(jPanel1Layout.createSequentialGroup()
+														.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+																.addGroup(jPanel1Layout.createSequentialGroup()
+																		.addComponent(doDriftCorrect)
+																		.addGap(18, 18, 18)
+																		.addComponent(driftCorrect, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
+																.addComponent(particlesPerBinLabel1))
+														.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+										.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+												.addComponent(driftCorrShiftZ, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+												.addComponent(driftCorrBinHighCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+								.addGroup(jPanel1Layout.createSequentialGroup()
+										.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+												.addGroup(jPanel1Layout.createSequentialGroup()
+														.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+																.addGroup(jPanel1Layout.createSequentialGroup()
+																		.addGap(10, 10, 10)
+																		.addComponent(particlesPerBinLabelchAlign)
+																		.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+																		.addComponent(minLabel1))
+																.addGroup(jPanel1Layout.createSequentialGroup()
+																		.addContainerGap()
+																		.addComponent(particlesPerBinLabel2)
+																		.addGap(34, 34, 34)
+																		.addComponent(minLabel4)))
+														.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+														.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+																.addComponent(chAlignShiftXY, javax.swing.GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE)
+																.addComponent(chAlignBinLowCount))
+														.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+																.addGroup(jPanel1Layout.createSequentialGroup()
+																		.addGap(29, 29, 29)
+																		.addComponent(maxLabel4))
+																.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+																		.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+																		.addComponent(maxLabel1)))
+														.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+														.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+																.addComponent(chAlignBinHighCount, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
+																.addComponent(chAlignShiftZ)))
+												.addGroup(jPanel1Layout.createSequentialGroup()
+														.addGap(10, 10, 10)
+														.addComponent(doChannelAlign)
+														.addGap(18, 18, 18)
+														.addComponent(alignChannels)))
+										.addGap(0, 0, Short.MAX_VALUE)))
+						.addContainerGap())
+				.addGroup(jPanel1Layout.createSequentialGroup()
+						.addContainerGap()
+						.addComponent(numberOfBinsLabel)
+						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+				);
+
+		jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {driftCorrBinHighCount, driftCorrBinLowCount, driftCorrShiftXY, driftCorrShiftZ, numberOfBinsDriftCorr});
+
+		jPanel1Layout.setVerticalGroup(
+				jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(jPanel1Layout.createSequentialGroup()
+						.addGap(4, 4, 4)
+						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+								.addComponent(doDriftCorrect)
+								.addComponent(driftCorrect))
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+								.addComponent(particlesPerBinLabel)
+								.addComponent(driftCorrBinLowCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addComponent(driftCorrBinHighCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addComponent(minLabel)
+								.addComponent(maxLabel))
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+								.addComponent(particlesPerBinLabel1)
+								.addComponent(driftCorrShiftXY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addComponent(driftCorrShiftZ, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addComponent(minLabel2)
+								.addComponent(maxLabel2))
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
 								.addComponent(numberOfBinsLabel)
-								.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-						);
+								.addComponent(numberOfBinsDriftCorr, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+								.addComponent(alignChannels)
+								.addComponent(doChannelAlign))
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+								.addComponent(particlesPerBinLabelchAlign)
+								.addComponent(chAlignBinHighCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addComponent(minLabel1)
+								.addComponent(maxLabel1)
+								.addComponent(chAlignBinLowCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+								.addComponent(chAlignShiftXY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addComponent(chAlignShiftZ, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addComponent(minLabel4)
+								.addComponent(maxLabel4)
+								.addComponent(particlesPerBinLabel2))
+						.addContainerGap())
+				);
 
-				jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {driftCorrBinHighCount, driftCorrBinLowCount, driftCorrShiftXY, driftCorrShiftZ, numberOfBinsDriftCorr});
+		jPanel2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, null, null, new java.awt.Color(153, 153, 153), new java.awt.Color(204, 204, 204)));
 
-				jPanel1Layout.setVerticalGroup(
-						jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(jPanel1Layout.createSequentialGroup()
-								.addGap(4, 4, 4)
-								.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-										.addComponent(doDriftCorrect)
-										.addComponent(driftCorrect))
-								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-										.addComponent(particlesPerBinLabel)
-										.addComponent(driftCorrBinLowCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addComponent(driftCorrBinHighCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addComponent(minLabel)
-										.addComponent(maxLabel))
-								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-										.addComponent(particlesPerBinLabel1)
-										.addComponent(driftCorrShiftXY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addComponent(driftCorrShiftZ, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addComponent(minLabel2)
-										.addComponent(maxLabel2))
-								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-										.addComponent(numberOfBinsLabel)
-										.addComponent(numberOfBinsDriftCorr, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-										.addComponent(alignChannels)
-										.addComponent(doChannelAlign))
-								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-										.addComponent(particlesPerBinLabelchAlign)
-										.addComponent(chAlignBinHighCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addComponent(minLabel1)
-										.addComponent(maxLabel1)
-										.addComponent(chAlignBinLowCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-										.addComponent(chAlignShiftXY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addComponent(chAlignShiftZ, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addComponent(minLabel4)
-										.addComponent(maxLabel4)
-										.addComponent(particlesPerBinLabel2))
-								.addContainerGap())
-						);
+		correctBackground.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
+		correctBackground.setText("Correct backgound");
+		correctBackground.setToolTipText("Correct background using pixel by pixel time median. Median window set by Filter width in Basic input.");
+		correctBackground.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				correctBackgroundActionPerformed(evt);
+			}
+		});
 
-				jPanel2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, null, null, new java.awt.Color(153, 153, 153), new java.awt.Color(204, 204, 204)));
+		localize_Fit.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
+		localize_Fit.setText("Localize");
+		localize_Fit.setToolTipText("Extract regions of interest and fit against 2D gaussian function. ROI size, minimal signal for inclusion, translation of pixel intensity to photons, minimal number of pixels above background and minimum distance between particles in a frame is set in Basic input.");
+		localize_Fit.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				localize_FitActionPerformed(evt);
+			}
+		});
 
-				correctBackground.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
-				correctBackground.setText("Correct backgound");
-				correctBackground.setToolTipText("Correct background using pixel by pixel time median. Median window set by Filter width in Basic input.");
-				correctBackground.addActionListener(new java.awt.event.ActionListener() {
-					public void actionPerformed(java.awt.event.ActionEvent evt) {
-						correctBackgroundActionPerformed(evt);
-					}
-				});
+		loadSettings.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
+		loadSettings.setText("Load settings");
+		loadSettings.setToolTipText("Load previously stored settings (or default to restart).");
+		loadSettings.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				loadSettingsActionPerformed(evt);
+			}
+		});
 
-				localize_Fit.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
-				localize_Fit.setText("Localize");
-				localize_Fit.setToolTipText("Extract regions of interest and fit against 2D gaussian function. ROI size, minimal signal for inclusion, translation of pixel intensity to photons, minimal number of pixels above background and minimum distance between particles in a frame is set in Basic input.");
-				localize_Fit.addActionListener(new java.awt.event.ActionListener() {
-					public void actionPerformed(java.awt.event.ActionEvent evt) {
-						localize_FitActionPerformed(evt);
-					}
-				});
+		storeSettings.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
+		storeSettings.setText("Store settings");
+		storeSettings.setToolTipText("Store the current settings for future processing.");
+		storeSettings.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				storeSettingsActionPerformed(evt);
+			}
+		});
 
-				loadSettings.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
-				loadSettings.setText("Load settings");
-				loadSettings.setToolTipText("Load previously stored settings (or default to restart).");
-				loadSettings.addActionListener(new java.awt.event.ActionListener() {
-					public void actionPerformed(java.awt.event.ActionEvent evt) {
-						loadSettingsActionPerformed(evt);
-					}
-				});
-
-				storeSettings.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
-				storeSettings.setText("Store settings");
-				storeSettings.setToolTipText("Store the current settings for future processing.");
-				storeSettings.addActionListener(new java.awt.event.ActionListener() {
-					public void actionPerformed(java.awt.event.ActionEvent evt) {
-						storeSettingsActionPerformed(evt);
-					}
-				});
-
-				javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-				jPanel2.setLayout(jPanel2Layout);
-				jPanel2Layout.setHorizontalGroup(
-						jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(jPanel2Layout.createSequentialGroup()
-								.addContainerGap()
+		javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+		jPanel2.setLayout(jPanel2Layout);
+		jPanel2Layout.setHorizontalGroup(
+				jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(jPanel2Layout.createSequentialGroup()
+						.addContainerGap()
+						.addComponent(correctBackground)
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+						.addComponent(localize_Fit, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+						.addComponent(storeSettings)
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+						.addComponent(loadSettings, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
+				);
+		jPanel2Layout.setVerticalGroup(
+				jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(jPanel2Layout.createSequentialGroup()
+						.addContainerGap()
+						.addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
 								.addComponent(correctBackground)
-								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addComponent(localize_Fit, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
-								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+								.addComponent(localize_Fit)
 								.addComponent(storeSettings)
-								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addComponent(loadSettings, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
-						);
-				jPanel2Layout.setVerticalGroup(
-						jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(jPanel2Layout.createSequentialGroup()
-								.addContainerGap()
-								.addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-										.addComponent(correctBackground)
-										.addComponent(localize_Fit)
-										.addComponent(storeSettings)
-										.addComponent(loadSettings))
-								.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-						);
+								.addComponent(loadSettings))
+						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+				);
 
-				jPanel3.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, null, null, null, new java.awt.Color(153, 153, 153)));
-				jPanel3.setToolTipText("");
+		jPanel3.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, null, null, null, new java.awt.Color(153, 153, 153)));
+		jPanel3.setToolTipText("");
 
-				renderImage.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
-				renderImage.setText("Render image");
-				renderImage.setToolTipText("Render image based on fitted particle result table and selected Parameter ranges.");
-				renderImage.addActionListener(new java.awt.event.ActionListener() {
-					public void actionPerformed(java.awt.event.ActionEvent evt) {
-						renderImageActionPerformed(evt);
-					}
-				});
+		renderImage.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
+		renderImage.setText("Render image");
+		renderImage.setToolTipText("Render image based on fitted particle result table and selected Parameter ranges.");
+		renderImage.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				renderImageActionPerformed(evt);
+			}
+		});
 
-				doRenderImage.setSelected(true);
-				doRenderImage.setToolTipText("Render image during Process execution.");
+		doRenderImage.setSelected(true);
+		doRenderImage.setToolTipText("Render image during Process execution.");
 
-				outputPixelSizeLabel.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
-				outputPixelSizeLabel.setText("Pixel size [nm]");
-				outputPixelSizeLabel.setToolTipText("Rendered image pixel size.");
+		outputPixelSizeLabel.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+		outputPixelSizeLabel.setText("Pixel size [nm]");
+		outputPixelSizeLabel.setToolTipText("Rendered image pixel size.");
 
-				outputPixelSize.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-				outputPixelSize.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-				outputPixelSize.setText("5");
-				outputPixelSize.setToolTipText("Rendered image pixel size.");
+		outputPixelSize.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+		outputPixelSize.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+		outputPixelSize.setText("5");
+		outputPixelSize.setToolTipText("Rendered image pixel size.");
 
-				doGaussianSmoothing.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-				doGaussianSmoothing.setText("Gaussian smoothing");
-				doGaussianSmoothing.setToolTipText("Add a 2 pixel radius gaussian smoothing of the rendered image.");
-				doGaussianSmoothing.addActionListener(new java.awt.event.ActionListener() {
-					public void actionPerformed(java.awt.event.ActionEvent evt) {
-						doGaussianSmoothingActionPerformed(evt);
-					}
-				});
+		doGaussianSmoothing.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+		doGaussianSmoothing.setText("Gaussian smoothing");
+		doGaussianSmoothing.setToolTipText("Add a 2 pixel radius gaussian smoothing of the rendered image.");
+		doGaussianSmoothing.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				doGaussianSmoothingActionPerformed(evt);
+			}
+		});
 
-				outputPixelSizeZ.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-				outputPixelSizeZ.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-				outputPixelSizeZ.setText("5");
-				outputPixelSizeZ.setToolTipText("Rendered image pixel size.");
-				outputPixelSizeZ.addActionListener(new java.awt.event.ActionListener() {
-					public void actionPerformed(java.awt.event.ActionEvent evt) {
-						outputPixelSizeZActionPerformed(evt);
-					}
-				});
+		outputPixelSizeZ.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+		outputPixelSizeZ.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+		outputPixelSizeZ.setText("5");
+		outputPixelSizeZ.setToolTipText("Rendered image pixel size.");
+		outputPixelSizeZ.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				outputPixelSizeZActionPerformed(evt);
+			}
+		});
 
-				XYrenderLabel.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-				XYrenderLabel.setText("XY");
+		XYrenderLabel.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+		XYrenderLabel.setText("XY");
 
-				ZrenderLabel.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-				ZrenderLabel.setText("Z");
+		ZrenderLabel.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+		ZrenderLabel.setText("Z");
 
-				javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-				jPanel3.setLayout(jPanel3Layout);
-				jPanel3Layout.setHorizontalGroup(
-						jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(jPanel3Layout.createSequentialGroup()
-								.addContainerGap()
-								.addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-										.addGroup(jPanel3Layout.createSequentialGroup()
-												.addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-														.addComponent(doGaussianSmoothing)
-														.addGroup(jPanel3Layout.createSequentialGroup()
-																.addGap(8, 8, 8)
-																.addComponent(outputPixelSizeLabel)))
-												.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-												.addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-														.addComponent(XYrenderLabel)
-														.addComponent(outputPixelSize, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
-												.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-												.addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-														.addComponent(ZrenderLabel)
-														.addComponent(outputPixelSizeZ, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)))
-										.addGroup(jPanel3Layout.createSequentialGroup()
-												.addComponent(doRenderImage)
-												.addGap(18, 18, 18)
-												.addComponent(renderImage, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)))
-								.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-						);
-				jPanel3Layout.setVerticalGroup(
-						jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(jPanel3Layout.createSequentialGroup()
-								.addContainerGap()
-								.addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-										.addComponent(doRenderImage)
-										.addComponent(renderImage))
-								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-										.addComponent(doGaussianSmoothing)
-										.addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+		javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+		jPanel3.setLayout(jPanel3Layout);
+		jPanel3Layout.setHorizontalGroup(
+				jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(jPanel3Layout.createSequentialGroup()
+						.addContainerGap()
+						.addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+								.addGroup(jPanel3Layout.createSequentialGroup()
+										.addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+												.addComponent(doGaussianSmoothing)
+												.addGroup(jPanel3Layout.createSequentialGroup()
+														.addGap(8, 8, 8)
+														.addComponent(outputPixelSizeLabel)))
+										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+										.addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
 												.addComponent(XYrenderLabel)
-												.addComponent(ZrenderLabel)))
-								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-										.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-												.addComponent(outputPixelSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-												.addComponent(outputPixelSizeLabel))
-										.addComponent(outputPixelSizeZ, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-								.addGap(32, 32, 32))
-						);
+												.addComponent(outputPixelSize, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+										.addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+												.addComponent(ZrenderLabel)
+												.addComponent(outputPixelSizeZ, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)))
+								.addGroup(jPanel3Layout.createSequentialGroup()
+										.addComponent(doRenderImage)
+										.addGap(18, 18, 18)
+										.addComponent(renderImage, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)))
+						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+				);
+		jPanel3Layout.setVerticalGroup(
+				jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(jPanel3Layout.createSequentialGroup()
+						.addContainerGap()
+						.addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+								.addComponent(doRenderImage)
+								.addComponent(renderImage))
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+						.addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+								.addComponent(doGaussianSmoothing)
+								.addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+										.addComponent(XYrenderLabel)
+										.addComponent(ZrenderLabel)))
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+								.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+										.addComponent(outputPixelSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+										.addComponent(outputPixelSizeLabel))
+								.addComponent(outputPixelSizeZ, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+						.addGap(32, 32, 32))
+				);
 
-				channelId.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
-				channelId.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Add channel", "Channel 1" }));
-				channelId.setSelectedIndex(1);
-				channelId.setToolTipText("Select or add new channel for channel specifc settings");
-				channelId.addMouseListener(new java.awt.event.MouseAdapter() {
-					public void mouseClicked(java.awt.event.MouseEvent evt) {
-						channelIdMouseClicked(evt);
-					}
-				});
-				channelId.addActionListener(new java.awt.event.ActionListener() {
-					public void actionPerformed(java.awt.event.ActionEvent evt) {
-						channelIdActionPerformed(evt);
-					}
-				});
+		channelId.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
+		channelId.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Add channel", "Channel 1" }));
+		channelId.setSelectedIndex(1);
+		channelId.setToolTipText("Select or add new channel for channel specifc settings");
+		channelId.addMouseListener(new java.awt.event.MouseAdapter() {
+			public void mouseClicked(java.awt.event.MouseEvent evt) {
+				channelIdMouseClicked(evt);
+			}
+		});
+		channelId.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				channelIdActionPerformed(evt);
+			}
+		});
 
-				buttonGroup2.add(parallelComputation);
-				parallelComputation.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-				parallelComputation.setSelected(true);
-				parallelComputation.setText("parallel computation");
-				parallelComputation.setToolTipText("Only CPU bound computation");
+		buttonGroup2.add(parallelComputation);
+		parallelComputation.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+		parallelComputation.setSelected(true);
+		parallelComputation.setText("parallel computation");
+		parallelComputation.setToolTipText("Only CPU bound computation");
 
-				buttonGroup2.add(GPUcomputation);
-				GPUcomputation.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-				GPUcomputation.setText("GPU computation");
-				GPUcomputation.setToolTipText("Transfer bulk of computation to GPU. Not functional on Mac OS.");
+		buttonGroup2.add(GPUcomputation);
+		GPUcomputation.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+		GPUcomputation.setText("GPU computation");
+		GPUcomputation.setToolTipText("Transfer bulk of computation to GPU. Not functional on Mac OS.");
 
-				javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-				getContentPane().setLayout(layout);
-				layout.setHorizontalGroup(
-						layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-								.addContainerGap(14, Short.MAX_VALUE)
-								.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-										.addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addGroup(layout.createSequentialGroup()
-												.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-														.addGroup(layout.createSequentialGroup()
-																.addGap(188, 188, 188)
-																.addComponent(Header))
-														.addComponent(channelId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-												.addGap(46, 46, 46)
-												.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-														.addComponent(GPUcomputation)
-														.addComponent(parallelComputation)))
-										.addGroup(layout.createSequentialGroup()
-												.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-														.addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-														.addComponent(Analysis, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-														.addComponent(BasicInp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-												.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-												.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-														.addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-														.addComponent(ParameterRange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-						);
-				layout.setVerticalGroup(
-						layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(layout.createSequentialGroup()
-								.addContainerGap(32, Short.MAX_VALUE)
-								.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-										.addComponent(Header)
-										.addComponent(parallelComputation))
-								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-										.addComponent(GPUcomputation)
-										.addComponent(channelId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-										.addComponent(ParameterRange, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-										.addComponent(BasicInp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-										.addGroup(layout.createSequentialGroup()
-												.addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
-												.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-												.addComponent(Analysis, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-										.addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-						);
+		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+		getContentPane().setLayout(layout);
+		layout.setHorizontalGroup(
+				layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+						.addContainerGap(14, Short.MAX_VALUE)
+						.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+								.addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addGroup(layout.createSequentialGroup()
+										.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+												.addGroup(layout.createSequentialGroup()
+														.addGap(188, 188, 188)
+														.addComponent(Header))
+												.addComponent(channelId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+										.addGap(46, 46, 46)
+										.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+												.addComponent(GPUcomputation)
+												.addComponent(parallelComputation)))
+								.addGroup(layout.createSequentialGroup()
+										.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+												.addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+												.addComponent(Analysis, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+												.addComponent(BasicInp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+										.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+												.addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+												.addComponent(ParameterRange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+				);
+		layout.setVerticalGroup(
+				layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(layout.createSequentialGroup()
+						.addContainerGap(32, Short.MAX_VALUE)
+						.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+								.addComponent(Header)
+								.addComponent(parallelComputation))
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+						.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+								.addComponent(GPUcomputation)
+								.addComponent(channelId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+						.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+								.addComponent(ParameterRange, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+								.addComponent(BasicInp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+						.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+								.addGroup(layout.createSequentialGroup()
+										.addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+										.addComponent(Analysis, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+								.addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+						.addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+				);
 
-				pack();
+		pack();
 	}// </editor-fold>                        
 
 	private void minimalSignalActionPerformed(java.awt.event.ActionEvent evt) {                                              
@@ -3192,18 +3190,19 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		{
 			selectedModel = 0;			
 			BackgroundCorrection.medianFiltering(window,WindowManager.getCurrentImage(),selectedModel); // correct background.
-			ArrayList<Particle> Results = localizeAndFit.run(signalStrength, minDistance, gWindow, pixelSize,minPixelOverBkgrnd,totalGain,selectedModel);  //locate and fit all particles.
-			TableIO.Store(Results);			
+			localizeAndFit.run(signalStrength, minDistance, gWindow, pixelSize,minPixelOverBkgrnd,totalGain,selectedModel);  //locate and fit all particles.
+			//			ArrayList<Particle> Results = localizeAndFit.run(signalStrength, minDistance, gWindow, pixelSize,minPixelOverBkgrnd,totalGain,selectedModel);  //locate and fit all particles.
+			//	TableIO.Store(Results);			
 		}
 		else if (GPUcomputation.isSelected()) // GPU accelerated computation.
 		{
 			selectedModel = 2;
 			processMedianFit.run(window, WindowManager.getCurrentImage(), signalStrength, minDistance, gWindow, pixelSize, minPixelOverBkgrnd, totalGain); // GPU specific call. 
 		}
-		
+
 		boolean[][] include = IncludeParameters();
-		double[][] lb = lbParameters();
-		double[][] ub = ubParameters();
+		double[][] lb 		= lbParameters();
+		double[][] ub 		= ubParameters();
 
 		cleanParticleList.run(lb,ub,include);
 
@@ -3689,7 +3688,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			doRenderImage.setSelected(false);
 
 		//outputPixelSize.setText(outputPixelSizeChList.getItem(id).getText());
-                 
+
 
 		/*
 		 *       Drift and channel correction settings.
@@ -3843,7 +3842,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
 			outputPixelSizeZ.setText("10"); 		// Update.
 		} 
-		
+
 		/*
 		 *       Drift and channel correction settings.
 		 */
@@ -4203,7 +4202,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 	private int[] getOutputPixelSize()
 	{        
 		int[] data = new int[2];
-/*		for (int id = 0; id < data.length; id++)
+		/*		for (int id = 0; id < data.length; id++)
 		{
 			data[id] = Integer.parseInt(outputPixelSizeChList.getItem(id).getText());
 		}        */
@@ -4406,20 +4405,27 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 
 		// pixel size XY
 		outputPixelSize.setText(
-		ij.Prefs.get("SMLocalizer.settings."+storeName+
-				".pixelSize", 
-				""));
+				ij.Prefs.get("SMLocalizer.settings."+storeName+
+						".pixelSize", 
+						""));
 		// pixel size Z
 		outputPixelSizeZ.setText(
-		ij.Prefs.get("SMLocalizer.settings."+storeName+
-				".pixelSizeZ", 
-				""));
+				ij.Prefs.get("SMLocalizer.settings."+storeName+
+						".pixelSizeZ", 
+						""));
+		// gaussian smoothing
+		if(ij.Prefs.get("SMLocalizer.settings."+storeName+
+				".doGaussianSmoothing.",1)== 1)
+			doGaussianSmoothing.setSelected(true);
+		else
+			doGaussianSmoothing.setSelected(false);
+
 		for (int Ch = 0; Ch < 10; Ch++){
 			/*
 			 *   Basic input settings
 			 */		    		                           		   
-		
-					
+
+
 			// total gain
 			totalGainChList.getItem(Ch).setText( 
 					ij.Prefs.get("SMLocalizer.settings."+storeName+
@@ -4476,7 +4482,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 					ij.Prefs.get("SMLocalizer.settings."+storeName+
 							".doRenderImage."+Ch, 
 							""));			
-	    
+
 			/*
 			 * store parameter settings:
 			 */		    		   					
@@ -4644,8 +4650,8 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		 */
 
 		ij.Prefs.set("SMLocalizer.CurrentSetting",storeName);
-		
-		
+
+
 		if (doDriftCorrect.isSelected())
 			ij.Prefs.set("SMLocalizer.settings."+storeName+
 					".doDriftCorrect.",1);
@@ -4668,6 +4674,14 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		ij.Prefs.set("SMLocalizer.settings."+storeName+
 				".pixelSizeZ", 
 				outputPixelSizeZ.getText());
+		// gaussian smoothing
+		if(doGaussianSmoothing.isSelected())
+			ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".doGaussianSmoothing.",1);
+		else
+			ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".doGaussianSmoothing.",0);
+
 		for (int Ch = 0; Ch < 10; Ch++){
 			/*
 			 *   Basic input settings
@@ -4724,7 +4738,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 					".doRenderImage."+Ch,
 					doRenderImageChList.getItem(Ch).getText());		
 
-		
+
 			/*
 			 * store parameter settings:
 			 */		    		   					

@@ -146,6 +146,11 @@ public class processMedianFit {
 					frameCounter++;
 				} // frame loop for mean calculations.
 
+				int stepLength = nFrames/30;
+				if (stepLength > 10)
+					stepLength = 10;
+				if(nFrames < 500)
+					stepLength = 1;
 
 				CUdeviceptr device_Data 		= CUDA.copyToDevice(timeVector);
 				CUdeviceptr device_meanVector 	= CUDA.copyToDevice(MeanFrame);
@@ -163,6 +168,7 @@ public class processMedianFit {
 						Pointer.to(new int[]{testDataLength}),
 						Pointer.to(device_meanVector),
 						Pointer.to(new int[]{meanVectorLength}),
+						Pointer.to(new int[]{stepLength}),						
 						Pointer.to(deviceOutput),
 						Pointer.to(new int[]{testDataLength})
 						);
@@ -369,7 +375,10 @@ public class processMedianFit {
 		ArrayList<Particle> cleanResults = new ArrayList<Particle>();
 		for (int i = 0; i < Results.size(); i++)
 		{
-			if (Results.get(i).sigma_x > 0 &&
+			if (Results.get(i).x > 0 &&
+					Results.get(i).y > 0 &&
+					Results.get(i).z >= 0 &&
+					Results.get(i).sigma_x > 0 &&
 					Results.get(i).sigma_y > 0 &&
 					Results.get(i).precision_x > 0 &&
 					Results.get(i).precision_y > 0 &&
@@ -384,9 +393,5 @@ public class processMedianFit {
 		tab.addValue("width", columns*inputPixelSize[0]);
 		tab.addValue("height", rows*inputPixelSize[0]);
 		TableIO.Store(cleanResults);
-
-
 	} // end run
-
-
 }
