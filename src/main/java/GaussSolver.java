@@ -51,8 +51,8 @@ public class GaussSolver {
 				data[width*(width-1)/2 + (width-1)/2], 	// use center pixel value to approximate max value.
 				mx/m0,									// weighted centroid as approximation.
 				my/m0,									// weighted centroid as approximation.
-				2,									// approximation of sigma x, 1.5Na objective with 500nm emission.
-				2,									// approximation of sigma y, 1.5Na objective with 500nm emission
+				1.5,									// approximation of sigma x, 1.5Na objective with 500nm emission.
+				1.5,									// approximation of sigma y, 1.5Na objective with 500nm emission
 				0,										// theta.
 				0};										// offset, set to 0 initially.
 		this.P = tempP;									// add parameter estimate to P.
@@ -68,7 +68,7 @@ public class GaussSolver {
 	 * test function
 	 */
 	public static void main(String[] args) { // testcase
-		int[] testdata ={ // slize 45 SingleBead2
+		/*int[] testdata ={ // slize 45 SingleBead2
 				3888, 3984,  6192,   4192, 3664,  3472, 3136,
 				6384, 8192,  12368, 12720, 6032,  5360, 3408, 
 				6192, 13760, 21536, 20528, 9744,  6192, 2896,
@@ -77,7 +77,7 @@ public class GaussSolver {
 				2944, 4688,  7168,   5648, 5824,  3456, 2912,
 				2784, 3168,  4512,   4192, 3472,  2768, 2912
 		};
-		/*int[] testdata = {
+		int[] testdata = {
 				3296, 4544,  5600,  5536,  5248,  4448, 3328,
 				3760, 5344,  8240,  9680, 10592,  7056, 3328,
 				3744, 6672, 14256, 24224, 20256, 11136, 5248,
@@ -87,14 +87,19 @@ public class GaussSolver {
 				3088, 3248,  3552, 	3504,  4144,  4512, 2944  
 		};
 */
-		
+		int[] testdata = {627,803,957,716,202,
+				763,2061,2678,1531,1134,
+				1387,4792,6712,3875,710,
+				1365,3558,4858,2676,630,
+				1107,1010,906,1144,986				
+		};
 		// user provided parameter input.
-		int width 			= 7;
+		int width 			= 5;
 		int maxIterations 	= 1000;
 		int pixelSize 		= 100;
 		int channel 		= 1;
 		int frame 			= 1;
-		int[] center 		= {5,5};
+		int[] center 		= {9,29};
 		double convergence 	= 1E-8;
 		int gain = 100;
 		int n = 1;
@@ -108,7 +113,7 @@ public class GaussSolver {
 			}
 		}
 		long stop = System.nanoTime() - start;
-		stop = stop/5; // five time mean.
+		//stop = stop/5; // five time mean.
 		System.out.println(stop/1000000); 
 		
 		
@@ -134,7 +139,7 @@ public class GaussSolver {
 				P[2] - 2	, P[2] + 2,			// y.
 				0.7			, width / 2.0,		// sigma x.
 				0.7			, width / 2.0,		// sigma y.
-				-0.5*Math	.PI,0.5*Math.PI,	// theta.
+				-0.5*Math.PI,0.5*Math.PI,	// theta.
 				-0.5		, 0.5				// offset.
 		};
 
@@ -172,9 +177,9 @@ public class GaussSolver {
 		////////////////////// Optimize parameters:////////////////////////
 		///////////////////////////////////////////////////////////////////
 
-		for (double sigmaX = P[3] - 2*stepSize[3]; sigmaX < P[3] + 2*stepSize[3]; sigmaX += stepSize[3])
+		for (double sigmaX = P[3] - 3*stepSize[3]; sigmaX < P[3] + 2*stepSize[3]; sigmaX += stepSize[3])
 		{
-			for (double sigmaY = P[4] - 2*stepSize[4]; sigmaY < P[4] + 2*stepSize[4]; sigmaY += stepSize[4])
+			for (double sigmaY = P[4] - 3*stepSize[4]; sigmaY < P[4] + 2*stepSize[4]; sigmaY += stepSize[4])
 			{
 	
 				ThetaA = 1/(2*sigmaX*sigmaX);

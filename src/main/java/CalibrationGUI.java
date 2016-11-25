@@ -151,7 +151,7 @@ public class CalibrationGUI extends javax.swing.JFrame {
 					(int) nFrames/2);		// frame.
 		}
 		ImageStatistics IMstat 	= image.getStatistics();
-		int[] MinLevel 			= {(int) (IMstat.max*0.8)};
+		int[] MinLevel 			= {(int) (IMstat.max*0.6)};
 		double[] sqDistance 	= {3};
 		int[] gWindow 			= {5};
 		int[] inputPixelSize 	= {Integer.parseInt(pixelSize.getText())};
@@ -201,15 +201,54 @@ public class CalibrationGUI extends javax.swing.JFrame {
 		{
 			result.get(i).z = (result.get(i).frame-1)*zStep;
 		}
-			TableIO.Store(result);
-		RenderIm.run(renderCh, DesiredPixelSize, gSmoothing);
+		TableIO.Store(result);
+		//RenderIm.run(renderCh, DesiredPixelSize, gSmoothing);
     	
     	/*
     	 * translate into calibration data based on method:
     	 */
+		result = TableIO.Load();
+		int minSqdist = 600*600;
     	if(algorithmSelect.getSelectedIndex() == 0)
     	{ // PRILM
     		System.out.println("PRILM");
+    		int id = 2;
+    		int counter = 0;
+    		for (int i = 0; i < result.size(); i++)
+    		{
+    			counter = 0;
+    			if (result.get(i).include == 1) // if the current entry is within ok range and has not yet been assigned.
+    			{
+    				int idx = i + 1;
+    				while (idx < result.size() && result.get(i).channel == result.get(idx).channel)
+    				{
+    					if (result.get(i).channel == result.get(idx).channel &&
+    							result.get(i).z == result.get(idx).z)
+    					{
+    						if (((result.get(i).x - result.get(idx).x)*(result.get(i).x - result.get(idx).x) +
+    							(result.get(i).y - result.get(idx).y)*(result.get(i).y - result.get(idx).y)) < minSqdist)
+    						{
+    							result.get(idx).include = id;
+    							result.get(i).include = id;
+    							counter ++;
+    						}
+    					}
+    					idx ++;
+    				}    				    				
+    				if (counter > 1)
+    				{
+    					for (int j = 0; j < result.size(); j++)
+    					{
+    						if (result.get(j).include == id)
+    						{
+    							result.get(j).include = 0;
+    						}
+    					}
+    				}
+    				id++;
+    			}
+    		}
+    		TableIO.Store(result);
       	}else 
       	if(algorithmSelect.getSelectedIndex() == 1)	
       	{ // Double helix

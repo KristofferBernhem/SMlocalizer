@@ -1,68 +1,69 @@
 
-// KernelDevelopment.gaussFitShort
-extern "C" __global__  void gaussFitter( int* gaussVector, int gaussVectorLen0,  float* P, int PLen0, int windowWidth,  float* bounds, int boundsLen0,  float* stepSize, int stepSizeLen0, double convCriteria, int maxIterations);
+// KernelDevelopment.gaussFit
+extern "C" __global__  void gaussFitter( int* gaussVector, int gaussVectorLen0,  double* P, int PLen0, unsigned short windowWidth,  double* bounds, int boundsLen0,  double* stepSize, int stepSizeLen0, double convCriteria, int maxIterations);
 
-// KernelDevelopment.gaussFitShort
-extern "C" __global__  void gaussFitter( int* gaussVector, int gaussVectorLen0,  float* P, int PLen0, int windowWidth,  float* bounds, int boundsLen0,  float* stepSize, int stepSizeLen0, double convCriteria, int maxIterations)
+// KernelDevelopment.gaussFit
+extern "C" __global__  void gaussFitter( int* gaussVector, int gaussVectorLen0,  double* P, int PLen0, unsigned short windowWidth,  double* bounds, int boundsLen0,  double* stepSize, int stepSizeLen0, double convCriteria, int maxIterations)
 {
-	int num = blockIdx.x + gridDim.x * blockIdx.y;
-	if (num < gaussVectorLen0 / (windowWidth * windowWidth))
+	int x = blockIdx.x;
+	int y = blockIdx.y;
+	int num = x + gridDim.x * y;
+	if (num < gaussVectorLen0 / (int)(windowWidth * windowWidth))
 	{
 		int num2 = 7 * num;
-		int num3 = windowWidth * windowWidth * num;
-		float num4 = 0.0f;
-		float num5 = 0.0f;
-		float num6 = 0.0f;
-		for (int i = 0; i < windowWidth * windowWidth; i++)
+		int num3 = (int)(windowWidth * windowWidth) * num;
+		double num4 = 0.0;
+		double num5 = 0.0;
+		double num6 = 0.0;
+		for (int i = 0; i < (int)(windowWidth * windowWidth); i++)
 		{
-			num6 += (float)gaussVector[(num3 + i)];
-			num4 += (float)(i % windowWidth * gaussVector[(num3 + i)]);
-			num5 += (float)(i / windowWidth * gaussVector[(num3 + i)]);
+			num6 += (double)gaussVector[(num3 + i)];
+			num4 += (double)(i % (int)windowWidth * gaussVector[(num3 + i)]);
+			num5 += (double)(i / (int)windowWidth * gaussVector[(num3 + i)]);
 		}
 		P[(num2 + 1)] = num4 / num6;
 		P[(num2 + 2)] = num5 / num6;
-		num6 /= (float)(windowWidth * windowWidth);
-		float num7 = 0.0f;
-		for (int j = 0; j < windowWidth * windowWidth; j++)
+		num6 /= (double)(windowWidth * windowWidth);
+		double num7 = 0.0;
+		for (int j = 0; j < (int)(windowWidth * windowWidth); j++)
 		{
-			num7 += ((float)gaussVector[(num3 + j)] - num6) * ((float)gaussVector[(num3 + j)] - num6);
+			num7 += ((double)gaussVector[(num3 + j)] - num6) * ((double)gaussVector[(num3 + j)] - num6);
 		}
 		bool flag = true;
 		int num8 = 0;
-		int num9 = 0;
-		float num10 = 1.0f;
-		float num11 = num10;
-		float num12 = 0.0f;
-		float num13 = 0.0f;
-		float num14 = 0.0f;
-		float num15 = 0.0f;
+		double num9 = 1.0;
+		double num10 = num9;
+		int num11 = 0;
+		double num12 = 0.0;
+		double num13 = 0.0;
+		double num14 = 0.0;
+		double num15 = 0.0;
 		int k = 0;
-		float num16 = 0.0f;
+		double num16 = 0.0;
+		double num17 = P[(num2)] * bounds[(0)];
+		double num18 = P[(num2)] * bounds[(1)];
+		double num19 = P[(num2)] * bounds[(12)];
+		double num20 = P[(num2)] * bounds[(13)];
 		stepSize[(num2)] *= P[(num2)];
 		stepSize[(num2 + 6)] *= P[(num2)];
-		float num17 = P[(num2)] * bounds[(0)];
-		float num18 = P[(num2)] * bounds[(1)];
-		float num19 = P[(num2)] * bounds[(12)];
-		float num20 = P[(num2)] * bounds[(13)];
-		bool flag2 = false;
-		for (float num21 = P[(num2 + 3)] - 3.0f * stepSize[(num2 + 3)]; num21 <= P[(num2 + 3)] + 2.0f * stepSize[(num2 + 3)]; num21 += stepSize[(num2 + 3)])
+		for (double num21 = P[(num2 + 3)] - 3.0 * stepSize[(num2 + 3)]; num21 <= P[(num2 + 3)] + 2.0 * stepSize[(num2 + 3)]; num21 += stepSize[(num2 + 3)])
 		{
-			num12 = 1.0f / (2.0f * num21 * num21);
-			for (float num22 = P[(num2 + 4)] - 3.0f * stepSize[(num2 + 4)]; num22 <= P[(num2 + 4)] + 2.0f * stepSize[(num2 + 4)]; num22 += stepSize[(num2 + 4)])
+			num12 = 1.0 / (2.0 * num21 * num21);
+			for (double num22 = P[(num2 + 4)] - 3.0 * stepSize[(num2 + 4)]; num22 <= P[(num2 + 4)] + 2.0 * stepSize[(num2 + 4)]; num22 += stepSize[(num2 + 4)])
 			{
-				num14 = 1.0f / (2.0f * num22 * num22);
-				num15 = 0.0f;
-				for (k = 0; k < windowWidth * windowWidth; k++)
+				num14 = 1.0 / (2.0 * num22 * num22);
+				num15 = 0.0;
+				for (k = 0; k < (int)(windowWidth * windowWidth); k++)
 				{
-					int num23 = k % windowWidth;
-					int num24 = k / windowWidth;
-					float num25 = (float)((double)P[(num2)] * exp((double)(-(double)(num12 * ((float)num23 - P[(num2 + 1)]) * ((float)num23 - P[(num2 + 1)]) - 2.0f * num13 * ((float)num23 - P[(num2 + 1)]) * ((float)num24 - P[(num2 + 2)]) + num14 * ((float)num24 - P[(num2 + 2)]) * ((float)num24 - P[(num2 + 2)]))))) - (float)gaussVector[(num3 + k)];
+					int num23 = k % (int)windowWidth;
+					int num24 = k / (int)windowWidth;
+					double num25 = P[(num2)] * exp(-(num12 * ((double)num23 - P[(num2 + 1)]) * ((double)num23 - P[(num2 + 1)]) - 2.0 * num13 * ((double)num23 - P[(num2 + 1)]) * ((double)num24 - P[(num2 + 2)]) + num14 * ((double)num24 - P[(num2 + 2)]) * ((double)num24 - P[(num2 + 2)]))) - (double)gaussVector[(num3 + k)];
 					num15 += num25 * num25;
 				}
 				num15 /= num7;
-				if (num15 < num10)
+				if (num15 < num9)
 				{
-					num10 = num15;
+					num9 = num15;
 					num17 = num21;
 					num18 = num22;
 				}
@@ -72,117 +73,184 @@ extern "C" __global__  void gaussFitter( int* gaussVector, int gaussVectorLen0, 
 		P[(num2 + 4)] = num18;
 		num17 = P[(num2)] * bounds[(0)];
 		num18 = P[(num2)] * bounds[(1)];
-		num10 = 1.0f;
-		num12 = 1.0f / (2.0f * P[(num2 + 3)] * P[(num2 + 3)]);
-		num13 = 0.0f;
-		num14 = 1.0f / (2.0f * P[(num2 + 4)] * P[(num2 + 4)]);
+		num9 = 1.0;
+		num12 = 1.0 / (2.0 * P[(num2 + 3)] * P[(num2 + 3)]);
+		num13 = 0.0;
+		num14 = 1.0 / (2.0 * P[(num2 + 4)] * P[(num2 + 4)]);
 		while (flag)
 		{
-			flag2 = false;
-			if (num9 == 0)
+			if (num11 == 0)
 			{
-				num11 = num10;
-			}
-			if (num9 == 0)
-			{
-				if (P[(num2)] + stepSize[(num2)] > num17 && P[(num2)] + stepSize[(num2)] < num18)
+				num10 = num9;
+				if (P[(num2 + num11)] + stepSize[(num2 + num11)] > num17 && P[(num2 + num11)] + stepSize[(num2 + num11)] < num18)
 				{
-					flag2 = true;
-				}
-			}
-			else
-			{
-				if (num9 == 6)
-				{
-					if (P[(num2 + 6)] + stepSize[(num2 + 6)] > num19 && P[(num2 + 6)] + stepSize[(num2 + 6)] < num20)
+					P[(num2 + num11)] += stepSize[(num2 + num11)];
+					num15 = 0.0;
+					for (k = 0; k < (int)(windowWidth * windowWidth); k++)
 					{
-						flag2 = true;
+						int num23 = k % (int)windowWidth;
+						int num24 = k / (int)windowWidth;
+						double num25 = P[(num2)] * exp(-(num12 * ((double)num23 - P[(num2 + 1)]) * ((double)num23 - P[(num2 + 1)]) - 2.0 * num13 * ((double)num23 - P[(num2 + 1)]) * ((double)num24 - P[(num2 + 2)]) + num14 * ((double)num24 - P[(num2 + 2)]) * ((double)num24 - P[(num2 + 2)]))) + P[(num2 + 6)] - (double)gaussVector[(num3 + k)];
+						num15 += num25 * num25;
 					}
-				}
-				else
-				{
-					if (P[(num2 + num9)] + stepSize[(num2 + num9)] > bounds[(num9 * 2)] && P[(num2 + num9)] + stepSize[(num2 + num9)] < bounds[(num9 * 2 + 1)])
+					num15 /= num7;
+					if (num15 < num9)
 					{
-						flag2 = true;
-					}
-				}
-			}
-			if (flag2)
-			{
-				P[(num2 + num9)] += stepSize[(num2 + num9)];
-				if (num9 == 3 || num9 == 4 || num9 == 5)
-				{
-					num12 = (float)(cos((double)P[(num2 + 5)]) * cos((double)P[(num2 + 5)]) / (double)(2.0f * P[(num2 + 3)] * P[(num2 + 3)]) + sin((double)P[(num2 + 5)]) * sin((double)P[(num2 + 5)]) / (double)(2.0f * P[(num2 + 4)] * P[(num2 + 4)]));
-					num13 = (float)(-(float)sin((double)(2.0f * P[(num2 + 5)])) / (double)(4.0f * P[(num2 + 3)] * P[(num2 + 3)]) + sin((double)(2.0f * P[(num2 + 5)])) / (double)(4.0f * P[(num2 + 4)] * P[(num2 + 4)]));
-					num14 = (float)(sin((double)P[(num2 + 5)]) * sin((double)P[(num2 + 5)]) / (double)(2.0f * P[(num2 + 3)] * P[(num2 + 3)]) + cos((double)P[(num2 + 5)]) * cos((double)P[(num2 + 5)]) / (double)(2.0f * P[(num2 + 4)] * P[(num2 + 4)]));
-				}
-				num15 = 0.0f;
-				for (k = 0; k < windowWidth * windowWidth; k++)
-				{
-					int num23 = k % windowWidth;
-					int num24 = k / windowWidth;
-					float num25 = (float)((double)P[(num2)] * exp((double)(-(double)(num12 * ((float)num23 - P[(num2 + 1)]) * ((float)num23 - P[(num2 + 1)]) - 2.0f * num13 * ((float)num23 - P[(num2 + 1)]) * ((float)num24 - P[(num2 + 2)]) + num14 * ((float)num24 - P[(num2 + 2)]) * ((float)num24 - P[(num2 + 2)]))))) + P[(num2 + 6)] - (float)gaussVector[(num3 + k)];
-					num15 += num25 * num25;
-				}
-				num15 /= num7;
-				if (num15 < num10)
-				{
-					num10 = num15;
-				}
-				else
-				{
-					P[(num2 + num9)] -= stepSize[(num2 + num9)];
-					if (stepSize[(num2 + num9)] < 0.0f)
-					{
-						stepSize[(num2 + num9)] /= -1.5f;
+						num9 = num15;
 					}
 					else
 					{
-						stepSize[(num2 + num9)] *= -1.0f;
+						P[(num2 + num11)] -= stepSize[(num2 + num11)];
+						if (stepSize[(num2 + num11)] < 0.0)
+						{
+							stepSize[(num2 + num11)] *= -0.6667;
+						}
+						else
+						{
+							stepSize[(num2 + num11)] *= -1.0;
+						}
+					}
+				}
+				else
+				{
+					if (stepSize[(num2 + num11)] < 0.0)
+					{
+						stepSize[(num2 + num11)] *= -0.6667;
+					}
+					else
+					{
+						stepSize[(num2 + num11)] *= -1.0;
 					}
 				}
 			}
 			else
 			{
-				if (stepSize[(num2 + num9)] < 0.0f)
+				if (num11 == 6)
 				{
-					stepSize[(num2 + num9)] /= -1.5f;
+					if (P[(num2 + num11)] + stepSize[(num2 + num11)] > num19 && P[(num2 + num11)] + stepSize[(num2 + num11)] < num20)
+					{
+						P[(num2 + num11)] += stepSize[(num2 + num11)];
+						num15 = 0.0;
+						for (k = 0; k < (int)(windowWidth * windowWidth); k++)
+						{
+							int num23 = k % (int)windowWidth;
+							int num24 = k / (int)windowWidth;
+							double num25 = P[(num2)] * exp(-(num12 * ((double)num23 - P[(num2 + 1)]) * ((double)num23 - P[(num2 + 1)]) - 2.0 * num13 * ((double)num23 - P[(num2 + 1)]) * ((double)num24 - P[(num2 + 2)]) + num14 * ((double)num24 - P[(num2 + 2)]) * ((double)num24 - P[(num2 + 2)]))) + P[(num2 + 6)] - (double)gaussVector[(num3 + k)];
+							num15 += num25 * num25;
+						}
+						num15 /= num7;
+						if (num15 < num9)
+						{
+							num9 = num15;
+						}
+						else
+						{
+							P[(num2 + num11)] -= stepSize[(num2 + num11)];
+							if (stepSize[(num2 + num11)] < 0.0)
+							{
+								stepSize[(num2 + num11)] *= -0.6667;
+							}
+							else
+							{
+								stepSize[(num2 + num11)] *= -1.0;
+							}
+						}
+					}
+					else
+					{
+						if (stepSize[(num2 + num11)] < 0.0)
+						{
+							stepSize[(num2 + num11)] *= -0.6667;
+						}
+						else
+						{
+							stepSize[(num2 + num11)] *= -1.0;
+						}
+					}
 				}
 				else
 				{
-					stepSize[(num2 + num9)] *= -1.0f;
+					if (flag)
+					{
+						if (P[(num2 + num11)] + stepSize[(num2 + num11)] > bounds[(2 * num11)] && P[(num2 + num11)] + stepSize[(num2 + num11)] < bounds[(2 * num11 + 1)])
+						{
+							P[(num2 + num11)] += stepSize[(num2 + num11)];
+							num12 = cos(P[(num2 + 5)]) * cos(P[(num2 + 5)]) / (2.0 * P[(num2 + 3)] * P[(num2 + 3)]) + sin(P[(num2 + 5)]) * sin(P[(num2 + 5)]) / (2.0 * P[(num2 + 4)] * P[(num2 + 4)]);
+							num13 = -sin(2.0 * P[(num2 + 5)]) / (4.0 * P[(num2 + 3)] * P[(num2 + 3)]) + sin(2.0 * P[(num2 + 5)]) / (4.0 * P[(num2 + 4)] * P[(num2 + 4)]);
+							num14 = sin(P[(num2 + 5)]) * sin(P[(num2 + 5)]) / (2.0 * P[(num2 + 3)] * P[(num2 + 3)]) + cos(P[(num2 + 5)]) * cos(P[(num2 + 5)]) / (2.0 * P[(num2 + 4)] * P[(num2 + 4)]);
+							num15 = 0.0;
+							for (k = 0; k < (int)(windowWidth * windowWidth); k++)
+							{
+								int num23 = k % (int)windowWidth;
+								int num24 = k / (int)windowWidth;
+								double num25 = P[(num2)] * exp(-(num12 * ((double)num23 - P[(num2 + 1)]) * ((double)num23 - P[(num2 + 1)]) - 2.0 * num13 * ((double)num23 - P[(num2 + 1)]) * ((double)num24 - P[(num2 + 2)]) + num14 * ((double)num24 - P[(num2 + 2)]) * ((double)num24 - P[(num2 + 2)]))) + P[(num2 + 6)] - (double)gaussVector[(num3 + k)];
+								num15 += num25 * num25;
+							}
+							num15 /= num7;
+							if (num15 < num9)
+							{
+								num9 = num15;
+							}
+							else
+							{
+								P[(num2 + num11)] -= stepSize[(num2 + num11)];
+								num12 = cos(P[(num2 + 5)]) * cos(P[(num2 + 5)]) / (2.0 * P[(num2 + 3)] * P[(num2 + 3)]) + sin(P[(num2 + 5)]) * sin(P[(num2 + 5)]) / (2.0 * P[(num2 + 4)] * P[(num2 + 4)]);
+								num13 = -sin(2.0 * P[(num2 + 5)]) / (4.0 * P[(num2 + 3)] * P[(num2 + 3)]) + sin(2.0 * P[(num2 + 5)]) / (4.0 * P[(num2 + 4)] * P[(num2 + 4)]);
+								num14 = sin(P[(num2 + 5)]) * sin(P[(num2 + 5)]) / (2.0 * P[(num2 + 3)] * P[(num2 + 3)]) + cos(P[(num2 + 5)]) * cos(P[(num2 + 5)]) / (2.0 * P[(num2 + 4)] * P[(num2 + 4)]);
+								if (stepSize[(num2 + num11)] < 0.0)
+								{
+									stepSize[(num2 + num11)] *= -0.6667;
+								}
+								else
+								{
+									stepSize[(num2 + num11)] *= -1.0;
+								}
+							}
+						}
+						else
+						{
+							if (stepSize[(num2 + num11)] < 0.0)
+							{
+								stepSize[(num2 + num11)] *= -0.6667;
+							}
+							else
+							{
+								stepSize[(num2 + num11)] *= -1.0;
+							}
+						}
+					}
 				}
 			}
-			num9++;
-			if (num9 > 6)
+			num11++;
+			num8++;
+			if (num11 > 6)
 			{
-				if (num8 > 40 && (double)(num11 - num10) < convCriteria)
+				if (num8 > 50 && num10 - num9 < convCriteria)
 				{
 					flag = false;
 				}
-				num9 = 0;
+				num11 = 0;
 			}
-			num8++;
 			if (num8 > maxIterations)
 			{
 				flag = false;
 			}
 		}
-		num12 = (float)(cos((double)P[(num2 + 5)]) * cos((double)P[(num2 + 5)]) / (double)(2.0f * P[(num2 + 3)] * P[(num2 + 3)]) + sin((double)P[(num2 + 5)]) * sin((double)P[(num2 + 5)]) / (double)(2.0f * P[(num2 + 4)] * P[(num2 + 4)]));
-		num13 = (float)(-(float)sin((double)(2.0f * P[(num2 + 5)])) / (double)(4.0f * P[(num2 + 3)] * P[(num2 + 3)]) + sin((double)(2.0f * P[(num2 + 5)])) / (double)(4.0f * P[(num2 + 4)] * P[(num2 + 4)]));
-		num14 = (float)(sin((double)P[(num2 + 5)]) * sin((double)P[(num2 + 5)]) / (double)(2.0f * P[(num2 + 3)] * P[(num2 + 3)]) + cos((double)P[(num2 + 5)]) * cos((double)P[(num2 + 5)]) / (double)(2.0f * P[(num2 + 4)] * P[(num2 + 4)]));
-		num15 = 0.0f;
-		for (k = 0; k < windowWidth * windowWidth; k++)
+		num12 = cos(P[(num2 + 5)]) * cos(P[(num2 + 5)]) / (2.0 * P[(num2 + 3)] * P[(num2 + 3)]) + sin(P[(num2 + 5)]) * sin(P[(num2 + 5)]) / (2.0 * P[(num2 + 4)] * P[(num2 + 4)]);
+		num13 = -sin(2.0 * P[(num2 + 5)]) / (4.0 * P[(num2 + 3)] * P[(num2 + 3)]) + sin(2.0 * P[(num2 + 5)]) / (4.0 * P[(num2 + 4)] * P[(num2 + 4)]);
+		num14 = sin(P[(num2 + 5)]) * sin(P[(num2 + 5)]) / (2.0 * P[(num2 + 3)] * P[(num2 + 3)]) + cos(P[(num2 + 5)]) * cos(P[(num2 + 5)]) / (2.0 * P[(num2 + 4)] * P[(num2 + 4)]);
+		num15 = 0.0;
+		for (k = 0; k < (int)(windowWidth * windowWidth); k++)
 		{
-			int num23 = k % windowWidth;
-			int num24 = k / windowWidth;
-			float num25 = (float)((double)P[(num2)] * exp((double)(-(double)(num12 * ((float)num23 - P[(num2 + 1)]) * ((float)num23 - P[(num2 + 1)]) - 2.0f * num13 * ((float)num23 - P[(num2 + 1)]) * ((float)num24 - P[(num2 + 2)]) + num14 * ((float)num24 - P[(num2 + 2)]) * ((float)num24 - P[(num2 + 2)]))))) + P[(num2 + 6)];
+			int num23 = k % (int)windowWidth;
+			int num24 = k / (int)windowWidth;
+			double num25 = P[(num2)] * exp(-(num12 * ((double)num23 - P[(num2 + 1)]) * ((double)num23 - P[(num2 + 1)]) - 2.0 * num13 * ((double)num23 - P[(num2 + 1)]) * ((double)num24 - P[(num2 + 2)]) + num14 * ((double)num24 - P[(num2 + 2)]) * ((double)num24 - P[(num2 + 2)]))) + P[(num2 + 6)];
 			num16 += num25;
-			num25 -= (float)gaussVector[(num3 + k)];
+			num25 -= (double)gaussVector[(num3 + k)];
 			num15 += num25 * num25;
 		}
 		num15 /= num7;
 		P[(num2)] = num16;
-		P[(num2 + 6)] = 1.0f - num15;
+		P[(num2 + 6)] = 1.0 - num15;
 	}
 }

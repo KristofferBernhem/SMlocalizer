@@ -276,11 +276,12 @@ class BackgroundCorrection {
 								Pointer.to(device_Data),
 								Pointer.to(new int[]{testDataLength}),
 								Pointer.to(device_meanVector),
-								Pointer.to(new int[]{meanVectorLength}),
-								Pointer.to(new int[]{stepLength}),
+								Pointer.to(new int[]{meanVectorLength}),								
 								Pointer.to(deviceOutput),
 								Pointer.to(new int[]{testDataLength})
 								);
+						
+//						Pointer.to(new int[]{stepLength}),
 						int blockSizeX 	= 1;
 						int blockSizeY 	= 1;				   
 						int gridSizeX 	= columns;

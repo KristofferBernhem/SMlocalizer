@@ -90,6 +90,13 @@ public class CUDA {
 	    cuMemcpyHtoD(deviceData, Pointer.to(hostData), hostData.length * Sizeof.FLOAT);
 	    return deviceData;
 	}
+	static CUdeviceptr copyToDevice(double hostData[])
+	{
+	    CUdeviceptr deviceData = new CUdeviceptr();
+	    cuMemAlloc(deviceData, hostData.length * Sizeof.DOUBLE);
+	    cuMemcpyHtoD(deviceData, Pointer.to(hostData), hostData.length * Sizeof.DOUBLE);
+	    return deviceData;
+	}
 	
 	static CUdeviceptr copyToDevice(int hostData[])
 	{
@@ -109,6 +116,12 @@ public class CUDA {
 	{
 	    CUdeviceptr deviceData = new CUdeviceptr();
 	    cuMemAlloc(deviceData, (int)hostDatasize * Sizeof.FLOAT);	  
+	    return deviceData;
+	}	
+	static CUdeviceptr allocateOnDevice(double hostDatasize)
+	{
+	    CUdeviceptr deviceData = new CUdeviceptr();
+	    cuMemAlloc(deviceData, (int)hostDatasize * Sizeof.DOUBLE);	  
 	    return deviceData;
 	}
 	static CUdeviceptr allocateOnDevice(short hostDatasize)

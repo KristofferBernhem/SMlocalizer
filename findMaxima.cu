@@ -51,47 +51,8 @@ extern "C" __global__  void run( int* data, int dataLen0, int frameWidth, int fr
 				}
 				if (flag)
 				{
-					i = 0;
-					flag = true;
-					while (i < num2)
-					{
-						if ((double)((Center[(num * sizeCenter + i)] % frameWidth - j % frameWidth) * (Center[(num * sizeCenter + i)] % frameWidth - j % frameWidth) + (Center[(num * sizeCenter + i)] / frameWidth % frameHeight - j / frameWidth % frameHeight) * (Center[(num * sizeCenter + i)] / frameWidth % frameHeight - j / frameWidth % frameHeight)) < sqDistance)
-						{
-							Center[(num * sizeCenter + i)] = 0;
-							flag = false;
-						}
-						i++;
-					}
-					if (flag)
-					{
-						Center[(num * sizeCenter + num2)] = j;
-						num2++;
-					}
-					else
-					{
-						i = num * sizeCenter;
-						num4 = num2;
-						while (i < num * sizeCenter + num4)
-						{
-							flag = true;
-							if (Center[(i)] == 0)
-							{
-								num3 = i + 1;
-								while (num3 < num * sizeCenter + num2 && flag)
-								{
-									if (Center[(num3)] > 0)
-									{
-										Center[(i)] = Center[(num3)];
-										Center[(num3)] = 0;
-										flag = false;
-										num2--;
-									}
-									num3++;
-								}
-							}
-							i++;
-						}
-					}
+					Center[(num * sizeCenter + num2)] = j;
+					num2++;
 				}
 			}
 			j++;
