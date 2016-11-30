@@ -1,8 +1,8 @@
 
-// KernelDevelopment.medianFilteringInterpolate
+// KernelDevelopment.medianFilteringInterpolateSecond
 extern "C" __global__  void medianKernel(int windowWidth,  float* filterWindow, int filterWindowLen0, int depth,  float* inputVector, int inputVectorLen0,  float* meanVector, int meanVectorLen0, int nStep,  int* answer, int answerLen0);
 
-// KernelDevelopment.medianFilteringInterpolate
+// KernelDevelopment.medianFilteringInterpolateSecond
 extern "C" __global__  void medianKernel(int windowWidth,  float* filterWindow, int filterWindowLen0, int depth,  float* inputVector, int inputVectorLen0,  float* meanVector, int meanVectorLen0, int nStep,  int* answer, int answerLen0)
 {
 	int y = blockIdx.y;
@@ -10,309 +10,243 @@ extern "C" __global__  void medianKernel(int windowWidth,  float* filterWindow, 
 	int num = x + y * gridDim.x;
 	if (num < inputVectorLen0 / depth)
 	{
-		int num2 = 0;
+		int num2 = num * (2 * windowWidth + 1);
+		int num3 = num2 + windowWidth;
+		int num4 = 0;
 		int i = num * depth;
-		int num3 = num * (2 * windowWidth + 1);
-		bool flag = true;
-		double num4 = 0.0;
-		int j = num;
+		int j = num2;
+		int num5 = num;
+		int num6 = inputVectorLen0 / depth;
+		float num7 = 0.0f;
 		while (i < (num + 1) * depth)
 		{
-			inputVector[(i)] /= meanVector[(num2)];
-			num2++;
+			inputVector[(i)] /= meanVector[(num4)];
 			i++;
+			num4++;
 		}
-		num2 = 0;
+		num4 = 0;
 		i = num * depth;
-		for (int k = num * depth; k < num * depth + (windowWidth + 1) * nStep; k += nStep)
+		while (j <= num3)
 		{
-			filterWindow[(num3)] = inputVector[(k)];
-			num3++;
+			filterWindow[(j)] = inputVector[(i)];
+			j++;
+			i += nStep;
 		}
-		int num5 = num * (2 * windowWidth + 1);
-		for (int l = num5 + 1; l < num5 + windowWidth + 1; l++)
+		num3++;
+		bool flag = true;
+		int k = 0;
+		while (flag)
 		{
-			for (int m = num5; m < num5 + windowWidth - l; m++)
-			{
-				if (filterWindow[(m)] > filterWindow[(m + 1)])
-				{
-					float num6 = filterWindow[(m)];
-					filterWindow[(m)] = filterWindow[(m + 1)];
-					filterWindow[(m + 1)] = num6;
-				}
-			}
-		}
-		if (windowWidth % 2 == 0)
-		{
-			answer[(j)] = (int)(meanVector[(num2)] * (inputVector[(i)] - filterWindow[(num5 + windowWidth / 2)]));
-			if (answer[(j)] < 0)
-			{
-				answer[(j)] = 0;
-			}
-			num4 = (double)filterWindow[(num5 + windowWidth / 2)];
 			flag = false;
-		}
-		else
-		{
-			answer[(j)] = (int)((double)meanVector[(num2)] * ((double)inputVector[(i)] - (double)(filterWindow[(num5 + (windowWidth - 1) / 2)] + filterWindow[(num5 + (windowWidth - 1) / 2 + 1)]) / 2.0));
-			if (answer[(j)] < 0)
+			k++;
+			for (int l = num2; l < num3 - k; l++)
 			{
-				answer[(j)] = 0;
+				if (filterWindow[(l)] > filterWindow[(l + 1)])
+				{
+					float num8 = filterWindow[(l)];
+					filterWindow[(l)] = filterWindow[(l + 1)];
+					filterWindow[(l + 1)] = num8;
+					flag = true;
+				}
 			}
-			num4 = (double)(filterWindow[(num5 + (windowWidth - 1) / 2)] + filterWindow[(num5 + (windowWidth - 1) / 2 + 1)]) / 2.0;
-			flag = true;
 		}
-		num2 += nStep;
-		if (flag)
+		num3 = windowWidth + 1;
+		i = num * depth;
+		answer[(num5)] = (int)(meanVector[(num4)] * (inputVector[(i)] - filterWindow[(num2 + num3 / 2)]));
+		num7 = filterWindow[(num2 + num3 / 2)];
+		if (answer[(num5)] < 0)
 		{
-			num5 = num * (2 * windowWidth + 1) + (windowWidth - 1) / 2 + 1;
+			answer[(num5)] = 0;
 		}
-		else
-		{
-			num5 = num * (2 * windowWidth + 1) + windowWidth / 2 + 1;
-		}
+		num5 += num6 * nStep;
 		i += nStep;
-		j += inputVectorLen0 / depth * nStep;
-		double num9;
-		for (int n = num * depth + windowWidth + 1; n < num * depth + (2 * windowWidth + 1) * nStep; n += nStep)
+		num4 += nStep;
+		float num9;
+		while (j < num2 + 2 * windowWidth + 1)
 		{
-			filterWindow[(num3)] = inputVector[(n)];
-			for (int num7 = num * (2 * windowWidth + 1); num7 < num3; num7++)
+			filterWindow[(j)] = inputVector[(i + windowWidth * nStep)];
+			flag = false;
+			k = j;
+			while (!flag)
 			{
-				for (int num8 = num * (2 * windowWidth + 1); num8 < num3 - num7; num8++)
+				if (filterWindow[(k - 1)] > filterWindow[(k)])
 				{
-					if (filterWindow[(num8)] > filterWindow[(num8 + 1)])
-					{
-						float num6 = filterWindow[(num8)];
-						filterWindow[(num8)] = filterWindow[(num8 + 1)];
-						filterWindow[(num8 + 1)] = num6;
-					}
+					float num8 = filterWindow[(k)];
+					filterWindow[(k)] = filterWindow[(k - 1)];
+					filterWindow[(k - 1)] = num8;
+				}
+				else
+				{
+					flag = true;
+				}
+				k--;
+				if (k == num2)
+				{
+					flag = true;
 				}
 			}
-			if (flag)
+			answer[(num5)] = (int)(meanVector[(num4)] * (inputVector[(i)] - (filterWindow[(num2 + num3 / 2)] + (float)(num3 % 2) * filterWindow[(num2 + num3 % 2 + num3 / 2)]) / (float)(1 + num3 % 2)));
+			if (answer[(num5)] < 0)
 			{
-				answer[(j)] = (int)(meanVector[(num2)] * (inputVector[(i)] - filterWindow[(num5)]));
-				if (answer[(j)] < 0)
-				{
-					answer[(j)] = 0;
-				}
-				num9 = ((double)filterWindow[(num5)] - num4) / (double)nStep;
-				for (int num10 = 1; num10 < nStep; num10++)
-				{
-					answer[(j - inputVectorLen0 / depth * nStep + inputVectorLen0 / depth * num10)] = (int)((double)meanVector[(num2 - nStep + num10)] * ((double)inputVector[(i - nStep + num10)] - (num4 + num9 * (double)num10)));
-					if (answer[(j - inputVectorLen0 / depth * nStep + inputVectorLen0 / depth * num10)] < 0)
-					{
-						answer[(j - inputVectorLen0 / depth * nStep + inputVectorLen0 / depth * num10)] = 0;
-					}
-				}
-				flag = false;
-				num4 = (double)filterWindow[(num5)];
-				num5++;
+				answer[(num5)] = 0;
 			}
-			else
+			num9 = (filterWindow[(num2 + num3 / 2)] + (float)(num3 % 2) * filterWindow[(num2 + num3 % 2 + num3 / 2)]) / (float)(1 + num3 % 2) - num7;
+			num9 /= (float)nStep;
+			for (int m = 1; m < nStep; m++)
 			{
-				answer[(j)] = (int)((double)meanVector[(num2)] * ((double)inputVector[(i)] - (double)(filterWindow[(num5)] + filterWindow[(num5 - 1)]) / 2.0));
-				if (answer[(j)] < 0)
+				answer[(num5 - nStep * num6 + m * num6)] = (int)(meanVector[(num4 - nStep + m)] * (inputVector[(i - nStep + m)] - num7 - num9 * (float)m));
+				if (answer[(num5 - nStep * num6 + m * num6)] < 0)
 				{
-					answer[(j)] = 0;
+					answer[(num5 - nStep * num6 + m * num6)] = 0;
 				}
-				num9 = ((double)(filterWindow[(num5)] + filterWindow[(num5 - 1)]) / 2.0 - num4) / (double)nStep;
-				for (int num11 = 1; num11 < nStep; num11++)
-				{
-					answer[(j - inputVectorLen0 / depth * nStep + inputVectorLen0 / depth * num11)] = (int)((double)meanVector[(num2 - nStep + num11)] * ((double)inputVector[(i - nStep + num11)] - (num4 + num9 * (double)num11)));
-					if (answer[(j - inputVectorLen0 / depth * nStep + inputVectorLen0 / depth * num11)] < 0)
-					{
-						answer[(j - inputVectorLen0 / depth * nStep + inputVectorLen0 / depth * num11)] = 0;
-					}
-				}
-				flag = true;
-				num4 = (double)(filterWindow[(num5)] + filterWindow[(num5 + 1)]) / 2.0;
 			}
-			num2 += nStep;
+			num7 = (filterWindow[(num2 + num3 / 2)] + (float)(num3 % 2) * filterWindow[(num2 + num3 % 2 + num3 / 2)]) / (float)(1 + num3 % 2);
 			num3++;
 			i += nStep;
-			j += inputVectorLen0 / depth * nStep;
+			j++;
+			num5 += num6 * nStep;
+			num4 += nStep;
 		}
-		num3 = num * (2 * windowWidth + 1);
-		num5 = num3 + windowWidth;
-		int num12 = num5 + windowWidth;
-		bool flag2 = false;
-		int num13 = 0;
-		while (i < (num + 1) * depth - windowWidth)
+		while (i < (num + 1) * depth - windowWidth * nStep)
 		{
-			flag2 = false;
-			num13 = num3;
-			while (!flag2 && num13 < num12 + 1)
+			k = num2;
+			flag = false;
+			while (!flag)
 			{
-				if (filterWindow[(num13)] == inputVector[(i - windowWidth - 1)])
+				if (inputVector[(i - (windowWidth + 1) * nStep)] == filterWindow[(k)])
 				{
-					flag2 = true;
-					filterWindow[(num13)] = inputVector[(i + windowWidth)];
-					if ((num13 != num3 || filterWindow[(num13)] >= filterWindow[(num13 + 1)]) && (num13 != num12 || filterWindow[(num13)] <= filterWindow[(num13 - 1)]))
+					filterWindow[(k)] = inputVector[(i + windowWidth * nStep)];
+					flag = true;
+				}
+				else
+				{
+					k++;
+				}
+			}
+			flag = false;
+			if (k != num2 && k != num2 + 2 * windowWidth && (filterWindow[(k)] >= filterWindow[(k + 1)] || filterWindow[(k)] <= filterWindow[(k - 1)]))
+			{
+				if (filterWindow[(k)] > filterWindow[(k + 1)])
+				{
+					while (!flag)
 					{
-						if (num13 == num3 && filterWindow[(num13)] > filterWindow[(num13 + 1)])
+						float num8 = filterWindow[(k + 1)];
+						filterWindow[(k + 1)] = filterWindow[(k)];
+						filterWindow[(k)] = num8;
+						k++;
+						if (filterWindow[(k)] < filterWindow[(k + 1)])
 						{
-							while (filterWindow[(num13)] > filterWindow[(num13 + 1)])
-							{
-								if (num13 >= num12)
-								{
-									break;
-								}
-								float num6 = filterWindow[(num13 + 1)];
-								filterWindow[(num13 + 1)] = filterWindow[(num13)];
-								filterWindow[(num13)] = num6;
-								num13++;
-							}
+							flag = true;
 						}
-						else
+						if (k == num2 + 2 * windowWidth)
 						{
-							if (num13 == num12 && filterWindow[(num13)] < filterWindow[(num13 - 1)])
+							flag = true;
+						}
+					}
+				}
+				else
+				{
+					if (filterWindow[(k)] < filterWindow[(k - 1)])
+					{
+						while (!flag)
+						{
+							float num8 = filterWindow[(k - 1)];
+							filterWindow[(k - 1)] = filterWindow[(k)];
+							filterWindow[(k)] = num8;
+							k--;
+							if (filterWindow[(k)] > filterWindow[(k - 1)])
 							{
-								while (filterWindow[(num13)] < filterWindow[(num13 - 1)])
-								{
-									if (num13 <= num3)
-									{
-										break;
-									}
-									float num6 = filterWindow[(num13 - 1)];
-									filterWindow[(num13 - 1)] = filterWindow[(num13)];
-									filterWindow[(num13)] = num6;
-									num13--;
-								}
+								flag = true;
 							}
 							else
 							{
-								if (filterWindow[(num13)] != filterWindow[(num13 + 1)] && filterWindow[(num13)] != filterWindow[(num13 - 1)])
+								if (k == num2)
 								{
-									if (filterWindow[(num13)] > filterWindow[(num13 + 1)])
-									{
-										while (filterWindow[(num13)] > filterWindow[(num13 + 1)])
-										{
-											if (num13 >= num12)
-											{
-												break;
-											}
-											float num6 = filterWindow[(num13 + 1)];
-											filterWindow[(num13 + 1)] = filterWindow[(num13)];
-											filterWindow[(num13)] = num6;
-											num13++;
-										}
-									}
-									else
-									{
-										while (filterWindow[(num13)] < filterWindow[(num13 - 1)] && num13 > num3)
-										{
-											float num6 = filterWindow[(num13 - 1)];
-											filterWindow[(num13 - 1)] = filterWindow[(num13)];
-											filterWindow[(num13)] = num6;
-											num13--;
-										}
-									}
+									flag = true;
 								}
 							}
 						}
 					}
 				}
-				num13++;
 			}
-			answer[(j)] = (int)(meanVector[(num2)] * (inputVector[(i)] - filterWindow[(num5)]));
-			if (answer[(j)] < 0)
+			answer[(num5)] = (int)(meanVector[(num4)] * (inputVector[(i)] - filterWindow[(num2 + num3 / 2)]));
+			if (answer[(num5)] < 0)
 			{
-				answer[(j)] = 0;
+				answer[(num5)] = 0;
 			}
-			num9 = ((double)filterWindow[(num5)] - num4) / (double)nStep;
-			for (int num14 = 1; num14 < nStep; num14++)
+			num9 = filterWindow[(num2 + num3 / 2)] - num7;
+			num9 /= (float)nStep;
+			for (int n = 1; n < nStep; n++)
 			{
-				answer[(j - inputVectorLen0 / depth * nStep + inputVectorLen0 / depth * num14)] = (int)((double)meanVector[(num2 - nStep + num14)] * ((double)inputVector[(i - nStep + num14)] - (num4 + num9 * (double)num14)));
-				if (answer[(j - inputVectorLen0 / depth * nStep + inputVectorLen0 / depth * num14)] < 0)
+				answer[(num5 - nStep * num6 + n * num6)] = (int)(meanVector[(num4 - nStep + n)] * (inputVector[(i - nStep + n)] - num7 - num9 * (float)n));
+				if (answer[(num5 - nStep * num6 + n * num6)] < 0)
 				{
-					answer[(j - inputVectorLen0 / depth * nStep + inputVectorLen0 / depth * num14)] = 0;
+					answer[(num5 - nStep * num6 + n * num6)] = 0;
 				}
 			}
-			num4 = (double)filterWindow[(num5)];
-			num2 += nStep;
+			num7 = filterWindow[(num2 + num3 / 2)];
 			i += nStep;
-			j += inputVectorLen0 / depth * nStep;
+			num5 += num6 * nStep;
+			num4 += nStep;
 		}
-		flag = false;
+		num3--;
 		while (i < (num + 1) * depth)
 		{
-			flag2 = false;
-			num13 = num3;
-			while (!flag2 && num13 < num12 + 1)
+			k = num2;
+			flag = false;
+			while (!flag)
 			{
-				if (filterWindow[(num13)] == inputVector[(i - windowWidth - 1)] && num13 < num12)
+				if (inputVector[(i - (windowWidth + 1) * nStep)] == filterWindow[(k)])
 				{
-					while (num13 < num12 + 1)
+					while (k < num2 + num3)
 					{
-						float num6 = filterWindow[(num13)];
-						filterWindow[(num13)] = filterWindow[(num13 + 1)];
-						filterWindow[(num13 + 1)] = num6;
-						num13++;
+						float num8 = filterWindow[(k + 1)];
+						filterWindow[(k + 1)] = filterWindow[(k)];
+						filterWindow[(k)] = num8;
+						k++;
 					}
+					flag = true;
 				}
-				num13++;
+				else
+				{
+					k++;
+				}
 			}
-			num12--;
-			if (flag)
+			answer[(num5)] = (int)(meanVector[(num4)] * (inputVector[(i)] - (filterWindow[(num2 + num3 / 2)] + (float)(num3 % 2) * filterWindow[(num2 + num3 % 2 + num3 / 2)]) / (float)(1 + num3 % 2)));
+			if (answer[(num5)] < 0)
 			{
-				answer[(j)] = (int)(meanVector[(num2)] * (inputVector[(i)] - filterWindow[(num5)]));
-				if (answer[(j)] < 0)
-				{
-					answer[(j)] = 0;
-				}
-				num9 = ((double)filterWindow[(num5)] - num4) / (double)nStep;
-				for (int num15 = 1; num15 < nStep; num15++)
-				{
-					answer[(j - inputVectorLen0 / depth * nStep + inputVectorLen0 / depth * num15)] = (int)((double)meanVector[(num2 - nStep + num15)] * ((double)inputVector[(i - nStep + num15)] - (num4 + num9 * (double)num15)));
-					if (answer[(j - inputVectorLen0 / depth * nStep + inputVectorLen0 / depth * num15)] < 0)
-					{
-						answer[(j - inputVectorLen0 / depth * nStep + inputVectorLen0 / depth * num15)] = 0;
-					}
-				}
-				flag = false;
-				num4 = (double)filterWindow[(num5)];
-				num5++;
+				answer[(num5)] = 0;
 			}
-			else
+			num9 = (filterWindow[(num2 + num3 / 2)] + (float)(num3 % 2) * filterWindow[(num2 + num3 % 2 + num3 / 2)]) / (float)(1 + num3 % 2) - num7;
+			num9 /= (float)nStep;
+			for (int num10 = 1; num10 < nStep; num10++)
 			{
-				answer[(j)] = (int)((double)meanVector[(num2)] * ((double)inputVector[(i)] - (double)(filterWindow[(num5)] + filterWindow[(num5 - 1)]) / 2.0));
-				if (answer[(j)] < 0)
+				answer[(num5 - nStep * num6 + num10 * num6)] = (int)(meanVector[(num4 - nStep + num10)] * (inputVector[(i - nStep + num10)] - num7 - num9 * (float)num10));
+				if (answer[(num5 - nStep * num6 + num10 * num6)] < 0)
 				{
-					answer[(j)] = 0;
+					answer[(num5 - nStep * num6 + num10 * num6)] = 0;
 				}
-				num9 = ((double)(filterWindow[(num5)] + filterWindow[(num5 - 1)]) / 2.0 - num4) / (double)nStep;
-				for (int num16 = 1; num16 < nStep; num16++)
-				{
-					answer[(j - inputVectorLen0 / depth * nStep + inputVectorLen0 / depth * num16)] = (int)((double)meanVector[(num2 - nStep + num16)] * ((double)inputVector[(i - nStep + num16)] - (num4 + num9 * (double)num16)));
-					if (answer[(j - inputVectorLen0 / depth * nStep + inputVectorLen0 / depth * num16)] < 0)
-					{
-						answer[(j - inputVectorLen0 / depth * nStep + inputVectorLen0 / depth * num16)] = 0;
-					}
-				}
-				flag = true;
-				num4 = (double)(filterWindow[(num5)] + filterWindow[(num5 + 1)]) / 2.0;
-				num5--;
 			}
-			num2 += nStep;
+			num7 = (filterWindow[(num2 + num3 / 2)] + (float)(num3 % 2) * filterWindow[(num2 + num3 % 2 + num3 / 2)]) / (float)(1 + num3 % 2);
+			num3--;
 			i += nStep;
-			j += inputVectorLen0 / depth * nStep;
+			num5 += num6 * nStep;
+			num4 += nStep;
 		}
-		num2 -= nStep;
 		i -= nStep;
-		j -= inputVectorLen0 / depth * nStep;
-		nStep = meanVectorLen0 - num2;
-		num9 = ((double)filterWindow[(num5)] - num4) / (double)nStep;
-		while (j < answerLen0)
+		num4 -= nStep;
+		num5 -= num6 * nStep;
+		nStep = depth - num4;
+		answer[(num5 + nStep * num6)] = (int)(meanVector[(num * depth - 1)] * (inputVector[(num * depth - 1)] - (filterWindow[(num2 + num3 / 2)] + (float)(num3 % 2) * filterWindow[(num2 + num3 % 2 + num3 / 2)]) / (float)(1 + num3 % 2)));
+		num9 = (filterWindow[(num2 + num3 / 2)] + (float)(num3 % 2) * filterWindow[(num2 + num3 % 2 + num3 / 2)]) / (float)(1 + num3 % 2) - num7;
+		num9 /= (float)nStep;
+		for (int num11 = 1; num11 < nStep; num11++)
 		{
-			answer[(j)] = (int)(meanVector[(num2)] * (inputVector[(i)] - filterWindow[(num5)]));
-			if (answer[(j)] < 0)
+			answer[(num5 + num11 * num6)] = (int)(meanVector[(num4 + num11)] * (inputVector[(i + num11)] - num7 - num9 * (float)num11));
+			if (answer[(num5 + num11 * num6)] < 0)
 			{
-				answer[(j)] = 0;
+				answer[(num5 + num11 * num6)] = 0;
 			}
-			j += inputVectorLen0 / depth;
-			num2++;
-			i++;
 		}
 	}
 }
