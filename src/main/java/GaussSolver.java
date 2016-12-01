@@ -177,9 +177,9 @@ public class GaussSolver {
 		////////////////////// Optimize parameters:////////////////////////
 		///////////////////////////////////////////////////////////////////
 
-		for (double sigmaX = P[3] - 3*stepSize[3]; sigmaX < P[3] + 2*stepSize[3]; sigmaX += stepSize[3])
+		for (double sigmaX = P[3] - 3*stepSize[3]; sigmaX <= P[3] + 2*stepSize[3]; sigmaX += stepSize[3])
 		{
-			for (double sigmaY = P[4] - 3*stepSize[4]; sigmaY < P[4] + 2*stepSize[4]; sigmaY += stepSize[4])
+			for (double sigmaY = P[4] - 3*stepSize[4]; sigmaY <= P[4] + 2*stepSize[4]; sigmaY += stepSize[4])
 			{
 	
 				ThetaA = 1/(2*sigmaX*sigmaX);
@@ -273,7 +273,7 @@ public class GaussSolver {
 
 			if (pId > 6){ // if all parameters has been evaluated this round.
 
-				if (iterationCount > 60){ // if two rounds has been run.
+				if (iterationCount > 50){ // if two rounds has been run.
 					if ((oldRsquare  - Rsquare) < convCritera) // check if we improved the fit this full round by atleast the convergence criteria.
 					{	
 						optimize = false;	// exit.

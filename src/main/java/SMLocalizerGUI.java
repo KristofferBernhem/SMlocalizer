@@ -3411,7 +3411,8 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		updateList(channelId.getSelectedIndex()-1); 
 	}                                               
 
-	private void renderImageActionPerformed(java.awt.event.ActionEvent evt) {                                            
+	private void renderImageActionPerformed(java.awt.event.ActionEvent evt) {      
+		
 		updateList(channelId.getSelectedIndex()-1);        
 		int[] desiredPixelSize = getOutputPixelSize();        
 		boolean[][] include = IncludeParameters();

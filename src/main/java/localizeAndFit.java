@@ -108,8 +108,7 @@ public class localizeAndFit {
 								totalGain[Ch-1]));
 
 					} // loop over all located centers from this frame.									
-				} // loop over all frames.					
-				System.out.println( fitThese.size() + " centers found w CPU");
+				} // loop over all frames.									
 			} // loop over all channels.
 			
 			List<Callable<Particle>> tasks = new ArrayList<Callable<Particle>>();	// Preallocate.
@@ -520,8 +519,7 @@ public class localizeAndFit {
 							// Free up memory allocation on device, housekeeping.
 							cuMemFree(deviceGaussVector);   
 							cuMemFree(deviceP);    
-							cuMemFree(deviceStepSize);
-							System.out.println(newN + " centers found w GPU");
+							cuMemFree(deviceStepSize);							
 							for (int n = 0; n < newN; n++) //loop over all particles
 							{	    	
 								Particle Localized = new Particle();
@@ -738,8 +736,7 @@ public class localizeAndFit {
 							// Free up memory allocation on device, housekeeping.
 							cuMemFree(deviceGaussVector);   
 							cuMemFree(deviceP);    
-							cuMemFree(deviceStepSize);
-							System.out.println(newN + " centers found w GPU");
+							cuMemFree(deviceStepSize);							
 							for (int n = 0; n < newN; n++) //loop over all particles
 							{	    	
 								Particle Localized = new Particle();

@@ -43,8 +43,8 @@ public class generateImage {
 			width = (int) Math.ceil(width/pixelSize[0]);
 			height = (int) Math.ceil(height/pixelSize[0]);		
 			ImageStack imstack = new ImageStack(width,height);
-			int nChannels = ParticleList.get(ParticleList.size()-1).channel; // numnber of channels
-			int zSlice = 0; // counter for number of slizes.
+			int nChannels = ParticleList.get(ParticleList.size()-1).channel; // number of channels
+			int zSlice = 0; // counter for number of slices.
 			int particleCounter = 0;
 			/*
 			 * Loop over all particles, add the ones that has the correct channel and z-range. Increase channel until all channels are done then update z-range

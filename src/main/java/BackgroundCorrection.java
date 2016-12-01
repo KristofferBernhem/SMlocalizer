@@ -184,10 +184,7 @@ class BackgroundCorrection {
 					IP 	= image.getProcessor(); 			// Update processor to next slice.
 					for (int i = 0; i < rows*columns; i++)
 					{
-						value = (int)timeVector[i][Frame-1];						
-						if (i == 20)
-							System.out.print((int)timeVector[i][Frame-1] + " ");
-						
+						value = (int)timeVector[i][Frame-1];											
 						IP.set(i , value);	
 					}
 				}
