@@ -1,9 +1,9 @@
 
 // KernelDevelopment.findMaxima
-extern "C" __global__  void run( int* data, int dataLen0, int frameWidth, int frameHeight, int windowWidth, int minLevel, double sqDistance, int minPosPixel, int sizeCenter,  int* Center, int CenterLen0);
+extern "C" __global__  void run( int* data, int dataLen0, int frameWidth, int frameHeight, int windowWidth, int minLevel, int minPosPixel, int sizeCenter,  int* Center, int CenterLen0);
 
 // KernelDevelopment.findMaxima
-extern "C" __global__  void run( int* data, int dataLen0, int frameWidth, int frameHeight, int windowWidth, int minLevel, double sqDistance, int minPosPixel, int sizeCenter,  int* Center, int CenterLen0)
+extern "C" __global__  void run( int* data, int dataLen0, int frameWidth, int frameHeight, int windowWidth, int minLevel, int minPosPixel, int sizeCenter,  int* Center, int CenterLen0)
 {
 	int num = blockIdx.x + gridDim.x * blockIdx.y;
 	if (num < dataLen0 / (frameWidth * frameHeight))

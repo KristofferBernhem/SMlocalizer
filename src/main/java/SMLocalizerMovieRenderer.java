@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.measure.Calibration;
-import ij.plugin.PlugIn;
 import ij.plugin.filter.Analyzer;
 import ij.process.ByteProcessor;
 import ij.process.ImageStatistics;

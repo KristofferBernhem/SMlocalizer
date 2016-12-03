@@ -64,7 +64,9 @@ public class generateImage {
 					{
 						int x = (int) Math.round(ParticleList.get(idx).x/pixelSize[0]);
 						int y = (int) Math.round(ParticleList.get(idx).y/pixelSize[0]);						
-						IP.putPixel(x, y, (IP.get(x, y) + 1));
+						if (x >= 0 && x <= width &&
+								y >= 0 && y <= height)
+							IP.putPixel(x, y, (IP.get(x, y) + 1));
 					}
 				}
 				if(gSmoothing)
@@ -113,8 +115,10 @@ public class generateImage {
 				for (int i = 0; i < ParticleList.size(); i++){
 					if (ParticleList.get(i).include == 1){
 						int x = (int) Math.round(ParticleList.get(i).x/pixelSize[0]);
-						int y = (int) Math.round(ParticleList.get(i).y/pixelSize[0]);						
-						IP.putPixel(x, y, (IP.get(x, y) + 1));
+						int y = (int) Math.round(ParticleList.get(i).y/pixelSize[0]);
+						if (x >= 0 && x <= width &&
+								y >= 0 && y <= height)
+							IP.putPixel(x, y, (IP.get(x, y) + 1));
 					}
 				}	
 				if(gSmoothing)
@@ -151,7 +155,9 @@ public class generateImage {
 							if (ParticleList.get(i).include == 1 && ParticleList.get(i).channel == ch){
 								int x = (int) Math.round(ParticleList.get(i).x/pixelSize[0]);
 								int y = (int) Math.round(ParticleList.get(i).y/pixelSize[0]);				
-								IP.putPixel(x, y, (IP.get(x, y) + 1));
+								if (x >= 0 && x <= width &&
+										y >= 0 && y <= height)
+									IP.putPixel(x, y, (IP.get(x, y) + 1));
 							}
 						}
 						if(gSmoothing)

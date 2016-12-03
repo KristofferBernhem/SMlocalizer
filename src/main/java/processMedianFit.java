@@ -6,7 +6,7 @@ import static jcuda.driver.JCudaDriver.cuLaunchKernel;
 import static jcuda.driver.JCudaDriver.cuMemFree;
 import static jcuda.driver.JCudaDriver.cuMemcpyDtoH;
 import static jcuda.driver.JCudaDriver.cuModuleGetFunction;
-import static jcuda.driver.JCudaDriver.cuModuleLoad;
+import static jcuda.driver.JCudaDriver.cuModuleLoadDataEx;
 
 import java.util.ArrayList;
 
@@ -44,7 +44,7 @@ import jcuda.driver.CUmodule;
  */
 public class processMedianFit {
 
-	public static void run(final int[] W, ImagePlus image, int[] MinLevel, double[] sqDistance, int[] gWindow, int[] inputPixelSize, int[] minPosPixels, int[] totalGain)
+	public static void run(final int[] W, ImagePlus image, int[] MinLevel, int[] gWindow, int[] inputPixelSize, int[] minPosPixels, int[] totalGain)
 	{
 		int columns 						= image.getWidth();
 		int rows 							= image.getHeight();		
@@ -64,14 +64,22 @@ public class processMedianFit {
 		cuCtxCreate(context, 0, device);
 		// Load the PTX that contains the kernel.
 		CUmodule moduleMedianFilter = new CUmodule();
-		cuModuleLoad(moduleMedianFilter, "medianFilter.ptx");
+		String ptxFileNameMedianFilter = "medianFilter.ptx";
+		byte ptxFilMedianFilter[] = CUDA.loadData(ptxFileNameMedianFilter);				
+		cuModuleLoadDataEx(moduleMedianFilter, Pointer.to(ptxFilMedianFilter), 
+	            0, new int[0], Pointer.to(new int[0]));
+		//cuModuleLoad(moduleMedianFilter, "medianFilter.ptx");
 		// Obtain a handle to the kernel function.
 		CUfunction functionMedianFilter = new CUfunction();
 		cuModuleGetFunction(functionMedianFilter, moduleMedianFilter, "medianKernel");
 		// gauss fit algorithm.
 		// Load the PTX that contains the kernel.
 		CUmodule module = new CUmodule();
-		cuModuleLoad(module, "gFit.ptx");
+		String ptxFileNameGaussFit = "gFit.ptx";
+		byte ptxFilGaussFit[] = CUDA.loadData(ptxFileNameGaussFit);				
+		cuModuleLoadDataEx(module, Pointer.to(ptxFilGaussFit), 
+	            0, new int[0], Pointer.to(new int[0]));
+	//	cuModuleLoad(module, "gFit.ptx");
 		// Obtain a handle to the kernel function.
 		CUfunction fittingFcn = new CUfunction();
 		cuModuleGetFunction(fittingFcn, module, "gaussFitter");  //gFit.pth (gaussFitter function).
@@ -79,7 +87,11 @@ public class processMedianFit {
 		// prepare for locating centra for gaussfitting.
 		// Load the PTX that contains the kernel.
 		CUmodule moduleLM = new CUmodule();
-		cuModuleLoad(moduleLM, "findMaxima.ptx");					
+		String ptxFileNameFindMaxima = "findMaxima.ptx";
+		byte ptxFilFindMaxima[] = CUDA.loadData(ptxFileNameFindMaxima);				
+		cuModuleLoadDataEx(moduleLM, Pointer.to(ptxFilFindMaxima), 
+	            0, new int[0], Pointer.to(new int[0]));
+		//cuModuleLoad(moduleLM, "findMaxima.ptx");					
 		// Obtain a handle to the kernel function
 		CUfunction findMaximaFcn = new CUfunction();
 		cuModuleGetFunction(findMaximaFcn, moduleLM, "run");	// findMaxima.ptx (run function).
@@ -95,6 +107,8 @@ public class processMedianFit {
 			int nCenter =(( columns*rows/(gWindow[Ch-1]*gWindow[Ch-1])) / 2); // ~ 80 possible particles for a 64x64 frame. Lets the program scale with frame size.
 			int staticMemory = (2*W[Ch-1]+1*rows*columns)*Sizeof.FLOAT;
 			long framesPerBatch = (3*GB-staticMemory)/frameSize; // 3 GB memory allocation gives this numbers of frames. 					
+			if (framesPerBatch > 10000)
+				framesPerBatch = 10000;
 			int loadedFrames = 0;
 			int startFrame = 1;
 			int endFrame = (int)framesPerBatch;				
@@ -211,7 +225,6 @@ public class processMedianFit {
 						Pointer.to(new int[]{rows}),
 						Pointer.to(new int[]{gWindow[Ch-1]}),
 						Pointer.to(new int[]{MinLevel[Ch-1]}),
-						Pointer.to(new double[]{sqDistance[Ch-1]}),
 						Pointer.to(new int[]{minPosPixels[Ch-1]}),
 						Pointer.to(new int[]{nCenter}),
 						Pointer.to(deviceCenter),
@@ -262,8 +275,8 @@ public class processMedianFit {
 					}
 
 				} // locatedCenter now populated.
-				float[] P = new float[newN*7];
-				float[] stepSize = new float[newN*7];							
+				double[] P = new double[newN*7];
+				double[] stepSize = new double[newN*7];							
 				int[] gaussVector = new int[newN*gWindow[Ch-1]*gWindow[Ch-1]];
 
 				for (int i = 0; i < newN; i++)
@@ -271,17 +284,17 @@ public class processMedianFit {
 					P[i*7] = hostOutput[locatedCenter[i]];
 					P[i*7+1] = 2;
 					P[i*7+2] = 2;
-					P[i*7+3] = 2;
-					P[i*7+4] = 2;
+					P[i*7+3] = 1.5;
+					P[i*7+4] = 1.5;
 					P[i*7+6] = 0;
 					P[i*7+6] = 0;
-					stepSize[i * 7] = 0.1F;// amplitude
-					stepSize[i * 7 + 1] = 0.25F; // x center.
-					stepSize[i * 7 + 2] = 0.25F; // y center.
-					stepSize[i * 7 + 3] = 0.25F; // sigma x.
-					stepSize[i * 7 + 4] = 0.25F; // sigma y.
-					stepSize[i * 7 + 5] = 0.19625F; // Theta.
-					stepSize[i * 7 + 6] = 0.01F; // offset.   
+					stepSize[i * 7] = 0.1;// amplitude
+					stepSize[i * 7 + 1] = 0.25; // x center.
+					stepSize[i * 7 + 2] = 0.25; // y center.
+					stepSize[i * 7 + 3] = 0.25; // sigma x.
+					stepSize[i * 7 + 4] = 0.25; // sigma y.
+					stepSize[i * 7 + 5] = 0.19625; // Theta.
+					stepSize[i * 7 + 6] = 0.01; // offset.   
 					int k = locatedCenter[i] - (gWindow[Ch-1] / 2) * (columns + 1); // upper left corner.
 					int j = 0;
 					int loopC = 0;
@@ -314,12 +327,12 @@ public class processMedianFit {
 						Pointer.to(deviceGaussVector),
 						Pointer.to(new int[]{newN * gWindow[Ch-1] * gWindow[Ch-1]}),
 						Pointer.to(deviceP),																											
-						Pointer.to(new float[]{newN*7}),
+						Pointer.to(new double[]{newN*7}),
 						Pointer.to(new short[]{(short) gWindow[Ch-1]}),
 						Pointer.to(deviceBounds),
-						Pointer.to(new float[]{bounds.length}),
+						Pointer.to(new double[]{bounds.length}),
 						Pointer.to(deviceStepSize),																											
-						Pointer.to(new float[]{newN*7}),
+						Pointer.to(new double[]{newN*7}),
 						Pointer.to(new double[]{convCriteria}),
 						Pointer.to(new int[]{maxIterations}));	
 
@@ -332,11 +345,11 @@ public class processMedianFit {
 						);
 				//cuCtxSynchronize(); 
 
-				float hostParameterOutput[] = new float[newN*7];
+				double hostParameterOutput[] = new double[newN*7];
 
 				// Pull data from device.
 				cuMemcpyDtoH(Pointer.to(hostParameterOutput), deviceP,
-						newN*7 * Sizeof.FLOAT);
+						newN*7 * Sizeof.DOUBLE);
 				//		for(int i = 0; i < hostOutput.length; i+=7)
 				//			System.out.println(hostOutput[i]);
 				// Free up memory allocation on device, housekeeping.

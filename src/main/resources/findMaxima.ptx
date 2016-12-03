@@ -19,11 +19,10 @@
 	.param .u32 run_param_3,
 	.param .u32 run_param_4,
 	.param .u32 run_param_5,
-	.param .f64 run_param_6,
+	.param .u32 run_param_6,
 	.param .u32 run_param_7,
-	.param .u32 run_param_8,
-	.param .u64 run_param_9,
-	.param .u32 run_param_10
+	.param .u64 run_param_8,
+	.param .u32 run_param_9
 )
 {
 	.reg .pred 	%p<20>;
@@ -38,9 +37,9 @@
 	ld.param.u32 	%r31, [run_param_3];
 	ld.param.u32 	%r32, [run_param_4];
 	ld.param.u32 	%r33, [run_param_5];
-	ld.param.u32 	%r34, [run_param_7];
-	ld.param.u32 	%r35, [run_param_8];
-	ld.param.u64 	%rd5, [run_param_9];
+	ld.param.u32 	%r34, [run_param_6];
+	ld.param.u32 	%r35, [run_param_7];
+	ld.param.u64 	%rd5, [run_param_8];
 	cvta.to.global.u64 	%rd1, %rd6;
 	mov.u32 	%r37, %ctaid.y;
 	mov.u32 	%r38, %nctaid.x;

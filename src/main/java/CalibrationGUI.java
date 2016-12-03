@@ -152,13 +152,12 @@ public class CalibrationGUI extends javax.swing.JFrame {
 		}
 		ImageStatistics IMstat 	= image.getStatistics();
 		int[] MinLevel 			= {(int) (IMstat.max*0.6)};
-		double[] sqDistance 	= {3};
 		int[] gWindow 			= {5};
 		int[] inputPixelSize 	= {Integer.parseInt(pixelSize.getText())};
 		int[] minPosPixels 		= {12};
 		int[] totalGain 		= {100};
 		int selectedModel 		= 0; // CPU
-    	localizeAndFit.run(MinLevel, sqDistance, gWindow, inputPixelSize, minPosPixels, totalGain, selectedModel);
+    	localizeAndFit.run(MinLevel, gWindow, inputPixelSize, minPosPixels, totalGain, selectedModel);
     	/*
     	 * clean out fits based on goodness of fit:
     	 */

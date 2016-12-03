@@ -359,13 +359,13 @@ public class SMLocalizerProcess {
 		{
 			BackgroundCorrection.medianFiltering(window,WindowManager.getCurrentImage(),0); // correct background.
 			ij.IJ.log("background ok");
-			localizeAndFit.run(signalStrength, minDistance, gWindow, pixelSize,minPixelOverBkgrnd,totalGain,selectedModel);  //locate and fit all particles.
+			localizeAndFit.run(signalStrength, gWindow, pixelSize,minPixelOverBkgrnd,totalGain,selectedModel);  //locate and fit all particles.
 			ij.IJ.log("localize ok");
 		} // end CPU processing
 		else // GPU processing 
 		{
 			selectedModel = 2; // tell functions to utilize GPU.
-			processMedianFit.run(window, WindowManager.getCurrentImage(), signalStrength, minDistance, gWindow, pixelSize, minPixelOverBkgrnd, totalGain); // GPU specific call.
+			processMedianFit.run(window, WindowManager.getCurrentImage(), signalStrength, gWindow, pixelSize, minPixelOverBkgrnd, totalGain); // GPU specific call.
 		} // end GPU processing
 		cleanParticleList.run(lb,ub,include);
 		ij.IJ.log("clean list ok ok");

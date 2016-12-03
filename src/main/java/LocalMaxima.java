@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import ij.process.ImageProcessor;
 
 public class LocalMaxima {
-	public static ArrayList<int[]> FindMaxima(int[][] Array, int Window, int MinLevel,double sqDistance, int minPosPixels){		
+	public static ArrayList<int[]> FindMaxima(int[][] Array, int Window, int MinLevel, int minPosPixels){		
 		ArrayList<int[]> Results = new ArrayList<int[]>();
 		//int[] XY = {5,3}; //Example of how results are organized.		
 		//Results.add(XY);
@@ -53,7 +53,7 @@ public class LocalMaxima {
 
 		return Results;
 	}
-	public static ArrayList<int[]> FindMaxima(ImageProcessor IP, int Window, int MinLevel,double sqDistance, int minPosPixels){		
+	public static ArrayList<int[]> FindMaxima(ImageProcessor IP, int Window, int MinLevel, int minPosPixels){		
 		ArrayList<int[]> Results = new ArrayList<int[]>();
 		
 		int columns = IP.getWidth();

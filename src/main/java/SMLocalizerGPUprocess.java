@@ -1,4 +1,4 @@
-import ij.plugin.PlugIn;
+
 
 /* Copyright 2016 Kristoffer Bernhem.
  * This file is part of SMLocalizer.
@@ -16,6 +16,8 @@ import ij.plugin.PlugIn;
  *  You should have received a copy of the GNU General Public License
  *  along with SMLocalizer.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+import ij.plugin.PlugIn;
 public class SMLocalizerGPUprocess  implements PlugIn {
 
 	public void run(String arg0)

@@ -22,7 +22,7 @@ import static jcuda.driver.JCudaDriver.cuLaunchKernel;
 import static jcuda.driver.JCudaDriver.cuMemFree;
 import static jcuda.driver.JCudaDriver.cuMemcpyDtoH;
 import static jcuda.driver.JCudaDriver.cuModuleGetFunction;
-import static jcuda.driver.JCudaDriver.cuModuleLoad;
+import static jcuda.driver.JCudaDriver.cuModuleLoadDataEx;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -320,7 +320,11 @@ public class correctDrift {
 				cuCtxCreate(context, 0, device);
 				// Load the PTX that contains the kernel.
 				CUmodule module = new CUmodule();
-				cuModuleLoad(module, "driftCorr.ptx");
+				String ptxFileName = "driftCorr.ptx";
+				byte ptxFile[] = CUDA.loadData(ptxFileName);				
+				cuModuleLoadDataEx(module, Pointer.to(ptxFile), 
+			            0, new int[0], Pointer.to(new int[0]));
+//				cuModuleLoad(module, "driftCorr.ptx");
 				// Obtain a handle to the kernel function.
 				CUfunction function = new CUfunction();
 				cuModuleGetFunction(function, module, "run");
@@ -719,7 +723,7 @@ public class correctDrift {
 							locatedParticles.remove(i);
 						}		
 					} // verify that the particles have not been shifted out of bounds.			
-				} // channel loop.
+				} // channel loop.				
 				TableIO.Store(locatedParticles);
 				ij.IJ.log("Channels aligned.");
 			}else // end parallel-
@@ -731,9 +735,13 @@ public class correctDrift {
 					cuDeviceGet(device, 0);
 					CUcontext context = new CUcontext();
 					cuCtxCreate(context, 0, device);
-					// Load the PTX that contains the kernel.
+					// Load the PTX that contains the kernel.					
 					CUmodule module = new CUmodule();
-					cuModuleLoad(module, "driftCorr.ptx");
+					String ptxFileName = "driftCorr.ptx";
+					byte ptxFile[] = CUDA.loadData(ptxFileName);				
+					cuModuleLoadDataEx(module, Pointer.to(ptxFile), 
+				            0, new int[0], Pointer.to(new int[0]));
+//					cuModuleLoad(module, "driftCorr.ptx");
 					// Obtain a handle to the kernel function.
 					CUfunction function = new CUfunction();
 					cuModuleGetFunction(function, module, "run");
@@ -865,8 +873,7 @@ public class correctDrift {
 								{
 									corr = hostOutput[i];
 									lambdaCh[1] = maxShift[0] - (i / (numStep[0] * numStep[1])) * stepSize[0];
-									lambdaCh[2] = maxShift[0] - (i / numStep[1]) * stepSize[0];
-
+									lambdaCh[2] = maxShift[0] - (i % numStep[0]) * stepSize[0];									
 								}
 							} // get best estimate of drift.
 							lambdaCh[3] = 0;
@@ -966,6 +973,7 @@ public class correctDrift {
 							}		
 						} // verify that the particles have not been shifted out of bounds.			
 					} // channel loop.
+					
 					TableIO.Store(locatedParticles);
 					ij.IJ.log("Channels aligned.");					
 				} // end GPU.

@@ -256,7 +256,7 @@ public class GaussSolver {
 				{
 					P[pId] -= stepSize[pId]; // reset the current parameter.
 					if (stepSize[pId] < 0)  // if stepSize is negative, try positive direction at reduced stepSize.
-						stepSize[pId] /= -1.5;
+						stepSize[pId] *= -0.6667;
 					else 					// if stepSize is positive, try changing direction.
 						stepSize[pId] /= -1;
 				}
@@ -264,7 +264,7 @@ public class GaussSolver {
 			else // if stepSize is out of bounds.
 			{
 				if (stepSize[pId] < 0)  	// if stepSize is negative, try positive direction at reduced stepSize.
-					stepSize[pId] /= -1.5;
+					stepSize[pId] *= -0.6667;
 				else						// if stepSize is positive, try changing direction.
 					stepSize[pId] /= -1;
 			}

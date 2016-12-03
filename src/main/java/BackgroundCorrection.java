@@ -22,7 +22,6 @@ import static jcuda.driver.JCudaDriver.cuLaunchKernel;
 import static jcuda.driver.JCudaDriver.cuMemFree;
 import static jcuda.driver.JCudaDriver.cuMemcpyDtoH;
 import static jcuda.driver.JCudaDriver.cuModuleGetFunction;
-import static jcuda.driver.JCudaDriver.cuModuleLoad;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +40,7 @@ import jcuda.driver.CUdeviceptr;
 import jcuda.driver.CUfunction;
 import jcuda.driver.CUmodule;
 import jcuda.driver.JCudaDriver;
-
+import static jcuda.driver.JCudaDriver.cuModuleLoadDataEx;
 
 /* This class contains all relevant algorithms for background corrections. Handles 2D and 3D stacks with single slice per frame.
  * 
@@ -203,7 +202,12 @@ class BackgroundCorrection {
 				cuCtxCreate(context, 0, device);
 				// Load the PTX that contains the kernel.
 				CUmodule module = new CUmodule();
-				cuModuleLoad(module, "medianFilter.ptx");
+				
+				String ptxFileName = "medianFilter.ptx";
+				byte ptxFile[] = CUDA.loadData(ptxFileName);
+//				cuModuleLoad(module, "medianFilter.ptx"); // old  version, loading directly from the ptx file.
+				cuModuleLoadDataEx(module, Pointer.to(ptxFile), 
+			            0, new int[0], Pointer.to(new int[0]));
 				// Obtain a handle to the kernel function.
 				CUfunction function = new CUfunction();
 				cuModuleGetFunction(function, module, "medianKernel");

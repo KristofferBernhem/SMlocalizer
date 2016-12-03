@@ -20,9 +20,13 @@ import static jcuda.driver.JCudaDriver.cuMemcpyHtoD;
 import static jcuda.driver.CUdevice_attribute.*;
 import static jcuda.driver.JCudaDriver.*;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 import jcuda.driver.*;
+import jcuda.CudaException;
 import jcuda.Pointer;
 import jcuda.Sizeof;
 import jcuda.driver.CUdeviceptr;
@@ -30,6 +34,35 @@ import jcuda.driver.JCudaDriver;
 
 /*
  * Contain help classes for jcuda implementation.
+ * 
+ * 
+ * The ptx loading is taken directly from the jcuda project:
+ * * JCudaVec - Vector operations for JCuda 
+ * http://www.jcuda.org
+ *
+ * Copyright (c) 2013-2015 Marco Hutter - http://www.jcuda.org
+ * 
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without
+ * restriction, including without limitation the rights to use,
+ * copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following
+ * conditions:
+ * 
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ * 
  */
 public class CUDA {
 	
@@ -131,7 +164,103 @@ public class CUDA {
 	    return deviceData;
 	}
 	
-
+    /**
+     * Reads the data from a file resource with the given name, and returns 
+     * it as a 0-terminated byte array. 
+     * 
+     * @param ptxFileName The name of the file to read
+     * @return The data from the file
+     * @throws CudaException If there is an IO error
+     */
+    static byte[] loadData(String ptxFileName)
+    {
+        InputStream ptxInputStream = null;
+        try
+        {
+            ptxInputStream = 
+                CUDA.class.getResourceAsStream(ptxFileName);
+            if (ptxInputStream != null)
+            {
+                return loadData(ptxInputStream);
+            }
+            else
+            {
+                throw new CudaException(
+                    "Could not initialize the kernels: " +
+                    "Resource "+ptxFileName+" not found");
+            }
+        }
+        finally
+        {
+            if (ptxInputStream != null)
+            {
+                try
+                {
+                    ptxInputStream.close();
+                }
+                catch (IOException e)
+                {
+                    throw new CudaException(
+                        "Could not initialize the kernels", e);
+                }
+            }
+        }
+        
+    }
+    
+	 /**
+     * Reads the data from the given inputStream and returns it as
+     * a 0-terminated byte array. The caller is responsible to 
+     * close the given stream.
+     * 
+     * @param inputStream The inputStream to read
+     * @return The data from the inputStream
+     * @throws CudaException If there is an IO error
+     */
+    private static byte[] loadData(InputStream inputStream)
+    {
+        ByteArrayOutputStream baos = null;
+        try
+        {
+            baos = new ByteArrayOutputStream();
+            byte buffer[] = new byte[8192];
+            while (true)
+            {
+                int read = inputStream.read(buffer);
+                if (read == -1)
+                {
+                    break;
+                }
+                baos.write(buffer, 0, read);
+            }
+            baos.write('\0');
+            baos.flush();
+            return baos.toByteArray();
+        }
+        catch (IOException e)
+        {
+            throw new CudaException(
+                "Could not load data", e);
+        }
+        finally
+        {
+            if (baos != null)
+            {
+                try
+                {
+                    baos.close();
+                }
+                catch (IOException e)
+                {
+                    throw new CudaException(
+                        "Could not close output", e);
+                }
+            }
+        }
+        
+    }
+	
+	
     /**
      * Returns a short description of the given CUdevice_attribute constant
      * 
