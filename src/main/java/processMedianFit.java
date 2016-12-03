@@ -115,14 +115,14 @@ public class processMedianFit {
 			if (endFrame > nFrames)
 				endFrame = nFrames;
 			CUdeviceptr device_window 		= CUDA.allocateOnDevice((float)((2 * W[Ch-1] + 1) * rows * columns)); // swap vector.
-			float[] bounds = { // bounds for gauss fitting.
-					0.5F			, 1.5F,				// amplitude.
-					1	,(float)(gWindow[Ch-1]-1),			// x.
-					1	, (float)(gWindow[Ch-1]-1),			// y.
-					0.7F			, (float) (gWindow[Ch-1] / 2.0),		// sigma x.
-					0.7F			, (float) (gWindow[Ch-1] / 2.0),		// sigma y.
-					(float) (-0.5*Math.PI) ,(float) (0.5*Math.PI),	// theta.
-					-0.5F		, 0.5F				// offset.
+			double[] bounds = { // bounds for gauss fitting.
+					0.5			, 1.5,				// amplitude.
+					1	,(gWindow[Ch-1]-1),			// x.
+					1	, (gWindow[Ch-1]-1),			// y.
+					0.7			,  (gWindow[Ch-1] / 2.0),		// sigma x.
+					0.7			,  (gWindow[Ch-1] / 2.0),		// sigma y.
+					 (-0.5*Math.PI) , (0.5*Math.PI),	// theta.
+					-0.5		, 0.5				// offset.
 			};
 			CUdeviceptr deviceBounds 		= CUDA.copyToDevice(bounds);	
 			while (loadedFrames < nFrames-1)
