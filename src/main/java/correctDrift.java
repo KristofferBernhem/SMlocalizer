@@ -14,6 +14,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with SMLocalizer.  If not, see <http://www.gnu.org/licenses/>.
  */
+/**
+ *
+ * @author kristoffer.bernhem@gmail.com
+ */
 import static jcuda.driver.JCudaDriver.cuCtxCreate;
 import static jcuda.driver.JCudaDriver.cuCtxSynchronize;
 import static jcuda.driver.JCudaDriver.cuDeviceGet;

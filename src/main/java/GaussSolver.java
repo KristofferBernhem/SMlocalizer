@@ -15,7 +15,10 @@
  *  along with SMLocalizer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
+/**
+ *
+ * @author kristoffer.bernhem@gmail.com
+ */
 public class GaussSolver {
 
 	int[] data, center;
@@ -51,8 +54,8 @@ public class GaussSolver {
 				data[width*(width-1)/2 + (width-1)/2], 	// use center pixel value to approximate max value.
 				mx/m0,									// weighted centroid as approximation.
 				my/m0,									// weighted centroid as approximation.
-				1.5,									// approximation of sigma x, 1.5Na objective with 500nm emission.
-				1.5,									// approximation of sigma y, 1.5Na objective with 500nm emission
+				1.50,									// approximation of sigma x, 1.5Na objective with 500nm emission.
+				1.50,									// approximation of sigma y, 1.5Na objective with 500nm emission
 				0,										// theta.
 				0};										// offset, set to 0 initially.
 		this.P = tempP;									// add parameter estimate to P.
@@ -86,7 +89,7 @@ public class GaussSolver {
 				2912, 3872,  4992,  6560,  6448,  4896, 3392,
 				3088, 3248,  3552, 	3504,  4144,  4512, 2944  
 		};
-*/
+		 */
 		int[] testdata = {627,803,957,716,202,
 				763,2061,2678,1531,1134,
 				1387,4792,6712,3875,710,
@@ -103,7 +106,7 @@ public class GaussSolver {
 		double convergence 	= 1E-8;
 		int gain = 100;
 		int n = 1;
-		
+
 		long start = System.nanoTime();
 		for (int j = 0; j < 1; j++){
 
@@ -115,8 +118,8 @@ public class GaussSolver {
 		long stop = System.nanoTime() - start;
 		//stop = stop/5; // five time mean.
 		System.out.println(stop/1000000); 
-		
-		
+
+
 		GaussSolver Gsolver = new GaussSolver(testdata, width, convergence, maxIterations, center, channel, pixelSize,frame,gain);		
 		Particle P = Gsolver.Fit();
 		System.out.println("Rsquare: " + P.r_square + " " + Gsolver.P[0] + " " + Gsolver.P[1] + " x "+ Gsolver.P[2]+ " " +Gsolver.P[3] + " x "+ Gsolver.P[4]+" " + Gsolver.P[5] + " x "+ Gsolver.P[6]);
@@ -127,7 +130,7 @@ public class GaussSolver {
 
 	} // main
 
-	public Particle Fit()
+	public Particle Fit() // 2D version
 	{
 		///////////////////////////////////////////////////////////////////
 		////////////////////// Setup calculations: ////////////////////////
@@ -137,8 +140,8 @@ public class GaussSolver {
 				0.6			, 1.4,				// amplitude.
 				P[1] - 2	, P[1] + 2,			// x.
 				P[2] - 2	, P[2] + 2,			// y.
-				0.7			, width / 2.0,		// sigma x.
-				0.7			, width / 2.0,		// sigma y.
+				0.7			, width / 2,		// sigma x.
+				0.7			, width / 2,		// sigma y.
 				-0.5*Math.PI,0.5*Math.PI,	// theta.
 				-0.5		, 0.5				// offset.
 		};
@@ -152,12 +155,6 @@ public class GaussSolver {
 				0.1965,				// theta.
 				0.01				// offset.
 		};		
-		double Rsquare 	= 1;			// start value.
-		double ThetaA 	= 0;			// Initialize, used for gaussian function evaluation.
-		double ThetaB 	= 0;			// Initialize, used for gaussian function evaluation.
-		double ThetaC 	= 0;			// Initialize, used for gaussian function evaluation.
-		double residual = 0;			// Initialize, used for gaussian function evaluation.
-		double tempRsquare = 0;			// Initialize, used for gaussian function evaluation.
 
 		// update bonds based on center pixel value.
 		bounds[0] 	= bounds[0] * P[0];  	// input bounds are fractional, based on image max intensity.
@@ -166,22 +163,72 @@ public class GaussSolver {
 		bounds[13] 	= bounds[13] * P[0];  	// input bounds are fractional, based on image max intensity.
 		stepSize[0] = stepSize[0] * P[0];  	// input stepSize are fractional, based on image max intensity.
 		stepSize[6] = stepSize[6] * P[0];  	// input stepSize are fractional, based on image max intensity.
+		return Optimize(bounds, stepSize);
+	}
+	
+	public Particle Fit(double maxSigma)
+	{
+		///////////////////////////////////////////////////////////////////
+		////////////////////// Setup calculations: ////////////////////////
+		///////////////////////////////////////////////////////////////////
+
+		double[] bounds = {
+				0.6			, 1.4,				// amplitude.
+				P[1] - 2	, P[1] + 2,			// x.
+				P[2] - 2	, P[2] + 2,			// y.
+				0.7			, maxSigma,		// sigma x.
+				0.7			, maxSigma,		// sigma y.
+				-0.5*Math.PI,0.5*Math.PI,	// theta.
+				-0.5		, 0.5				// offset.
+		};
+
+		double[] stepSize = {
+				0.1,				// amplitude.
+				0.25*100/pixelSize,// x.
+				0.25*100/pixelSize,// y
+				0.25*100/pixelSize,	// sigma x.
+				0.25*100/pixelSize, // sigma y.
+				0.1965,				// theta.
+				0.01				// offset.
+		};		
+
+		// update bonds based on center pixel value.
+		bounds[0] 	= bounds[0] * P[0];  	// input bounds are fractional, based on image max intensity.
+		bounds[1] 	= bounds[1] * P[0];  	// input bounds are fractional, based on image max intensity.
+		bounds[12] 	= bounds[12] * P[0];  	// input bounds are fractional, based on image max intensity.
+		bounds[13] 	= bounds[13] * P[0];  	// input bounds are fractional, based on image max intensity.
+		stepSize[0] = stepSize[0] * P[0];  	// input stepSize are fractional, based on image max intensity.
+		stepSize[6] = stepSize[6] * P[0];  	// input stepSize are fractional, based on image max intensity.
+		return Optimize(bounds, stepSize);
+	}
+	public Particle Optimize(double[] bounds, double[] stepSize)
+	{
+
+		double Rsquare 	= 1;			// start value.
+		double ThetaA 	= 0;			// Initialize, used for gaussian function evaluation.
+		double ThetaB 	= 0;			// Initialize, used for gaussian function evaluation.
+		double ThetaC 	= 0;			// Initialize, used for gaussian function evaluation.
+		double residual = 0;			// Initialize, used for gaussian function evaluation.
+		double tempRsquare = 0;			// Initialize, used for gaussian function evaluation.
 
 		int iterationCount 	= 0; 		// keep track of number of iterations.
 		double oldRsquare	= Rsquare;	// keep track of last main round of optimizations goodness of fit.
 		int pId 			= 0; 		// parameter id.
 		boolean optimize 	= true; 	// true whilst still optimizing parameters.
-		double bestSigmaX = 0;
-		double bestSigmaY = 0;
+		double bestSigmaX 	= 0;
+		double bestSigmaY 	= 0;
 		///////////////////////////////////////////////////////////////////
 		////////////////////// Optimize parameters:////////////////////////
 		///////////////////////////////////////////////////////////////////
-
-		for (double sigmaX = P[3] - 3*stepSize[3]; sigmaX <= P[3] + 2*stepSize[3]; sigmaX += stepSize[3])
+		double sigmaX = bounds[6];
+		double sigmaY = bounds[8];
+//		for (double sigmaX = P[3] - 3*stepSize[3]; sigmaX <= P[3] + 3*stepSize[3]; sigmaX += stepSize[3])
+		while (sigmaX <= bounds[7])
 		{
-			for (double sigmaY = P[4] - 3*stepSize[4]; sigmaY <= P[4] + 2*stepSize[4]; sigmaY += stepSize[4])
+	//		for (double sigmaY = P[4] - 3*stepSize[4]; sigmaY <= P[4] + 3*stepSize[4]; sigmaY += stepSize[4])
+			while (sigmaY <= bounds[9])
 			{
-	
+
 				ThetaA = 1/(2*sigmaX*sigmaX);
 				ThetaC = 1/(2*sigmaY*sigmaY);
 				for (int xyIndex = 0; xyIndex < width * width; xyIndex++)
@@ -202,7 +249,10 @@ public class GaussSolver {
 					bestSigmaX = sigmaX;
 					bestSigmaY = sigmaY;
 				} 
+				sigmaY += stepSize[4];
 			}
+			sigmaX += stepSize[3];
+			sigmaY = bounds[8]; // reset each loop.
 		}
 		P[3] = bestSigmaX;
 		P[4] = bestSigmaY;
@@ -213,10 +263,9 @@ public class GaussSolver {
 
 		Rsquare 	= 1;			// start value.
 		tempRsquare = 0;
-		residual = 0;
+		residual 	= 0;
 		while (optimize)
 		{				
-			//System.out.println(iterationCount);
 			if (pId == 0) // if we start a new full iteration over all parameters.
 				oldRsquare = Rsquare; // store the last iterations goodness of fit.
 			if (P[pId] + stepSize[pId] > bounds[pId*2] && P[pId] + stepSize[pId] < bounds[pId*2 + 1]){
@@ -324,7 +373,7 @@ public class GaussSolver {
 		Localized.precision_x 	= Localized.sigma_x/Math.sqrt(Localized.photons);
 		Localized.precision_y 	= Localized.sigma_y/Math.sqrt(Localized.photons);
 		Localized.precision_z 	= Localized.sigma_z/Math.sqrt(Localized.photons);	
-		
+
 		return Localized;
 	}	
 

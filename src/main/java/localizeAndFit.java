@@ -14,7 +14,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with SMLocalizer.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+/**
+ *
+ * @author kristoffer.bernhem@gmail.com
+ */
 import static jcuda.driver.JCudaDriver.cuCtxCreate;
 import static jcuda.driver.JCudaDriver.cuCtxSynchronize;
 import static jcuda.driver.JCudaDriver.cuDeviceGet;
@@ -47,8 +50,8 @@ import jcuda.driver.CUmodule;
 
 public class localizeAndFit {
 
-	public static ArrayList<Particle> run(int[] MinLevel, int[] gWindow, int[] inputPixelSize, int[] minPosPixels, int[] totalGain , int selectedModel){				
-
+	public static ArrayList<Particle> run(int[] MinLevel, int[] gWindow, int[] inputPixelSize, int[] minPosPixels, int[] totalGain , int selectedModel, double maxSigma){				
+		
 		ImagePlus image 					= WindowManager.getCurrentImage();
 		int columns 						= image.getWidth();
 		int rows 							= image.getHeight();
@@ -112,11 +115,12 @@ public class localizeAndFit {
 			} // loop over all channels.
 			
 			List<Callable<Particle>> tasks = new ArrayList<Callable<Particle>>();	// Preallocate.
+			
 			for (final fitParameters object : fitThese) {							// Loop over and setup computation.
 				Callable<Particle> c = new Callable<Particle>() {					// Computation to be done.
 					@Override
 					public Particle call() throws Exception {
-						return ParticleFitter.Fitter(object);						// Actual call for each parallel process.
+						return ParticleFitter.Fitter(object,maxSigma);						// Actual call for each parallel process.
 					}
 				};
 				tasks.add(c);														// Que this task.
@@ -159,7 +163,52 @@ public class localizeAndFit {
 						Results.get(i).photons > 0 && 
 						Results.get(i).r_square > 0)
 					cleanResults.add(Results.get(i));
+			}
+			
+			
+			/*
+			 * 
+			 * Remove duplicates that can occur if two center pixels has the exact same value. Select the best fit if this is the case.
+			 */
+			int currFrame = -1;
+			int i  = 0;
+			int j = 0;
+			int Ch = 1;
 
+			int pixelDistance = 2*inputPixelSize[Ch-1]*inputPixelSize[Ch-1];
+			while( i < cleanResults.size())
+			{				
+				if (cleanResults.get(i).channel > Ch)
+					pixelDistance = 2*inputPixelSize[Ch-1]*inputPixelSize[Ch-1];
+				if( cleanResults.get(i).frame > currFrame)
+				{
+					currFrame = cleanResults.get(i).frame;					
+					j = i+1;
+
+				}
+				while (j < cleanResults.size() && cleanResults.get(j).frame == currFrame)
+				{
+					if (((cleanResults.get(i).x - cleanResults.get(j).x)*(cleanResults.get(i).x - cleanResults.get(j).x) + 
+						(cleanResults.get(i).y - cleanResults.get(j).y)*(cleanResults.get(i).y - cleanResults.get(j).y)) < pixelDistance)
+					{
+						if (cleanResults.get(i).r_square > cleanResults.get(j).r_square)
+						{
+							cleanResults.get(j).include = 0;					
+						}else
+						{
+							cleanResults.get(i).include = 0;
+						}
+					}
+					j++;
+				}
+
+				i++;
+				j = i+1;
+			}
+			for (i = cleanResults.size()-1; i >= 0; i--)
+			{
+				if (cleanResults.get(i).include == 0)
+					cleanResults.remove(i);
 			}
 			ij.measure.ResultsTable tab = Analyzer.getResultsTable();
 			tab.reset();		
@@ -382,57 +431,6 @@ public class localizeAndFit {
 							CUdeviceptr deviceP 			= 		CUDA.copyToDevice(P);
 							CUdeviceptr deviceStepSize 		= 		CUDA.copyToDevice(stepSize);							
 							
-						
-							/*
-							 * This functions is being implemented, reducing computationtime by reducing device to host to device transfers. 
-							 * 
-							CUdeviceptr deviceLocatedCenter = CUDA.copyToDevice(locatedCenter);
-							CUdeviceptr deviceGaussVector 	= CUDA.allocateOnDevice((int)(newN * gWindow[Ch-1] * gWindow[Ch-1])); // gWindow*gWindow entries per found center.
-							CUdeviceptr deviceP 			= CUDA.allocateOnDevice((float)(newN * 7)); // 7 entries per found center.
-							CUdeviceptr deviceStepSize 		= CUDA.allocateOnDevice((float)(newN * 7));  // 7 entries per found center.
-							gridSizeX = (int) Math.ceil((Math.sqrt(newN)));
-							gridSizeY 	= gridSizeX;
-							
-							
-							Pointer kernelParametersPrepareGaussFit 		= Pointer.to(   
-									Pointer.to(deviceData),
-									Pointer.to(new int[]{data.length}),
-									Pointer.to(deviceLocatedCenter),
-									Pointer.to(new int[]{newN}),
-									Pointer.to(new int[]{columns}),		 				       
-									Pointer.to(new int[]{rows}),
-									Pointer.to(new int[]{gWindow[Ch-1]}),
-									Pointer.to(deviceGaussVector),
-									Pointer.to(new int[]{newN * gWindow[Ch-1] * gWindow[Ch-1]}),
-									Pointer.to(deviceP),																											
-									Pointer.to(new float[]{newN*7}),
-									Pointer.to(deviceStepSize),																											
-									Pointer.to(new float[]{newN*7})
-									);
-							
-							
-							cuLaunchKernel(prepareGaussFcn,
-									gridSizeX,  gridSizeY, 1, 	// Grid dimension
-									blockSizeX, blockSizeY, 1,  // Block dimension
-									0, null,               		// Shared memory size and stream
-									kernelParametersPrepareGaussFit, null 		// Kernel- and extra parameters
-									);
-					//		cuCtxSynchronize();
-
-
-
-							// clean device memory.
-							cuMemFree(deviceData); // remove deviceData from device.
-							cuMemFree(deviceLocatedCenter); // remove deviceLocatedCenter from device.
-							*/
-							// pull down data and relaunch.
-						//	int hostOutput[] = new int[newN * gWindow[Ch-1] * gWindow[Ch-1]];
-
-//							cuMemcpyDtoH(Pointer.to(hostOutput), deviceGaussVector,
-//									newN*25 * Sizeof.INT);
-							//for( int i = 0; i < hostOutput.length; i++)
-								//System.out.println(hostOutput[i]);
-
 							/******************************************************************************
 							 * Gauss fitting.
 							 ******************************************************************************/
@@ -458,7 +456,7 @@ public class localizeAndFit {
 									0, null,               		// Shared memory size and stream
 									kernelParametersGaussFit, null 		// Kernel- and extra parameters
 									);
-							//cuCtxSynchronize(); 
+							cuCtxSynchronize(); 
 
 							double hostOutput[] = new double[newN*7];
 
@@ -596,98 +594,11 @@ public class localizeAndFit {
 				                } // data pulled.
 							}
 					
-							/*float[] P = new float[newN*7];
-							float[] stepSize = new float[newN*7];							
-							int[] gaussVector = new int[newN*gWindow[Ch-1]*gWindow[Ch-1]];
-							
-							for (int i = 0; i < newN; i++)
-							{
-								P[i*7] = data[locatedCenter[i]];
-								P[i*7+1] = 2;
-								P[i*7+2] = 2;
-								P[i*7+3] = 1.5F;
-								P[i*7+4] = 1.5F;
-								P[i*7+6] = 0;
-								P[i*7+6] = 0;
-				                stepSize[i * 7] = 0.1F;// amplitude
-				                stepSize[i * 7 + 1] = 0.25F; // x center.
-				                stepSize[i * 7 + 2] = 0.25F; // y center.
-				                stepSize[i * 7 + 3] = 0.25F; // sigma x.
-				                stepSize[i * 7 + 4] = 0.25F; // sigma y.
-				                stepSize[i * 7 + 5] = 0.19625F; // Theta.
-				                stepSize[i * 7 + 6] = 0.01F; // offset.   
-				                int k = locatedCenter[i] - (gWindow[Ch-1] / 2) * (columns + 1); // upper left corner.
-				                int j = 0;
-				                int loopC = 0;
-				                while (k <= locatedCenter[i] + (gWindow[Ch-1] / 2) * (columns + 1)) // loop over all relevant pixels. use this loop to extract data based on single indexing defined centers.
-				                {
-				                    gaussVector[i * gWindow[Ch-1] * gWindow[Ch-1] + j] = data[k]; // add data.
-				                    k++;
-				                    loopC++;
-				                    j++;
-				                    if (loopC == gWindow[Ch-1])
-				                    {
-				                        k += (columns - gWindow[Ch-1]);
-				                        loopC = 0;
-				                    }
-				                } // data pulled.
-							}*/
 							
 							CUdeviceptr deviceGaussVector 	= 		CUDA.copyToDevice(gaussVector);					
 							CUdeviceptr deviceP 			= 		CUDA.copyToDevice(P);
 							CUdeviceptr deviceStepSize 		= 		CUDA.copyToDevice(stepSize);							
 							
-						
-							/*
-							 * This functions is being implemented, reducing computationtime by reducing device to host to device transfers. 
-							 * 
-							CUdeviceptr deviceLocatedCenter = CUDA.copyToDevice(locatedCenter);
-							CUdeviceptr deviceGaussVector 	= CUDA.allocateOnDevice((int)(newN * gWindow[Ch-1] * gWindow[Ch-1])); // gWindow*gWindow entries per found center.
-							CUdeviceptr deviceP 			= CUDA.allocateOnDevice((float)(newN * 7)); // 7 entries per found center.
-							CUdeviceptr deviceStepSize 		= CUDA.allocateOnDevice((float)(newN * 7));  // 7 entries per found center.
-							gridSizeX = (int) Math.ceil((Math.sqrt(newN)));
-							gridSizeY 	= gridSizeX;
-							
-							
-							Pointer kernelParametersPrepareGaussFit 		= Pointer.to(   
-									Pointer.to(deviceData),
-									Pointer.to(new int[]{data.length}),
-									Pointer.to(deviceLocatedCenter),
-									Pointer.to(new int[]{newN}),
-									Pointer.to(new int[]{columns}),		 				       
-									Pointer.to(new int[]{rows}),
-									Pointer.to(new int[]{gWindow[Ch-1]}),
-									Pointer.to(deviceGaussVector),
-									Pointer.to(new int[]{newN * gWindow[Ch-1] * gWindow[Ch-1]}),
-									Pointer.to(deviceP),																											
-									Pointer.to(new float[]{newN*7}),
-									Pointer.to(deviceStepSize),																											
-									Pointer.to(new float[]{newN*7})
-									);
-							
-							
-							cuLaunchKernel(prepareGaussFcn,
-									gridSizeX,  gridSizeY, 1, 	// Grid dimension
-									blockSizeX, blockSizeY, 1,  // Block dimension
-									0, null,               		// Shared memory size and stream
-									kernelParametersPrepareGaussFit, null 		// Kernel- and extra parameters
-									);
-					//		cuCtxSynchronize();
-
-
-
-							// clean device memory.
-							cuMemFree(deviceData); // remove deviceData from device.
-							cuMemFree(deviceLocatedCenter); // remove deviceLocatedCenter from device.
-							*/
-							// pull down data and relaunch.
-						//	int hostOutput[] = new int[newN * gWindow[Ch-1] * gWindow[Ch-1]];
-
-//							cuMemcpyDtoH(Pointer.to(hostOutput), deviceGaussVector,
-//									newN*25 * Sizeof.INT);
-							//for( int i = 0; i < hostOutput.length; i++)
-								//System.out.println(hostOutput[i]);
-
 							/******************************************************************************
 							 * Gauss fitting.
 							 ******************************************************************************/
@@ -707,28 +618,13 @@ public class localizeAndFit {
 									Pointer.to(new double[]{convCriteria}),
 									Pointer.to(new int[]{maxIterations}));	
 
-	/*						gridSizeX = (int) Math.ceil((Math.sqrt(newN)));
-							gridSizeY 	= gridSizeX;
-							Pointer kernelParametersGaussFit 		= Pointer.to(   
-									Pointer.to(deviceGaussVector),
-									Pointer.to(new int[]{newN * gWindow[Ch-1] * gWindow[Ch-1]}),
-									Pointer.to(deviceP),																											
-									Pointer.to(new float[]{newN*7}),
-									Pointer.to(new short[]{(short) gWindow[Ch-1]}),
-									Pointer.to(deviceBounds),
-									Pointer.to(new float[]{bounds.length}),
-									Pointer.to(deviceStepSize),																											
-									Pointer.to(new float[]{newN*7}),
-									Pointer.to(new double[]{convCriteria}),
-									Pointer.to(new int[]{maxIterations}));	
-*/
 							cuLaunchKernel(fittingFcn,
 									gridSizeX,  gridSizeY, 1, 	// Grid dimension
 									blockSizeX, blockSizeY, 1,  // Block dimension
 									0, null,               		// Shared memory size and stream
 									kernelParametersGaussFit, null 		// Kernel- and extra parameters
 									);
-							//cuCtxSynchronize(); 
+							cuCtxSynchronize(); 
 
 							double hostOutput[] = new double[newN*7];
 
@@ -778,6 +674,53 @@ public class localizeAndFit {
 						cleanResults.add(Results.get(i));
 
 				}
+				
+				/*
+				 * 
+				 * Remove duplicates that can occur if two center pixels has the exact same value. Select the best fit if this is the case.
+				 */
+				int currFrame = -1;
+				int i  = 0;
+				int j = 0;
+				int Ch = 1;
+
+				int pixelDistance = 2*inputPixelSize[Ch-1]*inputPixelSize[Ch-1];
+				while( i < cleanResults.size())
+				{				
+					if (cleanResults.get(i).channel > Ch)
+						pixelDistance = 2*inputPixelSize[Ch-1]*inputPixelSize[Ch-1];
+					if( cleanResults.get(i).frame > currFrame)
+					{
+						currFrame = cleanResults.get(i).frame;					
+						j = i+1;
+
+					}
+					while (j < cleanResults.size() && cleanResults.get(j).frame == currFrame)
+					{
+						if (((cleanResults.get(i).x - cleanResults.get(j).x)*(cleanResults.get(i).x - cleanResults.get(j).x) + 
+							(cleanResults.get(i).y - cleanResults.get(j).y)*(cleanResults.get(i).y - cleanResults.get(j).y)) < pixelDistance)
+						{					
+							if (cleanResults.get(i).r_square > cleanResults.get(j).r_square)
+							{
+								cleanResults.get(j).include = 0;
+					
+							}else
+							{
+								cleanResults.get(i).include = 0;					
+							}
+						}
+						j++;
+					}
+
+					i++;
+					j = i+1;
+				}
+				for (i = cleanResults.size()-1; i >= 0; i--)
+				{
+					if (cleanResults.get(i).include == 0)
+						cleanResults.remove(i);
+				}
+				
 				ij.measure.ResultsTable tab = Analyzer.getResultsTable();
 				tab.reset();		
 				tab.incrementCounter();
@@ -787,12 +730,6 @@ public class localizeAndFit {
 				TableIO.Store(cleanResults);
 				return cleanResults;
 			} // end GPU computing.
-	/*	ij.measure.ResultsTable tab = Analyzer.getResultsTable();
-		tab.reset();		
-		tab.incrementCounter();
-		tab.addValue("width", columns*inputPixelSize[0]);
-		tab.addValue("height", rows*inputPixelSize[0]);
-		tab.show("Results");*/
 		return Results;					
 	}
 

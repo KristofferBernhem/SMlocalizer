@@ -38,7 +38,10 @@ import jcuda.driver.CUmodule;
  *  along with SMLocalizer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
+/**
+*
+* @author kristoffer.bernhem@gmail.com
+*/
 /*
  * ProcessMedianFit is called by the process call button and will in sequence load image data, median filter (background removal), locate events and fit them, returning a result table.
  */

@@ -14,7 +14,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with SMLocalizer.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+/**
+ *
+ * @author kristoffer.bernhem@gmail.com
+ */
 /*
  * ParticleFitter.Fitter returns an arraylist of particles that has been fitted. Input is a ImageProcessor for a frame of interest, an int array list of center coordinates of interest,
  * Window width of square centered on these coordinates in pixels and frame number.
@@ -23,7 +26,7 @@
 public class ParticleFitter {
 
 	
-	public static Particle Fitter(fitParameters fitThese){ // setup a single gaussian fit, return localized particle.
+	public static Particle Fitter(fitParameters fitThese, double maxSigma ){ // setup a single gaussian fit, return localized particle.
 		double convergence	= 1E-8;	// stop optimizing once improvement is below this.
 		int maxIteration 	= 1000;	// max number of iterations.
 		GaussSolver Gsolver = new GaussSolver(
@@ -36,7 +39,7 @@ public class ParticleFitter {
 				fitThese.pixelsize,		// pixelsize in nm.
 				fitThese.frame,			// frame number.
 				fitThese.totalGain);	// total gain, camera specific parameter giving relation between input photon to output pixel intensity.
-		Particle Results 	= Gsolver.Fit();	// do fit.
+		Particle Results 	= Gsolver.Fit(maxSigma);	// do fit.
 		return Results;
 	}
 }

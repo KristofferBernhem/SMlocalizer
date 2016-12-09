@@ -17,7 +17,10 @@ import ij.WindowManager;
  *  You should have received a copy of the GNU General Public License
  *  along with SMLocalizer.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+/**
+*
+* @author kristoffer.bernhem@gmail.com
+*/
 
 /*
  * TODO: Add storage of gaussfilter setting.
@@ -359,7 +362,8 @@ public class SMLocalizerProcess {
 		{
 			BackgroundCorrection.medianFiltering(window,WindowManager.getCurrentImage(),0); // correct background.
 			ij.IJ.log("background ok");
-			localizeAndFit.run(signalStrength, gWindow, pixelSize,minPixelOverBkgrnd,totalGain,selectedModel);  //locate and fit all particles.
+			double maxSigma = 2; // 2D
+			localizeAndFit.run(signalStrength, gWindow, pixelSize,minPixelOverBkgrnd,totalGain,selectedModel,maxSigma);  //locate and fit all particles.
 			ij.IJ.log("localize ok");
 		} // end CPU processing
 		else // GPU processing 

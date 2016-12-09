@@ -24,11 +24,10 @@ import javax.swing.JPanel;
 
 import ij.WindowManager;
 
-
-/*
- * @author kristoffer.bernhem
- */
-@SuppressWarnings("serial")
+/**
+*
+* @author kristoffer.bernhem@gmail.com
+*/@SuppressWarnings("serial")
 public class SMLocalizerGUI extends javax.swing.JFrame {
 
 	public SMLocalizerGUI() {
@@ -3178,8 +3177,9 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		if (parallelComputation.isSelected()) // parallel computation.
 		{
 			selectedModel = 0;			
+			double maxSigma = 2; // 2D 
 			BackgroundCorrection.medianFiltering(window,WindowManager.getCurrentImage(),selectedModel); // correct background.
-			localizeAndFit.run(signalStrength, gWindow, pixelSize,minPixelOverBkgrnd,totalGain,selectedModel);  //locate and fit all particles.
+			localizeAndFit.run(signalStrength, gWindow, pixelSize,minPixelOverBkgrnd,totalGain,selectedModel,maxSigma);  //locate and fit all particles.
 			//			ArrayList<Particle> Results = localizeAndFit.run(signalStrength, minDistance, gWindow, pixelSize,minPixelOverBkgrnd,totalGain,selectedModel);  //locate and fit all particles.
 			//	TableIO.Store(Results);			
 		}
@@ -3434,8 +3434,8 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		int[] gWindow = getGaussWindowsize();
 		int[] minPixelOverBkgrnd = getMinPixelOverBackground();
 		int[] signalStrength = getMinSignal();
-
-		ArrayList<Particle> Results = localizeAndFit.run(signalStrength, gWindow, pixelSize,minPixelOverBkgrnd,totalGain,selectedModel);  //locate and fit all particles.	   	   
+		double maxSigma = 2; // 2D 
+		ArrayList<Particle> Results = localizeAndFit.run(signalStrength, gWindow, pixelSize,minPixelOverBkgrnd,totalGain,selectedModel,maxSigma);  //locate and fit all particles.	   	   
 		TableIO.Store(Results);
 	}                                            
 

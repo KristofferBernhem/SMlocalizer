@@ -19,6 +19,10 @@
  * nearestNeighbour analysis not currently active in SMLocalizer v 1.5 implementation pending.
  * 
  */
+/**
+ *
+ * @author kristoffer.bernhem@gmail.com
+ */
 import java.util.ArrayList;
 import java.util.Random;
 

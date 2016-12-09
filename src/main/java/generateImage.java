@@ -18,7 +18,10 @@
 /*
  * TODO: 3D rendering!
  */
-
+/**
+ *
+ * @author kristoffer.bernhem@gmail.com
+ */
 import java.util.ArrayList;
 import ij.ImagePlus;
 import ij.ImageStack;

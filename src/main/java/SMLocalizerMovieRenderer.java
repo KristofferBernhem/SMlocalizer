@@ -14,7 +14,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with SMLocalizer.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+/**
+ *
+ * @author kristoffer.bernhem@gmail.com
+ */
 import java.util.ArrayList;
 
 import ij.ImagePlus;
@@ -28,13 +31,12 @@ import ij.process.ImageStatistics;
 public class SMLocalizerMovieRenderer{// implements PlugIn {
 
 
-	public  void run(String Arg0)
+	public static void run(int[] pixelSize, int frameBinSize, boolean GaussFilter)
 	{
 		ArrayList<Particle> ParticleList 	= TableIO.Load(); 									// get results table.
 		ij.measure.ResultsTable tab 		= Analyzer.getResultsTable();   					// load a new handle to results table.
 		int width 							= (int)tab.getValue("width", 0);					// get width of image.
-		int height 							= (int) tab.getValue("height", 0);					// get height of image.
-		int[] pixelSize 					= {5,10};											// user provided (from GUI) pixelsize.
+		int height 							= (int) tab.getValue("height", 0);					// get height of image.	
 		width 								= (int) Math.ceil(width/pixelSize[0]);				// rescale image.
 		height 								= (int) Math.ceil(height/pixelSize[0]);				// rescale image.
 		ImageStack imstack 					= new ImageStack(width,height);						// generate image stack that will become the final output.
@@ -70,13 +72,15 @@ public class SMLocalizerMovieRenderer{// implements PlugIn {
 						IP.putPixel(x, y, (IP.get(x, y) + 1));
 					} // frame check.
 				} // idx for loop.
-	//			IP.multiply(50); 			// do afterwards.
-	//			IP.blurGaussian(2);			// do afterwards.
+				if (GaussFilter){ // if user wants gaussian smoothing.
+					IP.multiply(50); 			
+					IP.blurGaussian(2);			
+				}
 				imstack.addSlice(IP);
 			} // channel loop.
-			frame+=10;  // Frame step size. Increase to decrease movie size.
+			frame+=frameBinSize;  // Frame step size. Increase to decrease movie size.
 		} // main loop over all frames.
-		
+
 		ImagePlus Image = ij.IJ.createHyperStack("", 
 				width, 
 				height, 
@@ -96,6 +100,6 @@ public class SMLocalizerMovieRenderer{// implements PlugIn {
 		Image.setDisplayRange(ImStats.min, ImStats.max);
 		Image.updateAndDraw();
 		Image.show();
-		
+
 	}
 }

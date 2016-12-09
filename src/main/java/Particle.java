@@ -14,7 +14,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with SMLocalizer.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+/**
+ *
+ * @author kristoffer.bernhem@gmail.com
+ */
 /*
  * Particle is a object that hold all fitting information.
  */
