@@ -50,8 +50,7 @@ import jcuda.driver.CUmodule;
 
 public class localizeAndFit {
 
-	public static ArrayList<Particle> run(int[] MinLevel, int[] gWindow, int[] inputPixelSize, int[] minPosPixels, int[] totalGain , int selectedModel, double maxSigma){				
-		
+	public static ArrayList<Particle> run(int[] MinLevel, int[] gWindow, int[] inputPixelSize, int[] minPosPixels, int[] totalGain , int selectedModel, double maxSigma){						
 		ImagePlus image 					= WindowManager.getCurrentImage();
 		int columns 						= image.getWidth();
 		int rows 							= image.getHeight();
@@ -172,7 +171,7 @@ public class localizeAndFit {
 			 */
 			int currFrame = -1;
 			int i  = 0;
-			int j = 0;
+			int j  = 0;
 			int Ch = 1;
 
 			int pixelDistance = 2*inputPixelSize[Ch-1]*inputPixelSize[Ch-1];
@@ -216,7 +215,14 @@ public class localizeAndFit {
 			tab.addValue("width", columns*inputPixelSize[0]);
 			tab.addValue("height", rows*inputPixelSize[0]);
 			tab.show("Results");
+			
+	//		ArrayList<Particle> output = PRILMfitting.fit(cleanResults);
+	//		TableIO.Store(output);
 			TableIO.Store(cleanResults);
+			// call 3D algorithms to translate fits to 3D. 
+			
+			
+	//		return output;
 			return cleanResults; // end parallel computation by returning results.
 		}else // end parallel. 
 			if (selectedModel == 2) // GPU

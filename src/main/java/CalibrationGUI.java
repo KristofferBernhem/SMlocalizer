@@ -133,7 +133,7 @@ public class CalibrationGUI extends javax.swing.JFrame {
 		/*
 		 * Localize all events in all frames.
 		 */
-	
+
 		ImagePlus image 					= WindowManager.getCurrentImage();
 		int nFrames 						= image.getNFrames();
 		if (nFrames == 1)
@@ -152,8 +152,8 @@ public class CalibrationGUI extends javax.swing.JFrame {
 					1,			// slice.
 					(int) nFrames/2);		// frame.
 		}
-		
 
+		int nChannels = image.getNChannels();
 
 		/*
 		 * Set z values based on frame and z-stepsize.
@@ -163,9 +163,236 @@ public class CalibrationGUI extends javax.swing.JFrame {
 		 */
 
 
-		if(algorithmSelect.getSelectedIndex() == 0 ||
-				algorithmSelect.getSelectedIndex() == 1)
-		{ // PRILM
+		if(algorithmSelect.getSelectedIndex() == 0)
+		{ // PRILM			
+
+			int[] inputPixelSize 	= {Integer.parseInt(pixelSize.getText())};
+			int zStep = Integer.parseInt(stepSize.getText());
+			PRILMfitting.calibrate(inputPixelSize, zStep);
+			/*
+			int[] totalGain 		= {100};
+			int selectedModel 		= 0; // CPU
+			double meanRsquare 		= 0;
+			int calibrationLength 	= 0;
+			boolean[][] include = new boolean[7][10];
+			double[][] lb 		= new double[7][10];
+			double[][] ub 		= new double[7][10];
+			for (int i = 0; i < 10; i++)
+			{
+				include[0][i] 		= false;
+				include[1][i] 		= false;
+				include[2][i] 		= false;
+				include[3][i] 		= true;
+				include[4][i] 		= false;
+				include[5][i] 		= false;
+				include[6][i] 		= false;
+
+				lb[0][i]			= 0;
+				lb[1][i]			= 0;
+				lb[2][i]			= 0;
+				lb[3][i]			= 0.8;
+				lb[4][i]			= 0;
+				lb[5][i]			= 0;
+				lb[6][i]			= 0;
+
+				ub[0][i]			= 0;
+				ub[1][i]			= 0;
+				ub[2][i]			= 0;
+				ub[3][i]			= 1.0;
+				ub[4][i]			= 0;
+				ub[5][i]			= 0;
+				ub[6][i]			= 0;
+			}
+			int finalWindow = 0;
+			double finalLevel = 0;
+			double finalSigma = 0;
+			int finalDist = 0;
+			for (int window = 5; window <= 7; window +=2)
+			{
+				for (double level = 0.7; level > 0.4; level -= 0.1)
+				{
+					for (double maxSigma = 2.5; maxSigma < 4; maxSigma += 0.5)
+					{
+						for (int maxDist = 650; maxDist < 1000; maxDist += 200)
+						{
+							int maxSqdist = maxDist * maxDist;
+							ImageStatistics IMstat 	= image.getStatistics(); 
+							int[] gWindow 			= {window,window,window,window,window,window,window,window,window,window}; // iterate.
+							int[] MinLevel 			= {(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level)};
+							int[] minPosPixels 		= {window*window-5,window*window-5,window*window-5,window*window-5,window*window-5,window*window-5,window*window-5,window*window-5,window*window-5,window*window-5};
+
+							//	int maxSqdist 			= 650*650; // iterate.
+
+
+
+							localizeAndFit.run(MinLevel, gWindow, inputPixelSize, minPosPixels, totalGain, selectedModel, maxSigma);
+							/*
+							 * clean out fits based on goodness of fit:
+							 *
+							 
+
+							cleanParticleList.run(lb,ub,include);
+							cleanParticleList.delete();
+							ArrayList<Particle> result = TableIO.Load();
+							int zStep = Integer.parseInt(stepSize.getText());
+							for (int i = 0; i < result.size(); i++)
+							{
+								result.get(i).z = (result.get(i).frame-1)*zStep;
+							}
+							TableIO.Store(result);
+							result = TableIO.Load();
+							int id = 2;		
+							double[] angle	  = new double[nFrames];
+							double[] distance = new double[nFrames];
+							int[] count 	  = new int[nFrames];
+							for (int i = 0; i < result.size(); i++)
+							{			
+								if (result.get(i).include == 1) // if the current entry is within ok range and has not yet been assigned.
+								{
+									int idx = i + 1;
+									while (idx < result.size() && result.get(i).channel == result.get(idx).channel)
+									{
+										if (result.get(i).frame == result.get(idx).frame && result.get(idx).include == 1)
+										{
+											if (((result.get(i).x - result.get(idx).x)*(result.get(i).x - result.get(idx).x) +
+													(result.get(i).y - result.get(idx).y)*(result.get(i).y - result.get(idx).y)) < maxSqdist)
+											{
+												result.get(idx).include = id;
+												result.get(i).include 	= id;								
+												short dx = (short)(result.get(i).x - result.get(idx).x); // diff in x dimension.
+												short dy = (short)(result.get(i).y - result.get(idx).y); // diff in y dimension.
+												angle[(int)(result.get(i).frame-1)] += (Math.atan2(dy, dx)); // angle between points and horizontal axis.
+												if (Math.sqrt(dx*dx + dy*dy) > distance[(int)(result.get(i).frame-1)])
+													distance[(int)(result.get(i).frame-1)] = Math.sqrt(dx*dx + dy*dy);
+												count[(int)(result.get(i).frame-1)]++;
+
+											}
+										}
+										idx ++;
+									}    				    				
+									id++;
+								}
+							}
+							for(int i = 0; i < count.length; i++)
+							{
+								if (count[i]>0)
+								{
+									angle[i] 	/= count[i]; // mean angle for this z-depth.					
+								}
+							}
+							int minLength = 40;			
+							double[] calibration = interpolate(angle, minLength);
+							if (calibrationLength < calibration.length)
+							{
+								calibrationLength = calibration.length;
+								meanRsquare = 0;
+							}
+							if (calibrationLength == calibration.length)
+							{
+								double rsquare = 0;
+								for (int i = 0; i < result.size(); i++)
+								{
+									rsquare +=result.get(i).r_square;
+								}
+								rsquare /= result.size();
+								if (rsquare > meanRsquare)
+								{								
+									meanRsquare = rsquare;
+									finalWindow = window;
+									finalLevel = level;
+									finalSigma = maxSigma;
+									finalDist = maxDist;
+								}
+		
+							}
+						} // iterate over maxDistance
+					} // iterate over maxSigma
+				} // iterate over level.
+			} // iterate window size.
+			int maxSqdist = finalDist * finalDist;
+			ImageStatistics IMstat 	= image.getStatistics(); 
+			int[] gWindow 			= {finalWindow,finalWindow,finalWindow,finalWindow,finalWindow,finalWindow,finalWindow,finalWindow,finalWindow,finalWindow}; // iterate.
+			int[] MinLevel 			= {(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel)};
+			int[] minPosPixels 		= {finalWindow*finalWindow-5,finalWindow*finalWindow-5,finalWindow*finalWindow-5,finalWindow*finalWindow-5,finalWindow*finalWindow-5,finalWindow*finalWindow-5,finalWindow*finalWindow-5,finalWindow*finalWindow-5,finalWindow*finalWindow-5,finalWindow*finalWindow-5};
+
+			localizeAndFit.run(MinLevel, gWindow, inputPixelSize, minPosPixels, totalGain, selectedModel, finalSigma);
+			/*
+			 * clean out fits based on goodness of fit:
+			 *
+			 
+
+			cleanParticleList.run(lb,ub,include);
+			cleanParticleList.delete();
+			ArrayList<Particle> result = TableIO.Load();
+			int zStep = Integer.parseInt(stepSize.getText());
+			for (int i = 0; i < result.size(); i++)
+			{
+				result.get(i).z = (result.get(i).frame-1)*zStep;
+			}
+			TableIO.Store(result);
+			result = TableIO.Load();
+			int id = 2;		
+			double[] angle	  = new double[nFrames];
+			double[] distance = new double[nFrames];
+			int[] count 	  = new int[nFrames];
+			for (int i = 0; i < result.size(); i++)
+			{			
+				if (result.get(i).include == 1) // if the current entry is within ok range and has not yet been assigned.
+				{
+					int idx = i + 1;
+					while (idx < result.size() && result.get(i).channel == result.get(idx).channel)
+					{
+						if (result.get(i).frame == result.get(idx).frame && result.get(idx).include == 1)
+						{
+							if (((result.get(i).x - result.get(idx).x)*(result.get(i).x - result.get(idx).x) +
+									(result.get(i).y - result.get(idx).y)*(result.get(i).y - result.get(idx).y)) < maxSqdist)
+							{
+								result.get(idx).include = id;
+								result.get(i).include 	= id;								
+								short dx = (short)(result.get(i).x - result.get(idx).x); // diff in x dimension.
+								short dy = (short)(result.get(i).y - result.get(idx).y); // diff in y dimension.
+								angle[(int)(result.get(i).frame-1)] += (Math.atan2(dy, dx)); // angle between points and horizontal axis.
+								if (Math.sqrt(dx*dx + dy*dy) > distance[(int)(result.get(i).frame-1)])
+									distance[(int)(result.get(i).frame-1)] = Math.sqrt(dx*dx + dy*dy);
+								count[(int)(result.get(i).frame-1)]++;
+
+							}
+						}
+						idx ++;
+					}    				    				
+					id++;
+				}
+			}
+			for(int i = 0; i < count.length; i++)
+			{
+				if (count[i]>0)
+				{
+					angle[i] 	/= count[i]; // mean angle for this z-depth.					
+				}
+			}
+			int minLength = 40;			
+			double[] calibration = interpolate(angle, minLength);
+			
+			
+			/*
+			 * STORE calibration file:
+			 
+			ij.Prefs.set("SMLocalizer.calibration.PRILM.window.",finalWindow);
+			ij.Prefs.set("SMLocalizer.calibration.PRILM.sigma.",finalSigma);
+			ij.Prefs.set("SMLocalizer.calibration.PRILM.height.",calibration.length);
+			ij.Prefs.set("SMLocalizer.calibration.PRILM.step.",zStep);
+			for (int i = 0; i < calibration.length; i++)
+			{
+				ij.Prefs.set("SMLocalizer.calibration.PRILM."+i,calibration[i]);
+			}
+			correctDrift.plot(calibration);
+			
+			
+
+
+*/
+		}else if(algorithmSelect.getSelectedIndex() == 1)
+		{ // DH
 			ImageStatistics IMstat 	= image.getStatistics();
 			int[] MinLevel 			= {(int) (IMstat.max*0.3)};	
 			double maxSigma 		= 2.5;
@@ -175,6 +402,7 @@ public class CalibrationGUI extends javax.swing.JFrame {
 			int[] minPosPixels 		= {20};
 			int[] totalGain 		= {100};
 			int selectedModel 		= 0; // CPU
+			System.out.println("Double helix"); 
 			localizeAndFit.run(MinLevel, gWindow, inputPixelSize, minPosPixels, totalGain, selectedModel,maxSigma);
 			/*
 			 * clean out fits based on goodness of fit:
@@ -216,14 +444,12 @@ public class CalibrationGUI extends javax.swing.JFrame {
 			int maxSqdist = 650*650;
 			System.out.println("PRILM");
 			System.out.println("Double helix");   
-			int id = 2;
-			int counter = 0;
+			int id = 2;		
 			double[] angle = new double[nFrames];
 			double[] distance = new double[nFrames];
 			int[] count = new int[nFrames];
 			for (int i = 0; i < result.size(); i++)
 			{
-				counter = 0;
 				if (result.get(i).include == 1) // if the current entry is within ok range and has not yet been assigned.
 				{
 					int idx = i + 1;
@@ -234,11 +460,8 @@ public class CalibrationGUI extends javax.swing.JFrame {
 							if (((result.get(i).x - result.get(idx).x)*(result.get(i).x - result.get(idx).x) +
 									(result.get(i).y - result.get(idx).y)*(result.get(i).y - result.get(idx).y)) < maxSqdist)
 							{
-
 								result.get(idx).include = id;
-								result.get(i).include 	= id;
-								
-								//counter ++;
+								result.get(i).include 	= id;							
 								short dx = (short)(result.get(i).x - result.get(idx).x); // diff in x dimension.
 								short dy = (short)(result.get(i).y - result.get(idx).y); // diff in y dimension.
 								angle[(int)(result.get(i).frame-1)] += (Math.atan2(dy, dx)); // angle between points and horizontal axis.
@@ -265,198 +488,238 @@ public class CalibrationGUI extends javax.swing.JFrame {
 			}
 			// interpolate to smooth out calibration curve.
 			// Store calibrationfile.
-			
+
 			correctDrift.plot(angle);
 			correctDrift.plot(distance);
 			int start 	= 0;
 			int end 	= 0;
 			for (int i = 0; i < angle.length; i++) // loop over all and determine start and end
 			{
-				
+
 			}
-			
+
 
 		}else 	
-		if(algorithmSelect.getSelectedIndex() == 2)
-		{ // Biplane
-			/*
-			 * Fit all and then calculate intensity distribution between the two cameras for z position. Use strongest intensity fit for x-y.
-			 */			
-			ImageStatistics IMstat 	= image.getStatistics();
-			int[] MinLevel 			= {(int) (IMstat.max*0.3)};	
-			double maxSigma = 6;
-			System.out.println(MinLevel[0]);		
-			int[] gWindow 			= {5}; // Astigmatism: 15. PRILM: 5
-			int[] inputPixelSize 	= {Integer.parseInt(pixelSize.getText())};
-			int[] minPosPixels 		= {20};
-			int[] totalGain 		= {100};
-			int selectedModel 		= 0; // CPU
-			localizeAndFit.run(MinLevel, gWindow, inputPixelSize, minPosPixels, totalGain, selectedModel,maxSigma);
-			/*
-			 * clean out fits based on goodness of fit:
-			 */
-			boolean[][] include = new boolean[7][1];
-			include[0][0] 		= false;
-			include[1][0] 		= false;
-			include[2][0] 		= false;
-			include[3][0] 		= true;
-			include[4][0] 		= false;
-			include[5][0] 		= false;
-			include[6][0] 		= false;    	
-			double[][] lb 		= new double[7][1];
-			lb[0][0]			= 0;
-			lb[1][0]			= 0;
-			lb[2][0]			= 0;
-			lb[3][0]			= 0.8;
-			lb[4][0]			= 0;
-			lb[5][0]			= 0;
-			lb[6][0]			= 0;
-			double[][] ub 		= new double[7][1];
-			ub[0][0]			= 0;
-			ub[1][0]			= 0;
-			ub[2][0]			= 0;
-			ub[3][0]			= 1.0;
-			ub[4][0]			= 0;
-			ub[5][0]			= 0;
-			ub[6][0]			= 0;
-			cleanParticleList.run(lb,ub,include);
-			System.out.println("Biplane");			
-			ArrayList<Particle> result = TableIO.Load();
-			double[] ratio = new double[nFrames];
-			int[] count = new int[nFrames];
-			int zStep = Integer.parseInt(stepSize.getText());
-			for (int i = 0; i < result.size(); i++)
-			{
-				result.get(i).z = (result.get(i).frame-1)*zStep;
-			}
-			TableIO.Store(result);
-			result = TableIO.Load();
-			int maxSqdist = 500*500;
-			double minRsquare = 0.8;
-			int shift = image.getWidth()/2; // half the width is for the first camera, the second half is for the scond camera.
-			shift *= inputPixelSize[0]; // translate to nm.
-			
-			for (int i = 0; i < result.size(); i++)
-			{
-				if (result.get(i).r_square >= minRsquare)
+			if(algorithmSelect.getSelectedIndex() == 2)
+			{ // Biplane
+				/*
+				 * Fit all and then calculate intensity distribution between the two cameras for z position. Use strongest intensity fit for x-y.
+				 */			
+				ImageStatistics IMstat 	= image.getStatistics();
+				int[] MinLevel 			= {(int) (IMstat.max*0.3)};	
+				double maxSigma = 6;
+				System.out.println(MinLevel[0]);		
+				int[] gWindow 			= {5}; // Astigmatism: 15. PRILM: 5
+				int[] inputPixelSize 	= {Integer.parseInt(pixelSize.getText())};
+				int[] minPosPixels 		= {20};
+				int[] totalGain 		= {100};
+				int selectedModel 		= 0; // CPU
+				localizeAndFit.run(MinLevel, gWindow, inputPixelSize, minPosPixels, totalGain, selectedModel,maxSigma);
+				/*
+				 * clean out fits based on goodness of fit:
+				 */
+				boolean[][] include = new boolean[7][1];
+				include[0][0] 		= false;
+				include[1][0] 		= false;
+				include[2][0] 		= false;
+				include[3][0] 		= true;
+				include[4][0] 		= false;
+				include[5][0] 		= false;
+				include[6][0] 		= false;    	
+				double[][] lb 		= new double[7][1];
+				lb[0][0]			= 0;
+				lb[1][0]			= 0;
+				lb[2][0]			= 0;
+				lb[3][0]			= 0.8;
+				lb[4][0]			= 0;
+				lb[5][0]			= 0;
+				lb[6][0]			= 0;
+				double[][] ub 		= new double[7][1];
+				ub[0][0]			= 0;
+				ub[1][0]			= 0;
+				ub[2][0]			= 0;
+				ub[3][0]			= 1.0;
+				ub[4][0]			= 0;
+				ub[5][0]			= 0;
+				ub[6][0]			= 0;
+				cleanParticleList.run(lb,ub,include);
+				System.out.println("Biplane");			
+				ArrayList<Particle> result = TableIO.Load();
+				double[] ratio = new double[nFrames];
+				int[] count = new int[nFrames];
+				int zStep = Integer.parseInt(stepSize.getText());
+				for (int i = 0; i < result.size(); i++)
 				{
-
-					if (result.get(i).x < shift)
-					{
-
-						for (int j = 0; j < result.size(); j++) // loop over all entries
-							if(result.get(j).include == 1 && result.get(j).x > shift && result.get(j).frame == result.get(i).frame)
-							{								
-								double dist = (result.get(i).x - result.get(j).x+shift)*(result.get(i).x - result.get(j).x+shift) + 
-										(result.get(i).y - result.get(j).y)*(result.get(i).y - result.get(j).y);
-								if (dist < maxSqdist)
-								{		
-									double base	= ( result.get(j).photons + result.get(i).photons);
-									ratio[(int)(result.get(i).z/zStep)] += result.get(i).photons/base;
-//									ratio[(int)(result.get(i).z/zStep)] += result.get(i).photons/result.get(j).photons;
-									count[(int)(result.get(i).z/zStep)]++;
-								}
-
-							}
-					}
-					else 
-					{
-
-						for (int j = 0; j < result.size(); j++) // loop over all entries
-							if(result.get(j).include == 1 && result.get(j).x < shift && result.get(j).frame == result.get(i).frame)
-							{								
-								double dist = (result.get(i).x - result.get(j).x + shift)*(result.get(i).x - result.get(j).x + shift) + 
-										(result.get(i).y - result.get(j).y)*(result.get(i).y - result.get(j).y);
-
-								if (dist < maxSqdist)
-								{
-									double base	= ( result.get(j).photons + result.get(i).photons);							
-									ratio[(int)(result.get(i).z/zStep)] += result.get(j).photons/base;
-//									ratio[(int)(result.get(i).z/zStep)] += result.get(j).photons/result.get(i).photons;
-									count[(int)(result.get(i).z/zStep)]++;
-								}
-
-							}
-					}
-					
+					result.get(i).z = (result.get(i).frame-1)*zStep;
 				}
-			}
-			for (int i = 0; i < nFrames; i++)
-			{
-				if (count[i]>0)
-					ratio[i] /= count[i]; // normalize.
-			}
-			correctDrift.plot(ratio);
-		}else
-		if(algorithmSelect.getSelectedIndex() == 3)
-		{ // Astigmatism
-			/*
-			 * requires rewrite of fit algorithm to handle larger values of sigma. 
-			 */
-			ImageStatistics IMstat 	= image.getStatistics();
-			int[] MinLevel 			= {(int) (IMstat.max*0.1)};	
-			double maxSigma 		= 7;
-			System.out.println(MinLevel[0]);		
-			int[] gWindow 			= {15}; 
-			int[] inputPixelSize 	= {Integer.parseInt(pixelSize.getText())};
-			int[] minPosPixels 		= {25};
-			int[] totalGain 		= {100};
-			int selectedModel 		= 0; // CPU
-			localizeAndFit.run(MinLevel, gWindow, inputPixelSize, minPosPixels, totalGain, selectedModel,maxSigma);
-			/*
-			 * clean out fits based on goodness of fit:
-			 */
-			boolean[][] include = new boolean[7][1];
-			include[0][0] 		= false;
-			include[1][0] 		= false;
-			include[2][0] 		= false;
-			include[3][0] 		= true;
-			include[4][0] 		= false;
-			include[5][0] 		= false;
-			include[6][0] 		= false;    	
-			double[][] lb 		= new double[7][1];
-			lb[0][0]			= 0;
-			lb[1][0]			= 0;
-			lb[2][0]			= 0;
-			lb[3][0]			= 0.9;
-			lb[4][0]			= 0;
-			lb[5][0]			= 0;
-			lb[6][0]			= 0;
-			double[][] ub 		= new double[7][1];
-			ub[0][0]			= 0;
-			ub[1][0]			= 0;
-			ub[2][0]			= 0;
-			ub[3][0]			= 1.0;
-			ub[4][0]			= 0;
-			ub[5][0]			= 0;
-			ub[6][0]			= 0;
-			cleanParticleList.run(lb,ub,include);
-			cleanParticleList.delete();
-			ArrayList<Particle> result = TableIO.Load();
-			int zStep = Integer.parseInt(stepSize.getText());
-			for (int i = 0; i < result.size(); i++)
-			{
-				result.get(i).z = (result.get(i).frame-1)*zStep;
-			}
-			TableIO.Store(result);
-			result = TableIO.Load();
-			System.out.println("Astigmatism");
-			double[] ratio = new double[nFrames];
-			int[] count = new int[nFrames];
-			for (int i = 0; i < result.size(); i++)
-			{
-				ratio[(int)(result.get(i).z/zStep)] += result.get(i).sigma_x/result.get(i).sigma_y;
-				count[(int)(result.get(i).z/zStep)]++;
-			}
-			for (int i = 0; i < nFrames; i++)
-			{
-				if (count[i]>0)
-					ratio[i] /= count[i]; // normalize.
-			}
-			correctDrift.plot(ratio);
-		}
+				TableIO.Store(result);
+				result = TableIO.Load();
+				int maxSqdist = 500*500;
+				double minRsquare = 0.8;
+				int shift = image.getWidth()/2; // half the width is for the first camera, the second half is for the scond camera.
+				shift *= inputPixelSize[0]; // translate to nm.
+
+				for (int i = 0; i < result.size(); i++)
+				{
+					if (result.get(i).r_square >= minRsquare)
+					{
+
+						if (result.get(i).x < shift)
+						{
+
+							for (int j = 0; j < result.size(); j++) // loop over all entries
+								if(result.get(j).include == 1 && result.get(j).x > shift && result.get(j).frame == result.get(i).frame)
+								{								
+									double dist = (result.get(i).x - result.get(j).x+shift)*(result.get(i).x - result.get(j).x+shift) + 
+											(result.get(i).y - result.get(j).y)*(result.get(i).y - result.get(j).y);
+									if (dist < maxSqdist)
+									{		
+										double base	= ( result.get(j).photons + result.get(i).photons);
+										ratio[(int)(result.get(i).z/zStep)] += result.get(i).photons/base;
+										//									ratio[(int)(result.get(i).z/zStep)] += result.get(i).photons/result.get(j).photons;
+										count[(int)(result.get(i).z/zStep)]++;
+									}
+
+								}
+						}
+						else 
+						{
+
+							for (int j = 0; j < result.size(); j++) // loop over all entries
+								if(result.get(j).include == 1 && result.get(j).x < shift && result.get(j).frame == result.get(i).frame)
+								{								
+									double dist = (result.get(i).x - result.get(j).x + shift)*(result.get(i).x - result.get(j).x + shift) + 
+											(result.get(i).y - result.get(j).y)*(result.get(i).y - result.get(j).y);
+
+									if (dist < maxSqdist)
+									{
+										double base	= ( result.get(j).photons + result.get(i).photons);							
+										ratio[(int)(result.get(i).z/zStep)] += result.get(j).photons/base;
+										//									ratio[(int)(result.get(i).z/zStep)] += result.get(j).photons/result.get(i).photons;
+										count[(int)(result.get(i).z/zStep)]++;
+									}
+
+								}
+						}
+
+					}
+				}
+				for (int i = 0; i < nFrames; i++)
+				{
+					if (count[i]>0)
+						ratio[i] /= count[i]; // normalize.
+				}
+				correctDrift.plot(ratio);
+			}else
+				if(algorithmSelect.getSelectedIndex() == 3)
+				{ // Astigmatism
+					/*
+					 * requires rewrite of fit algorithm to handle larger values of sigma. 
+					 */
+					ImageStatistics IMstat 	= image.getStatistics();
+					int[] MinLevel 			= {(int) (IMstat.max*0.1)};	
+					double maxSigma 		= 7;
+					System.out.println(MinLevel[0]);		
+					int[] gWindow 			= {15}; 
+					int[] inputPixelSize 	= {Integer.parseInt(pixelSize.getText())};
+					int[] minPosPixels 		= {25};
+					int[] totalGain 		= {100};
+					int selectedModel 		= 0; // CPU
+					localizeAndFit.run(MinLevel, gWindow, inputPixelSize, minPosPixels, totalGain, selectedModel,maxSigma);
+					/*
+					 * clean out fits based on goodness of fit:
+					 */
+					boolean[][] include = new boolean[7][1];
+					include[0][0] 		= false;
+					include[1][0] 		= false;
+					include[2][0] 		= false;
+					include[3][0] 		= true;
+					include[4][0] 		= false;
+					include[5][0] 		= false;
+					include[6][0] 		= false;    	
+					double[][] lb 		= new double[7][1];
+					lb[0][0]			= 0;
+					lb[1][0]			= 0;
+					lb[2][0]			= 0;
+					lb[3][0]			= 0.9;
+					lb[4][0]			= 0;
+					lb[5][0]			= 0;
+					lb[6][0]			= 0;
+					double[][] ub 		= new double[7][1];
+					ub[0][0]			= 0;
+					ub[1][0]			= 0;
+					ub[2][0]			= 0;
+					ub[3][0]			= 1.0;
+					ub[4][0]			= 0;
+					ub[5][0]			= 0;
+					ub[6][0]			= 0;
+					cleanParticleList.run(lb,ub,include);
+					cleanParticleList.delete();
+					ArrayList<Particle> result = TableIO.Load();
+					int zStep = Integer.parseInt(stepSize.getText());
+					for (int i = 0; i < result.size(); i++)
+					{
+						result.get(i).z = (result.get(i).frame-1)*zStep;
+					}
+					TableIO.Store(result);
+					result = TableIO.Load();
+					System.out.println("Astigmatism");
+					double[] ratio = new double[nFrames];
+					int[] count = new int[nFrames];
+					for (int i = 0; i < result.size(); i++)
+					{
+						ratio[(int)(result.get(i).z/zStep)] += result.get(i).sigma_x/result.get(i).sigma_y;
+						count[(int)(result.get(i).z/zStep)]++;
+					}
+					for (int i = 0; i < nFrames; i++)
+					{
+						if (count[i]>0)
+							ratio[i] /= count[i]; // normalize.
+					}
+					correctDrift.plot(ratio);
+				}
 	}                                       
 
+	public static double[] interpolate(double[] result, int minLength)
+	{
+		int start 	= 0;
+		int end 	= 0;
+		int counter = 0;
+		for (int i = 0; i < result.length; i++) // loop over all and determine start and end
+		{
+			if (result[i] < 0)
+			{
+				counter++;
+			}
+			if (result[i] >= 0)
+			{
+				if (counter >= minLength)
+					end = i-1;
+				counter = 0;
+
+			}
+			if (counter == minLength)
+			{
+				start = i-minLength + 1;
+			}
+		}
+		double[] calibration = new double[end-start+1];
+
+		for (int i = 0; i < calibration.length; i++)
+		{
+			if (i == 0) 
+				calibration[i] = (result[start] + result[start + 1] + result[start + 2]) / 3;
+			else if (i == 1)
+				calibration[i] = (result[start] + result[start + 1] + result[start + 2] + result[start + 3]) / 4;
+			else if (i == calibration.length-2)
+				calibration[i] = (result[start + i + 1] + result[start + i] + result[start + i - 1] + result[start + i - 2])/4;
+			else if (i == calibration.length-1)
+				calibration[i] = (result[start + i] + result[start + i - 1]+ result[start + i - 2])/3;
+			else
+				calibration[i] = (result[start + i] + result[start + i - 1] + result[start + i + 1] + result[start + i - 2] + result[start + i + 2])/5;
+		}
+		return calibration;
+	}
 	/**
 	 * @param args the command line arguments
 	 */
