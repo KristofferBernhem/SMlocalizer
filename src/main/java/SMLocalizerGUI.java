@@ -33,11 +33,15 @@ import ij.WindowManager;
  * Set pixels over background based on ROI size.
  * Update GPU fitting code to handle 3D (new intiial search and input)
  * Check errors in cluster analysis.
- * Add fiducial checkbox saving of choice. fiducialsChList
- * Add doCorrelativeChList for choice of channel alignment method.
- * Add doChromaticChList for choice of channel alignment method.
- * set default correlativeCorr and chromaticCorr
- * Remove sigmaZ from parameter list in code.
+ * DONE: Add fiducial checkbox saving of choice. fiducialsChList
+ * DONE:  Add doCorrelativeChList for choice of channel alignment method.
+ * DONE: Add doChromaticChList for choice of channel alignment method.
+ * DONE: set default correlativeCorr and chromaticCorr
+ * update tooltips (align channel incorrect)
+ * 
+ * Remove channel independent pixel size.
+ * 
+ * DONE: Remove sigmaZ from parameter list in code.
  * 
  * 
  * 
@@ -106,6 +110,9 @@ import ij.WindowManager;
 				 chAlignBinHighCountChList.getItem(id).setText("1000");
 				 chAlignShiftXYChList.getItem(id).setText("150");
 				 chAlignShiftZChList.getItem(id).setText("150");
+				 doCorrelativeChList.getItem(id).setText("0");
+				 doChromaticChList.getItem(id).setText("0");
+				 fiducialsChList.getItem(id).setText("0");
 
 				 /*
 				  *   Parameter settings
@@ -153,7 +160,7 @@ import ij.WindowManager;
 		 }
 
 	 }	
-	   // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
+	                          
 	    private void initComponents() {
 
 	        pixelSizeChList = new javax.swing.JMenu();
@@ -3212,7 +3219,8 @@ import ij.WindowManager;
 		  */
 
 		 updateList(channelId.getSelectedIndex()-1); // store current settings.
-		 int[] pixelSize = getPixelSize();
+		 int pixelSize = Integer.parseInt(inputPixelSize.getText());
+		 
 		 int[] totalGain = getTotalGain();
 		 int[] window = getWindowWidth(); // get user input, (W-1)/2.
 		 int[] gWindow = getGaussWindowsize();
@@ -3221,19 +3229,31 @@ import ij.WindowManager;
 		 int[] signalStrength = getMinSignal();
 		 int[] desiredPixelSize = getOutputPixelSize();
 		 int selectedModel = 5;
+		 boolean[] useFiducials = getFiducials();
+		 String modalityChoice = "";
+		 if (modality.getSelectedIndex() == 0)
+			 modalityChoice = "2D";
+		 else if(modality.getSelectedIndex() == 1)
+			 modalityChoice = "PRILM";
+		 else if(modality.getSelectedIndex() == 2)
+			 modalityChoice = "Biplane";
+		 else if(modality.getSelectedIndex() == 3)
+			 modalityChoice = "Double Helix";
+		 else if(modality.getSelectedIndex() == 4)
+			 modalityChoice = "Astigmatism";
 		 if (parallelComputation.isSelected()) // parallel computation.
 		 {
 			 selectedModel = 0;			
 			 double maxSigma = 2; // 2D 
-			 BackgroundCorrection.medianFiltering(window,WindowManager.getCurrentImage(),selectedModel); // correct background.
-			 localizeAndFit.run(signalStrength, gWindow, pixelSize,minPixelOverBkgrnd,totalGain,selectedModel,maxSigma);  //locate and fit all particles.
+			 BackgroundCorrection.medianFiltering(window,WindowManager.getCurrentImage(),selectedModel); // correct background.			 
+			 localizeAndFit.run(signalStrength,  pixelSize,  totalGain , selectedModel, maxSigma, modalityChoice);  //locate and fit all particles.
 			 //			ArrayList<Particle> Results = localizeAndFit.run(signalStrength, minDistance, gWindow, pixelSize,minPixelOverBkgrnd,totalGain,selectedModel);  //locate and fit all particles.
 			 //	TableIO.Store(Results);			
 		 }
 		 else if (GPUcomputation.isSelected()) // GPU accelerated computation.
 		 {
 			 selectedModel = 2;
-			 processMedianFit.run(window, WindowManager.getCurrentImage(), signalStrength, gWindow, pixelSize, minPixelOverBkgrnd, totalGain); // GPU specific call. 
+			 processMedianFit.run(window, WindowManager.getCurrentImage(), signalStrength, pixelSize, totalGain, modalityChoice); // GPU specific call. 
 		 }
 
 		 boolean[][] include = IncludeParameters();
@@ -3318,6 +3338,8 @@ import ij.WindowManager;
 		 int[] maxParticles = getDriftCorrBinHighCount();
 		 int[] bins         = getNumberOfBinsDriftCorr();
 		 int[][] boundry     = getDriftCorrShift();            
+		 
+		 
 		 correctDrift.run(boundry, bins, maxParticles, minParticles, selectedModel); // drift correct all channels.
 	 }                                            
 
@@ -3448,7 +3470,6 @@ import ij.WindowManager;
 		 RenderIm.run(getDoRender(),desiredPixelSize,doGaussianSmoothing.isSelected()); // Not 3D yet, how to implement? Need to find out how multi channel images are organized for multi channel functions.
 	 }            
 
-
 	 private void correctBackgroundActionPerformed(java.awt.event.ActionEvent evt) {                                                  
 		 updateList(channelId.getSelectedIndex()-1);          
 		 int selectedModel = 5;
@@ -3472,15 +3493,27 @@ import ij.WindowManager;
 		 else if (GPUcomputation.isSelected()) // GPU accelerated computation.
 			 selectedModel = 2;
 
-
-		 int[] pixelSize = getPixelSize();
+		 boolean[] useFiducials = getFiducials();
+		
 		 int[] totalGain = getTotalGain();        
 		 int[] gWindow = getGaussWindowsize();
 		 //		int[] minPixelOverBkgrnd = getMinPixelOverBackground(); // change to be ROI dependent in code.
 		 int[] minPixelOverBkgrnd = {20,20};
 		 int[] signalStrength = getMinSignal();
 		 double maxSigma = 2; // 2D 
-		 ArrayList<Particle> Results = localizeAndFit.run(signalStrength, gWindow, pixelSize,minPixelOverBkgrnd,totalGain,selectedModel,maxSigma);  //locate and fit all particles.	   	   
+		 int pixelSize = Integer.parseInt(inputPixelSize.getText());
+		 String modalityChoice = "";
+		 if (modality.getSelectedIndex() == 0)
+			 modalityChoice = "2D";
+		 else if(modality.getSelectedIndex() == 1)
+			 modalityChoice = "PRILM";
+		 else if(modality.getSelectedIndex() == 2)
+			 modalityChoice = "Biplane";
+		 else if(modality.getSelectedIndex() == 3)
+			 modalityChoice = "Double Helix";
+		 else if(modality.getSelectedIndex() == 4)
+			 modalityChoice = "Astigmatism";
+		 ArrayList<Particle> Results = localizeAndFit.run(signalStrength,  pixelSize,  totalGain , selectedModel, maxSigma, modalityChoice);  //locate and fit all particles.		  	   	  
 		 TableIO.Store(Results);
 	 }                                            
 
@@ -3631,6 +3664,22 @@ import ij.WindowManager;
 		 chAlignBinHighCountChList.getItem(id).setText(chAlignBinHighCount.getText());
 		 chAlignShiftXYChList.getItem(id).setText(chAlignShiftXY.getText());
 		 chAlignShiftZChList.getItem(id).setText(chAlignShiftZ.getText());
+		 		
+		 
+		 if (correlativeCorr.isSelected())
+			 doCorrelativeChList.getItem(id).setText("1");
+		 else
+			 doCorrelativeChList.getItem(id).setText("0");
+		 if (chromaticCorr.isSelected())
+			 doChromaticChList.getItem(id).setText("1");
+		 else
+			 doChromaticChList.getItem(id).setText("0");
+
+		 if (fiducials.isSelected())
+			 fiducialsChList.getItem(id).setText("1");
+		 else
+			 fiducialsChList.getItem(id).setText("0");
+
 		 /*
 		  *   Parameter settings
 		  */
@@ -3733,6 +3782,25 @@ import ij.WindowManager;
 		 chAlignBinHighCount.setText(chAlignBinHighCountChList.getItem(id).getText());
 		 chAlignShiftXY.setText(chAlignShiftXYChList.getItem(id).getText());
 		 chAlignShiftZ.setText(chAlignShiftZChList.getItem(id).getText());
+		 
+		 if (doCorrelativeChList.getItem(id).getText().equals("1"))
+			 correlativeCorr.setSelected(true);
+		 else
+			 correlativeCorr.setSelected(false);
+
+		
+
+		 if (doChromaticChList.getItem(id).getText().equals("1"))
+			 chromaticCorr.setSelected(true);
+		 else
+			 chromaticCorr.setSelected(false);
+
+		 if (fiducialsChList.getItem(id).getText().equals("1"))
+			 fiducials.setSelected(true);
+		 else
+			 fiducials.setSelected(false);
+		 
+		 
 		 /*
 		  *   Parameter settings
 		  */
@@ -4154,6 +4222,25 @@ import ij.WindowManager;
 	 /*
 	  * render channels.
 	  */
+	 
+	 
+	 /*
+	  * get boolean for which channels has fiducials for drift correction. 
+	  */
+	 private boolean[] getFiducials()
+	 {
+		 boolean[] useFiducials = new boolean[10];
+		 for (int id = 0; id <  10; id++)
+		 {
+			 if (fiducialsChList.getItem(id).getText().equals("1"))
+				 useFiducials[id] = true;
+			 else
+				 useFiducials[id] = false;
+			 
+		 }
+		 return useFiducials;
+	 }
+	 
 	 private boolean[] getDoRender()
 	 {
 		 boolean[] Include = new boolean[10];
@@ -4366,11 +4453,11 @@ import ij.WindowManager;
 		 {
 			 lb[0][id] = Float.parseFloat(minPhotonCountChList.getItem(id).getText());
 			 lb[1][id] = Float.parseFloat(minSigmaXYChList.getItem(id).getText());
-			 lb[2][id] = Float.parseFloat(minSigmaZChList.getItem(id).getText());
-			 lb[3][id] = Float.parseFloat(minRsquareChList.getItem(id).getText());
-			 lb[4][id] = Float.parseFloat(minPrecisionXYChList.getItem(id).getText());
-			 lb[5][id] = Float.parseFloat(minPrecisionZChList.getItem(id).getText());
-			 lb[6][id] = Float.parseFloat(minFrameChList.getItem(id).getText());
+			 //lb[2][id] = Float.parseFloat(minSigmaZChList.getItem(id).getText());
+			 lb[2][id] = Float.parseFloat(minRsquareChList.getItem(id).getText());
+			 lb[3][id] = Float.parseFloat(minPrecisionXYChList.getItem(id).getText());
+			 lb[4][id] = Float.parseFloat(minPrecisionZChList.getItem(id).getText());
+			 lb[5][id] = Float.parseFloat(minFrameChList.getItem(id).getText());
 		 }
 		 return lb;
 	 }
@@ -4385,11 +4472,11 @@ import ij.WindowManager;
 		 {
 			 ub[0][id] = Float.parseFloat(maxPhotonCountChList.getItem(id).getText());
 			 ub[1][id] = Float.parseFloat(maxSigmaXYChList.getItem(id).getText());
-			 ub[2][id] = Float.parseFloat(maxSigmaZChList.getItem(id).getText());
-			 ub[3][id] = Float.parseFloat(maxRsquareChList.getItem(id).getText());
-			 ub[4][id] = Float.parseFloat(maxPrecisionXYChList.getItem(id).getText());
-			 ub[5][id] = Float.parseFloat(maxPrecisionZChList.getItem(id).getText());
-			 ub[6][id] = Float.parseFloat(maxFrameChList.getItem(id).getText());
+	//		 ub[2][id] = Float.parseFloat(maxSigmaZChList.getItem(id).getText());
+			 ub[2][id] = Float.parseFloat(maxRsquareChList.getItem(id).getText());
+			 ub[3][id] = Float.parseFloat(maxPrecisionXYChList.getItem(id).getText());
+			 ub[4][id] = Float.parseFloat(maxPrecisionZChList.getItem(id).getText());
+			 ub[5][id] = Float.parseFloat(maxFrameChList.getItem(id).getText());
 		 }
 		 return ub;
 	 }
@@ -4518,7 +4605,7 @@ import ij.WindowManager;
 					 ij.Prefs.get("SMLocalizer.settings."+storeName+
 							 ".maxSigmaXY."+Ch, 
 							 ""));  
-			 // Sigma Z 		    
+	/*		 // Sigma Z 		    
 			 doSigmaZChList.getItem(Ch).setText( 
 					 ij.Prefs.get("SMLocalizer.settings."+storeName+
 							 ".doSigmaZ."+Ch, 
@@ -4530,7 +4617,7 @@ import ij.WindowManager;
 			 maxSigmaZChList.getItem(Ch).setText( 
 					 ij.Prefs.get("SMLocalizer.settings."+storeName+
 							 ".maxSigmaZ."+Ch,
-							 ""));
+							 "")); */
 			 // Rsquare  
 
 			 doRsquareChList.getItem(Ch).setText( 
@@ -4637,6 +4724,20 @@ import ij.WindowManager;
 					 ij.Prefs.get("SMLocalizer.settings."+storeName+
 							 ".chAlignShiftZ."+Ch,
 							 ""));	 
+			 doCorrelativeChList.getItem(Ch).setText( 
+					 ij.Prefs.get("SMLocalizer.settings."+storeName+
+							 ".correlative."+Ch,
+							 ""));
+			 doChromaticChList.getItem(Ch).setText( 
+					 ij.Prefs.get("SMLocalizer.settings."+storeName+
+							 ".chromatic."+Ch,
+							 ""));				
+			 fiducialsChList.getItem(Ch).setText( 
+					 ij.Prefs.get("SMLocalizer.settings."+storeName+
+							 ".fiducials."+Ch,
+							 ""));	
+			 
+			 
 		 }
 
 		 int id = 0; // set current ch to 1.
@@ -4767,7 +4868,7 @@ import ij.WindowManager;
 					 ".maxSigmaXY."+Ch, 
 					 maxSigmaXYChList.getItem(Ch).getText());
 
-			 // Sigma Z        		    
+/*			 // Sigma Z        		    
 			 ij.Prefs.set("SMLocalizer.settings."+storeName+
 					 ".doSigmaZ."+Ch, 
 					 doSigmaZChList.getItem(Ch).getText());
@@ -4777,7 +4878,7 @@ import ij.WindowManager;
 			 ij.Prefs.set("SMLocalizer.settings."+storeName+
 					 ".maxSigmaZ."+Ch, 
 					 maxSigmaZChList.getItem(Ch).getText());
-
+*/
 			 // Rsquare        
 			 ij.Prefs.set("SMLocalizer.settings."+storeName+
 					 ".doRsquare."+Ch, 
@@ -4860,7 +4961,17 @@ import ij.WindowManager;
 					 chAlignShiftXYChList.getItem(Ch).getText());
 			 ij.Prefs.set("SMLocalizer.settings."+storeName+
 					 ".chAlignShiftZ."+Ch, 
-					 chAlignShiftZChList.getItem(Ch).getText());		    
+					 chAlignShiftZChList.getItem(Ch).getText());	
+			 
+			 ij.Prefs.set("SMLocalizer.settings."+storeName+
+					 ".correlative."+Ch, 
+					 doCorrelativeChList.getItem(Ch).getText());
+			 ij.Prefs.set("SMLocalizer.settings."+storeName+
+					 ".chromatic."+Ch, 
+					 doChromaticChList.getItem(Ch).getText());
+			 ij.Prefs.set("SMLocalizer.settings."+storeName+
+					 ".fiducials."+Ch, 
+					 fiducialsChList.getItem(Ch).getText());	 			 
 		 }
 
 		 ij.Prefs.savePreferences(); // store settings. 

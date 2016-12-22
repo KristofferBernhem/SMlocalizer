@@ -44,10 +44,12 @@ import jcuda.driver.CUmodule;
 */
 /*
  * ProcessMedianFit is called by the process call button and will in sequence load image data, median filter (background removal), locate events and fit them, returning a result table.
+ * 
+ * TODO: Change sigma estimate.
  */
 public class processMedianFit {
 
-	public static void run(final int[] W, ImagePlus image, int[] MinLevel, int[] gWindow, int[] inputPixelSize, int[] minPosPixels, int[] totalGain)
+	public static void run(final int[] W, ImagePlus image, int[] MinLevel, int pixelSize, int[] totalGain, String modality)
 	{
 		int columns 						= image.getWidth();
 		int rows 							= image.getHeight();		
@@ -58,7 +60,33 @@ public class processMedianFit {
 		double convCriteria = 1E-8; // how large improvement from one step to next we require.
 		int maxIterations = 1000;  // stop if an individual fit reaches this number of iterati
 		ArrayList<Particle> Results 		= new ArrayList<Particle>();		// Fitted results array list.
-
+		int gWindow = 5;
+		/*
+		 if (modality.getSelectedIndex() == 0)
+			 modalityChoice = "2D";
+		 else if(modality.getSelectedIndex() == 1)
+			 modalityChoice = "PRILM";
+		 else if(modality.getSelectedIndex() == 2)
+			 modalityChoice = "Biplane";
+		 else if(modality.getSelectedIndex() == 3)
+			 modalityChoice = "Double Helix";
+		 else if(modality.getSelectedIndex() == 4)
+			 modalityChoice = "Astigmatism";
+		*/
+		if (modality.equals("2D"))
+		{
+			if (pixelSize < 100)
+			{
+				gWindow = (int) Math.ceil(500 / pixelSize); // 500 nm wide window.
+				
+			}
+		}
+		else if (modality.equals("PRILM"))
+		{
+			// get calibrated values for gWindow.
+		}
+		int minPosPixels = gWindow*gWindow - 4;
+		
 		// Initialize the driver and create a context for the first device.
 		cuInit(0);
 		CUdevice device = new CUdevice();
@@ -107,7 +135,7 @@ public class processMedianFit {
 		int frameSize = (3*columns*rows)*Sizeof.FLOAT;
 		for(int Ch = 1; Ch <= nChannels; Ch++)
 		{
-			int nCenter =(( columns*rows/(gWindow[Ch-1]*gWindow[Ch-1])) / 2); // ~ 80 possible particles for a 64x64 frame. Lets the program scale with frame size.
+			int nCenter =(( columns*rows/(gWindow*gWindow)) / 2); // ~ 80 possible particles for a 64x64 frame. Lets the program scale with frame size.
 			int staticMemory = (2*W[Ch-1]+1*rows*columns)*Sizeof.FLOAT;
 			long framesPerBatch = (3*GB-staticMemory)/frameSize; // 3 GB memory allocation gives this numbers of frames. 					
 			if (framesPerBatch > 10000)
@@ -120,10 +148,10 @@ public class processMedianFit {
 			CUdeviceptr device_window 		= CUDA.allocateOnDevice((float)((2 * W[Ch-1] + 1) * rows * columns)); // swap vector.
 			double[] bounds = { // bounds for gauss fitting.
 					0.5			, 1.5,				// amplitude.
-					1	,(gWindow[Ch-1]-1),			// x.
-					1	, (gWindow[Ch-1]-1),			// y.
-					0.7			,  (gWindow[Ch-1] / 2.0),		// sigma x.
-					0.7			,  (gWindow[Ch-1] / 2.0),		// sigma y.
+					1	,(gWindow-1),			// x.
+					1	, (gWindow-1),			// y.
+					0.7			,  (gWindow / 2.0),		// sigma x.
+					0.7			,  (gWindow / 2.0),		// sigma y.
 					 (-0.5*Math.PI) , (0.5*Math.PI),	// theta.
 					-0.5		, 0.5				// offset.
 			};
@@ -226,9 +254,9 @@ public class processMedianFit {
 						Pointer.to(new int[]{hostOutput.length}),
 						Pointer.to(new int[]{columns}),		 				       
 						Pointer.to(new int[]{rows}),
-						Pointer.to(new int[]{gWindow[Ch-1]}),
+						Pointer.to(new int[]{gWindow}),
 						Pointer.to(new int[]{MinLevel[Ch-1]}),
-						Pointer.to(new int[]{minPosPixels[Ch-1]}),
+						Pointer.to(new int[]{minPosPixels}),
 						Pointer.to(new int[]{nCenter}),
 						Pointer.to(deviceCenter),
 						Pointer.to(new int[]{meanVectorLength*nCenter}));
@@ -280,7 +308,7 @@ public class processMedianFit {
 				} // locatedCenter now populated.
 				double[] P = new double[newN*7];
 				double[] stepSize = new double[newN*7];							
-				int[] gaussVector = new int[newN*gWindow[Ch-1]*gWindow[Ch-1]];
+				int[] gaussVector = new int[newN*gWindow*gWindow];
 
 				for (int i = 0; i < newN; i++)
 				{
@@ -298,18 +326,18 @@ public class processMedianFit {
 					stepSize[i * 7 + 4] = 0.25; // sigma y.
 					stepSize[i * 7 + 5] = 0.19625; // Theta.
 					stepSize[i * 7 + 6] = 0.01; // offset.   
-					int k = locatedCenter[i] - (gWindow[Ch-1] / 2) * (columns + 1); // upper left corner.
+					int k = locatedCenter[i] - (gWindow / 2) * (columns + 1); // upper left corner.
 					int j = 0;
 					int loopC = 0;
-					while (k <= locatedCenter[i] + (gWindow[Ch-1] / 2) * (columns + 1)) // loop over all relevant pixels. use this loop to extract data based on single indexing defined centers.
+					while (k <= locatedCenter[i] + (gWindow / 2) * (columns + 1)) // loop over all relevant pixels. use this loop to extract data based on single indexing defined centers.
 					{
-						gaussVector[i * gWindow[Ch-1] * gWindow[Ch-1] + j] = hostOutput[k]; // add data.
+						gaussVector[i * gWindow * gWindow + j] = hostOutput[k]; // add data.
 						k++;
 						loopC++;
 						j++;
-						if (loopC == gWindow[Ch-1])
+						if (loopC == gWindow)
 						{
-							k += (columns - gWindow[Ch-1]);
+							k += (columns - gWindow);
 							loopC = 0;
 						}
 					} // data pulled.
@@ -328,10 +356,10 @@ public class processMedianFit {
 				gridSizeY 	= gridSizeX;
 				Pointer kernelParametersGaussFit 		= Pointer.to(   
 						Pointer.to(deviceGaussVector),
-						Pointer.to(new int[]{newN * gWindow[Ch-1] * gWindow[Ch-1]}),
+						Pointer.to(new int[]{newN * gWindow * gWindow}),
 						Pointer.to(deviceP),																											
 						Pointer.to(new double[]{newN*7}),
-						Pointer.to(new short[]{(short) gWindow[Ch-1]}),
+						Pointer.to(new short[]{(short) gWindow}),
 						Pointer.to(deviceBounds),
 						Pointer.to(new double[]{bounds.length}),
 						Pointer.to(deviceStepSize),																											
@@ -367,12 +395,12 @@ public class processMedianFit {
 					Localized.channel 		= Ch;
 					Localized.frame   		= startFrame + locatedCenter[n]/(columns*rows);
 					Localized.r_square 		= hostParameterOutput[n*7+6];
-					Localized.x				= inputPixelSize[Ch-1]*(hostParameterOutput[n*7+1] + (locatedCenter[n]%columns) - Math.round((gWindow[Ch-1])/2));
-					Localized.y				= inputPixelSize[Ch-1]*(hostParameterOutput[n*7+2] + ((locatedCenter[n]/columns)%rows) - Math.round((gWindow[Ch-1])/2));
-					Localized.z				= inputPixelSize[Ch-1]*0;	// no 3D information.
-					Localized.sigma_x		= inputPixelSize[Ch-1]*hostParameterOutput[n*7+3];
-					Localized.sigma_y		= inputPixelSize[Ch-1]*hostParameterOutput[n*7+4];
-					Localized.sigma_z		= inputPixelSize[Ch-1]*0; // no 3D information.
+					Localized.x				= pixelSize*(hostParameterOutput[n*7+1] + (locatedCenter[n]%columns) - Math.round((gWindow)/2));
+					Localized.y				= pixelSize*(hostParameterOutput[n*7+2] + ((locatedCenter[n]/columns)%rows) - Math.round((gWindow)/2));
+					Localized.z				= pixelSize*0;	// no 3D information.
+					Localized.sigma_x		= pixelSize*hostParameterOutput[n*7+3];
+					Localized.sigma_y		= pixelSize*hostParameterOutput[n*7+4];
+					Localized.sigma_z		= pixelSize*0; // no 3D information.
 					Localized.photons		= (int) (hostParameterOutput[n*7]/totalGain[Ch-1]);
 					Localized.precision_x 	= Localized.sigma_x/Math.sqrt(Localized.photons);
 					Localized.precision_y 	= Localized.sigma_y/Math.sqrt(Localized.photons);
@@ -406,8 +434,8 @@ public class processMedianFit {
 		ij.measure.ResultsTable tab = Analyzer.getResultsTable();
 		tab.reset();		
 		tab.incrementCounter();
-		tab.addValue("width", columns*inputPixelSize[0]);
-		tab.addValue("height", rows*inputPixelSize[0]);
+		tab.addValue("width", columns*pixelSize);
+		tab.addValue("height", rows*pixelSize);
 		TableIO.Store(cleanResults);
 	} // end run
 }

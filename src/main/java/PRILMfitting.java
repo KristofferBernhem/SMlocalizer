@@ -50,7 +50,7 @@ public class PRILMfitting {
 		return results;
 	}
 
-	public static void calibrate(int[] inputPixelSize,int zStep)
+	public static void calibrate(int inputPixelSize,int zStep)
 	{
 		ImagePlus image 					= WindowManager.getCurrentImage();
 		int nFrames 						= image.getNFrames();
@@ -118,11 +118,11 @@ public class PRILMfitting {
 					{
 						int maxSqdist = maxDist * maxDist;
 						ImageStatistics IMstat 	= image.getStatistics(); 
-						int[] gWindow 			= {window,window,window,window,window,window,window,window,window,window}; // iterate.
+						int gWindow 			= window;
 						int[] MinLevel 			= {(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level)};
-						int[] minPosPixels 		= {window*window-5,window*window-5,window*window-5,window*window-5,window*window-5,window*window-5,window*window-5,window*window-5,window*window-5,window*window-5};
+						int minPosPixels 		= window*window-5;
 
-						localizeAndFit.run(MinLevel, gWindow, inputPixelSize, minPosPixels, totalGain, selectedModel, maxSigma);
+						localizeAndFit.run(MinLevel, inputPixelSize, totalGain, selectedModel, maxSigma,"PRILM");
 						/*
 						 * clean out fits based on goodness of fit:
 						 */
@@ -215,8 +215,8 @@ public class PRILMfitting {
 		int[] gWindow 			= {finalWindow,finalWindow,finalWindow,finalWindow,finalWindow,finalWindow,finalWindow,finalWindow,finalWindow,finalWindow}; // iterate.
 		int[] MinLevel 			= {(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel)};
 		int[] minPosPixels 		= {finalWindow*finalWindow-5,finalWindow*finalWindow-5,finalWindow*finalWindow-5,finalWindow*finalWindow-5,finalWindow*finalWindow-5,finalWindow*finalWindow-5,finalWindow*finalWindow-5,finalWindow*finalWindow-5,finalWindow*finalWindow-5,finalWindow*finalWindow-5};
-
-		localizeAndFit.run(MinLevel, gWindow, inputPixelSize, minPosPixels, totalGain, selectedModel, finalSigma);
+		
+		localizeAndFit.run(MinLevel, inputPixelSize, totalGain, selectedModel, finalSigma,"PRILM");
 		/*
 		 * clean out fits based on goodness of fit:
 		 */

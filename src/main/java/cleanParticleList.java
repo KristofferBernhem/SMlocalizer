@@ -25,11 +25,10 @@ public class cleanParticleList {
 	public static void run(double[][] lb, double[][] ub, boolean[][] Include){
 		/*	Include[0][id] = photon limits.
             Include[1][id] = sigma xy limits.
-            Include[2][id] = sigma z limits.
-            Include[3][id] = r square limits.
-            Include[4][id] = precision xy limits.
-            Include[5][id] = precision z limits.
-            Include[6][id] = frame limits.
+            Include[2][id] = r square limits.
+            Include[3][id] = precision xy limits.
+            Include[4][id] = precision z limits.
+            Include[5][id] = frame limits.
 		 */
 		ArrayList<Particle> Results = TableIO.Load();
 		int Ch = 0;
@@ -57,39 +56,39 @@ public class cleanParticleList {
 				}else
 					remove++;
 			}
-			if (Include[2][Ch]){ 
+		/*	if (Include[2][Ch]){ 
 				if(Results.get(i).sigma_z >= lb[2][Ch] &&
 						Results.get(i).sigma_z <= ub[2][Ch]){
 
 				}else
 					remove++;
-			}
-			if (Include[3][Ch]){
-				if(Results.get(i).r_square >= lb[3][Ch] &&			
-						Results.get(i).r_square <= ub[3][Ch]){
+			}*/
+			if (Include[2][Ch]){
+				if(Results.get(i).r_square >= lb[2][Ch] &&			
+						Results.get(i).r_square <= ub[2][Ch]){
 
 				}else
 					remove++;
 			}
-			if (Include[4][Ch]){
-				if(Results.get(i).precision_x >= lb[4][Ch] &&
-						Results.get(i).precision_x <= ub[4][Ch] && 
-						Results.get(i).precision_y >= lb[4][Ch] &&
-						Results.get(i).precision_y <= ub[4][Ch]){
+			if (Include[3][Ch]){
+				if(Results.get(i).precision_x >= lb[3][Ch] &&
+						Results.get(i).precision_x <= ub[3][Ch] && 
+						Results.get(i).precision_y >= lb[3][Ch] &&
+						Results.get(i).precision_y <= ub[3][Ch]){
+
+				}else
+					remove++;
+			}
+			if (Include[4][Ch]){ 
+				if(Results.get(i).precision_z >= lb[4][Ch] &&
+						Results.get(i).precision_z <= ub[4][Ch]){
 
 				}else
 					remove++;
 			}
 			if (Include[5][Ch]){ 
-				if(Results.get(i).precision_z >= lb[5][Ch] &&
-						Results.get(i).precision_z <= ub[5][Ch]){
-
-				}else
-					remove++;
-			}
-			if (Include[6][Ch]){ 
-				if(Results.get(i).frame >= lb[6][Ch] &&
-						Results.get(i).frame <= ub[6][Ch]){
+				if(Results.get(i).frame >= lb[5][Ch] &&
+						Results.get(i).frame <= ub[5][Ch]){
 
 				}else
 					remove++;

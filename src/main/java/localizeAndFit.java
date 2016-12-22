@@ -50,7 +50,7 @@ import jcuda.driver.CUmodule;
 
 public class localizeAndFit {
 
-	public static ArrayList<Particle> run(int[] MinLevel, int[] gWindow, int[] inputPixelSize, int[] minPosPixels, int[] totalGain , int selectedModel, double maxSigma){						
+	public static ArrayList<Particle> run(int[] MinLevel,  int inputPixelSize,  int[] totalGain , int selectedModel, double maxSigma, String modality){						
 		ImagePlus image 					= WindowManager.getCurrentImage();
 		int columns 						= image.getWidth();
 		int rows 							= image.getHeight();
@@ -58,8 +58,35 @@ public class localizeAndFit {
 		int nChannels 						= image.getNChannels(); 	// Number of channels.
 		int nFrames 						= image.getNFrames();
 		if (nFrames == 1)
-			nFrames 						= image.getNSlices();  	
-
+			nFrames 						= image.getNSlices();
+		
+		int gWindow = 5;
+		/*
+		 if (modality.getSelectedIndex() == 0)
+			 modalityChoice = "2D";
+		 else if(modality.getSelectedIndex() == 1)
+			 modalityChoice = "PRILM";
+		 else if(modality.getSelectedIndex() == 2)
+			 modalityChoice = "Biplane";
+		 else if(modality.getSelectedIndex() == 3)
+			 modalityChoice = "Double Helix";
+		 else if(modality.getSelectedIndex() == 4)
+			 modalityChoice = "Astigmatism";
+		*/
+		if (modality.equals("2D"))
+		{
+			if (inputPixelSize < 100)
+			{
+				gWindow = (int) Math.ceil(500 / inputPixelSize); // 500 nm wide window.
+				
+			}
+		}
+		else if (modality.equals("PRILM"))
+		{
+			// get calibrated values for gWindow.
+		}
+		int minPosPixels = gWindow*gWindow - 4;
+		
 		ArrayList<Particle> Results 		= new ArrayList<Particle>();		// Fitted results array list.
 		if (selectedModel == 0) // parallel
 		{
@@ -87,17 +114,17 @@ public class localizeAndFit {
 					int[][] Arr = IP.getIntArray();
 
 //					ArrayList<int[]> Center 	= LocalMaxima.FindMaxima(Arr, gWindow[Ch-1], MinLevel[Ch-1], sqDistance[Ch-1], minPosPixels[Ch-1]); 	// Get possibly relevant center coordinates.
-					ArrayList<int[]> Center 	= LocalMaxima.FindMaxima(IP, gWindow[Ch-1], MinLevel[Ch-1], minPosPixels[Ch-1]); 	// Get possibly relevant center coordinates.
+					ArrayList<int[]> Center 	= LocalMaxima.FindMaxima(IP, gWindow, MinLevel[Ch-1], minPosPixels); 	// Get possibly relevant center coordinates.
 					for (int i = 0; i < Center.size(); i++)
 					{
 
-						int[] dataFit = new int[gWindow[Ch-1]*gWindow[Ch-1]];			// Container for data to be fitted.
+						int[] dataFit = new int[gWindow*gWindow];			// Container for data to be fitted.
 						int[] Coord = Center.get(i);									// X and Y coordinates for center pixels to be fitted.
 
-						for (int j = 0; j < gWindow[Ch-1]*gWindow[Ch-1]; j++)
+						for (int j = 0; j < gWindow*gWindow; j++)
 						{
-							int x =  Coord[0] - Math.round((gWindow[Ch-1])/2) +  (j % gWindow[Ch-1]);
-							int y =  Coord[1] - Math.round((gWindow[Ch-1])/2) +  (j / gWindow[Ch-1]);
+							int x =  Coord[0] - Math.round((gWindow)/2) +  (j % gWindow);
+							int y =  Coord[1] - Math.round((gWindow)/2) +  (j / gWindow);
 							dataFit[j] = Arr[x][y];	// Faster then pulling from IP.get again.
 						} // pull out data for this fit.
 
@@ -105,8 +132,8 @@ public class localizeAndFit {
 								dataFit,
 								Ch,
 								Frame,
-								inputPixelSize[Ch-1],
-								gWindow[Ch-1],
+								inputPixelSize,
+								gWindow,
 								totalGain[Ch-1]));
 
 					} // loop over all located centers from this frame.									
@@ -174,11 +201,11 @@ public class localizeAndFit {
 			int j  = 0;
 			int Ch = 1;
 
-			int pixelDistance = 2*inputPixelSize[Ch-1]*inputPixelSize[Ch-1];
+			int pixelDistance = 2*inputPixelSize*inputPixelSize;
 			while( i < cleanResults.size())
 			{				
 				if (cleanResults.get(i).channel > Ch)
-					pixelDistance = 2*inputPixelSize[Ch-1]*inputPixelSize[Ch-1];
+					pixelDistance = 2*inputPixelSize*inputPixelSize;
 				if( cleanResults.get(i).frame > currFrame)
 				{
 					currFrame = cleanResults.get(i).frame;					
@@ -212,8 +239,8 @@ public class localizeAndFit {
 			ij.measure.ResultsTable tab = Analyzer.getResultsTable();
 			tab.reset();		
 			tab.incrementCounter();
-			tab.addValue("width", columns*inputPixelSize[0]);
-			tab.addValue("height", rows*inputPixelSize[0]);
+			tab.addValue("width", columns*inputPixelSize);
+			tab.addValue("height", rows*inputPixelSize);
 			tab.show("Results");
 			
 	//		ArrayList<Particle> output = PRILMfitting.fit(cleanResults);
@@ -272,7 +299,7 @@ public class localizeAndFit {
 				
 				for (int Ch = 1; Ch <= nChannels; Ch++)					// Loop over all channels.
 				{						
-					int nCenter =(( columns*rows/(gWindow[Ch-1]*gWindow[Ch-1])) / 2); // ~ 80 possible particles for a 64x64 frame. Lets the program scale with frame size.
+					int nCenter =(( columns*rows/(gWindow*gWindow)) / 2); // ~ 80 possible particles for a 64x64 frame. Lets the program scale with frame size.
 					long gb = 1024*1024*1024;
 					long maxMemoryGPU = 3*gb; // TODO: get size of gpu memory.
 					int nMax = (int) (maxMemoryGPU/(2*columns*rows*Sizeof.INT + 4*nCenter*Sizeof.INT)); 	// the localMaxima GPU calculations require: (x*y*frame*(Sizeof.INT ) + frame*nCenters*Sizeof.FLOAT)/gb memory. with known x and y dimensions, determine maximum size of frame for each batch.
@@ -283,10 +310,10 @@ public class localizeAndFit {
 					int idx = 0;					
 					double[] bounds = { // bounds for gauss fitting.
 							0.5			, 1.5,				// amplitude.
-							1	,(gWindow[Ch-1]-1),			// x.
-							1	, (gWindow[Ch-1]-1),			// y.
-							0.7			,  (gWindow[Ch-1] / 2.0),		// sigma x.
-							0.7			,  (gWindow[Ch-1] / 2.0),		// sigma y.
+							1	,(gWindow-1),			// x.
+							1	, (gWindow-1),			// y.
+							0.7			,  (gWindow / 2.0),		// sigma x.
+							0.7			,  (gWindow / 2.0),		// sigma y.
 							 (-0.5*Math.PI) , (0.5*Math.PI),	// theta.
 							-0.5		, 0.5				// offset.
 					};
@@ -345,9 +372,9 @@ public class localizeAndFit {
 									Pointer.to(new int[]{data.length}),
 									Pointer.to(new int[]{columns}),		 				       
 									Pointer.to(new int[]{rows}),
-									Pointer.to(new int[]{gWindow[Ch-1]}),
+									Pointer.to(new int[]{gWindow}),
 									Pointer.to(new int[]{MinLevel[Ch-1]}),
-									Pointer.to(new int[]{minPosPixels[Ch-1]}),
+									Pointer.to(new int[]{minPosPixels}),
 									Pointer.to(new int[]{nCenter}),
 									Pointer.to(deviceCenter),
 									Pointer.to(new int[]{nMax*nCenter}));
@@ -398,7 +425,7 @@ public class localizeAndFit {
 							} // locatedCenter now populated.							
 							double[] P = new double[newN*7];
 							double[] stepSize = new double[newN*7];							
-							int[] gaussVector = new int[newN*gWindow[Ch-1]*gWindow[Ch-1]];
+							int[] gaussVector = new int[newN*gWindow*gWindow];
 							
 							for (int i = 0; i < newN; i++)
 							{
@@ -416,18 +443,18 @@ public class localizeAndFit {
 				                stepSize[i * 7 + 4] = 0.25; // sigma y.
 				                stepSize[i * 7 + 5] = 0.19625; // Theta.
 				                stepSize[i * 7 + 6] = 0.01; // offset.   
-				                int k = locatedCenter[i] - (gWindow[Ch-1] / 2) * (columns + 1); // upper left corner.
+				                int k = locatedCenter[i] - (gWindow / 2) * (columns + 1); // upper left corner.
 				                int j = 0;
 				                int loopC = 0;
-				                while (k <= locatedCenter[i] + (gWindow[Ch-1] / 2) * (columns + 1)) // loop over all relevant pixels. use this loop to extract data based on single indexing defined centers.
+				                while (k <= locatedCenter[i] + (gWindow / 2) * (columns + 1)) // loop over all relevant pixels. use this loop to extract data based on single indexing defined centers.
 				                {
-				                    gaussVector[i * gWindow[Ch-1] * gWindow[Ch-1] + j] = data[k]; // add data.
+				                    gaussVector[i * gWindow * gWindow + j] = data[k]; // add data.
 				                    k++;
 				                    loopC++;
 				                    j++;
-				                    if (loopC == gWindow[Ch-1])
+				                    if (loopC == gWindow)
 				                    {
-				                        k += (columns - gWindow[Ch-1]);
+				                        k += (columns - gWindow);
 				                        loopC = 0;
 				                    }
 				                } // data pulled.
@@ -445,10 +472,10 @@ public class localizeAndFit {
 							gridSizeY 	= gridSizeX;
 							Pointer kernelParametersGaussFit 		= Pointer.to(   
 									Pointer.to(deviceGaussVector),
-									Pointer.to(new int[]{newN * gWindow[Ch-1] * gWindow[Ch-1]}),
+									Pointer.to(new int[]{newN * gWindow * gWindow}),
 									Pointer.to(deviceP),																											
 									Pointer.to(new double[]{newN*7}),
-									Pointer.to(new short[]{(short) gWindow[Ch-1]}),
+									Pointer.to(new short[]{(short) gWindow}),
 									Pointer.to(deviceBounds),
 									Pointer.to(new double[]{bounds.length}),
 									Pointer.to(deviceStepSize),																											
@@ -480,12 +507,12 @@ public class localizeAndFit {
 								Localized.channel 		= Ch;
 								Localized.frame   		= startFrame + locatedCenter[n]/(columns*rows);
 								Localized.r_square 		= hostOutput[n*7+6];
-								Localized.x				= inputPixelSize[Ch-1]*(hostOutput[n*7+1] + (locatedCenter[n]%columns) - Math.round((gWindow[Ch-1])/2));
-								Localized.y				= inputPixelSize[Ch-1]*(hostOutput[n*7+2] + ((locatedCenter[n]/columns)%rows) - Math.round((gWindow[Ch-1])/2));
-								Localized.z				= inputPixelSize[Ch-1]*0;	// no 3D information.
-								Localized.sigma_x		= inputPixelSize[Ch-1]*hostOutput[n*7+3];
-								Localized.sigma_y		= inputPixelSize[Ch-1]*hostOutput[n*7+4];
-								Localized.sigma_z		= inputPixelSize[Ch-1]*0; // no 3D information.
+								Localized.x				= inputPixelSize*(hostOutput[n*7+1] + (locatedCenter[n]%columns) - Math.round((gWindow)/2));
+								Localized.y				= inputPixelSize*(hostOutput[n*7+2] + ((locatedCenter[n]/columns)%rows) - Math.round((gWindow)/2));
+								Localized.z				= inputPixelSize*0;	// no 3D information.
+								Localized.sigma_x		= inputPixelSize*hostOutput[n*7+3];
+								Localized.sigma_y		= inputPixelSize*hostOutput[n*7+4];
+								Localized.sigma_z		= inputPixelSize*0; // no 3D information.
 								Localized.photons		= (int) (hostOutput[n*7]/totalGain[Ch-1]);
 								Localized.precision_x 	= Localized.sigma_x/Math.sqrt(Localized.photons);
 								Localized.precision_y 	= Localized.sigma_y/Math.sqrt(Localized.photons);
@@ -512,9 +539,9 @@ public class localizeAndFit {
 									Pointer.to(new int[]{remainingData.length}),
 									Pointer.to(new int[]{columns}),		 				       
 									Pointer.to(new int[]{rows}),
-									Pointer.to(new int[]{gWindow[Ch-1]}),
+									Pointer.to(new int[]{gWindow}),
 									Pointer.to(new int[]{MinLevel[Ch-1]}),
-									Pointer.to(new int[]{minPosPixels[Ch-1]}),
+									Pointer.to(new int[]{minPosPixels}),
 									Pointer.to(new int[]{nCenter}),
 									Pointer.to(deviceCenter),
 									Pointer.to(new int[]{nMax*nCenter}));
@@ -565,7 +592,7 @@ public class localizeAndFit {
 							} // locatedCenter now populated.
 							double[] P = new double[newN*7];
 							double[] stepSize = new double[newN*7];							
-							int[] gaussVector = new int[newN*gWindow[Ch-1]*gWindow[Ch-1]];
+							int[] gaussVector = new int[newN*gWindow*gWindow];
 							
 							for (int i = 0; i < newN; i++)
 							{
@@ -583,18 +610,18 @@ public class localizeAndFit {
 				                stepSize[i * 7 + 4] = 0.25; // sigma y.
 				                stepSize[i * 7 + 5] = 0.19625; // Theta.
 				                stepSize[i * 7 + 6] = 0.01; // offset.   
-				                int k = locatedCenter[i] - (gWindow[Ch-1] / 2) * (columns + 1); // upper left corner.
+				                int k = locatedCenter[i] - (gWindow / 2) * (columns + 1); // upper left corner.
 				                int j = 0;
 				                int loopC = 0;
-				                while (k <= locatedCenter[i] + (gWindow[Ch-1] / 2) * (columns + 1)) // loop over all relevant pixels. use this loop to extract data based on single indexing defined centers.
+				                while (k <= locatedCenter[i] + (gWindow / 2) * (columns + 1)) // loop over all relevant pixels. use this loop to extract data based on single indexing defined centers.
 				                {
-				                    gaussVector[i * gWindow[Ch-1] * gWindow[Ch-1] + j] = data[k]; // add data.
+				                    gaussVector[i * gWindow * gWindow + j] = data[k]; // add data.
 				                    k++;
 				                    loopC++;
 				                    j++;
-				                    if (loopC == gWindow[Ch-1])
+				                    if (loopC == gWindow)
 				                    {
-				                        k += (columns - gWindow[Ch-1]);
+				                        k += (columns - gWindow);
 				                        loopC = 0;
 				                    }
 				                } // data pulled.
@@ -613,10 +640,10 @@ public class localizeAndFit {
 							gridSizeY 	= gridSizeX;
 							Pointer kernelParametersGaussFit 		= Pointer.to(   
 									Pointer.to(deviceGaussVector),
-									Pointer.to(new int[]{newN * gWindow[Ch-1] * gWindow[Ch-1]}),
+									Pointer.to(new int[]{newN * gWindow * gWindow}),
 									Pointer.to(deviceP),																											
 									Pointer.to(new double[]{newN*7}),
-									Pointer.to(new short[]{(short) gWindow[Ch-1]}),
+									Pointer.to(new short[]{(short) gWindow}),
 									Pointer.to(deviceBounds),
 									Pointer.to(new double[]{bounds.length}),
 									Pointer.to(deviceStepSize),																											
@@ -648,12 +675,12 @@ public class localizeAndFit {
 								Localized.channel 		= Ch;
 								Localized.frame   		= startFrame + locatedCenter[n]/(columns*rows);
 								Localized.r_square 		= hostOutput[n*7+6];
-								Localized.x				= inputPixelSize[Ch-1]*(hostOutput[n*7+1] + (locatedCenter[n]%columns) - Math.round((gWindow[Ch-1])/2));
-								Localized.y				= inputPixelSize[Ch-1]*(hostOutput[n*7+2] + ((locatedCenter[n]/columns)%rows) - Math.round((gWindow[Ch-1])/2));
-								Localized.z				= inputPixelSize[Ch-1]*0;	// no 3D information.
-								Localized.sigma_x		= inputPixelSize[Ch-1]*hostOutput[n*7+3];
-								Localized.sigma_y		= inputPixelSize[Ch-1]*hostOutput[n*7+4];
-								Localized.sigma_z		= inputPixelSize[Ch-1]*0; // no 3D information.
+								Localized.x				= inputPixelSize*(hostOutput[n*7+1] + (locatedCenter[n]%columns) - Math.round((gWindow)/2));
+								Localized.y				= inputPixelSize*(hostOutput[n*7+2] + ((locatedCenter[n]/columns)%rows) - Math.round((gWindow)/2));
+								Localized.z				= inputPixelSize*0;	// no 3D information.
+								Localized.sigma_x		= inputPixelSize*hostOutput[n*7+3];
+								Localized.sigma_y		= inputPixelSize*hostOutput[n*7+4];
+								Localized.sigma_z		= inputPixelSize*0; // no 3D information.
 								Localized.photons		= (int) (hostOutput[n*7]/totalGain[Ch-1]);
 								Localized.precision_x 	= Localized.sigma_x/Math.sqrt(Localized.photons);
 								Localized.precision_y 	= Localized.sigma_y/Math.sqrt(Localized.photons);
@@ -690,11 +717,11 @@ public class localizeAndFit {
 				int j = 0;
 				int Ch = 1;
 
-				int pixelDistance = 2*inputPixelSize[Ch-1]*inputPixelSize[Ch-1];
+				int pixelDistance = 2*inputPixelSize*inputPixelSize;
 				while( i < cleanResults.size())
 				{				
 					if (cleanResults.get(i).channel > Ch)
-						pixelDistance = 2*inputPixelSize[Ch-1]*inputPixelSize[Ch-1];
+						pixelDistance = 2*inputPixelSize*inputPixelSize;
 					if( cleanResults.get(i).frame > currFrame)
 					{
 						currFrame = cleanResults.get(i).frame;					
@@ -730,8 +757,8 @@ public class localizeAndFit {
 				ij.measure.ResultsTable tab = Analyzer.getResultsTable();
 				tab.reset();		
 				tab.incrementCounter();
-				tab.addValue("width", columns*inputPixelSize[0]);
-				tab.addValue("height", rows*inputPixelSize[0]);
+				tab.addValue("width", columns*inputPixelSize);
+				tab.addValue("height", rows*inputPixelSize);
 				tab.show("Results");
 				TableIO.Store(cleanResults);
 				return cleanResults;
