@@ -48,9 +48,13 @@ import jcuda.driver.CUdeviceptr;
 import jcuda.driver.CUfunction;
 import jcuda.driver.CUmodule;
 
+
+/*
+ * TODO: Fiducial correction on fits, add call with logical array.
+ */
 public class localizeAndFit {
 
-	public static ArrayList<Particle> run(int[] MinLevel,  int inputPixelSize,  int[] totalGain , int selectedModel, double maxSigma, String modality){						
+	public static ArrayList<Particle> run(int[] MinLevel, int gWindow, int inputPixelSize,  int[] totalGain , int selectedModel, double maxSigma, String modality){						
 		ImagePlus image 					= WindowManager.getCurrentImage();
 		int columns 						= image.getWidth();
 		int rows 							= image.getHeight();
@@ -59,8 +63,8 @@ public class localizeAndFit {
 		int nFrames 						= image.getNFrames();
 		if (nFrames == 1)
 			nFrames 						= image.getNSlices();
+
 		
-		int gWindow = 5;
 		/*
 		 if (modality.getSelectedIndex() == 0)
 			 modalityChoice = "2D";
@@ -72,20 +76,33 @@ public class localizeAndFit {
 			 modalityChoice = "Double Helix";
 		 else if(modality.getSelectedIndex() == 4)
 			 modalityChoice = "Astigmatism";
-		*/
+		 */
+		int minPosPixels = 0;
 		if (modality.equals("2D"))
 		{
-			if (inputPixelSize < 100)
-			{
-				gWindow = (int) Math.ceil(500 / inputPixelSize); // 500 nm wide window.
-				
-			}
+			minPosPixels = gWindow*gWindow - 4; // update to relevant numbers for this modality.
 		}
 		else if (modality.equals("PRILM"))
 		{
-			// get calibrated values for gWindow.
+			minPosPixels = gWindow*gWindow - 4; // update to relevant numbers for this modality.
 		}
-		int minPosPixels = gWindow*gWindow - 4;
+		else if (modality.equals("Biplane"))
+		{
+			// get calibrated values for gWindow.
+			minPosPixels = gWindow*gWindow - 4; // update to relevant numbers for this modality.
+		}
+		else if (modality.equals("Double Helix"))
+		{
+			// get calibrated values for gWindow.
+			minPosPixels = gWindow*gWindow - 4; // update to relevant numbers for this modality.
+		}
+		else if (modality.equals("Astigmatism"))
+		{
+			// get calibrated values for gWindow.
+			minPosPixels = gWindow*gWindow - 4; // update to relevant numbers for this modality.		
+			
+		}
+
 		
 		ArrayList<Particle> Results 		= new ArrayList<Particle>();		// Fitted results array list.
 		if (selectedModel == 0) // parallel
@@ -113,7 +130,7 @@ public class localizeAndFit {
 					IP = image.getProcessor();					
 					int[][] Arr = IP.getIntArray();
 
-//					ArrayList<int[]> Center 	= LocalMaxima.FindMaxima(Arr, gWindow[Ch-1], MinLevel[Ch-1], sqDistance[Ch-1], minPosPixels[Ch-1]); 	// Get possibly relevant center coordinates.
+					//					ArrayList<int[]> Center 	= LocalMaxima.FindMaxima(Arr, gWindow[Ch-1], MinLevel[Ch-1], sqDistance[Ch-1], minPosPixels[Ch-1]); 	// Get possibly relevant center coordinates.
 					ArrayList<int[]> Center 	= LocalMaxima.FindMaxima(IP, gWindow, MinLevel[Ch-1], minPosPixels); 	// Get possibly relevant center coordinates.
 					for (int i = 0; i < Center.size(); i++)
 					{
@@ -139,9 +156,9 @@ public class localizeAndFit {
 					} // loop over all located centers from this frame.									
 				} // loop over all frames.									
 			} // loop over all channels.
-			
+
 			List<Callable<Particle>> tasks = new ArrayList<Callable<Particle>>();	// Preallocate.
-			
+
 			for (final fitParameters object : fitThese) {							// Loop over and setup computation.
 				Callable<Particle> c = new Callable<Particle>() {					// Computation to be done.
 					@Override
@@ -177,11 +194,13 @@ public class localizeAndFit {
 
 			//TableIO.Store(Results);												// Return and display results to user.
 			ArrayList<Particle> cleanResults = new ArrayList<Particle>();
+			/*
+			 * Remove non-realistic fits.
+			 */			
 			for (int i = 0; i < Results.size(); i++)
 			{
 				if (Results.get(i).x > 0 &&
-						Results.get(i).y > 0 &&
-						Results.get(i).z >= 0 &&
+						Results.get(i).y > 0 &&						
 						Results.get(i).sigma_x > 0 &&
 						Results.get(i).sigma_y > 0 &&
 						Results.get(i).precision_x > 0 &&
@@ -191,16 +210,14 @@ public class localizeAndFit {
 					cleanResults.add(Results.get(i));
 			}
 			
-			
 			/*
-			 * 
 			 * Remove duplicates that can occur if two center pixels has the exact same value. Select the best fit if this is the case.
 			 */
 			int currFrame = -1;
 			int i  = 0;
 			int j  = 0;
 			int Ch = 1;
-
+			
 			int pixelDistance = 2*inputPixelSize*inputPixelSize;
 			while( i < cleanResults.size())
 			{				
@@ -215,7 +232,7 @@ public class localizeAndFit {
 				while (j < cleanResults.size() && cleanResults.get(j).frame == currFrame)
 				{
 					if (((cleanResults.get(i).x - cleanResults.get(j).x)*(cleanResults.get(i).x - cleanResults.get(j).x) + 
-						(cleanResults.get(i).y - cleanResults.get(j).y)*(cleanResults.get(i).y - cleanResults.get(j).y)) < pixelDistance)
+							(cleanResults.get(i).y - cleanResults.get(j).y)*(cleanResults.get(i).y - cleanResults.get(j).y)) < pixelDistance)
 					{
 						if (cleanResults.get(i).r_square > cleanResults.get(j).r_square)
 						{
@@ -236,6 +253,29 @@ public class localizeAndFit {
 				if (cleanResults.get(i).include == 0)
 					cleanResults.remove(i);
 			}
+
+			
+			if (modality.equals("2D"))
+			{
+				// no 2D specific processing required.
+			}
+			else if (modality.equals("PRILM"))
+			{
+				cleanResults = PRILMfitting.fit(cleanResults); // change 2D data to 3D data based on calibration data.
+			}
+			else if (modality.equals("Biplane"))
+			{
+				// get calibrated values for gWindow.
+			}
+			else if (modality.equals("Double Helix"))
+			{
+				cleanResults = DoubleHelixFitting.fit(cleanResults); // change 2D data to 3D data based on calibration data.
+			}
+			else if (modality.equals("Astigmatism"))
+			{
+				// get calibrated values for gWindow.
+			}
+			
 			ij.measure.ResultsTable tab = Analyzer.getResultsTable();
 			tab.reset();		
 			tab.incrementCounter();
@@ -243,13 +283,7 @@ public class localizeAndFit {
 			tab.addValue("height", rows*inputPixelSize);
 			tab.show("Results");
 			
-	//		ArrayList<Particle> output = PRILMfitting.fit(cleanResults);
-	//		TableIO.Store(output);
 			TableIO.Store(cleanResults);
-			// call 3D algorithms to translate fits to 3D. 
-			
-			
-	//		return output;
 			return cleanResults; // end parallel computation by returning results.
 		}else // end parallel. 
 			if (selectedModel == 2) // GPU
@@ -267,13 +301,13 @@ public class localizeAndFit {
 				// gauss fit algorithm.
 				// Load the PTX that contains the kernel.
 				CUmodule module = new CUmodule();
-//				cuModuleLoad(module, "gFit.ptx");
+				//				cuModuleLoad(module, "gFit.ptx");
 				String ptxFileNameGaussFit = "gFit.ptx";
 				byte ptxFileGaussFit[] = CUDA.loadData(ptxFileNameGaussFit);
-//				cuModuleLoad(module, "medianFilter.ptx"); // old  version, loading directly from the ptx file.
+				//				cuModuleLoad(module, "medianFilter.ptx"); // old  version, loading directly from the ptx file.
 				//cuModuleLoadDataEx(module,ptxFile);
 				cuModuleLoadDataEx(module, Pointer.to(ptxFileGaussFit), 
-			            0, new int[0], Pointer.to(new int[0]));
+						0, new int[0], Pointer.to(new int[0]));
 				// Obtain a handle to the kernel function.
 				CUfunction fittingFcn = new CUfunction();
 				cuModuleGetFunction(fittingFcn, module, "gaussFitter");  //gFit.pth (gaussFitter function).
@@ -283,20 +317,20 @@ public class localizeAndFit {
 				CUmodule moduleLM = new CUmodule();
 				String ptxFileNameFindMaxima = "findMaxima.ptx";
 				byte ptxFileFindMaxima[] = CUDA.loadData(ptxFileNameFindMaxima);
-			//	cuModuleLoad(moduleLM, "findMaxima.ptx");					
+				//	cuModuleLoad(moduleLM, "findMaxima.ptx");					
 				// Obtain a handle to the kernel function
 				cuModuleLoadDataEx(moduleLM, Pointer.to(ptxFileFindMaxima), 
-			            0, new int[0], Pointer.to(new int[0]));
+						0, new int[0], Pointer.to(new int[0]));
 				CUfunction findMaximaFcn = new CUfunction();
 				cuModuleGetFunction(findMaximaFcn, moduleLM, "run");	// findMaxima.ptx (run function).
 				//CUmodule modulePrepGauss = new CUmodule();
 				//cuModuleLoad(modulePrepGauss, "prepareGaussian.ptx");					
 				// Obtain a handle to the kernel function
-			//	CUfunction prepareGaussFcn = new CUfunction();
-			//	cuModuleGetFunction(prepareGaussFcn, modulePrepGauss, "run");	// prepareGaussian.ptx (run function).
-				
-				
-				
+				//	CUfunction prepareGaussFcn = new CUfunction();
+				//	cuModuleGetFunction(prepareGaussFcn, modulePrepGauss, "run");	// prepareGaussian.ptx (run function).
+
+
+
 				for (int Ch = 1; Ch <= nChannels; Ch++)					// Loop over all channels.
 				{						
 					int nCenter =(( columns*rows/(gWindow*gWindow)) / 2); // ~ 80 possible particles for a 64x64 frame. Lets the program scale with frame size.
@@ -314,7 +348,7 @@ public class localizeAndFit {
 							1	, (gWindow-1),			// y.
 							0.7			,  (gWindow / 2.0),		// sigma x.
 							0.7			,  (gWindow / 2.0),		// sigma y.
-							 (-0.5*Math.PI) , (0.5*Math.PI),	// theta.
+							(-0.5*Math.PI) , (0.5*Math.PI),	// theta.
 							-0.5		, 0.5				// offset.
 					};
 					CUdeviceptr deviceBounds 		= CUDA.copyToDevice(bounds);															
@@ -347,7 +381,7 @@ public class localizeAndFit {
 							processed = false;
 							startFrame = Frame;
 						}
-	
+
 
 						// load as large chunks of data as possible on the gpu at each time.
 						if (dataIdx < nMax)
@@ -399,7 +433,7 @@ public class localizeAndFit {
 
 							// Free up memory allocation on device, housekeeping.
 							cuMemFree(deviceCenter);
-							
+
 							cuMemFree(deviceData);
 							/******************************************************************************
 							 * Transfer data for gauss fitting.
@@ -421,12 +455,12 @@ public class localizeAndFit {
 									locatedCenter[counter] = hostCenter[j];								
 									counter++;
 								}
-									
+
 							} // locatedCenter now populated.							
 							double[] P = new double[newN*7];
 							double[] stepSize = new double[newN*7];							
 							int[] gaussVector = new int[newN*gWindow*gWindow];
-							
+
 							for (int i = 0; i < newN; i++)
 							{
 								P[i*7] = data[locatedCenter[i]];
@@ -436,34 +470,34 @@ public class localizeAndFit {
 								P[i*7+4] = 1.5;
 								P[i*7+6] = 0;
 								P[i*7+6] = 0;
-				                stepSize[i * 7] = 0.1;// amplitude
-				                stepSize[i * 7 + 1] = 0.25; // x center.
-				                stepSize[i * 7 + 2] = 0.25; // y center.
-				                stepSize[i * 7 + 3] = 0.25; // sigma x.
-				                stepSize[i * 7 + 4] = 0.25; // sigma y.
-				                stepSize[i * 7 + 5] = 0.19625; // Theta.
-				                stepSize[i * 7 + 6] = 0.01; // offset.   
-				                int k = locatedCenter[i] - (gWindow / 2) * (columns + 1); // upper left corner.
-				                int j = 0;
-				                int loopC = 0;
-				                while (k <= locatedCenter[i] + (gWindow / 2) * (columns + 1)) // loop over all relevant pixels. use this loop to extract data based on single indexing defined centers.
-				                {
-				                    gaussVector[i * gWindow * gWindow + j] = data[k]; // add data.
-				                    k++;
-				                    loopC++;
-				                    j++;
-				                    if (loopC == gWindow)
-				                    {
-				                        k += (columns - gWindow);
-				                        loopC = 0;
-				                    }
-				                } // data pulled.
+								stepSize[i * 7] = 0.1;// amplitude
+								stepSize[i * 7 + 1] = 0.25; // x center.
+								stepSize[i * 7 + 2] = 0.25; // y center.
+								stepSize[i * 7 + 3] = 0.25; // sigma x.
+								stepSize[i * 7 + 4] = 0.25; // sigma y.
+								stepSize[i * 7 + 5] = 0.19625; // Theta.
+								stepSize[i * 7 + 6] = 0.01; // offset.   
+								int k = locatedCenter[i] - (gWindow / 2) * (columns + 1); // upper left corner.
+								int j = 0;
+								int loopC = 0;
+								while (k <= locatedCenter[i] + (gWindow / 2) * (columns + 1)) // loop over all relevant pixels. use this loop to extract data based on single indexing defined centers.
+								{
+									gaussVector[i * gWindow * gWindow + j] = data[k]; // add data.
+									k++;
+									loopC++;
+									j++;
+									if (loopC == gWindow)
+									{
+										k += (columns - gWindow);
+										loopC = 0;
+									}
+								} // data pulled.
 							}
-												
+
 							CUdeviceptr deviceGaussVector 	= 		CUDA.copyToDevice(gaussVector);					
 							CUdeviceptr deviceP 			= 		CUDA.copyToDevice(P);
 							CUdeviceptr deviceStepSize 		= 		CUDA.copyToDevice(stepSize);							
-							
+
 							/******************************************************************************
 							 * Gauss fitting.
 							 ******************************************************************************/
@@ -524,7 +558,7 @@ public class localizeAndFit {
 							int[] remainingData = new int[idx];
 							for (int i = 0; i < idx; i++)
 								remainingData[i] = data[i];
-							
+
 							while (idx < data.length)
 							{
 								data[idx] = 0; // remove remaining entries.
@@ -588,12 +622,12 @@ public class localizeAndFit {
 									locatedCenter[counter] = hostCenter[j];								
 									counter++;
 								}
-									
+
 							} // locatedCenter now populated.
 							double[] P = new double[newN*7];
 							double[] stepSize = new double[newN*7];							
 							int[] gaussVector = new int[newN*gWindow*gWindow];
-							
+
 							for (int i = 0; i < newN; i++)
 							{
 								P[i*7] = data[locatedCenter[i]];
@@ -603,35 +637,35 @@ public class localizeAndFit {
 								P[i*7+4] = 1.5;
 								P[i*7+6] = 0;
 								P[i*7+6] = 0;
-				                stepSize[i * 7] = 0.1;// amplitude
-				                stepSize[i * 7 + 1] = 0.25; // x center.
-				                stepSize[i * 7 + 2] = 0.25; // y center.
-				                stepSize[i * 7 + 3] = 0.25; // sigma x.
-				                stepSize[i * 7 + 4] = 0.25; // sigma y.
-				                stepSize[i * 7 + 5] = 0.19625; // Theta.
-				                stepSize[i * 7 + 6] = 0.01; // offset.   
-				                int k = locatedCenter[i] - (gWindow / 2) * (columns + 1); // upper left corner.
-				                int j = 0;
-				                int loopC = 0;
-				                while (k <= locatedCenter[i] + (gWindow / 2) * (columns + 1)) // loop over all relevant pixels. use this loop to extract data based on single indexing defined centers.
-				                {
-				                    gaussVector[i * gWindow * gWindow + j] = data[k]; // add data.
-				                    k++;
-				                    loopC++;
-				                    j++;
-				                    if (loopC == gWindow)
-				                    {
-				                        k += (columns - gWindow);
-				                        loopC = 0;
-				                    }
-				                } // data pulled.
+								stepSize[i * 7] = 0.1;// amplitude
+								stepSize[i * 7 + 1] = 0.25; // x center.
+								stepSize[i * 7 + 2] = 0.25; // y center.
+								stepSize[i * 7 + 3] = 0.25; // sigma x.
+								stepSize[i * 7 + 4] = 0.25; // sigma y.
+								stepSize[i * 7 + 5] = 0.19625; // Theta.
+								stepSize[i * 7 + 6] = 0.01; // offset.   
+								int k = locatedCenter[i] - (gWindow / 2) * (columns + 1); // upper left corner.
+								int j = 0;
+								int loopC = 0;
+								while (k <= locatedCenter[i] + (gWindow / 2) * (columns + 1)) // loop over all relevant pixels. use this loop to extract data based on single indexing defined centers.
+								{
+									gaussVector[i * gWindow * gWindow + j] = data[k]; // add data.
+									k++;
+									loopC++;
+									j++;
+									if (loopC == gWindow)
+									{
+										k += (columns - gWindow);
+										loopC = 0;
+									}
+								} // data pulled.
 							}
-					
-							
+
+
 							CUdeviceptr deviceGaussVector 	= 		CUDA.copyToDevice(gaussVector);					
 							CUdeviceptr deviceP 			= 		CUDA.copyToDevice(P);
 							CUdeviceptr deviceStepSize 		= 		CUDA.copyToDevice(stepSize);							
-							
+
 							/******************************************************************************
 							 * Gauss fitting.
 							 ******************************************************************************/
@@ -707,7 +741,7 @@ public class localizeAndFit {
 						cleanResults.add(Results.get(i));
 
 				}
-				
+
 				/*
 				 * 
 				 * Remove duplicates that can occur if two center pixels has the exact same value. Select the best fit if this is the case.
@@ -731,12 +765,12 @@ public class localizeAndFit {
 					while (j < cleanResults.size() && cleanResults.get(j).frame == currFrame)
 					{
 						if (((cleanResults.get(i).x - cleanResults.get(j).x)*(cleanResults.get(i).x - cleanResults.get(j).x) + 
-							(cleanResults.get(i).y - cleanResults.get(j).y)*(cleanResults.get(i).y - cleanResults.get(j).y)) < pixelDistance)
+								(cleanResults.get(i).y - cleanResults.get(j).y)*(cleanResults.get(i).y - cleanResults.get(j).y)) < pixelDistance)
 						{					
 							if (cleanResults.get(i).r_square > cleanResults.get(j).r_square)
 							{
 								cleanResults.get(j).include = 0;
-					
+
 							}else
 							{
 								cleanResults.get(i).include = 0;					
@@ -752,6 +786,27 @@ public class localizeAndFit {
 				{
 					if (cleanResults.get(i).include == 0)
 						cleanResults.remove(i);
+				}
+
+				if (modality.equals("2D"))
+				{
+					// no 2D specific processing required.
+				}
+				else if (modality.equals("PRILM"))
+				{
+					cleanResults = PRILMfitting.fit(cleanResults); // change 2D data to 3D data based on calibration data.
+				}
+				else if (modality.equals("Biplane"))
+				{
+					// get calibrated values for gWindow.
+				}
+				else if (modality.equals("Double Helix"))
+				{
+					cleanResults = DoubleHelixFitting.fit(cleanResults); // change 2D data to 3D data based on calibration data.
+				}
+				else if (modality.equals("Astigmatism"))
+				{
+					// get calibrated values for gWindow.
 				}
 				
 				ij.measure.ResultsTable tab = Analyzer.getResultsTable();

@@ -26,21 +26,26 @@ import ij.WindowManager;
 
 
 /*TODO x-mas 2016:
- * Implement 3D calibrations
+ * Implement 3D calibrations:
+ * 		Write new fit call to bypass regular localize/process calls. 
+ * 		PRILM: Initially implemented, error testing required.
+ * 		Biplane: function creation left. Find offset based on image size.
+ * 		Double helix: Initially implemented, error testing required.
+ * 		Astigmatism: function creation left. Calculate width of psf to limit ratio to only increasing values.
  * Chromatic shift correction from calibration data.
- * Calibrate push button implemented
- * ROI size based on pixelsize and modality
- * Set pixels over background based on ROI size.
- * Update GPU fitting code to handle 3D (new intiial search and input)
+ * DONE: Calibrate push button implemented
+ * DONE: ROI size based on pixelsize and modality
+ * DONE: Set pixels over background based on ROI size.
+ * Update GPU fitting code to handle 3D (new initial search and input)
  * Check errors in cluster analysis.
  * DONE: Add fiducial checkbox saving of choice. fiducialsChList
- * DONE:  Add doCorrelativeChList for choice of channel alignment method.
+ * DONE: Add doCorrelativeChList for choice of channel alignment method.
  * DONE: Add doChromaticChList for choice of channel alignment method.
  * DONE: set default correlativeCorr and chromaticCorr
  * update tooltips (align channel incorrect)
- * 
- * Remove channel independent pixel size.
- * 
+ * Make fiducial track applied during initial fitting. Move fiducial checkbox to basic settings.
+ * DONE: Remove channel independent pixel size.
+ * DONE: (error loading default file). ERROR: Not loading values correctly in UBUNTU with java 1.8.0_101. Check with newer version.
  * DONE: Remove sigmaZ from parameter list in code.
  * 
  * 
@@ -48,7 +53,7 @@ import ij.WindowManager;
  * 
  * BONUS:
  * GPU transfer function for speedup.
- * Possible multiemitter fitting.
+ * Possible multi-emitter fitting.
  * Transfer function to LAMA
  * 
  * Manuscript: 
@@ -60,7 +65,9 @@ import ij.WindowManager;
 /**
  *
  * @author kristoffer.bernhem@gmail.com
- */@SuppressWarnings("serial")
+ */
+
+@SuppressWarnings("serial")
  public class SMLocalizerGUI extends javax.swing.JFrame {
 
 	 public SMLocalizerGUI() {
@@ -3210,8 +3217,39 @@ import ij.WindowManager;
 	 private void doGaussianSmoothingActionPerformed(java.awt.event.ActionEvent evt) {                                                    
 
 	 } 
-	 private void calibrateActionPerformed(java.awt.event.ActionEvent evt) {                                          
-		 // TODO add your handling code here:
+	 private void calibrateActionPerformed(java.awt.event.ActionEvent evt) {
+		 		 
+		 if (modality.getSelectedIndex() == 0)
+		 {
+			 // 2D, do nothing.		 		
+		 } // 2D.
+		 else if(modality.getSelectedIndex() == 1)
+		 {
+			// PRILM.
+			 int zStep = 10;
+			 // TODO: popup question for zStep.
+			 PRILMfitting.calibrate(Integer.parseInt(inputPixelSize.getText()), zStep);
+		 }
+		 else if(modality.getSelectedIndex() == 2)
+		 {
+			 // Biplane.
+			 int zStep = 10;
+			 // TODO: popup question for zStep.
+		 }
+		 else if(modality.getSelectedIndex() == 3)
+		 {
+			 // Double helix.
+			 int zStep = 10;
+			 // TODO: popup question for zStep.
+			 DoubleHelixFitting.calibrate(Integer.parseInt(inputPixelSize.getText()), zStep);
+		 }
+		 else if(modality.getSelectedIndex() == 4)
+		 {
+			 // Astigmatism.
+			 int zStep = 10;
+			 // TODO: popup question for zStep.
+		 }
+		 
 	 } 
 	 private void ProcessActionPerformed(java.awt.event.ActionEvent evt) {                                        
 		 /*
@@ -3223,30 +3261,50 @@ import ij.WindowManager;
 		 
 		 int[] totalGain = getTotalGain();
 		 int[] window = getWindowWidth(); // get user input, (W-1)/2.
-		 int[] gWindow = getGaussWindowsize();
+		 int gWindow = 5;
 		 //int[] minPixelOverBkgrnd = getMinPixelOverBackground();
-		 int[] minPixelOverBkgrnd = {20,20};
+		 double maxSigma = 2; // 2D 
 		 int[] signalStrength = getMinSignal();
 		 int[] desiredPixelSize = getOutputPixelSize();
 		 int selectedModel = 5;
 		 boolean[] useFiducials = getFiducials();
 		 String modalityChoice = "";
 		 if (modality.getSelectedIndex() == 0)
+		 {
 			 modalityChoice = "2D";
+				if (pixelSize < 100) // if smaller pixel size the window width needs to increase.
+				{
+					gWindow = (int) Math.ceil(500 / pixelSize); // 500 nm wide window.
+
+				}
+				if (gWindow%2 == 0)
+					gWindow++;			 
+		 } // 2D.
 		 else if(modality.getSelectedIndex() == 1)
+		 {
 			 modalityChoice = "PRILM";
+			 gWindow 		= (int)ij.Prefs.getInt("SMLocalizer.calibration.PRILM.window", 0);
+			 maxSigma 		= (int)ij.Prefs.getInt("SMLocalizer.calibration.PRILM.sigma", 0);
+		 }
 		 else if(modality.getSelectedIndex() == 2)
 			 modalityChoice = "Biplane";
 		 else if(modality.getSelectedIndex() == 3)
+		 {
 			 modalityChoice = "Double Helix";
+			 gWindow 		= (int)ij.Prefs.getInt("SMLocalizer.calibration.DoubleHelix.window", 0);
+			 maxSigma 		= (int)ij.Prefs.getInt("SMLocalizer.calibration.DoubleHelix.sigma", 0);
+		 }
 		 else if(modality.getSelectedIndex() == 4)
 			 modalityChoice = "Astigmatism";
+		
+
+
 		 if (parallelComputation.isSelected()) // parallel computation.
 		 {
 			 selectedModel = 0;			
-			 double maxSigma = 2; // 2D 
+			 
 			 BackgroundCorrection.medianFiltering(window,WindowManager.getCurrentImage(),selectedModel); // correct background.			 
-			 localizeAndFit.run(signalStrength,  pixelSize,  totalGain , selectedModel, maxSigma, modalityChoice);  //locate and fit all particles.
+			 localizeAndFit.run(signalStrength, gWindow, pixelSize,  totalGain , selectedModel, maxSigma, modalityChoice);  //locate and fit all particles.
 			 //			ArrayList<Particle> Results = localizeAndFit.run(signalStrength, minDistance, gWindow, pixelSize,minPixelOverBkgrnd,totalGain,selectedModel);  //locate and fit all particles.
 			 //	TableIO.Store(Results);			
 		 }
@@ -3496,24 +3554,46 @@ import ij.WindowManager;
 		 boolean[] useFiducials = getFiducials();
 		
 		 int[] totalGain = getTotalGain();        
-		 int[] gWindow = getGaussWindowsize();
+		 int gWindow = 0;
 		 //		int[] minPixelOverBkgrnd = getMinPixelOverBackground(); // change to be ROI dependent in code.
-		 int[] minPixelOverBkgrnd = {20,20};
+		
 		 int[] signalStrength = getMinSignal();
 		 double maxSigma = 2; // 2D 
 		 int pixelSize = Integer.parseInt(inputPixelSize.getText());
 		 String modalityChoice = "";
 		 if (modality.getSelectedIndex() == 0)
+		 {
 			 modalityChoice = "2D";
+				if (pixelSize < 100) // if smaller pixel size the window width needs to increase.
+				{
+					gWindow = (int) Math.ceil(500 / pixelSize); // 500 nm wide window.
+
+				}
+				if (gWindow%2 == 0)
+					gWindow++;			 
+		 } // 2D.
 		 else if(modality.getSelectedIndex() == 1)
+		 {
 			 modalityChoice = "PRILM";
+			 gWindow 		= (int)ij.Prefs.getInt("SMLocalizer.calibration.PRILM.window", 0);
+			 maxSigma 		= (int)ij.Prefs.getInt("SMLocalizer.calibration.PRILM.sigma", 0);
+		 }
 		 else if(modality.getSelectedIndex() == 2)
 			 modalityChoice = "Biplane";
 		 else if(modality.getSelectedIndex() == 3)
+		 {
 			 modalityChoice = "Double Helix";
+			 gWindow 		= (int)ij.Prefs.getInt("SMLocalizer.calibration.DoubleHelix.window", 0);
+			 maxSigma 		= (int)ij.Prefs.getInt("SMLocalizer.calibration.DoubleHelix.sigma", 0);
+		 }
 		 else if(modality.getSelectedIndex() == 4)
-			 modalityChoice = "Astigmatism";
-		 ArrayList<Particle> Results = localizeAndFit.run(signalStrength,  pixelSize,  totalGain , selectedModel, maxSigma, modalityChoice);  //locate and fit all particles.		  	   	  
+			 {
+			 	modalityChoice = "Astigmatism";
+			 	maxSigma = 7;
+			 	gWindow = 15;
+			 }
+		
+		 ArrayList<Particle> Results = localizeAndFit.run(signalStrength, gWindow, pixelSize,  totalGain , selectedModel, maxSigma, modalityChoice);  //locate and fit all particles.		  	   	  
 		 TableIO.Store(Results);
 	 }                                            
 
@@ -4144,38 +4224,12 @@ import ij.WindowManager;
 	 /*
 	  *   get user input pixel size.
 	  */
-	 private int[] getPixelSize()
-	 {        
-		 int[] data = new int[10];
-		 for (int id = 0; id < data.length; id++)
-		 {
-			 data[id] = Integer.parseInt(pixelSizeChList.getItem(id).getText());
-		 }
-		 return data;
-	 }
-
-	 /*
-	  *   get user input pixel size.
-	  */
 	 private int[] getTotalGain()
 	 {        
 		 int[] data = new int[10];
 		 for (int id = 0; id < data.length; id++)
 		 {
 			 data[id] = Integer.parseInt(totalGainChList.getItem(id).getText());
-		 }
-		 return data;
-	 }
-
-	 /*
-	  *   get user ROI size selections.
-	  */
-	 private int[] getGaussWindowsize()
-	 {        
-		 int[] data = new int[10];
-		 for (int id = 0; id < data.length; id++)
-		 {
-			 data[id] = 1 + 2*(1 + Integer.parseInt(gaussWindowChList.getItem(id).getText()));
 		 }
 		 return data;
 	 }

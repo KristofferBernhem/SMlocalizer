@@ -176,8 +176,8 @@ public class GaussSolver {
 				0.6			, 1.4,				// amplitude.
 				P[1] - 2	, P[1] + 2,			// x.
 				P[2] - 2	, P[2] + 2,			// y.
-				0.7			, maxSigma,		// sigma x.
-				0.7			, maxSigma,		// sigma y.
+				0.8			, maxSigma,		// sigma x.
+				0.8			, maxSigma,		// sigma y.
 				-0.5*Math.PI,0.5*Math.PI,	// theta.
 				-0.5		, 0.5				// offset.
 		};

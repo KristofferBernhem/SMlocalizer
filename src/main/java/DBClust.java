@@ -38,9 +38,13 @@ import ij.plugin.filter.Analyzer;
 public class DBClust {
 	public static void Ident(double[] eps, int[] minPts, int[] pixelSize, boolean[] doCluster){
 		ArrayList<Particle> InpParticle = TableIO.Load(); // Get current table data.
-
+		
 		ij.measure.ResultsTable tab = Analyzer.getResultsTable();
-		tab.reset();		
+		double width = tab.getValue("width", 0);
+		double height = tab.getValue("height", 0);
+		tab.reset();
+		tab.incrementCounter();
+
 		for (int Ch = 1; Ch <=InpParticle.get(InpParticle.size()-1).channel; Ch++){
 			if (doCluster[Ch-1])
 			{
@@ -71,11 +75,18 @@ public class DBClust {
 					}
 					ClustIdx++;
 				}  
+				boolean first = true;
 				for (int i = 0; i < InpParticle.size(); i++){
 					
 					if(InpParticle.get(i).channel == Ch)
 					{
 						tab.incrementCounter();
+						if(first)
+						{
+							first = false;
+							tab.addValue("width", width);
+							tab.addValue("height", height);
+						}
 						tab.addValue("Cluster", IndexList[i]);
 						tab.addValue("x0", InpParticle.get(i).x);
 						tab.addValue("y0", InpParticle.get(i).y);

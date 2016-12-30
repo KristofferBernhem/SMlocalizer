@@ -25,19 +25,19 @@
  */
 
 
-
+// TODO: angle calculated correctly but somehow not passed. Check interpolate function for error.
 import java.util.ArrayList;
 
 import ij.ImagePlus;
 import ij.WindowManager;
 import ij.process.ImageStatistics;
 
-public class PRILMfitting {
+public class DoubleHelixFitting {
 	public static ArrayList<Particle> fit(ArrayList<Particle> inputResults)
 	{
 		ArrayList<Particle> results = new ArrayList<Particle>();
 		double[][] calibration 		= getCalibration();
-		int distance 				= (int)ij.Prefs.get("SMLocalizer.calibration.PRILM.distance",0);
+		int distance 				= (int)ij.Prefs.get("SMLocalizer.calibration.DoubleHelix.distance",0);
 		distance *= distance; // square max distance between centers.
 		for (int i = 0; i < results.size(); i++)
 		{
@@ -72,13 +72,14 @@ public class PRILMfitting {
 				}	
 				j++;
 			}
+
 		}
 
 		return results;
 	}
 
 	public static void calibrate(int inputPixelSize,int zStep)
-	{		
+	{
 		ImagePlus image 					= WindowManager.getCurrentImage();
 		int nFrames 						= image.getNFrames();
 		if (nFrames == 1)
@@ -98,7 +99,8 @@ public class PRILMfitting {
 					(int) nFrames/2);		// frame.
 		}
 		int nChannels 			= image.getNChannels();
-		int[] totalGain 		= {100,100,100,100,100,100,100,100,100,100};		
+		int[] totalGain 		= {100};
+		int selectedModel 		= 0; // CPU
 		double meanRsquare 		= 0;
 		int calibrationLength 	= 0;
 		boolean[][] include = new boolean[6][10];
@@ -151,7 +153,7 @@ public class PRILMfitting {
 			{
 				for (double maxSigma = 2.5; maxSigma < 4; maxSigma += 0.5)
 				{
-					for (int maxDist = 650; maxDist < 1000; maxDist += 200)
+					for (int maxDist = 850; maxDist < 1600; maxDist += 200)
 					{
 						int maxSqdist = maxDist * maxDist;
 						ImageStatistics IMstat 	= image.getStatistics(); 					
@@ -164,13 +166,13 @@ public class PRILMfitting {
 
 						cleanParticleList.run(lb,ub,include);
 						cleanParticleList.delete();
-						ArrayList<Particle> result = TableIO.Load();						
+						ArrayList<Particle> result = TableIO.Load();
 						for (int i = 0; i < result.size(); i++)
 						{
 							result.get(i).z = (result.get(i).frame-1)*zStep;
 						}
-						//TableIO.Store(result);
-						//result 				= TableIO.Load();
+						TableIO.Store(result);
+						result 				= TableIO.Load();
 						int id 				= 2;		
 						double[][] angle	= new double[nFrames][nChannels];
 						double[][] distance = new double[nFrames][nChannels];
@@ -196,8 +198,7 @@ public class PRILMfitting {
 												angle[(int)(result.get(i).frame-1)][Ch-1] += (Math.atan2(dy, dx)); // angle between points and horizontal axis.
 												if (Math.sqrt(dx*dx + dy*dy) > distance[(int)(result.get(i).frame-1)][Ch-1])
 													distance[(int)(result.get(i).frame-1)][Ch-1] = Math.sqrt(dx*dx + dy*dy);
-												count[(int)(result.get(i).frame-1)][Ch-1]++;
-
+												count[(int)(result.get(i).frame-1)][Ch-1]++;												
 											}
 										}
 										idx ++;
@@ -212,7 +213,7 @@ public class PRILMfitting {
 							{
 								if (count[i][Ch-1]>0)
 								{
-									angle[i][Ch-1] 	/= count[i][Ch-1]; // mean angle for this z-depth.					
+									angle[i][Ch-1] 	/= count[i][Ch-1]; // mean angle for this z-depth.			
 								}
 							}
 						}
@@ -246,6 +247,8 @@ public class PRILMfitting {
 			} // iterate over level.
 			loopC++;
 		}
+		System.out.println("final distance " + finalDist);
+		finalDist = 1600;
 		int maxSqdist 			= finalDist * finalDist;
 		ImageStatistics IMstat 	= image.getStatistics(); 
 		int[] MinLevel 			= {(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel)};		
@@ -283,14 +286,18 @@ public class PRILMfitting {
 							if (((result.get(i).x - result.get(idx).x)*(result.get(i).x - result.get(idx).x) +
 									(result.get(i).y - result.get(idx).y)*(result.get(i).y - result.get(idx).y)) < maxSqdist)
 							{
+								//System.out.println(Math.sqrt(((result.get(i).x - result.get(idx).x)*(result.get(i).x - result.get(idx).x) +
+								//	(result.get(i).y - result.get(idx).y)*(result.get(i).y - result.get(idx).y))));
 								result.get(idx).include = id;
 								result.get(i).include 	= id;								
 								short dx = (short)(result.get(i).x - result.get(idx).x); // diff in x dimension.
 								short dy = (short)(result.get(i).y - result.get(idx).y); // diff in y dimension.
 								angle[(int)(result.get(i).frame-1)][Ch-1] += (Math.atan2(dy, dx)); // angle between points and horizontal axis.
+								System.out.println("frame: " + result.get(i).frame + " angle: " + (Math.atan2(dy, dx)));
+								count[(int)(result.get(i).frame-1)][Ch-1]++;
 								if (Math.sqrt(dx*dx + dy*dy) > distance[(int)(result.get(i).frame-1)][Ch-1])
 									distance[(int)(result.get(i).frame-1)][Ch-1] = Math.sqrt(dx*dx + dy*dy);
-								count[(int)(result.get(i).frame-1)][Ch-1]++;
+								
 
 							}
 						}
@@ -300,47 +307,44 @@ public class PRILMfitting {
 				}
 			}
 		}
-		double[] values = new double[count.length];
 		for (int Ch = 1; Ch <= nChannels; Ch++)
 		{
 			for(int i = 0; i < count.length; i++)
 			{
 				if (count[i][Ch-1]>0)
-				{					 
-					angle[i][Ch-1] 	/= count[i][Ch-1]; // mean angle for this z-depth.
-					if (Ch == 1)
-						values[i] =angle[i][Ch-1];
+				{
+					angle[i][Ch-1] 	/= count[i][Ch-1]; // mean angle for this z-depth.					
 				}
 			}
 		}
-		
-		correctDrift.plot(values);
 		int minLength = 40;			
 		double[][] calibration = interpolate(angle, minLength, nChannels);
-				
+
+
 		/*
 		 * STORE calibration file:
 		 */
-		ij.Prefs.set("SMLocalizer.calibration.PRILM.window",finalGWindow);
-		ij.Prefs.set("SMLocalizer.calibration.PRILM.sigma",finalSigma);
-		ij.Prefs.set("SMLocalizer.calibration.PRILM.distance",finalDist);
+		System.out.print(calibration.length);
+		ij.Prefs.set("SMLocalizer.calibration.DoubleHelix.window",finalGWindow);
+		ij.Prefs.set("SMLocalizer.calibration.DoubleHelix.sigma",finalSigma);
+		ij.Prefs.set("SMLocalizer.calibration.DoubleHelix.distance",finalDist);
 
-		ij.Prefs.set("SMLocalizer.calibration.PRILM.height",calibration.length);
-		ij.Prefs.set("SMLocalizer.calibration.PRILM.channels",calibration[0].length);
-		ij.Prefs.set("SMLocalizer.calibration.PRILM.step",zStep);
+		ij.Prefs.set("SMLocalizer.calibration.DoubleHelix.height",calibration.length);
+		ij.Prefs.set("SMLocalizer.calibration.DoubleHelix.channels",calibration[0].length);
+		ij.Prefs.set("SMLocalizer.calibration.DoubleHelix.step",zStep);
 		for (int Ch = 1; Ch <= nChannels; Ch++)
 		{
 			for (int i = 0; i < calibration.length; i++)
 			{
-				ij.Prefs.set("SMLocalizer.calibration.PRILM.Ch"+Ch+"."+i,calibration[i][Ch-1]);
+				ij.Prefs.set("SMLocalizer.calibration.DoubleHelix.Ch"+Ch+"."+i,calibration[i][Ch-1]);
 			}
 		} 
 		ij.Prefs.savePreferences(); // store settings. 
-		/*		double[] printout = new double[calibration.length];
+				double[] printout = new double[calibration.length];
 		for (int i = 0; i < printout.length; i++)
 			printout[i] = calibration[i][0];
 		correctDrift.plot(printout);
-		 */
+		 
 
 	} // calibrate.
 
@@ -365,20 +369,20 @@ public class PRILMfitting {
 			z = idx - 1 + fraction;
 		} 					
 
-		z *= ij.Prefs.get("SMLocalizer.calibration.PRILM.step",0); // scale.
+		z *= ij.Prefs.get("SMLocalizer.calibration.DoubleHelix.step",0); // scale.
 		return z;
 	}
 
 	// returns calibration[zStep][channel]
 	public static double[][] getCalibration()
 	{
-		int nChannels = (int)ij.Prefs.get("SMLocalizer.calibration.PRILM.channels",0);
-		double[][] calibration = new double[(int)ij.Prefs.get("SMLocalizer.calibration.PRILM.height",0)][nChannels];
+		int nChannels = (int)ij.Prefs.get("SMLocalizer.calibration.DoubleHelix.channels",0);
+		double[][] calibration = new double[(int)ij.Prefs.get("SMLocalizer.calibration.DoubleHelix.height",0)][nChannels];
 		for (int Ch = 1; Ch <= nChannels; Ch++)
 		{
 			for (int i = 0; i < calibration.length; i++)
 			{
-				calibration[i][Ch-1] = ij.Prefs.get("SMLocalizer.calibration.PRILM.Ch"+Ch+"."+i,0);
+				calibration[i][Ch-1] = ij.Prefs.get("SMLocalizer.calibration.DoubleHelix.Ch"+Ch+"."+i,0);
 			}
 		} 
 
