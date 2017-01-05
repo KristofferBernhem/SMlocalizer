@@ -25,19 +25,20 @@
  */
 
 
-
+// TODO: angle calculated correctly but somehow not passed. Check interpolate function for error.
 import java.util.ArrayList;
 
 import ij.ImagePlus;
 import ij.WindowManager;
 import ij.process.ImageStatistics;
 
-public class PRILMfitting {
+
+public class BiplaneFitting {
 	public static ArrayList<Particle> fit(ArrayList<Particle> inputResults)
 	{
 		ArrayList<Particle> results = new ArrayList<Particle>();
 		double[][] calibration 		= getCalibration();
-		int distance 				= (int)ij.Prefs.get("SMLocalizer.calibration.PRILM.distance",0);
+		int distance 				= (int)ij.Prefs.get("SMLocalizer.calibration.Biplane.distance",0);
 		distance *= distance; // square max distance between centers.
 		for (int i = 0; i < results.size(); i++)
 		{
@@ -72,13 +73,14 @@ public class PRILMfitting {
 				}	
 				j++;
 			}
+
 		}
 
 		return results;
 	}
 
 	public static void calibrate(int inputPixelSize,int zStep)
-	{		
+	{
 		ImagePlus image 					= WindowManager.getCurrentImage();
 		int nFrames 						= image.getNFrames();
 		if (nFrames == 1)
@@ -98,7 +100,7 @@ public class PRILMfitting {
 					(int) nFrames/2);		// frame.
 		}
 		int nChannels 			= image.getNChannels();
-		int[] totalGain 		= {100,100,100,100,100,100,100,100,100,100};		
+		int[] totalGain 		= {100};		
 		double meanRsquare 		= 0;
 		int calibrationLength 	= 0;
 		boolean[][] include = new boolean[6][10];
@@ -128,13 +130,12 @@ public class PRILMfitting {
 			ub[3][i]			= 0;
 			ub[4][i]			= 0;
 			ub[5][i]			= 0;
-
 		}
 
-		double finalLevel = 0;
-		double finalSigma = 0;
-		int finalDist = 0;
-		int gWindow = 5;
+		double finalLevel 	= 0;
+		double finalSigma 	= 0;
+		int finalDist 		= 0;
+		int gWindow 		= 5;
 		if (inputPixelSize < 100)
 		{
 			gWindow = (int) Math.ceil(500 / inputPixelSize); // 500 nm wide window.
@@ -142,8 +143,8 @@ public class PRILMfitting {
 			if (gWindow%2 == 0)
 				gWindow++;	
 		}
-		int finalGWindow = gWindow;
-		int loopC = 0;
+		int finalGWindow 	= gWindow;
+		int loopC 			= 0;
 		while (loopC < 2)
 		{
 			gWindow = gWindow + loopC*2; // increase window size each loop.
@@ -151,101 +152,165 @@ public class PRILMfitting {
 			{
 				for (double maxSigma = 2.5; maxSigma < 4; maxSigma += 0.5)
 				{
-					for (int maxDist = 650; maxDist < 1000; maxDist += 200)
-					{
-						int maxSqdist = maxDist * maxDist;
-						ImageStatistics IMstat 	= image.getStatistics(); 					
-						int[] MinLevel 			= {(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level)};					
-						//localizeAndFit.run(MinLevel, gWindow, inputPixelSize, totalGain, selectedModel, maxSigma,"PRILM");
-						Fit3D.fit(MinLevel,gWindow,inputPixelSize,totalGain,maxSigma);
-						/*
-						 * clean out fits based on goodness of fit:
-						 */
+					ImageStatistics IMstat 	= image.getStatistics(); 					
+					int[] MinLevel 			= {(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level)};									
+					Fit3D.fit(MinLevel,gWindow,inputPixelSize,totalGain,maxSigma);
+					/*
+					 * clean out fits based on goodness of fit:
+					 */
 
-						cleanParticleList.run(lb,ub,include);
-						cleanParticleList.delete();
-						ArrayList<Particle> result = TableIO.Load();						
+					cleanParticleList.run(lb,ub,include);
+					cleanParticleList.delete();
+					ArrayList<Particle> result = TableIO.Load();
+					for (int i = 0; i < result.size(); i++)
+					{
+						result.get(i).z = (result.get(i).frame-1)*zStep;
+					}
+					TableIO.Store(result);
+					result 				= TableIO.Load();
+					int id 				= 2;		
+					double[][] ratio	= new double[nFrames][nChannels];
+					/*
+					 * Find offset based on center stack fits.
+					 */
+					
+					double offsetX = 0;
+					double offsetY = 0;
+					int offsetCount = 0;
+					int frameWidth = inputPixelSize*image.getWidth()/2;
+					
+					for (int i = 0; i < result.size(); i++)
+					{
+						if (result.get(i).frame > ((int)nFrames/2-5) &&	// if we're on the within the 5 slizes closest to the center
+								result.get(i).frame < ((int)nFrames/2+5) &&
+								result.get(i).x < frameWidth) 			// and on the left side of the image.
+						{
+							/*
+							 * find closest fit on right hand side of the image from that frame, frameWidth to the right.
+							 */
+							double tempOffset = frameWidth;
+							double tempOffsetX = frameWidth;
+							double tempOffsetY = frameWidth;
+							for (int j = 0; j < result.size(); j++)
+							{
+								if (result.get(j).frame == result.get(i).frame &&
+										result.get(j).x > frameWidth &&
+										result.get(j).channel == result.get(i).channel)
+								{
+									double newX = result.get(i).x + frameWidth; // shift x value by the half frame width.
+									double temp = Math.sqrt((newX - result.get(j).x)*(newX - result.get(j).x) + 
+											(result.get(i).y - result.get(j).y)*(result.get(i).y - result.get(j).y));
+									
+									if (temp < tempOffset)
+									{
+										tempOffset = temp;
+										tempOffsetX = newX - result.get(j).x;
+										tempOffsetY = result.get(i).y - result.get(j).y;
+									}
+								}
+							}
+							offsetX += tempOffsetX; //update
+							offsetY += tempOffsetY; //update
+							offsetCount++;
+						}											
+					}
+					offsetX /= offsetCount; // normalize.
+					offsetY /= offsetCount; // normalize.
+					
+					/*
+					 * Calculate ratio using this offset.
+					 */
+					
+					for (int i = 0; i < result.size(); i++) // loop over all entries
+					{
+						double searchX = 0;
+						double searchY = result.get(i).y;
+						if (result.get(i).x < frameWidth) // if on the left hand side.
+						{
+							/*
+							 * check to see if there is another fitted object on the right side within 1 pixel + offset.
+							 * if so, use the best fit of these two as dominant and calculate summed intensity within fit region
+							 * for both, take ratio and store this. Center coordinate is transposed by offset if the dominant one is on the right.
+							 * 
+							 */
+							searchX = offsetX + frameWidth + result.get(i).x;
+							searchY = offsetY  + result.get(i).y;
+						}else{
+							searchX = - offsetX - frameWidth + result.get(i).x;
+							searchY = - offsetY  + result.get(i).y;
+						}
+						// find if any object are close to searchX,searchY.
+					}
+					//double[][] distance = new double[nFrames][nChannels];
+					/*int[][] count 	  	= new int[nFrames][nChannels];
+					for (int Ch = 1; Ch <= nChannels; Ch++)
+					{
+						for (int i = 0; i < result.size(); i++)
+						{			
+							if (result.get(i).include == 1 && result.get(i).channel == Ch) // if the current entry is within ok range and has not yet been assigned.
+							{
+								int idx = i + 1;
+								while (idx < result.size() && result.get(i).channel == result.get(idx).channel)
+								{
+									if (result.get(i).frame == result.get(idx).frame && result.get(idx).include == 1)
+									{
+										result.get(idx).include = id;
+										result.get(i).include 	= id;								
+										short dx = (short)(result.get(i).x - result.get(idx).x); // diff in x dimension.
+										short dy = (short)(result.get(i).y - result.get(idx).y); // diff in y dimension.
+										ratio[(int)(result.get(i).frame-1)][Ch-1] += (Math.atan2(dy, dx)); // angle between points and horizontal axis.
+						//				if (Math.sqrt(dx*dx + dy*dy) > distance[(int)(result.get(i).frame-1)][Ch-1])
+						//					distance[(int)(result.get(i).frame-1)][Ch-1] = Math.sqrt(dx*dx + dy*dy);
+										count[(int)(result.get(i).frame-1)][Ch-1]++;												
+									}
+									idx ++;
+								}    				    				
+								id++;
+							}
+						}
+					}
+					for (int Ch = 1; Ch <= nChannels; Ch++)
+					{
+						for(int i = 0; i < count.length; i++)
+						{
+							if (count[i][Ch-1]>0)
+							{
+								ratio[i][Ch-1] 	/= count[i][Ch-1]; // mean angle for this z-depth.			
+							}
+						}
+					}
+					int minLength = 40;			
+					double[][] calibration = interpolate(ratio, minLength, nChannels);
+					if (calibrationLength < calibration.length)
+					{
+						calibrationLength = calibration.length;
+						meanRsquare = 0;
+					}
+					if (calibrationLength == calibration.length)
+					{
+						double rsquare = 0;
 						for (int i = 0; i < result.size(); i++)
 						{
-							result.get(i).z = (result.get(i).frame-1)*zStep;
+							rsquare +=result.get(i).r_square;
 						}
-						//TableIO.Store(result);
-						//result 				= TableIO.Load();
-						int id 				= 2;		
-						double[][] angle	= new double[nFrames][nChannels];
-						double[][] distance = new double[nFrames][nChannels];
-						int[][] count 	  	= new int[nFrames][nChannels];
-						for (int Ch = 1; Ch <= nChannels; Ch++)
-						{
-							for (int i = 0; i < result.size(); i++)
-							{			
-								if (result.get(i).include == 1 && result.get(i).channel == Ch) // if the current entry is within ok range and has not yet been assigned.
-								{
-									int idx = i + 1;
-									while (idx < result.size() && result.get(i).channel == result.get(idx).channel)
-									{
-										if (result.get(i).frame == result.get(idx).frame && result.get(idx).include == 1)
-										{
-											if (((result.get(i).x - result.get(idx).x)*(result.get(i).x - result.get(idx).x) +
-													(result.get(i).y - result.get(idx).y)*(result.get(i).y - result.get(idx).y)) < maxSqdist)
-											{
-												result.get(idx).include = id;
-												result.get(i).include 	= id;								
-												short dx = (short)(result.get(i).x - result.get(idx).x); // diff in x dimension.
-												short dy = (short)(result.get(i).y - result.get(idx).y); // diff in y dimension.
-												angle[(int)(result.get(i).frame-1)][Ch-1] += (Math.atan2(dy, dx)); // angle between points and horizontal axis.
-												if (Math.sqrt(dx*dx + dy*dy) > distance[(int)(result.get(i).frame-1)][Ch-1])
-													distance[(int)(result.get(i).frame-1)][Ch-1] = Math.sqrt(dx*dx + dy*dy);
-												count[(int)(result.get(i).frame-1)][Ch-1]++;
+						rsquare /= result.size();
+						if (rsquare > meanRsquare)
+						{								
+							meanRsquare = rsquare;							
+							finalLevel = level;
+							finalSigma = maxSigma;
 
-											}
-										}
-										idx ++;
-									}    				    				
-									id++;
-								}
-							}
+							finalGWindow = gWindow;
 						}
-						for (int Ch = 1; Ch <= nChannels; Ch++)
-						{
-							for(int i = 0; i < count.length; i++)
-							{
-								if (count[i][Ch-1]>0)
-								{
-									angle[i][Ch-1] 	/= count[i][Ch-1]; // mean angle for this z-depth.					
-								}
-							}
-						}
-						int minLength = 40;			
-						double[][] calibration = interpolate(angle, minLength, nChannels);
-						if (calibrationLength < calibration.length)
-						{
-							calibrationLength = calibration.length;
-							meanRsquare = 0;
-						}
-						if (calibrationLength == calibration.length)
-						{
-							double rsquare = 0;
-							for (int i = 0; i < result.size(); i++)
-							{
-								rsquare +=result.get(i).r_square;
-							}
-							rsquare /= result.size();
-							if (rsquare > meanRsquare)
-							{								
-								meanRsquare = rsquare;							
-								finalLevel = level;
-								finalSigma = maxSigma;
-								finalDist = maxDist;
-								finalGWindow = gWindow;
-							}
 
-						}
-					} // iterate over maxDistance
+					}
+*/
 				} // iterate over maxSigma
 			} // iterate over level.
 			loopC++;
 		}
+	/*
+		finalDist = 1600;
 		int maxSqdist 			= finalDist * finalDist;
 		ImageStatistics IMstat 	= image.getStatistics(); 
 		int[] MinLevel 			= {(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel)};		
@@ -254,7 +319,7 @@ public class PRILMfitting {
 		/*
 		 * clean out fits based on goodness of fit:
 		 */
-
+/*
 
 		cleanParticleList.run(lb,ub,include);
 		cleanParticleList.delete();
@@ -283,14 +348,18 @@ public class PRILMfitting {
 							if (((result.get(i).x - result.get(idx).x)*(result.get(i).x - result.get(idx).x) +
 									(result.get(i).y - result.get(idx).y)*(result.get(i).y - result.get(idx).y)) < maxSqdist)
 							{
+								//System.out.println(Math.sqrt(((result.get(i).x - result.get(idx).x)*(result.get(i).x - result.get(idx).x) +
+								//	(result.get(i).y - result.get(idx).y)*(result.get(i).y - result.get(idx).y))));
 								result.get(idx).include = id;
 								result.get(i).include 	= id;								
 								short dx = (short)(result.get(i).x - result.get(idx).x); // diff in x dimension.
 								short dy = (short)(result.get(i).y - result.get(idx).y); // diff in y dimension.
 								angle[(int)(result.get(i).frame-1)][Ch-1] += (Math.atan2(dy, dx)); // angle between points and horizontal axis.
+								//	System.out.println("frame: " + result.get(i).frame + " angle: " + (Math.atan2(dy, dx)));
+								count[(int)(result.get(i).frame-1)][Ch-1]++;
 								if (Math.sqrt(dx*dx + dy*dy) > distance[(int)(result.get(i).frame-1)][Ch-1])
 									distance[(int)(result.get(i).frame-1)][Ch-1] = Math.sqrt(dx*dx + dy*dy);
-								count[(int)(result.get(i).frame-1)][Ch-1]++;
+
 
 							}
 						}
@@ -300,49 +369,48 @@ public class PRILMfitting {
 				}
 			}
 		}
-		double[] values = new double[count.length];
 		for (int Ch = 1; Ch <= nChannels; Ch++)
 		{
 			for(int i = 0; i < count.length; i++)
 			{
 				if (count[i][Ch-1]>0)
-				{					 
+				{
 					angle[i][Ch-1] 	/= count[i][Ch-1]; // mean angle for this z-depth.
-					if (Ch == 1)
-						values[i] =angle[i][Ch-1];
+					//		System.out.println(angle[i][Ch-1]);
 				}
 			}
 		}
-		
-		correctDrift.plot(values);
 		int minLength = 40;			
 		double[][] calibration = interpolate(angle, minLength, nChannels);
-				
+
+
 		/*
 		 * STORE calibration file:
-		 */
-		
-		ij.Prefs.set("SMLocalizer.calibration.PRILM.window",finalGWindow);
-		ij.Prefs.set("SMLocalizer.calibration.PRILM.sigma",finalSigma);
-		ij.Prefs.set("SMLocalizer.calibration.PRILM.distance",finalDist);
+		 *
+		System.out.print(calibration.length);
+		ij.Prefs.set("SMLocalizer.calibration.DoubleHelix.window",finalGWindow);
+		ij.Prefs.set("SMLocalizer.calibration.DoubleHelix.sigma",finalSigma);
+		ij.Prefs.set("SMLocalizer.calibration.DoubleHelix.distance",finalDist);
 
-		ij.Prefs.set("SMLocalizer.calibration.PRILM.height",calibration.length);
-		ij.Prefs.set("SMLocalizer.calibration.PRILM.channels",nChannels);
-		ij.Prefs.set("SMLocalizer.calibration.PRILM.step",zStep);
+		ij.Prefs.set("SMLocalizer.calibration.DoubleHelix.height",calibration.length);
+		ij.Prefs.set("SMLocalizer.calibration.DoubleHelix.channels",nChannels);
+		ij.Prefs.set("SMLocalizer.calibration.DoubleHelix.step",zStep);
 		for (int Ch = 1; Ch <= nChannels; Ch++)
 		{
 			for (int i = 0; i < calibration.length; i++)
 			{
-				ij.Prefs.set("SMLocalizer.calibration.PRILM.Ch"+Ch+"."+i,calibration[i][Ch-1]);
+				ij.Prefs.set("SMLocalizer.calibration.DoubleHelix.Ch"+Ch+"."+i,calibration[i][Ch-1]);
 			}
 		} 
-		ij.Prefs.savePreferences(); // store settings.
-		System.out.println("length: " + calibration.length);
+		ij.Prefs.savePreferences(); // store settings. 
 		double[] printout = new double[calibration.length];
-		for (int i = 0; i < printout.length; i++)
+		for (int i = 0; i < printout.length; i++){
 			printout[i] = calibration[i][0];
+			System.out.println(printout[i]);
+		}
+
 		correctDrift.plot(printout);
-		 
+*/
 
 	} // calibrate.
 
@@ -367,27 +435,29 @@ public class PRILMfitting {
 			z = idx - 1 + fraction;
 		} 					
 
-		z *= ij.Prefs.get("SMLocalizer.calibration.PRILM.step",0); // scale.
+		z *= ij.Prefs.get("SMLocalizer.calibration.DoubleHelix.step",0); // scale.
 		return z;
 	}
 
 	// returns calibration[zStep][channel]
 	public static double[][] getCalibration()
 	{
-		int nChannels = (int)ij.Prefs.get("SMLocalizer.calibration.PRILM.channels",0);
-		double[][] calibration = new double[(int)ij.Prefs.get("SMLocalizer.calibration.PRILM.height",0)][nChannels];
+		int nChannels = (int)ij.Prefs.get("SMLocalizer.calibration.DoubleHelix.channels",0);
+		double[][] calibration = new double[(int)ij.Prefs.get("SMLocalizer.calibration.DoubleHelix.height",0)][nChannels];
 		for (int Ch = 1; Ch <= nChannels; Ch++)
 		{
 			for (int i = 0; i < calibration.length; i++)
 			{
-				calibration[i][Ch-1] = ij.Prefs.get("SMLocalizer.calibration.PRILM.Ch"+Ch+"."+i,0);
+				calibration[i][Ch-1] = ij.Prefs.get("SMLocalizer.calibration.DoubleHelix.Ch"+Ch+"."+i,0);
 			}
 		} 
 
 		return calibration;
 	}
 
-	
+	/*
+	 * Used in generation of calibration file. Smoothes out fitted results, 5 point moving window mean.
+	 */
 	public static double[][] interpolate(double[][] result, int minLength, int nChannels)
 	{
 		int[] start = new int[nChannels];
@@ -422,7 +492,7 @@ public class PRILMfitting {
 				maxCounter = counter;
 
 			channelIdx++;
-		}	
+		}
 		if (maxCounter >= minLength)
 		{
 
@@ -482,83 +552,5 @@ public class PRILMfitting {
 		}
 	}
 
-	
-	
-	
-	/*
-	 * Used in generation of calibration file. Smoothes out fitted results, 5 point moving window mean.
-	 
-	public static double[][] interpolate(double[][] result, int minLength, int Channels)
-	{
-		int start 	= 0;
-		int end 	= 0;
-		int counter = 0;
-		int maxCounter = 0;
-		for (int Ch = 1; Ch <= Channels; Ch++)
-		{
-			for (int i = 0; i < result.length; i++) // loop over all and determine start and end
-			{
-				if (result[i][Ch-1] < 0)
-				{
-					counter++;
-				}
-				if (result[i][Ch-1] >= 0)
-				{
-					if (counter >= minLength)
-						end = i-1;
-					counter = 0;
 
-				}
-				if (counter == minLength)
-				{
-					start = i-minLength + 1;
-				}
-			}
-			if ((end-start+1) > maxCounter)
-				maxCounter = end-start+1;
-		}
-
-		double[][] calibration = new double[maxCounter][Channels];		
-
-		start 	= 0;
-		end 	= 0;
-		counter = 0;
-		for (int Ch = 1; Ch <= Channels; Ch++)
-		{
-			for (int i = 0; i < result.length; i++) // loop over all and determine start and end
-			{
-				if (result[i][Ch-1] < 0)
-				{
-					counter++;
-				}
-				if (result[i][Ch-1] >= 0)
-				{
-					if (counter >= minLength)
-						end = i-1;
-					counter = 0;
-
-				}
-				if (counter == minLength)
-				{
-					start = i-minLength + 1;
-				}
-			}
-
-			for (int i = 0; i < calibration.length; i++)
-			{
-				if (i == 0) 
-					calibration[i][Ch-1] = (result[start][Ch-1] + result[start + 1][Ch-1] + result[start + 2][Ch-1]) / 3;
-				else if (i == 1)
-					calibration[i][Ch-1] = (result[start][Ch-1] + result[start + 1][Ch-1] + result[start + 2][Ch-1] + result[start + 3][Ch-1]) / 4;
-				else if (i == calibration.length-2)
-					calibration[i][Ch-1] = (result[start + i + 1][Ch-1] + result[start + i][Ch-1] + result[start + i - 1][Ch-1] + result[start + i - 2][Ch-1])/4;
-				else if (i == calibration.length-1)
-					calibration[i][Ch-1] = (result[start + i][Ch-1] + result[start + i - 1][Ch-1]+ result[start + i - 2][Ch-1])/3;
-				else
-					calibration[i][Ch-1] = (result[start + i][Ch-1] + result[start + i - 1][Ch-1] + result[start + i + 1][Ch-1] + result[start + i - 2][Ch-1] + result[start + i + 2][Ch-1])/5;
-			}
-		}
-
-		return calibration;
-	}*/
 }

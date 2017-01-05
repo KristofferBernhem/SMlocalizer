@@ -164,134 +164,44 @@ public class CalibrationGUI extends javax.swing.JFrame {
 		 * translate into calibration data based on method:
 		 */
 
-		
+
 		if(algorithmSelect.getSelectedIndex() == 0)
 		{ // PRILM			
 
 			int inputPixelSize 	= Integer.parseInt(pixelSize.getText());
 			int zStep = Integer.parseInt(stepSize.getText());
 			PRILMfitting.calibrate(inputPixelSize, zStep);
-		
+
 		}else if(algorithmSelect.getSelectedIndex() == 1)
 		{ // DH
-			 int zStep = 10;
-			 // TODO: popup question for zStep.
-			 DoubleHelixFitting.calibrate(Integer.parseInt(pixelSize.getText()), zStep);
-			/*
-			ImageStatistics IMstat 	= image.getStatistics();
-			int[] MinLevel 			= {(int) (IMstat.max*0.3)};	
-			double maxSigma 		= 2.5;			
-			int gWindow 			= 5;
-			int inputPixelSize 	= Integer.parseInt(pixelSize.getText());
-			int[] minPosPixels 		= {20};
-			int[] totalGain 		= {100};
-			int selectedModel 		= 0; // CPU			
-			localizeAndFit.run(MinLevel, gWindow, inputPixelSize, totalGain, selectedModel,maxSigma,"Double helix");
-			/*
-			 * clean out fits based on goodness of fit:
-			 *
-			boolean[][] include = new boolean[7][1];
-			include[0][0] 		= false;
-			include[1][0] 		= false;
-			include[2][0] 		= false;
-			include[3][0] 		= true;
-			include[4][0] 		= false;
-			include[5][0] 		= false;
-			include[6][0] 		= false;    	
-			double[][] lb 		= new double[7][1];
-			lb[0][0]			= 0;
-			lb[1][0]			= 0;
-			lb[2][0]			= 0;
-			lb[3][0]			= 0.8;
-			lb[4][0]			= 0;
-			lb[5][0]			= 0;
-			lb[6][0]			= 0;
-			double[][] ub 		= new double[7][1];
-			ub[0][0]			= 0;
-			ub[1][0]			= 0;
-			ub[2][0]			= 0;
-			ub[3][0]			= 1.0;
-			ub[4][0]			= 0;
-			ub[5][0]			= 0;
-			ub[6][0]			= 0;
-			cleanParticleList.run(lb,ub,include);
-			cleanParticleList.delete();
-			ArrayList<Particle> result = TableIO.Load();
-			int zStep = Integer.parseInt(stepSize.getText());
-			for (int i = 0; i < result.size(); i++)
-			{
-				result.get(i).z = (result.get(i).frame-1)*zStep;
-			}
-			TableIO.Store(result);
-			result = TableIO.Load();
-			int maxSqdist = 650*650;
-			System.out.println("PRILM");
-			System.out.println("Double helix");   
-			int id = 2;		
-			double[] angle = new double[nFrames];
-			double[] distance = new double[nFrames];
-			int[] count = new int[nFrames];
-			for (int i = 0; i < result.size(); i++)
-			{
-				if (result.get(i).include == 1) // if the current entry is within ok range and has not yet been assigned.
-				{
-					int idx = i + 1;
-					while (idx < result.size() && result.get(i).channel == result.get(idx).channel)
-					{
-						if (result.get(i).frame == result.get(idx).frame && result.get(idx).include == 1)
-						{
-							if (((result.get(i).x - result.get(idx).x)*(result.get(i).x - result.get(idx).x) +
-									(result.get(i).y - result.get(idx).y)*(result.get(i).y - result.get(idx).y)) < maxSqdist)
-							{
-								result.get(idx).include = id;
-								result.get(i).include 	= id;							
-								short dx = (short)(result.get(i).x - result.get(idx).x); // diff in x dimension.
-								short dy = (short)(result.get(i).y - result.get(idx).y); // diff in y dimension.
-								angle[(int)(result.get(i).frame-1)] += (Math.atan2(dy, dx)); // angle between points and horizontal axis.
-								if (Math.sqrt(dx*dx + dy*dy) > distance[(int)(result.get(i).frame-1)])
-									distance[(int)(result.get(i).frame-1)] = Math.sqrt(dx*dx + dy*dy);
-								count[(int)(result.get(i).frame-1)]++;
-							}
-						}
-						idx ++;
-					}    				    				
-					id++;
-				}
-			}
-			for(int i = 0; i < count.length; i++)
-			{
-				if (count[i]>0)
-				{
-					angle[i] 	/= count[i]; // mean angle for this z-depth.					
-				}
-			}
-			// interpolate to smooth out calibration curve.
-			// Store calibrationfile.
-
-			correctDrift.plot(angle);
-			correctDrift.plot(distance);
-		*/
+			int zStep = 10;
+			// TODO: popup question for zStep.
+			DoubleHelixFitting.calibrate(Integer.parseInt(pixelSize.getText()), zStep);
 		}else 	
 			if(algorithmSelect.getSelectedIndex() == 2)
 			{ // Biplane
+				int zStep = 10;
+				// TODO: popup question for zStep.
+				BiplaneFitting.calibrate(Integer.parseInt(pixelSize.getText()), zStep);
+				
 				/*
 				 * Fit all and then calculate intensity distribution between the two cameras for z position. Use strongest intensity fit for x-y.
 				 */			
 				/*
 				 * Loop over min level, max sigma for optimization. Aquire separation distance based on total frame width.
-				 */
+				 *
 				ImageStatistics IMstat 	= image.getStatistics();
 				int[] MinLevel 			= {(int) (IMstat.max*0.3)};	
 				double maxSigma 		= 6;
-				
-				int gWindow 			= 5; // Astigmatism: 15. PRILM: 5
+
+				int gWindow 			= 7; // Astigmatism: 15. PRILM: 5
 				int inputPixelSize 		= Integer.parseInt(pixelSize.getText());				
 				int[] totalGain 		= {100};
 				int selectedModel 		= 0; // CPU
 				localizeAndFit.run(MinLevel, gWindow, inputPixelSize, totalGain, selectedModel,maxSigma,"Biplane");
 				/*
 				 * clean out fits based on goodness of fit:
-				 */
+				 *
 				boolean[][] include = new boolean[6][1];
 				include[0][0] 		= false;
 				include[1][0] 		= false;
@@ -299,15 +209,15 @@ public class CalibrationGUI extends javax.swing.JFrame {
 				include[3][0] 		= false;
 				include[4][0] 		= false;
 				include[5][0] 		= false;
-				    	
+
 				double[][] lb 		= new double[6][1];
 				lb[0][0]			= 0;
 				lb[1][0]			= 0;
-				lb[2][0]			= 0.8;
+				lb[2][0]			= 0.6;
 				lb[3][0]			= 0;
 				lb[4][0]			= 0;
 				lb[5][0]			= 0;
-				
+
 				double[][] ub 		= new double[6][1];
 				ub[0][0]			= 0;
 				ub[1][0]			= 0;
@@ -315,7 +225,7 @@ public class CalibrationGUI extends javax.swing.JFrame {
 				ub[3][0]			= 0;
 				ub[4][0]			= 0;
 				ub[5][0]			= 0;
-				
+
 				cleanParticleList.run(lb,ub,include);				
 				ArrayList<Particle> result = TableIO.Load();
 				double[] ratio = new double[nFrames];
@@ -382,7 +292,7 @@ public class CalibrationGUI extends javax.swing.JFrame {
 					if (count[i]>0)
 						ratio[i] /= count[i]; // normalize.
 				}
-				correctDrift.plot(ratio);
+				correctDrift.plot(ratio);*/
 			}else
 				if(algorithmSelect.getSelectedIndex() == 3)
 				{ // Astigmatism
@@ -392,17 +302,17 @@ public class CalibrationGUI extends javax.swing.JFrame {
 					ImageStatistics IMstat 	= image.getStatistics();
 					int[] MinLevel 			= {(int) (IMstat.max*0.1)};	
 					double maxSigma 		= 7;
-					
+
 					int gWindow 			= 15; 
 					int inputPixelSize 		= Integer.parseInt(pixelSize.getText());
-					
+
 					int[] totalGain 		= {100};
 					int selectedModel 		= 0; // CPU
 					localizeAndFit.run(MinLevel, gWindow, inputPixelSize, totalGain, selectedModel,maxSigma,"Astigmatism");
 					/*
 					 * clean out fits based on goodness of fit:
 					 */
-					
+
 					boolean[][] include = new boolean[6][1];
 					include[0][0] 		= false;
 					include[1][0] 		= false;
@@ -453,7 +363,7 @@ public class CalibrationGUI extends javax.swing.JFrame {
 						}
 						xi[i] = i;
 					}
-					
+
 					/*
 					 * TODO: IDEA: Use maxDim to limit lower end of the ratio curve for z-fitting. Find point from which ratio is
 					 * continuously increasing for longest duration.  

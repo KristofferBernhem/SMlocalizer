@@ -99,8 +99,7 @@ public class DoubleHelixFitting {
 					(int) nFrames/2);		// frame.
 		}
 		int nChannels 			= image.getNChannels();
-		int[] totalGain 		= {100};
-		int selectedModel 		= 0; // CPU
+		int[] totalGain 		= {100};		
 		double meanRsquare 		= 0;
 		int calibrationLength 	= 0;
 		boolean[][] include = new boolean[6][10];
@@ -130,7 +129,6 @@ public class DoubleHelixFitting {
 			ub[3][i]			= 0;
 			ub[4][i]			= 0;
 			ub[5][i]			= 0;
-
 		}
 
 		double finalLevel = 0;
@@ -293,11 +291,11 @@ public class DoubleHelixFitting {
 								short dx = (short)(result.get(i).x - result.get(idx).x); // diff in x dimension.
 								short dy = (short)(result.get(i).y - result.get(idx).y); // diff in y dimension.
 								angle[(int)(result.get(i).frame-1)][Ch-1] += (Math.atan2(dy, dx)); // angle between points and horizontal axis.
-								System.out.println("frame: " + result.get(i).frame + " angle: " + (Math.atan2(dy, dx)));
+								//	System.out.println("frame: " + result.get(i).frame + " angle: " + (Math.atan2(dy, dx)));
 								count[(int)(result.get(i).frame-1)][Ch-1]++;
 								if (Math.sqrt(dx*dx + dy*dy) > distance[(int)(result.get(i).frame-1)][Ch-1])
 									distance[(int)(result.get(i).frame-1)][Ch-1] = Math.sqrt(dx*dx + dy*dy);
-								
+
 
 							}
 						}
@@ -313,7 +311,8 @@ public class DoubleHelixFitting {
 			{
 				if (count[i][Ch-1]>0)
 				{
-					angle[i][Ch-1] 	/= count[i][Ch-1]; // mean angle for this z-depth.					
+					angle[i][Ch-1] 	/= count[i][Ch-1]; // mean angle for this z-depth.
+					//		System.out.println(angle[i][Ch-1]);
 				}
 			}
 		}
@@ -330,7 +329,7 @@ public class DoubleHelixFitting {
 		ij.Prefs.set("SMLocalizer.calibration.DoubleHelix.distance",finalDist);
 
 		ij.Prefs.set("SMLocalizer.calibration.DoubleHelix.height",calibration.length);
-		ij.Prefs.set("SMLocalizer.calibration.DoubleHelix.channels",calibration[0].length);
+		ij.Prefs.set("SMLocalizer.calibration.DoubleHelix.channels",nChannels);
 		ij.Prefs.set("SMLocalizer.calibration.DoubleHelix.step",zStep);
 		for (int Ch = 1; Ch <= nChannels; Ch++)
 		{
@@ -340,11 +339,14 @@ public class DoubleHelixFitting {
 			}
 		} 
 		ij.Prefs.savePreferences(); // store settings. 
-				double[] printout = new double[calibration.length];
-		for (int i = 0; i < printout.length; i++)
+		double[] printout = new double[calibration.length];
+		for (int i = 0; i < printout.length; i++){
 			printout[i] = calibration[i][0];
+			System.out.println(printout[i]);
+		}
+
 		correctDrift.plot(printout);
-		 
+
 
 	} // calibrate.
 
@@ -391,78 +393,100 @@ public class DoubleHelixFitting {
 
 	/*
 	 * Used in generation of calibration file. Smoothes out fitted results, 5 point moving window mean.
-	 */
-	public static double[][] interpolate(double[][] result, int minLength, int Channels)
+	*/
+	public static double[][] interpolate(double[][] result, int minLength, int nChannels)
 	{
-		int start 	= 0;
-		int end 	= 0;
+		int[] start = new int[nChannels];
+		int[] end 	= new int[nChannels];
 		int counter = 0;
 		int maxCounter = 0;
-		for (int Ch = 1; Ch <= Channels; Ch++)
+		int channelIdx = 1;
+		while (channelIdx <= nChannels)
 		{
-			for (int i = 0; i < result.length; i++) // loop over all and determine start and end
+			int idx = 0;
+			boolean iterate = true;
+			while (idx < result.length && iterate)
 			{
-				if (result[i][Ch-1] < 0)
+				if (result[idx][channelIdx-1] < 0)
 				{
 					counter++;
+					if (counter == minLength) // if we've passed the set number of points.
+						start[channelIdx-1] = idx - minLength + 1;
+					if (counter > minLength)
+						end[channelIdx-1] = idx;
 				}
-				if (result[i][Ch-1] >= 0)
+				else if (result[idx][channelIdx-1] >= 0) 
 				{
+					if (counter < minLength)
+						counter = 0;
 					if (counter >= minLength)
-						end = i-1;
-					counter = 0;
-
+						iterate = false;
 				}
-				if (counter == minLength)
-				{
-					start = i-minLength + 1;
-				}
+				idx++;
 			}
-			if ((end-start+1) > maxCounter)
-				maxCounter = end-start+1;
+			if (counter > maxCounter)
+				maxCounter = counter;
+
+			channelIdx++;
 		}
-
-		double[][] calibration = new double[maxCounter][Channels];		
-
-		start 	= 0;
-		end 	= 0;
-		counter = 0;
-		for (int Ch = 1; Ch <= Channels; Ch++)
+		if (maxCounter >= minLength)
 		{
-			for (int i = 0; i < result.length; i++) // loop over all and determine start and end
-			{
-				if (result[i][Ch-1] < 0)
-				{
-					counter++;
-				}
-				if (result[i][Ch-1] >= 0)
-				{
-					if (counter >= minLength)
-						end = i-1;
-					counter = 0;
 
-				}
-				if (counter == minLength)
-				{
-					start = i-minLength + 1;
-				}
-			}
 
-			for (int i = 0; i < calibration.length; i++)
+			double[][] calibration = new double[maxCounter][nChannels];
+			channelIdx = 1;
+
+			while (channelIdx <= nChannels)
 			{
-				if (i == 0) 
-					calibration[i][Ch-1] = (result[start][Ch-1] + result[start + 1][Ch-1] + result[start + 2][Ch-1]) / 3;
-				else if (i == 1)
-					calibration[i][Ch-1] = (result[start][Ch-1] + result[start + 1][Ch-1] + result[start + 2][Ch-1] + result[start + 3][Ch-1]) / 4;
-				else if (i == calibration.length-2)
-					calibration[i][Ch-1] = (result[start + i + 1][Ch-1] + result[start + i][Ch-1] + result[start + i - 1][Ch-1] + result[start + i - 2][Ch-1])/4;
-				else if (i == calibration.length-1)
-					calibration[i][Ch-1] = (result[start + i][Ch-1] + result[start + i - 1][Ch-1]+ result[start + i - 2][Ch-1])/3;
-				else
-					calibration[i][Ch-1] = (result[start + i][Ch-1] + result[start + i - 1][Ch-1] + result[start + i + 1][Ch-1] + result[start + i - 2][Ch-1] + result[start + i + 2][Ch-1])/5;
+				int idx = start[channelIdx-1];
+				int count = 0;
+				while (idx <= end[channelIdx-1])				
+				{
+					// 5 point smoothing:
+					if (idx == start[channelIdx-1])
+					{
+						calibration[count][channelIdx-1] = (result[idx][channelIdx-1]
+								+ result[idx + 1][channelIdx-1] 
+										+ result[idx + 2][channelIdx-1])/3;
+					}else if (idx == start[channelIdx-1] + 1)
+					{
+						calibration[count][channelIdx-1] = (result[idx - 1][channelIdx-1]
+								+ result[idx][channelIdx-1]
+										+ result[idx + 1][channelIdx-1] 
+												+ result[idx + 2][channelIdx-1])/4;
+					}else if (idx == end[channelIdx-1] - 1)
+					{
+						calibration[count][channelIdx-1] = (result[idx - 2][channelIdx-1]
+								+ result[idx - 1][channelIdx-1]
+										+ result[idx][channelIdx-1] 
+												+ result[idx + 1][channelIdx-1])/4;
+					}else if (idx == end[channelIdx-1])
+					{
+						calibration[count][channelIdx-1] = (result[idx - 2][channelIdx-1]
+								+ result[idx - 1][channelIdx-1]
+										+ result[idx][channelIdx-1])/3;
+					}else if (idx < end[channelIdx-1] - 1)
+					{
+						calibration[count][channelIdx-1] = (result[idx - 2][channelIdx-1]
+								+ result[idx - 1][channelIdx-1]
+										+ result[idx][channelIdx-1] 
+												+ result[idx + 1][channelIdx-1]
+														+ result[idx + 2][channelIdx-1])/5;
+					}
+					count++;
+					idx++;
+				}
+				channelIdx++;
 			}
+			return calibration;
 		}
 
-		return calibration;
+		else
+		{
+			double[][] calibration = new double[maxCounter][nChannels];
+			return calibration;
+		}
 	}
+
+	
 }

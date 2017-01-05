@@ -3241,7 +3241,7 @@ import ij.WindowManager;
 			 // Double helix.
 			 int zStep = 10;
 			 // TODO: popup question for zStep.
-			 DoubleHelixFitting.calibrate(Integer.parseInt(inputPixelSize.getText()), zStep);
+			 BiplaneFitting.calibrate(Integer.parseInt(inputPixelSize.getText()), zStep);
 		 }
 		 else if(modality.getSelectedIndex() == 4)
 		 {
