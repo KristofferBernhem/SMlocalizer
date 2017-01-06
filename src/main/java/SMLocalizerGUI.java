@@ -3235,13 +3235,14 @@ import ij.WindowManager;
 			 // Biplane.
 			 int zStep = 10;
 			 // TODO: popup question for zStep.
+			 BiplaneFitting.calibrate(Integer.parseInt(inputPixelSize.getText()), zStep);
 		 }
 		 else if(modality.getSelectedIndex() == 3)
 		 {
 			 // Double helix.
 			 int zStep = 10;
 			 // TODO: popup question for zStep.
-			 BiplaneFitting.calibrate(Integer.parseInt(inputPixelSize.getText()), zStep);
+			 DoubleHelixFitting.calibrate(Integer.parseInt(inputPixelSize.getText()), zStep);
 		 }
 		 else if(modality.getSelectedIndex() == 4)
 		 {
@@ -3287,7 +3288,11 @@ import ij.WindowManager;
 			 maxSigma 		= (int)ij.Prefs.getInt("SMLocalizer.calibration.PRILM.sigma", 0);
 		 }
 		 else if(modality.getSelectedIndex() == 2)
+		 {
 			 modalityChoice = "Biplane";
+			 gWindow 		= (int)ij.Prefs.getInt("SMLocalizer.calibration.Biplane.window", 0);
+			 maxSigma 		= (int)ij.Prefs.getInt("SMLocalizer.calibration.Biplane.sigma", 0);
+		 }
 		 else if(modality.getSelectedIndex() == 3)
 		 {
 			 modalityChoice = "Double Helix";
@@ -3295,8 +3300,11 @@ import ij.WindowManager;
 			 maxSigma 		= (int)ij.Prefs.getInt("SMLocalizer.calibration.DoubleHelix.sigma", 0);
 		 }
 		 else if(modality.getSelectedIndex() == 4)
+		 {
 			 modalityChoice = "Astigmatism";
-		
+			 gWindow 		= (int)ij.Prefs.getInt("SMLocalizer.calibration.Astigmatism.window", 0);
+			 maxSigma 		= (int)ij.Prefs.getInt("SMLocalizer.calibration.Astigmatism.sigma", 0);
+		 }
 
 
 		 if (parallelComputation.isSelected()) // parallel computation.
@@ -3579,7 +3587,11 @@ import ij.WindowManager;
 			 maxSigma 		= (int)ij.Prefs.getInt("SMLocalizer.calibration.PRILM.sigma", 0);
 		 }
 		 else if(modality.getSelectedIndex() == 2)
+		 {
 			 modalityChoice = "Biplane";
+			 gWindow 		= (int)ij.Prefs.getInt("SMLocalizer.calibration.Biplane.window", 0);
+			 maxSigma 		= (int)ij.Prefs.getInt("SMLocalizer.calibration.Biplane.sigma", 0);
+		 }
 		 else if(modality.getSelectedIndex() == 3)
 		 {
 			 modalityChoice = "Double Helix";
@@ -3587,12 +3599,12 @@ import ij.WindowManager;
 			 maxSigma 		= (int)ij.Prefs.getInt("SMLocalizer.calibration.DoubleHelix.sigma", 0);
 		 }
 		 else if(modality.getSelectedIndex() == 4)
-			 {
-			 	modalityChoice = "Astigmatism";
-			 	maxSigma = 7;
-			 	gWindow = 15;
-			 }
-		
+		 {
+			 modalityChoice = "Astigmatism";
+			 gWindow 		= (int)ij.Prefs.getInt("SMLocalizer.calibration.Astigmatism.window", 0);
+			 maxSigma 		= (int)ij.Prefs.getInt("SMLocalizer.calibration.Astigmatism.sigma", 0);
+		 }
+
 		 ArrayList<Particle> Results = localizeAndFit.run(signalStrength, gWindow, pixelSize,  totalGain , selectedModel, maxSigma, modalityChoice);  //locate and fit all particles.		  	   	  
 		 TableIO.Store(Results);
 	 }                                            

@@ -30,77 +30,157 @@ import java.util.ArrayList;
 
 import ij.ImagePlus;
 import ij.WindowManager;
+import ij.process.ImageProcessor;
 import ij.process.ImageStatistics;
 
 
 public class BiplaneFitting {
-	public static ArrayList<Particle> fit(ArrayList<Particle> inputResults)
+	public static ArrayList<Particle> fit(ArrayList<Particle> inputResults, int inputPixelSize, int[] totalGain)
 	{
+		ImagePlus image = WindowManager.getCurrentImage();
+		int frameWidth 	= image.getWidth()*inputPixelSize;
 		ArrayList<Particle> results = new ArrayList<Particle>();
 		double[][] calibration 		= getCalibration();
-		int distance 				= (int)ij.Prefs.get("SMLocalizer.calibration.Biplane.distance",0);
-		distance *= distance; // square max distance between centers.
-		for (int i = 0; i < results.size(); i++)
+		
+		
+		double offsetX 	= ij.Prefs.get("SMLocalizer.calibration.Biplane.finalOffsetX",0);
+		double offsetY 	= ij.Prefs.get("SMLocalizer.calibration.Biplane.finalOffsetY",0);
+		int gWindow 	= (int) ij.Prefs.get("SMLocalizer.calibration.Biplane.sigma",0);
+		
+		for (int i = 0; i < inputResults.size()-1; i++) // loop over all entries
 		{
-			int j = i+1;
-			while (j < inputResults.size() && inputResults.get(i).frame == inputResults.get(j).frame
-					&& inputResults.get(i).channel == inputResults.get(j).channel)
+			double searchX = inputResults.get(i).x;
+			double searchY = inputResults.get(i).y;
+			if (inputResults.get(i).include == 1)
 			{
-				if (((inputResults.get(i).x - inputResults.get(j).x)*(inputResults.get(i).x - inputResults.get(j).x) + 
-						(inputResults.get(i).x - inputResults.get(j).x)*(inputResults.get(i).x - inputResults.get(j).x)) < distance)
+				inputResults.get(i).include = 2; // checked.
+				if (inputResults.get(i).x < frameWidth) // if on the left hand side.
 				{
-					short dx 		= (short)(inputResults.get(i).x - inputResults.get(j).x); // diff in x dimension.
-					short dy 		= (short)(inputResults.get(i).y - inputResults.get(j).y); // diff in y dimension.
-					double angle 	= (Math.atan2(dy, dx));
-					// translate angle to z:
+					/*
+					 * check to see if there is another fitted object on the right side within 1 pixel + offset.
+					 * if so, use the best fit of these two as dominant and calculate summed intensity within fit region
+					 * for both, take ratio and store this. Center coordinate is transposed by offset if the dominant one is on the right.
+					 * 
+					 */
+					searchX += offsetX + frameWidth;
+					searchY += offsetY;
+				}else{
+					searchX -= - (offsetX + frameWidth);
+					searchY -= - offsetY;
+				}
+				// find if any object are close to searchX,searchY.
+				//for (int j = i + 1; j < result.size(); j++ )
+				int j = i + 1;
+				boolean search = true;
+				//ArrayList<Particle> correctedResult = new ArrayList<Particle>();
+				double z = 0;
+				int photon = 0;
+				while (search)
+				{
+					if (inputResults.get(j).channel == inputResults.get(i).channel &&  // if the same channel
+							inputResults.get(j).frame == inputResults.get(i).frame)    // and same frame-
+					{
+						if (inputResults.get(j).y < (searchY + inputPixelSize) &&
+								inputResults.get(j).y > (searchY - inputPixelSize))
+						{
+							if (inputResults.get(j).x < (searchX + inputPixelSize) &&
+									inputResults.get(j).x > (searchX - inputPixelSize))
+							{											
+								inputResults.get(j).include = 2; // this entry has been covered.
+
+								if(inputResults.get(i).x < frameWidth)
+								{																							
+
+									double photonLeft 	= getPhotons(image, inputResults.get(i).x/inputPixelSize,inputResults.get(i).y/inputPixelSize, inputResults.get(i).frame, inputResults.get(i).channel, gWindow,totalGain);
+									double photonRight 	= getPhotons(image, inputResults.get(j).x/inputPixelSize,inputResults.get(j).y/inputPixelSize, inputResults.get(i).frame, inputResults.get(i).channel, gWindow,totalGain);
+									photon = (int) (photonLeft + photonRight);
+									z = getZ(calibration, inputResults.get(i).channel, photonLeft/photonRight);
+								}else
+								{
+									double photonLeft 	= getPhotons(image, inputResults.get(j).x/inputPixelSize,inputResults.get(j).y/inputPixelSize, inputResults.get(i).frame, inputResults.get(i).channel, gWindow,totalGain);
+									double photonRight 	= getPhotons(image, inputResults.get(i).x/inputPixelSize,inputResults.get(i).y/inputPixelSize, inputResults.get(i).frame, inputResults.get(i).channel, gWindow,totalGain);
+									photon = (int) (photonLeft + photonRight);
+									z = getZ(calibration, inputResults.get(i).channel, photonLeft/photonRight);							
+								}
+								search = false;
+							}
+						}
+					}
+
+					j++;
+
+					if (j == inputResults.size() || 							// if we're at the end of the list and still have not found any other located events that match.
+							inputResults.get(j).frame > inputResults.get(i).frame)	// if we're looking in the wrong frame, stop.
+					{
+						search = false;
+						if(inputResults.get(i).x < frameWidth)
+						{																							
+							double photonLeft 	= getPhotons(image, inputResults.get(i).x/inputPixelSize,inputResults.get(i).y/inputPixelSize, inputResults.get(i).frame, inputResults.get(i).channel, gWindow,totalGain);
+							double photonRight 	= getPhotons(image, searchX/inputPixelSize,searchY/inputPixelSize, inputResults.get(i).frame, inputResults.get(i).channel, gWindow,totalGain);
+							photon = (int) (photonLeft + photonRight);
+							z = getZ(calibration, inputResults.get(i).channel, photonLeft/photonRight);																
+						}else
+						{
+							double photonLeft 	= getPhotons(image, searchX/inputPixelSize,searchY/inputPixelSize, inputResults.get(i).frame, inputResults.get(i).channel, gWindow,totalGain);
+							double photonRight 	= getPhotons(image, inputResults.get(i).x/inputPixelSize,inputResults.get(i).y/inputPixelSize, inputResults.get(i).frame, inputResults.get(i).channel, gWindow,totalGain);
+							photon = (int) (photonLeft + photonRight);
+							z = getZ(calibration, inputResults.get(i).channel, photonLeft/photonRight);							
+						}
+					}
+				}
+				if (inputResults.get(i).r_square > inputResults.get(j).r_square)
+				{
 					Particle temp 	= new Particle();
 					temp.channel 	= inputResults.get(i).channel;
-					temp.z 		 	= getZ(calibration, temp.channel, angle);
+					temp.z 		 	= z;
 					temp.frame 	 	= inputResults.get(i).frame;
-					temp.photons 	= inputResults.get(i).photons + inputResults.get(j).photons;
-					temp.x			= (inputResults.get(i).x + inputResults.get(j).x) / 2;
-					temp.y			= (inputResults.get(i).y + inputResults.get(j).y) / 2;
-					temp.sigma_x 	= (inputResults.get(i).sigma_x + inputResults.get(j).sigma_x) / 2; 		// fitted sigma in x direction.
-					temp.sigma_y 	= (inputResults.get(i).sigma_y + inputResults.get(j).sigma_y) / 2; 		// fitted sigma in x direction.
-					temp.sigma_z 	= Math.sqrt(dx*dx + dy*dy); 			// fitted sigma in z direction.
-					temp.precision_x= Math.min(inputResults.get(i).precision_x,inputResults.get(j).precision_x); 	// precision of fit for x coordinate.
-					temp.precision_y= Math.min(inputResults.get(i).precision_y,inputResults.get(j).precision_y); 	// precision of fit for y coordinate.
-					temp.precision_z= temp.sigma_z / Math.sqrt(temp.photons); 			// precision of fit for z coordinate.
-					temp.r_square 	= Math.min(inputResults.get(i).r_square,inputResults.get(j).r_square);; 	// Goodness of fit.
+					temp.photons 	= photon;
+					temp.x			= inputResults.get(i).x;
+					temp.y			= inputResults.get(i).y;
+					temp.sigma_x 	= inputResults.get(i).sigma_x; 		// fitted sigma in x direction.
+					temp.sigma_y 	= inputResults.get(i).sigma_y; 		// fitted sigma in x direction.					
+					temp.precision_x= inputResults.get(i).precision_x; 	// precision of fit for x coordinate.
+					temp.precision_y= inputResults.get(i).precision_y; 	// precision of fit for y coordinate.
+					temp.precision_z= 600 / Math.sqrt(temp.photons); 			// precision of fit for z coordinate.
+					temp.r_square 	= inputResults.get(i).r_square; 	// Goodness of fit.
 					temp.include	= 1; 		// If this particle should be included in analysis and plotted.
 					if (temp.z != -1)
 						results.add(temp);
-				}	
-				j++;
+				}else
+				{
+					Particle temp 	= new Particle();
+					temp.channel 	= inputResults.get(j).channel;
+					temp.z 		 	= z;
+					temp.frame 	 	= inputResults.get(j).frame;
+					temp.photons 	= photon;
+					temp.x			= inputResults.get(j).x;
+					temp.y			= inputResults.get(j).y;
+					temp.sigma_x 	= inputResults.get(j).sigma_x; 		// fitted sigma in x direction.
+					temp.sigma_y 	= inputResults.get(j).sigma_y; 		// fitted sigma in x direction.					
+					temp.precision_x= inputResults.get(j).precision_x; 	// precision of fit for x coordinate.
+					temp.precision_y= inputResults.get(j).precision_y; 	// precision of fit for y coordinate.
+					temp.precision_z= 600 / Math.sqrt(temp.photons); 			// precision of fit for z coordinate.
+					temp.r_square 	= inputResults.get(j).r_square; 	// Goodness of fit.
+					temp.include	= 1; 		// If this particle should be included in analysis and plotted.
+					if (temp.z != -1)
+						results.add(temp);
+				}
+
 			}
-
-		}
-
+		}		
+		
+		
 		return results;
 	}
 
 	public static void calibrate(int inputPixelSize,int zStep)
 	{
-		ImagePlus image 					= WindowManager.getCurrentImage();
-		int nFrames 						= image.getNFrames();
+		ImagePlus image 		= WindowManager.getCurrentImage();
+		int nFrames 			= image.getNFrames();
 		if (nFrames == 1)
-			nFrames 						= image.getNSlices(); 
-		if (image.getNFrames() == 1)
-		{
-			image.setPosition(							
-					1,			// channel.
-					(int) nFrames/2,			// slice.
-					1);		// frame.
-		}
-		else
-		{														
-			image.setPosition(
-					1,			// channel.
-					1,			// slice.
-					(int) nFrames/2);		// frame.
-		}
+			nFrames 			= image.getNSlices(); 
 		int nChannels 			= image.getNChannels();
-		int[] totalGain 		= {100};		
+		int[] totalGain 		= {100,100,100,100,100,100,100,100,100,100};		
 		double meanRsquare 		= 0;
 		int calibrationLength 	= 0;
 		boolean[][] include = new boolean[6][10];
@@ -132,10 +212,85 @@ public class BiplaneFitting {
 			ub[5][i]			= 0;
 		}
 
+		/*
+		 * remove frame median from calibration file.
+		 */
+
+		for (int channel = 1; channel <= nChannels; channel++)
+		{
+			if (image.getNFrames() == 1)
+			{
+				image.setPosition(							
+						channel,// channel.
+						1,	// slice.
+						1);		// frame.
+			}
+			else
+			{														
+				image.setPosition(
+						channel,			// channel.
+						1,			// slice.
+						1);		// frame.
+			}
+			ImageProcessor IP = image.getProcessor();
+			double median = 0;
+			for (int i = 0; i < IP.getPixelCount(); i++)
+				median += IP.get(i);
+			median /= IP.getPixelCount();
+			for (int frame = 1; frame <= nFrames; frame ++)
+			{
+				if (image.getNFrames() == 1)
+				{
+					image.setPosition(							
+							channel,// channel.
+							frame,	// slice.
+							1);		// frame.
+				}
+				else
+				{														
+					image.setPosition(
+							channel,			// channel.
+							1,			// slice.
+							frame);		// frame.
+				}
+
+				IP = image.getProcessor();
+				int value = 0;
+				for (int i = 0; i < IP.getPixelCount(); i++)
+				{								
+					value = (int)(IP.get(i)-median);
+					if (value < 0)
+						value = 0;
+					IP.set(i, value);
+				}
+				//image.setProcessor(IP);
+				image.updateAndDraw();
+			}
+
+		}
+
+
+		if (image.getNFrames() == 1)
+		{
+			image.setPosition(							
+					1,			// channel.
+					(int) nFrames/2,			// slice.
+					1);		// frame.
+		}
+		else
+		{														
+			image.setPosition(
+					1,			// channel.
+					1,			// slice.
+					(int) nFrames/2);		// frame.
+		}
+
 		double finalLevel 	= 0;
 		double finalSigma 	= 0;
-		int finalDist 		= 0;
+		double finalOffsetX = 0;
+		double finalOffsetY = 0;		
 		int gWindow 		= 5;
+		int frameWidth = inputPixelSize*image.getWidth()/2;
 		if (inputPixelSize < 100)
 		{
 			gWindow = (int) Math.ceil(500 / inputPixelSize); // 500 nm wide window.
@@ -168,17 +323,17 @@ public class BiplaneFitting {
 					}
 					TableIO.Store(result);
 					result 				= TableIO.Load();
-					int id 				= 2;		
 					double[][] ratio	= new double[nFrames][nChannels];
+					int[][] count		= new int[nFrames][nChannels];
 					/*
 					 * Find offset based on center stack fits.
 					 */
-					
+
 					double offsetX = 0;
 					double offsetY = 0;
 					int offsetCount = 0;
-					int frameWidth = inputPixelSize*image.getWidth()/2;
-					
+
+
 					for (int i = 0; i < result.size(); i++)
 					{
 						if (result.get(i).frame > ((int)nFrames/2-5) &&	// if we're on the within the 5 slizes closest to the center
@@ -200,7 +355,7 @@ public class BiplaneFitting {
 									double newX = result.get(i).x + frameWidth; // shift x value by the half frame width.
 									double temp = Math.sqrt((newX - result.get(j).x)*(newX - result.get(j).x) + 
 											(result.get(i).y - result.get(j).y)*(result.get(i).y - result.get(j).y));
-									
+
 									if (temp < tempOffset)
 									{
 										tempOffset = temp;
@@ -216,71 +371,116 @@ public class BiplaneFitting {
 					}
 					offsetX /= offsetCount; // normalize.
 					offsetY /= offsetCount; // normalize.
-					
+
 					/*
 					 * Calculate ratio using this offset.
 					 */
-					
-					for (int i = 0; i < result.size(); i++) // loop over all entries
+
+					for (int i = 0; i < result.size()-1; i++) // loop over all entries
 					{
-						double searchX = 0;
+						double searchX = result.get(i).x;
 						double searchY = result.get(i).y;
-						if (result.get(i).x < frameWidth) // if on the left hand side.
+						if (result.get(i).include == 1)
 						{
-							/*
-							 * check to see if there is another fitted object on the right side within 1 pixel + offset.
-							 * if so, use the best fit of these two as dominant and calculate summed intensity within fit region
-							 * for both, take ratio and store this. Center coordinate is transposed by offset if the dominant one is on the right.
-							 * 
-							 */
-							searchX = offsetX + frameWidth + result.get(i).x;
-							searchY = offsetY  + result.get(i).y;
-						}else{
-							searchX = - offsetX - frameWidth + result.get(i).x;
-							searchY = - offsetY  + result.get(i).y;
-						}
-						// find if any object are close to searchX,searchY.
-					}
-					//double[][] distance = new double[nFrames][nChannels];
-					/*int[][] count 	  	= new int[nFrames][nChannels];
-					for (int Ch = 1; Ch <= nChannels; Ch++)
-					{
-						for (int i = 0; i < result.size(); i++)
-						{			
-							if (result.get(i).include == 1 && result.get(i).channel == Ch) // if the current entry is within ok range and has not yet been assigned.
+							result.get(i).include = 2; // checked.
+							if (result.get(i).x < frameWidth) // if on the left hand side.
 							{
-								int idx = i + 1;
-								while (idx < result.size() && result.get(i).channel == result.get(idx).channel)
-								{
-									if (result.get(i).frame == result.get(idx).frame && result.get(idx).include == 1)
-									{
-										result.get(idx).include = id;
-										result.get(i).include 	= id;								
-										short dx = (short)(result.get(i).x - result.get(idx).x); // diff in x dimension.
-										short dy = (short)(result.get(i).y - result.get(idx).y); // diff in y dimension.
-										ratio[(int)(result.get(i).frame-1)][Ch-1] += (Math.atan2(dy, dx)); // angle between points and horizontal axis.
-						//				if (Math.sqrt(dx*dx + dy*dy) > distance[(int)(result.get(i).frame-1)][Ch-1])
-						//					distance[(int)(result.get(i).frame-1)][Ch-1] = Math.sqrt(dx*dx + dy*dy);
-										count[(int)(result.get(i).frame-1)][Ch-1]++;												
-									}
-									idx ++;
-								}    				    				
-								id++;
+								/*
+								 * check to see if there is another fitted object on the right side within 1 pixel + offset.
+								 * if so, use the best fit of these two as dominant and calculate summed intensity within fit region
+								 * for both, take ratio and store this. Center coordinate is transposed by offset if the dominant one is on the right.
+								 * 
+								 */
+								searchX += offsetX + frameWidth;
+								searchY += offsetY;
+							}else{
+								searchX -= - (offsetX + frameWidth);
+								searchY -= - offsetY;
 							}
+							// find if any object are close to searchX,searchY.
+							//for (int j = i + 1; j < result.size(); j++ )
+							int j = i + 1;
+							boolean search = true;
+							//ArrayList<Particle> correctedResult = new ArrayList<Particle>();
+							while (search)
+							{
+								if (result.get(j).channel == result.get(i).channel &&  // if the same channel
+										result.get(j).frame == result.get(i).frame)    // and same frame-
+								{
+									if (result.get(j).y < (searchY + inputPixelSize) &&
+											result.get(j).y > (searchY - inputPixelSize))
+									{
+										if (result.get(j).x < (searchX + inputPixelSize) &&
+												result.get(j).x > (searchX - inputPixelSize))
+										{											
+											result.get(j).include = 2; // this entry has been covered.
+											if (result.get(j).r_square > result.get(i).r_square)
+											{
+												// for fitting, use j entry for calculations.
+											}
+											if(result.get(i).x < frameWidth)
+											{																							
+
+												//ratio[result.get(i).frame][result.get(i).channel-1] += (double)(result.get(i).photons) / (double)(result.get(j).photons);
+
+												double photonLeft 	= getPhotons(image, result.get(i).x/inputPixelSize,result.get(i).y/inputPixelSize, result.get(i).frame, result.get(i).channel, gWindow,totalGain);
+												double photonRight 	= getPhotons(image, result.get(j).x/inputPixelSize,result.get(j).y/inputPixelSize, result.get(i).frame, result.get(i).channel, gWindow,totalGain);												
+												ratio[result.get(i).frame][result.get(i).channel-1] += photonLeft/photonRight;
+												count[result.get(i).frame][result.get(i).channel-1]++;												
+											}else
+											{
+												double photonLeft 	= getPhotons(image, result.get(j).x/inputPixelSize,result.get(j).y/inputPixelSize, result.get(i).frame, result.get(i).channel, gWindow,totalGain);
+												double photonRight 	= getPhotons(image, result.get(i).x/inputPixelSize,result.get(i).y/inputPixelSize, result.get(i).frame, result.get(i).channel, gWindow,totalGain);												
+												ratio[result.get(i).frame][result.get(i).channel-1] += photonLeft/photonRight;
+												count[result.get(i).frame][result.get(i).channel-1]++;							
+											}
+											search = false;
+										}
+									}
+								}
+
+
+								j++;
+
+								if (j == result.size() || 							// if we're at the end of the list and still have not found any other located events that match.
+										result.get(j).frame > result.get(i).frame)	// if we're looking in the wrong frame, stop.
+								{
+									search = false;
+									if(result.get(i).x < frameWidth)
+									{																							
+
+										//ratio[result.get(i).frame][result.get(i).channel-1] += (double)(result.get(i).photons) / (double)(result.get(j).photons);
+
+										double photonLeft 	= getPhotons(image, result.get(i).x/inputPixelSize,result.get(i).y/inputPixelSize, result.get(i).frame, result.get(i).channel, gWindow,totalGain);
+										double photonRight 	= getPhotons(image, searchX/inputPixelSize,searchY/inputPixelSize, result.get(i).frame, result.get(i).channel, gWindow,totalGain);												
+										ratio[result.get(i).frame][result.get(i).channel-1] += photonLeft/photonRight;
+										count[result.get(i).frame][result.get(i).channel-1]++;												
+									}else
+									{
+										double photonLeft 	= getPhotons(image, searchX/inputPixelSize,searchY/inputPixelSize, result.get(i).frame, result.get(i).channel, gWindow,totalGain);
+										double photonRight 	= getPhotons(image, result.get(i).x/inputPixelSize,result.get(i).y/inputPixelSize, result.get(i).frame, result.get(i).channel, gWindow,totalGain);												
+										ratio[result.get(i).frame][result.get(i).channel-1] += photonLeft/photonRight;
+										count[result.get(i).frame][result.get(i).channel-1]++;							
+									}
+								}
+							}
+
 						}
-					}
+					}		
 					for (int Ch = 1; Ch <= nChannels; Ch++)
 					{
 						for(int i = 0; i < count.length; i++)
 						{
 							if (count[i][Ch-1]>0)
 							{
-								ratio[i][Ch-1] 	/= count[i][Ch-1]; // mean angle for this z-depth.			
+								ratio[i][Ch-1] 	/= count[i][Ch-1]; // mean ratio for this z-depth.							
 							}
 						}
 					}
+
+
 					int minLength = 40;			
-					double[][] calibration = interpolate(ratio, minLength, nChannels);
+					double[][] calibration = interpolateBiplane(ratio, minLength, nChannels,false);
 					if (calibrationLength < calibration.length)
 					{
 						calibrationLength = calibration.length;
@@ -291,7 +491,7 @@ public class BiplaneFitting {
 						double rsquare = 0;
 						for (int i = 0; i < result.size(); i++)
 						{
-							rsquare +=result.get(i).r_square;
+							rsquare += result.get(i).r_square;
 						}
 						rsquare /= result.size();
 						if (rsquare > meanRsquare)
@@ -299,19 +499,20 @@ public class BiplaneFitting {
 							meanRsquare = rsquare;							
 							finalLevel = level;
 							finalSigma = maxSigma;
-
 							finalGWindow = gWindow;
+							finalOffsetX = offsetX;
+							finalOffsetY = offsetY;
 						}
 
-					}
-*/
+					}			
 				} // iterate over maxSigma
 			} // iterate over level.
 			loopC++;
+
 		}
-	/*
-		finalDist = 1600;
-		int maxSqdist 			= finalDist * finalDist;
+
+
+
 		ImageStatistics IMstat 	= image.getStatistics(); 
 		int[] MinLevel 			= {(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel)};		
 		Fit3D.fit(MinLevel,finalGWindow,inputPixelSize,totalGain,finalSigma);
@@ -319,7 +520,7 @@ public class BiplaneFitting {
 		/*
 		 * clean out fits based on goodness of fit:
 		 */
-/*
+
 
 		cleanParticleList.run(lb,ub,include);
 		cleanParticleList.delete();
@@ -330,125 +531,225 @@ public class BiplaneFitting {
 		}
 		TableIO.Store(result);
 		result = TableIO.Load();
-		int id = 2;		
-		double[][] angle	= new double[nFrames][nChannels];
-		double[][] distance = new double[nFrames][nChannels];
+		//int id = 2;		
+		double[][] ratio	= new double[nFrames][nChannels];	
 		int[][] count 	  	= new int[nFrames][nChannels];
-		for (int Ch = 1; Ch <= nChannels; Ch++)
+
+		for (int i = 0; i < result.size()-1; i++) // loop over all entries
 		{
-			for (int i = 0; i < result.size(); i++)
-			{			
-				if (result.get(i).include == 1 && result.get(i).channel == Ch) // if the current entry is within ok range and has not yet been assigned.
+			double searchX = result.get(i).x;
+			double searchY = result.get(i).y;
+			if (result.get(i).include == 1)
+			{
+				result.get(i).include = 2; // checked.
+				if (result.get(i).x < frameWidth) // if on the left hand side.
 				{
-					int idx = i + 1;
-					while (idx < result.size() && result.get(i).channel == result.get(idx).channel)
+					/*
+					 * check to see if there is another fitted object on the right side within 1 pixel + offset.
+					 * if so, use the best fit of these two as dominant and calculate summed intensity within fit region
+					 * for both, take ratio and store this. Center coordinate is transposed by offset if the dominant one is on the right.
+					 * 
+					 */
+					searchX += finalOffsetX + frameWidth;
+					searchY += finalOffsetY;
+				}else{
+					searchX -= - (finalOffsetX + frameWidth);
+					searchY -= - finalOffsetY;
+				}
+				// find if any object are close to searchX,searchY.
+				//for (int j = i + 1; j < result.size(); j++ )
+				int j = i + 1;
+				boolean search = true;
+				//ArrayList<Particle> correctedResult = new ArrayList<Particle>();
+				while (search)
+				{
+					if (result.get(j).channel == result.get(i).channel &&  // if the same channel
+							result.get(j).frame == result.get(i).frame)    // and same frame-
 					{
-						if (result.get(i).frame == result.get(idx).frame && result.get(idx).include == 1)
+						if (result.get(j).y < (searchY + 100) &&
+								result.get(j).y > (searchY - 100))
 						{
-							if (((result.get(i).x - result.get(idx).x)*(result.get(i).x - result.get(idx).x) +
-									(result.get(i).y - result.get(idx).y)*(result.get(i).y - result.get(idx).y)) < maxSqdist)
-							{
-								//System.out.println(Math.sqrt(((result.get(i).x - result.get(idx).x)*(result.get(i).x - result.get(idx).x) +
-								//	(result.get(i).y - result.get(idx).y)*(result.get(i).y - result.get(idx).y))));
-								result.get(idx).include = id;
-								result.get(i).include 	= id;								
-								short dx = (short)(result.get(i).x - result.get(idx).x); // diff in x dimension.
-								short dy = (short)(result.get(i).y - result.get(idx).y); // diff in y dimension.
-								angle[(int)(result.get(i).frame-1)][Ch-1] += (Math.atan2(dy, dx)); // angle between points and horizontal axis.
-								//	System.out.println("frame: " + result.get(i).frame + " angle: " + (Math.atan2(dy, dx)));
-								count[(int)(result.get(i).frame-1)][Ch-1]++;
-								if (Math.sqrt(dx*dx + dy*dy) > distance[(int)(result.get(i).frame-1)][Ch-1])
-									distance[(int)(result.get(i).frame-1)][Ch-1] = Math.sqrt(dx*dx + dy*dy);
+							if (result.get(j).x < (searchX + 100) &&
+									result.get(j).x > (searchX - 100))
+							{											
+								result.get(j).include = 2; // this entry has been covered.
+								if (result.get(j).r_square > result.get(i).r_square)
+								{
+									// for fitting, use j entry for calculations.
+								}
+								if(result.get(i).x < frameWidth)
+								{																							
 
+									//ratio[result.get(i).frame][result.get(i).channel-1] += (double)(result.get(i).photons) / (double)(result.get(j).photons);
 
+									double photonLeft 	= getPhotons(image, result.get(i).x/inputPixelSize,result.get(i).y/inputPixelSize, result.get(i).frame, result.get(i).channel, gWindow,totalGain);
+									double photonRight 	= getPhotons(image, result.get(j).x/inputPixelSize,result.get(j).y/inputPixelSize, result.get(i).frame, result.get(i).channel, gWindow,totalGain);												
+									ratio[result.get(i).frame][result.get(i).channel-1] += photonLeft/photonRight;
+									count[result.get(i).frame][result.get(i).channel-1]++;					
+
+								}else
+								{
+									double photonLeft 	= getPhotons(image, result.get(j).x/inputPixelSize,result.get(j).y/inputPixelSize, result.get(i).frame, result.get(i).channel, gWindow,totalGain);
+									double photonRight 	= getPhotons(image, result.get(i).x/inputPixelSize,result.get(i).y/inputPixelSize, result.get(i).frame, result.get(i).channel, gWindow,totalGain);												
+									ratio[result.get(i).frame][result.get(i).channel-1] += photonLeft/photonRight;
+									count[result.get(i).frame][result.get(i).channel-1]++;		
+
+								}
+								search = false;
 							}
 						}
-						idx ++;
-					}    				    				
-					id++;
+					}
+
+
+					j++;
+
+					if (j == result.size() || 							// if we're at the end of the list and still have not found any other located events that match.
+							result.get(j).frame > result.get(i).frame)	// if we're looking in the wrong frame, stop.
+					{
+						search = false;
+						if(result.get(i).x < frameWidth)
+						{																							
+
+							//ratio[result.get(i).frame][result.get(i).channel-1] += (double)(result.get(i).photons) / (double)(result.get(j).photons);
+
+							double photonLeft 	= getPhotons(image, result.get(i).x/inputPixelSize,result.get(i).y/inputPixelSize, result.get(i).frame, result.get(i).channel, gWindow,totalGain);
+							double photonRight 	= getPhotons(image, searchX/inputPixelSize,searchY/inputPixelSize, result.get(i).frame, result.get(i).channel, gWindow,totalGain);												
+							ratio[result.get(i).frame][result.get(i).channel-1] += photonLeft/photonRight;
+							count[result.get(i).frame][result.get(i).channel-1]++;						
+
+						}else
+						{
+							double photonLeft 	= getPhotons(image, searchX/inputPixelSize,searchY/inputPixelSize, result.get(i).frame, result.get(i).channel, gWindow,totalGain);
+							double photonRight 	= getPhotons(image, result.get(i).x/inputPixelSize,result.get(i).y/inputPixelSize, result.get(i).frame, result.get(i).channel, gWindow,totalGain);												
+							ratio[result.get(i).frame][result.get(i).channel-1] += photonLeft/photonRight;
+							count[result.get(i).frame][result.get(i).channel-1]++;					
+
+						}
+					}
 				}
+
 			}
 		}
+
+
+
 		for (int Ch = 1; Ch <= nChannels; Ch++)
 		{
 			for(int i = 0; i < count.length; i++)
 			{
 				if (count[i][Ch-1]>0)
 				{
-					angle[i][Ch-1] 	/= count[i][Ch-1]; // mean angle for this z-depth.
+					ratio[i][Ch-1] 	/= count[i][Ch-1]; // mean ratio for this z-depth.
 					//		System.out.println(angle[i][Ch-1]);
 				}
 			}
 		}
 		int minLength = 40;			
-		double[][] calibration = interpolate(angle, minLength, nChannels);
+		double[][] calibration = interpolateBiplane(ratio, minLength, nChannels,false);
 
 
 		/*
 		 * STORE calibration file:
-		 *
+		 */
 		System.out.print(calibration.length);
-		ij.Prefs.set("SMLocalizer.calibration.DoubleHelix.window",finalGWindow);
-		ij.Prefs.set("SMLocalizer.calibration.DoubleHelix.sigma",finalSigma);
-		ij.Prefs.set("SMLocalizer.calibration.DoubleHelix.distance",finalDist);
+		ij.Prefs.set("SMLocalizer.calibration.Biplane.window",finalGWindow);
+		ij.Prefs.set("SMLocalizer.calibration.Biplane.sigma",finalSigma);		
+		ij.Prefs.set("SMLocalizer.calibration.Biplane.height",calibration.length);
+		ij.Prefs.set("SMLocalizer.calibration.Biplane.channels",nChannels);
+		ij.Prefs.set("SMLocalizer.calibration.Biplane.step",zStep);
+		ij.Prefs.set("SMLocalizer.calibration.Biplane.finalOffsetX",finalOffsetX);
+		ij.Prefs.set("SMLocalizer.calibration.Biplane.finalOffsetY",finalOffsetY);
 
-		ij.Prefs.set("SMLocalizer.calibration.DoubleHelix.height",calibration.length);
-		ij.Prefs.set("SMLocalizer.calibration.DoubleHelix.channels",nChannels);
-		ij.Prefs.set("SMLocalizer.calibration.DoubleHelix.step",zStep);
 		for (int Ch = 1; Ch <= nChannels; Ch++)
 		{
 			for (int i = 0; i < calibration.length; i++)
 			{
-				ij.Prefs.set("SMLocalizer.calibration.DoubleHelix.Ch"+Ch+"."+i,calibration[i][Ch-1]);
+				ij.Prefs.set("SMLocalizer.calibration.Biplane.Ch"+Ch+"."+i,calibration[i][Ch-1]);
 			}
 		} 
 		ij.Prefs.savePreferences(); // store settings. 
+
 		double[] printout = new double[calibration.length];
 		for (int i = 0; i < printout.length; i++){
 			printout[i] = calibration[i][0];
-			System.out.println(printout[i]);
-		}
 
+		}
 		correctDrift.plot(printout);
-*/
+
 
 	} // calibrate.
 
-	public static double getZ (double[][] calibration, int channel, double angle)
+	public static double getPhotons(ImagePlus image, double xi, double yi, int frame, int channel, int gWindow, int[] gain)
+	{
+		double photons = 0;
+
+		if (image.getNFrames() == 1)
+		{
+			image.setPosition(							
+					channel,	// channel.
+					frame,		// slice.
+					1);			// frame.
+		}
+		else
+		{														
+			image.setPosition(
+					channel,	// channel.
+					1,			// slice.
+					frame);		// frame.
+		}
+		ImageProcessor IP = image.getProcessor();
+		int x = (int) (xi - gWindow/2);
+		int y = (int) (yi - gWindow/2);
+		while (x <= (xi + gWindow/2) && 
+				y <= (yi + gWindow/2))
+		{
+			photons += IP.get(x,y)/gain[channel-1];
+			x++;
+			if (x > (xi + gWindow/2))
+			{
+				x = (int)(xi - gWindow/2); // reset.
+				y++;
+			}
+		}
+
+		return photons;
+	}
+
+	public static double getZ (double[][] calibration, int channel, double ratio)
 	{
 		double z = 0;
 		int idx = 0;
-		while (calibration[idx][channel-1] < angle && idx < calibration.length)
+		while (calibration[idx][channel-1] > ratio && idx < calibration.length)
 		{
 			idx++;
 		}
-		if (idx == calibration.length -1 && angle > calibration[idx][channel-1])
+		if (idx == calibration.length -1 && ratio > calibration[idx][channel-1])
 			z = -1;
-		else if (calibration[idx][channel-1] == angle)
+		else if (calibration[idx][channel-1] == ratio)
 			z = idx;
-		else if (calibration[0][channel-1] == angle)
+		else if (calibration[0][channel-1] == ratio)
 			z = 0;
 		else // interpolate
 		{
-			double diff = calibration[idx][channel-1] - calibration[idx - 1][channel-1];
-			double fraction = (angle - calibration[idx - 1][channel-1]) / diff;
+			double diff = calibration[idx-1][channel-1] - calibration[idx][channel-1];
+			double fraction = (ratio - calibration[idx][channel-1]) / diff;
 			z = idx - 1 + fraction;
 		} 					
 
-		z *= ij.Prefs.get("SMLocalizer.calibration.DoubleHelix.step",0); // scale.
+		z *= ij.Prefs.get("SMLocalizer.calibration.Biplane.step",0); // scale.
 		return z;
 	}
 
 	// returns calibration[zStep][channel]
 	public static double[][] getCalibration()
 	{
-		int nChannels = (int)ij.Prefs.get("SMLocalizer.calibration.DoubleHelix.channels",0);
-		double[][] calibration = new double[(int)ij.Prefs.get("SMLocalizer.calibration.DoubleHelix.height",0)][nChannels];
+		int nChannels = (int)ij.Prefs.get("SMLocalizer.calibration.Biplane.channels",0);
+		double[][] calibration = new double[(int)ij.Prefs.get("SMLocalizer.calibration.Biplane.height",0)][nChannels];
 		for (int Ch = 1; Ch <= nChannels; Ch++)
 		{
 			for (int i = 0; i < calibration.length; i++)
 			{
-				calibration[i][Ch-1] = ij.Prefs.get("SMLocalizer.calibration.DoubleHelix.Ch"+Ch+"."+i,0);
+				calibration[i][Ch-1] = ij.Prefs.get("SMLocalizer.calibration.Biplane.Ch"+Ch+"."+i,0);
 			}
 		} 
 
@@ -458,45 +759,185 @@ public class BiplaneFitting {
 	/*
 	 * Used in generation of calibration file. Smoothes out fitted results, 5 point moving window mean.
 	 */
-	public static double[][] interpolate(double[][] result, int minLength, int nChannels)
+	public static double[][] interpolateBiplane(double[][] result, int minLength, int nChannels,boolean printout)
 	{
 		int[] start = new int[nChannels];
 		int[] end 	= new int[nChannels];
-		int counter = 0;
+		double[] startValue = new double[nChannels];
+		double[] endValue = new double[nChannels];		
 		int maxCounter = 0;
 		int channelIdx = 1;
-		while (channelIdx <= nChannels)
+
+		while (channelIdx <= nChannels)		
 		{
+			double[] tempVector = new double[result.length];
 			int idx = 0;
 			boolean iterate = true;
+
+			while (idx < result.length)
+			{
+
+				if (idx == 0)
+				{
+					int included = 0;
+					if (result[idx][channelIdx-1] != 0)
+						included++;
+					if (result[idx + 1][channelIdx-1] != 0)
+						included++;
+					if (result[idx + 2][channelIdx-1] != 0)
+						included++;
+					if (included > 0)
+						tempVector[idx] = (result[idx][channelIdx-1]
+								+ result[idx + 1][channelIdx-1] 
+										+ result[idx + 2][channelIdx-1])/included;
+					else
+						tempVector[idx] = 0;
+				}else if (idx == 1)
+				{
+					int included = 0;					
+					if (result[idx - 1][channelIdx-1] != 0)
+						included++;
+					if (result[idx][channelIdx-1] != 0)
+						included++;
+					if (result[idx + 1][channelIdx-1] != 0)
+						included++;
+					if (result[idx + 2][channelIdx-1] != 0)
+						included++;
+					if (included > 0)
+						tempVector[idx] = (result[idx - 1][channelIdx-1]
+								+ result[idx][channelIdx-1]
+										+ result[idx + 1][channelIdx-1] 
+												+ result[idx + 2][channelIdx-1])/included;
+					else
+						tempVector[idx] = 0;
+				}else if (idx == result.length - 2)
+				{
+					int included = 0;
+					if (result[idx - 2][channelIdx-1] != 0)
+						included++;
+					if (result[idx - 1][channelIdx-1] != 0)
+						included++;
+					if (result[idx][channelIdx-1] != 0)
+						included++;
+					if (result[idx + 1][channelIdx-1] != 0)
+						included++;
+					if (included > 0)
+						tempVector[idx] = (result[idx - 2][channelIdx-1]
+								+ result[idx - 1][channelIdx-1]
+										+ result[idx][channelIdx-1] 
+												+ result[idx + 1][channelIdx-1])/included;
+					else
+						tempVector[idx] = 0;
+				}else if (idx == result.length - 1)
+				{
+					int included = 0;
+					if (result[idx - 2][channelIdx-1] != 0)
+						included++;
+					if (result[idx - 1][channelIdx-1] != 0)
+						included++;
+					if (result[idx][channelIdx-1] != 0)
+						included++;
+					if (included > 0)
+						tempVector[idx] = (result[idx - 2][channelIdx-1]
+								+ result[idx - 1][channelIdx-1]
+										+ result[idx][channelIdx-1])/included;
+					else
+						tempVector[idx] = 0;
+				}else if (idx < result.length - 2)
+				{
+					int included = 0;
+					if (result[idx - 2][channelIdx-1] != 0)
+						included++;
+					if (result[idx - 1][channelIdx-1] != 0)
+						included++;
+					if (result[idx][channelIdx-1] != 0)
+						included++;
+					if (result[idx + 1][channelIdx-1] != 0)
+						included++;
+					if (result[idx + 2][channelIdx-1] != 0)
+						included++;
+					if (included > 0)
+						tempVector[idx] = (result[idx - 2][channelIdx-1]
+								+ result[idx - 1][channelIdx-1]
+										+ result[idx][channelIdx-1] 
+												+ result[idx + 1][channelIdx-1]
+														+ result[idx + 2][channelIdx-1])/included;
+					else
+						tempVector[idx] = 0;
+				}
+
+				idx++;
+
+			} // tempVector populated.
+
+			// find first and last positive value.
+			idx = 0;
 			while (idx < result.length && iterate)
 			{
-				if (result[idx][channelIdx-1] < 0)
-				{
-					counter++;
-					if (counter == minLength) // if we've passed the set number of points.
-						start[channelIdx-1] = idx - minLength + 1;
-					if (counter > minLength)
-						end[channelIdx-1] = idx;
-				}
-				else if (result[idx][channelIdx-1] >= 0) 
-				{
-					if (counter < minLength)
-						counter = 0;
-					if (counter >= minLength)
-						iterate = false;
+				if (tempVector[idx] > 0)
+				{					
+					startValue[channelIdx-1] = tempVector[idx];//(tempVector[idx] + tempVector[idx + 1] + tempVector[idx + 2]) / 3;
+					startValue[channelIdx-1] /= 1.1;
+					idx += 2;
+					if(printout)
+						System.out.println("startvalue: " + startValue[channelIdx-1] );
+					while (iterate)
+					{
+						idx++;
+						if (tempVector[idx] < startValue[channelIdx-1])
+						{
+							start[channelIdx-1] = idx;
+							if(printout)
+								System.out.println("start: " + start[channelIdx-1] );
+							iterate = false;
+						}
+						if (printout)
+						{
+							for (int i = 0; i < 30; i++)
+								System.out.println(tempVector[i] + " vs " + result[i][channelIdx-1]);
+						}
+
+					}
+
 				}
 				idx++;
 			}
-			if (counter > maxCounter)
-				maxCounter = counter;
+			idx = result.length-1;
+			if(printout)
+				System.out.println("idx: " + idx);
+			iterate = true;
+			while (idx > start[channelIdx-1] + 2 && iterate)
+			{
+				if (tempVector[idx] > 0)
+				{
+					endValue[channelIdx-1] = (tempVector[idx] + tempVector[idx - 1] + tempVector[idx - 2]) / 3;
+					endValue[channelIdx-1] *= 1.1;
+					idx -= 2;
+					if(printout)
+						System.out.println("endvalue: " + endValue[channelIdx-1] );
+					while (iterate)
+					{
+						idx--;
+						if (tempVector[idx] > endValue[channelIdx-1])
+						{
+							end[channelIdx-1] = idx;
+							if(printout)
+								System.out.println("end: " + end[channelIdx-1] );
+							iterate = false;
+							if (end[channelIdx-1] - start[channelIdx-1] + 1> maxCounter)
+								maxCounter = end[channelIdx-1] - start[channelIdx-1] + 1;
+						}
+
+					}
+				}
+				idx--;
+			}
 
 			channelIdx++;
 		}
+
 		if (maxCounter >= minLength)
 		{
-
-
 			double[][] calibration = new double[maxCounter][nChannels];
 			channelIdx = 1;
 
@@ -509,33 +950,110 @@ public class BiplaneFitting {
 					// 5 point smoothing:
 					if (idx == start[channelIdx-1])
 					{
-						calibration[count][channelIdx-1] = (result[idx][channelIdx-1]
-								+ result[idx + 1][channelIdx-1] 
-										+ result[idx + 2][channelIdx-1])/3;
+						int included = 0;
+						if (result[idx][channelIdx-1] != 0)
+							included++;
+						if (result[idx + 1][channelIdx-1] != 0)
+							included++;
+						if (result[idx + 2][channelIdx-1] != 0)
+							included++;
+						if (included > 0)
+							calibration[count][channelIdx-1] = (result[idx][channelIdx-1]
+									+ result[idx + 1][channelIdx-1] 
+											+ result[idx + 2][channelIdx-1])/included;
+						else
+							calibration[count][channelIdx-1] = 0;
+						//						calibration[count][channelIdx-1] = (result[idx][channelIdx-1]
+						//								+ result[idx + 1][channelIdx-1] 
+						//										+ result[idx + 2][channelIdx-1])/3;
 					}else if (idx == start[channelIdx-1] + 1)
 					{
-						calibration[count][channelIdx-1] = (result[idx - 1][channelIdx-1]
-								+ result[idx][channelIdx-1]
-										+ result[idx + 1][channelIdx-1] 
-												+ result[idx + 2][channelIdx-1])/4;
+						int included = 0;					
+						if (result[idx - 1][channelIdx-1] != 0)
+							included++;
+						if (result[idx][channelIdx-1] != 0)
+							included++;
+						if (result[idx + 1][channelIdx-1] != 0)
+							included++;
+						if (result[idx + 2][channelIdx-1] != 0)
+							included++;
+						if (included > 0)
+							calibration[count][channelIdx-1] = (result[idx - 1][channelIdx-1]
+									+ result[idx][channelIdx-1]
+											+ result[idx + 1][channelIdx-1] 
+													+ result[idx + 2][channelIdx-1])/included;
+						else
+							calibration[count][channelIdx-1] = 0;
+						//						calibration[count][channelIdx-1] = (result[idx - 1][channelIdx-1]
+						//								+ result[idx][channelIdx-1]
+						//										+ result[idx + 1][channelIdx-1] 
+						//												+ result[idx + 2][channelIdx-1])/4;
 					}else if (idx == end[channelIdx-1] - 1)
 					{
-						calibration[count][channelIdx-1] = (result[idx - 2][channelIdx-1]
-								+ result[idx - 1][channelIdx-1]
-										+ result[idx][channelIdx-1] 
-												+ result[idx + 1][channelIdx-1])/4;
+						int included = 0;
+						if (result[idx - 2][channelIdx-1] != 0)
+							included++;
+						if (result[idx - 1][channelIdx-1] != 0)
+							included++;
+						if (result[idx][channelIdx-1] != 0)
+							included++;
+						if (result[idx + 1][channelIdx-1] != 0)
+							included++;
+						if (included > 0)
+							calibration[count][channelIdx-1] = (result[idx - 2][channelIdx-1]
+									+ result[idx - 1][channelIdx-1]
+											+ result[idx][channelIdx-1] 
+													+ result[idx + 1][channelIdx-1])/included;
+						else
+							calibration[count][channelIdx-1] = 0;
+						//						calibration[count][channelIdx-1] = (result[idx - 2][channelIdx-1]
+						//								+ result[idx - 1][channelIdx-1]
+						//										+ result[idx][channelIdx-1] 
+						//												+ result[idx + 1][channelIdx-1])/4;
 					}else if (idx == end[channelIdx-1])
 					{
-						calibration[count][channelIdx-1] = (result[idx - 2][channelIdx-1]
-								+ result[idx - 1][channelIdx-1]
-										+ result[idx][channelIdx-1])/3;
+						int included = 0;
+						if (result[idx - 2][channelIdx-1] != 0)
+							included++;
+						if (result[idx - 1][channelIdx-1] != 0)
+							included++;
+						if (result[idx][channelIdx-1] != 0)
+							included++;
+						if (included > 0)
+							calibration[count][channelIdx-1] = (result[idx - 2][channelIdx-1]
+									+ result[idx - 1][channelIdx-1]
+											+ result[idx][channelIdx-1])/included;
+						else
+							calibration[count][channelIdx-1] = 0;
+						//						calibration[count][channelIdx-1] = (result[idx - 2][channelIdx-1]
+						//								+ result[idx - 1][channelIdx-1]
+						//										+ result[idx][channelIdx-1])/3;
 					}else if (idx < end[channelIdx-1] - 1)
 					{
-						calibration[count][channelIdx-1] = (result[idx - 2][channelIdx-1]
-								+ result[idx - 1][channelIdx-1]
-										+ result[idx][channelIdx-1] 
-												+ result[idx + 1][channelIdx-1]
-														+ result[idx + 2][channelIdx-1])/5;
+						int included = 0;
+						if (result[idx - 2][channelIdx-1] != 0)
+							included++;
+						if (result[idx - 1][channelIdx-1] != 0)
+							included++;
+						if (result[idx][channelIdx-1] != 0)
+							included++;
+						if (result[idx + 1][channelIdx-1] != 0)
+							included++;
+						if (result[idx + 2][channelIdx-1] != 0)
+							included++;
+						if (included > 0)
+							calibration[count][channelIdx-1] = (result[idx - 2][channelIdx-1]
+									+ result[idx - 1][channelIdx-1]
+											+ result[idx][channelIdx-1] 
+													+ result[idx + 1][channelIdx-1]
+															+ result[idx + 2][channelIdx-1])/included;
+						else
+							calibration[count][channelIdx-1] = 0;
+						//						calibration[count][channelIdx-1] = (result[idx - 2][channelIdx-1]
+						//								+ result[idx - 1][channelIdx-1]
+						//										+ result[idx][channelIdx-1] 
+						//												+ result[idx + 1][channelIdx-1]
+						//														+ result[idx + 2][channelIdx-1])/5;
 					}
 					count++;
 					idx++;

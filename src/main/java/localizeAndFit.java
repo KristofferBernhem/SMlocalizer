@@ -265,11 +265,11 @@ public class localizeAndFit {
 			}
 			else if (modality.equals("Biplane"))
 			{
-				// get calibrated values for gWindow.
+				cleanResults = BiplaneFitting.fit(cleanResults,inputPixelSize,totalGain); // change 2D data to 3D data based on calibration data.
 			}
 			else if (modality.equals("Double Helix"))
-			{
-				cleanResults = BiplaneFitting.fit(cleanResults); // change 2D data to 3D data based on calibration data.
+			{				
+				cleanResults = DoubleHelixFitting.fit(cleanResults); // change 2D data to 3D data based on calibration data.
 			}
 			else if (modality.equals("Astigmatism"))
 			{
@@ -798,11 +798,11 @@ public class localizeAndFit {
 				}
 				else if (modality.equals("Biplane"))
 				{
-					// get calibrated values for gWindow.
+					cleanResults = BiplaneFitting.fit(cleanResults,inputPixelSize,totalGain); // change 2D data to 3D data based on calibration data.
 				}
 				else if (modality.equals("Double Helix"))
 				{
-					cleanResults = BiplaneFitting.fit(cleanResults); // change 2D data to 3D data based on calibration data.
+					cleanResults = DoubleHelixFitting.fit(cleanResults); // change 2D data to 3D data based on calibration data.
 				}
 				else if (modality.equals("Astigmatism"))
 				{

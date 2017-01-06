@@ -26,13 +26,15 @@
 
 
 
+import java.awt.Color;
 import java.util.ArrayList;
 
 import ij.ImagePlus;
 import ij.WindowManager;
+import ij.gui.Plot;
 import ij.process.ImageStatistics;
 
-public class PRILMfitting {
+public class AstigmatismFitting {
 	public static ArrayList<Particle> fit(ArrayList<Particle> inputResults)
 	{
 		ArrayList<Particle> results = new ArrayList<Particle>();
@@ -132,8 +134,7 @@ public class PRILMfitting {
 		}
 
 		double finalLevel = 0;
-		double finalSigma = 0;
-		int finalDist = 0;
+		double finalSigma = 0;		
 		int gWindow = 5;
 		if (inputPixelSize < 100)
 		{
@@ -144,116 +145,111 @@ public class PRILMfitting {
 		}
 		int finalGWindow = gWindow;
 		int loopC = 0;
+
 		while (loopC < 2)
 		{
 			gWindow = gWindow + loopC*2; // increase window size each loop.
 			for (double level = 0.7; level > 0.4; level -= 0.1)
 			{
-				for (double maxSigma = 2.5; maxSigma < 4; maxSigma += 0.5)
-				{
-					for (int maxDist = 650; maxDist < 1000; maxDist += 200)
-					{
-						int maxSqdist = maxDist * maxDist;
-						ImageStatistics IMstat 	= image.getStatistics(); 					
-						int[] MinLevel 			= {(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level)};					
-						//localizeAndFit.run(MinLevel, gWindow, inputPixelSize, totalGain, selectedModel, maxSigma,"PRILM");
-						Fit3D.fit(MinLevel,gWindow,inputPixelSize,totalGain,maxSigma);
-						/*
-						 * clean out fits based on goodness of fit:
-						 */
+				for (double maxSigma = 5; maxSigma < 15; maxSigma += 1)
+				{				
+					gWindow = (int) maxSigma;
+					ImageStatistics IMstat 	= image.getStatistics();
+					int[] MinLevel 			= {(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level)};	
 
-						cleanParticleList.run(lb,ub,include);
-						cleanParticleList.delete();
-						ArrayList<Particle> result = TableIO.Load();						
+					Fit3D.fit(MinLevel,gWindow,inputPixelSize,totalGain,maxSigma);
+					/*
+					 * clean out fits based on goodness of fit:
+					 */
+
+
+					cleanParticleList.run(lb,ub,include);
+					cleanParticleList.delete();
+					ArrayList<Particle> result = TableIO.Load();					
+
+					for (int i = 0; i < result.size(); i++)
+					{
+						result.get(i).z = (result.get(i).frame-1)*zStep;
+					}
+
+
+					TableIO.Store(result);
+					result = TableIO.Load();					
+					double[][] ratio = new double[nFrames][nChannels];
+					double[][] maxDim = new double[nFrames][nChannels];
+					int[][] count = new int[nFrames][nChannels];
+					for (int Ch = 1; Ch <= nChannels; Ch++)
+					{
 						for (int i = 0; i < result.size(); i++)
 						{
-							result.get(i).z = (result.get(i).frame-1)*zStep;
-						}
-						//TableIO.Store(result);
-						//result 				= TableIO.Load();
-						int id 				= 2;		
-						double[][] angle	= new double[nFrames][nChannels];
-						double[][] distance = new double[nFrames][nChannels];
-						int[][] count 	  	= new int[nFrames][nChannels];
-						for (int Ch = 1; Ch <= nChannels; Ch++)
-						{
-							for (int i = 0; i < result.size(); i++)
-							{			
-								if (result.get(i).include == 1 && result.get(i).channel == Ch) // if the current entry is within ok range and has not yet been assigned.
-								{
-									int idx = i + 1;
-									while (idx < result.size() && result.get(i).channel == result.get(idx).channel)
-									{
-										if (result.get(i).frame == result.get(idx).frame && result.get(idx).include == 1)
-										{
-											if (((result.get(i).x - result.get(idx).x)*(result.get(i).x - result.get(idx).x) +
-													(result.get(i).y - result.get(idx).y)*(result.get(i).y - result.get(idx).y)) < maxSqdist)
-											{
-												result.get(idx).include = id;
-												result.get(i).include 	= id;								
-												short dx = (short)(result.get(i).x - result.get(idx).x); // diff in x dimension.
-												short dy = (short)(result.get(i).y - result.get(idx).y); // diff in y dimension.
-												angle[(int)(result.get(i).frame-1)][Ch-1] += (Math.atan2(dy, dx)); // angle between points and horizontal axis.
-												if (Math.sqrt(dx*dx + dy*dy) > distance[(int)(result.get(i).frame-1)][Ch-1])
-													distance[(int)(result.get(i).frame-1)][Ch-1] = Math.sqrt(dx*dx + dy*dy);
-												count[(int)(result.get(i).frame-1)][Ch-1]++;
-
-											}
-										}
-										idx ++;
-									}    				    				
-									id++;
-								}
-							}
-						}
-						for (int Ch = 1; Ch <= nChannels; Ch++)
-						{
-							for(int i = 0; i < count.length; i++)
+							if (result.get(i).channel == Ch)
 							{
-								if (count[i][Ch-1]>0)
-								{
-									angle[i][Ch-1] 	/= count[i][Ch-1]; // mean angle for this z-depth.					
-								}
+								ratio[(int)(result.get(i).z/zStep)][Ch-1] += result.get(i).sigma_x/result.get(i).sigma_y;
+								maxDim[(int)(result.get(i).z/zStep)][Ch-1] += Math.max(result.get(i).sigma_x,result.get(i).sigma_y);
+								count[(int)(result.get(i).z/zStep)][Ch-1]++;
 							}
 						}
-						int minLength = 40;			
-						double[][] calibration = interpolate(angle, minLength, nChannels);
-						if (calibrationLength < calibration.length)
+					}
+					for (int Ch = 1; Ch <= nChannels; Ch++)
+					{
+						for (int i = 0; i < nFrames; i++)
 						{
-							calibrationLength = calibration.length;
-							meanRsquare = 0;
-						}
-						if (calibrationLength == calibration.length)
-						{
-							double rsquare = 0;
-							for (int i = 0; i < result.size(); i++)
+							if (count[i][Ch-1]>0)
 							{
-								rsquare +=result.get(i).r_square;
-							}
-							rsquare /= result.size();
-							if (rsquare > meanRsquare)
-							{								
-								meanRsquare = rsquare;							
-								finalLevel = level;
-								finalSigma = maxSigma;
-								finalDist = maxDist;
-								finalGWindow = gWindow;
+								ratio[i][Ch-1] /= count[i][Ch-1]; // normalize.
+								maxDim[i][Ch-1] /= (count[i][Ch-1]*100);							
 							}
 
 						}
-					} // iterate over maxDistance
+					}
+
+
+					int minLength = 40;			
+					double[][] calibration = interpolate(ratio, minLength, nChannels);
+					if (calibrationLength < calibration.length)
+					{
+						calibrationLength = calibration.length;
+						meanRsquare = 0;
+					}
+					if (calibrationLength == calibration.length)
+					{
+						double rsquare = 0;
+						for (int i = 0; i < result.size(); i++)
+						{
+							rsquare +=result.get(i).r_square;
+						}
+						rsquare /= result.size();
+						if (rsquare > meanRsquare)
+						{								
+							meanRsquare = rsquare;							
+							finalLevel = level;
+							finalSigma = maxSigma;								
+							finalGWindow = gWindow;
+						}
+
+					}					
 				} // iterate over maxSigma
 			} // iterate over level.
 			loopC++;
+
 		}
-		int maxSqdist 			= finalDist * finalDist;
+
+
+
+
+
+
+/*
+
+
+
 		ImageStatistics IMstat 	= image.getStatistics(); 
 		int[] MinLevel 			= {(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel)};		
 		Fit3D.fit(MinLevel,finalGWindow,inputPixelSize,totalGain,finalSigma);
-		//localizeAndFit.run(MinLevel, finalGWindow, inputPixelSize, totalGain, selectedModel, finalSigma,"PRILM");
+
 		/*
 		 * clean out fits based on goodness of fit:
-		 */
+		 
 
 
 		cleanParticleList.run(lb,ub,include);
@@ -313,15 +309,15 @@ public class PRILMfitting {
 				}
 			}
 		}
-		
+
 		correctDrift.plot(values);
 		int minLength = 40;			
 		double[][] calibration = interpolate(angle, minLength, nChannels);
-				
+
 		/*
 		 * STORE calibration file:
-		 */
-		
+		 
+
 		ij.Prefs.set("SMLocalizer.calibration.PRILM.window",finalGWindow);
 		ij.Prefs.set("SMLocalizer.calibration.PRILM.sigma",finalSigma);
 		ij.Prefs.set("SMLocalizer.calibration.PRILM.distance",finalDist);
@@ -342,8 +338,8 @@ public class PRILMfitting {
 		for (int i = 0; i < printout.length; i++)
 			printout[i] = calibration[i][0];
 		correctDrift.plot(printout);
-		 
 
+*/
 	} // calibrate.
 
 	public static double getZ (double[][] calibration, int channel, double angle)
@@ -387,7 +383,7 @@ public class PRILMfitting {
 		return calibration;
 	}
 
-	
+
 	public static double[][] interpolate(double[][] result, int minLength, int nChannels)
 	{
 		int[] start = new int[nChannels];
@@ -482,83 +478,5 @@ public class PRILMfitting {
 		}
 	}
 
-	
-	
-	
-	/*
-	 * Used in generation of calibration file. Smoothes out fitted results, 5 point moving window mean.
-	 
-	public static double[][] interpolate(double[][] result, int minLength, int Channels)
-	{
-		int start 	= 0;
-		int end 	= 0;
-		int counter = 0;
-		int maxCounter = 0;
-		for (int Ch = 1; Ch <= Channels; Ch++)
-		{
-			for (int i = 0; i < result.length; i++) // loop over all and determine start and end
-			{
-				if (result[i][Ch-1] < 0)
-				{
-					counter++;
-				}
-				if (result[i][Ch-1] >= 0)
-				{
-					if (counter >= minLength)
-						end = i-1;
-					counter = 0;
 
-				}
-				if (counter == minLength)
-				{
-					start = i-minLength + 1;
-				}
-			}
-			if ((end-start+1) > maxCounter)
-				maxCounter = end-start+1;
-		}
-
-		double[][] calibration = new double[maxCounter][Channels];		
-
-		start 	= 0;
-		end 	= 0;
-		counter = 0;
-		for (int Ch = 1; Ch <= Channels; Ch++)
-		{
-			for (int i = 0; i < result.length; i++) // loop over all and determine start and end
-			{
-				if (result[i][Ch-1] < 0)
-				{
-					counter++;
-				}
-				if (result[i][Ch-1] >= 0)
-				{
-					if (counter >= minLength)
-						end = i-1;
-					counter = 0;
-
-				}
-				if (counter == minLength)
-				{
-					start = i-minLength + 1;
-				}
-			}
-
-			for (int i = 0; i < calibration.length; i++)
-			{
-				if (i == 0) 
-					calibration[i][Ch-1] = (result[start][Ch-1] + result[start + 1][Ch-1] + result[start + 2][Ch-1]) / 3;
-				else if (i == 1)
-					calibration[i][Ch-1] = (result[start][Ch-1] + result[start + 1][Ch-1] + result[start + 2][Ch-1] + result[start + 3][Ch-1]) / 4;
-				else if (i == calibration.length-2)
-					calibration[i][Ch-1] = (result[start + i + 1][Ch-1] + result[start + i][Ch-1] + result[start + i - 1][Ch-1] + result[start + i - 2][Ch-1])/4;
-				else if (i == calibration.length-1)
-					calibration[i][Ch-1] = (result[start + i][Ch-1] + result[start + i - 1][Ch-1]+ result[start + i - 2][Ch-1])/3;
-				else
-					calibration[i][Ch-1] = (result[start + i][Ch-1] + result[start + i - 1][Ch-1] + result[start + i + 1][Ch-1] + result[start + i - 2][Ch-1] + result[start + i + 2][Ch-1])/5;
-			}
-		}
-
-		return calibration;
-	}*/
 }

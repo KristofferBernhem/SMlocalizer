@@ -39,7 +39,7 @@ public class DoubleHelixFitting {
 		double[][] calibration 		= getCalibration();
 		int distance 				= (int)ij.Prefs.get("SMLocalizer.calibration.DoubleHelix.distance",0);
 		distance *= distance; // square max distance between centers.
-		for (int i = 0; i < results.size(); i++)
+		for (int i = 0; i < inputResults.size(); i++)
 		{
 			int j = i+1;
 			while (j < inputResults.size() && inputResults.get(i).frame == inputResults.get(j).frame
@@ -487,6 +487,5 @@ public class DoubleHelixFitting {
 			return calibration;
 		}
 	}
-
 	
 }

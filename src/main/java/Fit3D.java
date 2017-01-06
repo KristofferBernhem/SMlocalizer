@@ -132,8 +132,7 @@ public class Fit3D {
 		 */
 		int currFrame = -1;
 		int i  = 0;
-		int j  = 0;
-		int Ch = 1;
+		int j  = 0;	
 		
 		int pixelDistance = 2*inputPixelSize*inputPixelSize;
 		while( i < cleanResults.size())
