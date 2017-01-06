@@ -135,10 +135,10 @@ public class AstigmatismFitting {
 
 		double finalLevel = 0;
 		double finalSigma = 0;		
-		int gWindow = 5;
+		int gWindow = 15;
 		if (inputPixelSize < 100)
 		{
-			gWindow = (int) Math.ceil(500 / inputPixelSize); // 500 nm wide window.
+			gWindow = (int) Math.ceil(1500 / inputPixelSize); // 500 nm wide window.
 
 			if (gWindow%2 == 0)
 				gWindow++;	
@@ -151,9 +151,8 @@ public class AstigmatismFitting {
 			gWindow = gWindow + loopC*2; // increase window size each loop.
 			for (double level = 0.7; level > 0.4; level -= 0.1)
 			{
-				for (double maxSigma = 5; maxSigma < 15; maxSigma += 1)
-				{				
-					gWindow = (int) maxSigma;
+				for (double maxSigma = 5; maxSigma < 8; maxSigma += 1)
+				{									
 					ImageStatistics IMstat 	= image.getStatistics();
 					int[] MinLevel 			= {(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level)};	
 
@@ -236,20 +235,13 @@ public class AstigmatismFitting {
 
 
 
-
-
-
-/*
-
-
-
 		ImageStatistics IMstat 	= image.getStatistics(); 
 		int[] MinLevel 			= {(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel)};		
 		Fit3D.fit(MinLevel,finalGWindow,inputPixelSize,totalGain,finalSigma);
 
 		/*
 		 * clean out fits based on goodness of fit:
-		 
+		 */
 
 
 		cleanParticleList.run(lb,ub,include);
@@ -261,58 +253,36 @@ public class AstigmatismFitting {
 		}
 		TableIO.Store(result);
 		result = TableIO.Load();
-		int id = 2;		
-		double[][] angle	= new double[nFrames][nChannels];
-		double[][] distance = new double[nFrames][nChannels];
-		int[][] count 	  	= new int[nFrames][nChannels];
+		double[][] ratio = new double[nFrames][nChannels];
+		double[][] maxDim = new double[nFrames][nChannels];
+		int[][] count = new int[nFrames][nChannels];
 		for (int Ch = 1; Ch <= nChannels; Ch++)
 		{
 			for (int i = 0; i < result.size(); i++)
-			{			
-				if (result.get(i).include == 1 && result.get(i).channel == Ch) // if the current entry is within ok range and has not yet been assigned.
+			{
+				if (result.get(i).channel == Ch)
 				{
-					int idx = i + 1;
-					while (idx < result.size() && result.get(i).channel == result.get(idx).channel)
-					{
-						if (result.get(i).frame == result.get(idx).frame && result.get(idx).include == 1)
-						{
-							if (((result.get(i).x - result.get(idx).x)*(result.get(i).x - result.get(idx).x) +
-									(result.get(i).y - result.get(idx).y)*(result.get(i).y - result.get(idx).y)) < maxSqdist)
-							{
-								result.get(idx).include = id;
-								result.get(i).include 	= id;								
-								short dx = (short)(result.get(i).x - result.get(idx).x); // diff in x dimension.
-								short dy = (short)(result.get(i).y - result.get(idx).y); // diff in y dimension.
-								angle[(int)(result.get(i).frame-1)][Ch-1] += (Math.atan2(dy, dx)); // angle between points and horizontal axis.
-								if (Math.sqrt(dx*dx + dy*dy) > distance[(int)(result.get(i).frame-1)][Ch-1])
-									distance[(int)(result.get(i).frame-1)][Ch-1] = Math.sqrt(dx*dx + dy*dy);
-								count[(int)(result.get(i).frame-1)][Ch-1]++;
-
-							}
-						}
-						idx ++;
-					}    				    				
-					id++;
+					ratio[(int)(result.get(i).z/zStep)][Ch-1] += result.get(i).sigma_x/result.get(i).sigma_y;
+					maxDim[(int)(result.get(i).z/zStep)][Ch-1] += Math.max(result.get(i).sigma_x,result.get(i).sigma_y);
+					count[(int)(result.get(i).z/zStep)][Ch-1]++;
 				}
 			}
 		}
-		double[] values = new double[count.length];
 		for (int Ch = 1; Ch <= nChannels; Ch++)
 		{
-			for(int i = 0; i < count.length; i++)
+			for (int i = 0; i < nFrames; i++)
 			{
 				if (count[i][Ch-1]>0)
-				{					 
-					angle[i][Ch-1] 	/= count[i][Ch-1]; // mean angle for this z-depth.
-					if (Ch == 1)
-						values[i] =angle[i][Ch-1];
+				{
+					ratio[i][Ch-1] /= count[i][Ch-1]; // normalize.
+					maxDim[i][Ch-1] /= (count[i][Ch-1]*100);							
 				}
+
 			}
 		}
 
-		correctDrift.plot(values);
 		int minLength = 40;			
-		double[][] calibration = interpolate(angle, minLength, nChannels);
+		double[][] calibration = interpolate(ratio, minLength, nChannels);
 
 		/*
 		 * STORE calibration file:
@@ -333,13 +303,17 @@ public class AstigmatismFitting {
 			}
 		} 
 		ij.Prefs.savePreferences(); // store settings.
-		System.out.println("length: " + calibration.length);
+	*/	System.out.println("length: " + calibration.length);
 		double[] printout = new double[calibration.length];
 		for (int i = 0; i < printout.length; i++)
 			printout[i] = calibration[i][0];
 		correctDrift.plot(printout);
 
-*/
+		double[] printout2 = new double[maxDim.length];
+		for (int i = 0; i < printout2.length; i++)
+			printout2[i] = maxDim[i][0];
+		correctDrift.plot(printout2);
+
 	} // calibrate.
 
 	public static double getZ (double[][] calibration, int channel, double angle)
@@ -397,7 +371,7 @@ public class AstigmatismFitting {
 			boolean iterate = true;
 			while (idx < result.length && iterate)
 			{
-				if (result[idx][channelIdx-1] < 0)
+				if (result[idx][channelIdx-1] > 0)
 				{
 					counter++;
 					if (counter == minLength) // if we've passed the set number of points.
@@ -405,7 +379,7 @@ public class AstigmatismFitting {
 					if (counter > minLength)
 						end[channelIdx-1] = idx;
 				}
-				else if (result[idx][channelIdx-1] >= 0) 
+				else if (result[idx][channelIdx-1] <= 0) 
 				{
 					if (counter < minLength)
 						counter = 0;
