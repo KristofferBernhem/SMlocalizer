@@ -1,11 +1,6 @@
-import java.awt.Color;
-import java.util.ArrayList;
 
-import ij.ImagePlus;
-import ij.WindowManager;
-import ij.gui.Plot;
-import ij.process.ImageProcessor;
-import ij.process.ImageStatistics;
+
+import javax.swing.JOptionPane;
 
 /* Copyright 2016 Kristoffer Bernhem.
  * This file is part of SMLocalizer.
@@ -56,7 +51,7 @@ public class CalibrationGUI extends javax.swing.JFrame {
 		jLabel1.setText("SMLocalizer 3D calibration");
 
 		algorithmSelect.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
-		algorithmSelect.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "PRILM", "Double Helix", "Biplane" , "Astigmatism"}));
+		algorithmSelect.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "PRILM", "Double Helix", "Biplane" , "Astigmatism", "2D"}));
 
 		jLabel2.setFont(new java.awt.Font("Times New Roman", 0, 11)); // NOI18N
 		jLabel2.setText("Pixelsize [nm]:");
@@ -132,66 +127,31 @@ public class CalibrationGUI extends javax.swing.JFrame {
 	}                                         
 
 	private void ProcessActionPerformed(java.awt.event.ActionEvent evt) {                               
-		/*
-		 * Localize all events in all frames.
-		 */
 
-		ImagePlus image 					= WindowManager.getCurrentImage();
-		int nFrames 						= image.getNFrames();
-		if (nFrames == 1)
-			nFrames 						= image.getNSlices(); 
-		if (image.getNFrames() == 1)
-		{
-			image.setPosition(							
-					1,			// channel.
-					(int) nFrames/2,			// slice.
-					1);		// frame.
-		}
-		else
-		{														
-			image.setPosition(
-					1,			// channel.
-					1,			// slice.
-					(int) nFrames/2);		// frame.
-		}
-
-		int nChannels = image.getNChannels();
-
-		/*
-		 * Set z values based on frame and z-stepsize.
-		 */
-		/*
-		 * translate into calibration data based on method:
-		 */
-
+		int zStep = Integer.parseInt(JOptionPane.showInputDialog("z step for calibration file? [nm]",
+				"10"));
 
 		if(algorithmSelect.getSelectedIndex() == 0)
 		{ // PRILM			
-
-			int inputPixelSize 	= Integer.parseInt(pixelSize.getText());
-			int zStep = Integer.parseInt(stepSize.getText());
+			int inputPixelSize 	= Integer.parseInt(pixelSize.getText());		
 			PRILMfitting.calibrate(inputPixelSize, zStep);
 
 		}else if(algorithmSelect.getSelectedIndex() == 1)
-		{ // DH
-			int zStep = 10;
-			// TODO: popup question for zStep.
+		{ // DH			
 			DoubleHelixFitting.calibrate(Integer.parseInt(pixelSize.getText()), zStep);
 		}else 	
 			if(algorithmSelect.getSelectedIndex() == 2)
 			{ // Biplane
-				int zStep = 10;
-				// TODO: popup question for zStep.
-				BiplaneFitting.calibrate(Integer.parseInt(pixelSize.getText()), zStep);
-			
+				BiplaneFitting.calibrate(Integer.parseInt(pixelSize.getText()), zStep);			
 			}else
 				if(algorithmSelect.getSelectedIndex() == 3)
 				{ // Astigmatism
-					/*
-					 * Loop over max sigma, min level and gWindow for fit optimization.
-					 */
-					int zStep = 10;
 					AstigmatismFitting.calibrate(Integer.parseInt(pixelSize.getText()),zStep);
+				}
+				else if(algorithmSelect.getSelectedIndex() == 4)
+				{
+					int[] gain = {100};
+					BasicFittingCorrections.calibrate(100,gain);
 				}
 	}                                       
 

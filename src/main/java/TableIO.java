@@ -35,14 +35,14 @@ public class TableIO {
 			int channel = (int) tab.getValue("channel", i);
 			double sigma_x = tab.getValue("sigma_x", i);
 			double sigma_y = tab.getValue("sigma_y", i);
-			double sigma_z = tab.getValue("sigma_z", i);
+		//	double sigma_z = tab.getValue("sigma_z", i);
 			double precision_x = tab.getValue("precision_x", i);
 			double precision_y = tab.getValue("precision_y", i);
 			double precision_z = tab.getValue("precision_z", i);
 			double r_square = tab.getValue("r_square", i);
 			int photons = (int) tab.getValue("photons", i);
 			int include = (int) tab.getValue("include", i);
-			Results.add(new Particle(x,y,z,frame,channel,sigma_x,sigma_y,sigma_z,precision_x,precision_y,precision_z,r_square,photons,include));			
+			Results.add(new Particle(x,y,z,frame,channel,sigma_x,sigma_y,precision_x,precision_y,precision_z,r_square,photons,include));			
 		}		
 		return Results;
 
@@ -65,7 +65,7 @@ public class TableIO {
 				tab.addValue("channel", Results.get(i).channel);
 				tab.addValue("sigma_x", Results.get(i).sigma_x);
 				tab.addValue("sigma_y", Results.get(i).sigma_y);
-				tab.addValue("sigma_z", Results.get(i).sigma_z);
+			//	tab.addValue("sigma_z", Results.get(i).sigma_z);
 				tab.addValue("precision_x", Results.get(i).precision_x);
 				tab.addValue("precision_y", Results.get(i).precision_y);
 				tab.addValue("precision_z", Results.get(i).precision_z);

@@ -22,7 +22,7 @@
  * Particle is a object that hold all fitting information.
  */
 public class Particle {
-	double x, y, z, sigma_x, sigma_y, sigma_z, precision_x, precision_y, precision_z, r_square;
+	double x, y, z, sigma_x, sigma_y, precision_x, precision_y, precision_z, r_square;
 	int include, frame, channel, photons;
 	public Particle(){
 		this.x 				= 0; // Fitted x coordinate.
@@ -32,7 +32,7 @@ public class Particle {
 		this.channel 		= 0; // Channel id.
 		this.sigma_x 		= 0; // fitted sigma in x direction.
 		this.sigma_y 		= 0; // fitted sigma in y direction.
-		this.sigma_z 		= 0; // fitted sigma in z direction.
+	//	this.sigma_z 		= 0; // fitted sigma in z direction.
 		this.precision_x 	= 0; // precision of fit for x coordinate.
 		this.precision_y 	= 0; // precision of fit for y coordinate.
 		this.precision_z 	= 0; // precision of fit for z coordinate.
@@ -41,7 +41,7 @@ public class Particle {
 		this.include		= 0; // If this particle should be included in analysis and plotted.
 	}
 	
-	public Particle(double x, double y, double z, int frame, int channel, double sigma_x, double sigma_y, double sigma_z, double precision_x, double precision_y, double precision_z, double r_square,int photons, int include){
+	public Particle(double x, double y, double z, int frame, int channel, double sigma_x, double sigma_y,  double precision_x, double precision_y, double precision_z, double r_square,int photons, int include){
 		this.x 				= x; 			// Fitted x coordinate.
 		this.y 				= y;			// Fitted y coordinate.
 		this.z				= z; 			// Fitted z coordinate.
@@ -49,7 +49,7 @@ public class Particle {
 		this.channel 		= channel; 			// Channel id.
 		this.sigma_x 		= sigma_x; 		// fitted sigma in x direction.
 		this.sigma_y 		= sigma_y; 		// fitted sigma in y direction.
-		this.sigma_z 		= sigma_z; 			// fitted sigma in z direction.
+		//this.sigma_z 		= sigma_z; 			// fitted sigma in z direction.
 		this.precision_x 	= precision_x; 	// precision of fit for x coordinate.
 		this.precision_y 	= precision_y; 	// precision of fit for y coordinate.
 		this.precision_z 	= precision_z; 			// precision of fit for z coordinate.

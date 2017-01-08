@@ -27,16 +27,17 @@ import ij.WindowManager;
 
 /*TODO x-mas 2016:
  * Implement 3D calibrations:
- * 		Write new fit call to bypass regular localize/process calls. 
- * 		PRILM: Initially implemented, error testing required.
- * 		Biplane: function creation left. Find offset based on image size.
- * 		Double helix: Initially implemented, error testing required.
- * 		Astigmatism: function creation left. Calculate width of psf to limit ratio to only increasing values.
- * Chromatic shift correction from calibration data.
+ * 		DONE Write new fit call to bypass regular localize/process calls.
+ * 		DONE Implement chromatic offset correction in 3D fit algorithms 
+ * 		PRILM: preliminary complete.
+ * 		Biplane: preliminary complete.
+ * 		Double helix: preliminary complete.
+ * 		Astigmatism: preliminary complete.
+ * DONE_ Implement chromatic offset correction in 2D fit algorithms
  * DONE: Calibrate push button implemented
  * DONE: ROI size based on pixelsize and modality
  * DONE: Set pixels over background based on ROI size.
- * Update GPU fitting code to handle 3D (new initial search and input)
+ * DONE: Update GPU fitting code to handle 3D (new initial search and input)
  * Check errors in cluster analysis.
  * DONE: Add fiducial checkbox saving of choice. fiducialsChList
  * DONE: Add doCorrelativeChList for choice of channel alignment method.
@@ -3221,34 +3222,36 @@ import ij.WindowManager;
 		 		 
 		 if (modality.getSelectedIndex() == 0)
 		 {
-			 // 2D, do nothing.		 		
+			 int[] totalGain 		= getTotalGain();
+			 BasicFittingCorrections.calibrate(Integer.parseInt(inputPixelSize.getText()),totalGain);
 		 } // 2D.
 		 else if(modality.getSelectedIndex() == 1)
 		 {
 			// PRILM.
-			 int zStep = 10;
-			 // TODO: popup question for zStep.
+			 int zStep = Integer.parseInt(JOptionPane.showInputDialog("z step for calibration file? [nm]",
+		                "10"));
 			 PRILMfitting.calibrate(Integer.parseInt(inputPixelSize.getText()), zStep);
 		 }
 		 else if(modality.getSelectedIndex() == 2)
 		 {
 			 // Biplane.
-			 int zStep = 10;
-			 // TODO: popup question for zStep.
+			 int zStep = Integer.parseInt(JOptionPane.showInputDialog("z step for calibration file? [nm]",
+		                "10"));
 			 BiplaneFitting.calibrate(Integer.parseInt(inputPixelSize.getText()), zStep);
 		 }
 		 else if(modality.getSelectedIndex() == 3)
 		 {
 			 // Double helix.
-			 int zStep = 10;
-			 // TODO: popup question for zStep.
+			 int zStep = Integer.parseInt(JOptionPane.showInputDialog("z step for calibration file? [nm]",
+		                "10"));
 			 DoubleHelixFitting.calibrate(Integer.parseInt(inputPixelSize.getText()), zStep);
 		 }
 		 else if(modality.getSelectedIndex() == 4)
 		 {
 			 // Astigmatism.
-			 int zStep = 10;
-			 // TODO: popup question for zStep.
+			 int zStep = Integer.parseInt(JOptionPane.showInputDialog("z step for calibration file? [nm]",
+		                "10"));
+			 AstigmatismFitting.calibrate(Integer.parseInt(inputPixelSize.getText()), zStep);
 		 }
 		 
 	 } 
@@ -3260,16 +3263,16 @@ import ij.WindowManager;
 		 updateList(channelId.getSelectedIndex()-1); // store current settings.
 		 int pixelSize = Integer.parseInt(inputPixelSize.getText());
 		 
-		 int[] totalGain = getTotalGain();
-		 int[] window = getWindowWidth(); // get user input, (W-1)/2.
-		 int gWindow = 5;
+		 int[] totalGain 		= getTotalGain();
+		 int[] window 			= getWindowWidth(); // get user input, (W-1)/2.
+		 int gWindow 			= 5;
 		 //int[] minPixelOverBkgrnd = getMinPixelOverBackground();
-		 double maxSigma = 2; // 2D 
-		 int[] signalStrength = getMinSignal();
+		 double maxSigma 		= 2; // 2D 
+		 int[] signalStrength 	= getMinSignal();
 		 int[] desiredPixelSize = getOutputPixelSize();
-		 int selectedModel = 5;
+		 int selectedModel 		= 5;
 		 boolean[] useFiducials = getFiducials();
-		 String modalityChoice = "";
+		 String modalityChoice 	= "";
 		 if (modality.getSelectedIndex() == 0)
 		 {
 			 modalityChoice = "2D";
@@ -3321,7 +3324,7 @@ import ij.WindowManager;
 			 selectedModel = 2;
 			 processMedianFit.run(window, WindowManager.getCurrentImage(), signalStrength, pixelSize, totalGain, modalityChoice); // GPU specific call. 
 		 }
-
+		
 		 boolean[][] include = IncludeParameters();
 		 double[][] lb 		= lbParameters();
 		 double[][] ub 		= ubParameters();

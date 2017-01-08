@@ -38,6 +38,9 @@ import jcuda.driver.CUmodule;
  *  along with SMLocalizer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+
+
+
 /**
 *
 * @author kristoffer.bernhem@gmail.com
@@ -400,11 +403,11 @@ public class processMedianFit {
 					Localized.z				= pixelSize*0;	// no 3D information.
 					Localized.sigma_x		= pixelSize*hostParameterOutput[n*7+3];
 					Localized.sigma_y		= pixelSize*hostParameterOutput[n*7+4];
-					Localized.sigma_z		= pixelSize*0; // no 3D information.
+					//Localized.sigma_z		= pixelSize*0; // no 3D information.
 					Localized.photons		= (int) (hostParameterOutput[n*7]/totalGain[Ch-1]);
 					Localized.precision_x 	= Localized.sigma_x/Math.sqrt(Localized.photons);
 					Localized.precision_y 	= Localized.sigma_y/Math.sqrt(Localized.photons);
-					Localized.precision_z 	= Localized.sigma_z/Math.sqrt(Localized.photons);
+					//Localized.precision_z 	= Localized.sigma_z/Math.sqrt(Localized.photons);
 					Results.add(Localized);
 				}		
 				startFrame = endFrame-W[Ch-1]; // include W more frames to ensure that border errors from median calculations dont occur ore often then needed.
@@ -430,6 +433,27 @@ public class processMedianFit {
 					Results.get(i).r_square > 0)
 				cleanResults.add(Results.get(i));
 
+		}
+
+		if (modality.equals("2D"))
+		{
+			cleanResults = BasicFittingCorrections.compensate(cleanResults); // change 2D data to 3D data based on calibration data.
+		}
+		else if (modality.equals("PRILM"))
+		{
+			cleanResults = PRILMfitting.fit(cleanResults); // change 2D data to 3D data based on calibration data.
+		}
+		else if (modality.equals("Biplane"))
+		{
+			cleanResults = BiplaneFitting.fit(cleanResults,pixelSize,totalGain); // change 2D data to 3D data based on calibration data.
+		}
+		else if (modality.equals("Double Helix"))
+		{
+			cleanResults = DoubleHelixFitting.fit(cleanResults); // change 2D data to 3D data based on calibration data.
+		}
+		else if (modality.equals("Astigmatism"))
+		{
+			cleanResults =AstigmatismFitting.fit(cleanResults); // change 2D data to 3D data based on calibration data.
 		}
 		ij.measure.ResultsTable tab = Analyzer.getResultsTable();
 		tab.reset();		

@@ -39,6 +39,7 @@ public class PRILMfitting {
 		double[][] calibration 		= getCalibration();
 		int distance 				= (int)ij.Prefs.get("SMLocalizer.calibration.PRILM.distance",0);
 		distance *= distance; // square max distance between centers.
+		double[][] offset = getOffset();
 		for (int i = 0; i < inputResults.size(); i++)
 		{
 			int j = i+1;
@@ -61,19 +62,27 @@ public class PRILMfitting {
 					temp.y			= (inputResults.get(i).y + inputResults.get(j).y) / 2;
 					temp.sigma_x 	= (inputResults.get(i).sigma_x + inputResults.get(j).sigma_x) / 2; 		// fitted sigma in x direction.
 					temp.sigma_y 	= (inputResults.get(i).sigma_y + inputResults.get(j).sigma_y) / 2; 		// fitted sigma in x direction.
-					temp.sigma_z 	= Math.sqrt(dx*dx + dy*dy); 			// fitted sigma in z direction.
+					//				temp.sigma_z 	= Math.sqrt(dx*dx + dy*dy); 			// fitted sigma in z direction.
 					temp.precision_x= Math.min(inputResults.get(i).precision_x,inputResults.get(j).precision_x); 	// precision of fit for x coordinate.
 					temp.precision_y= Math.min(inputResults.get(i).precision_y,inputResults.get(j).precision_y); 	// precision of fit for y coordinate.
-					temp.precision_z= temp.sigma_z / Math.sqrt(temp.photons); 			// precision of fit for z coordinate.
+					temp.precision_z= 600 / Math.sqrt(temp.photons); 			// precision of fit for z coordinate.
 					temp.r_square 	= Math.min(inputResults.get(i).r_square,inputResults.get(j).r_square);; 	// Goodness of fit.
 					temp.include	= 1; 		// If this particle should be included in analysis and plotted.
-					if (temp.z != -1)
+					if(temp.z != -1 && temp.channel>1)
+					{
+						temp.x -= offset[0][temp.channel-1];
+						temp.y -= offset[1][temp.channel-1];
+						temp.z -= offset[2][temp.channel-1];
+						results.add(temp);
+					}
+					
+					if (temp.z != -1 && temp.channel==1)
 						results.add(temp);
 				}	
 				j++;
 			}
 		}
-
+	//	TableIO.Store(results);
 		return results;
 	}
 
@@ -173,7 +182,7 @@ public class PRILMfitting {
 						//result 				= TableIO.Load();
 						int id 				= 2;		
 						double[][] angle	= new double[nFrames][nChannels];
-						double[][] distance = new double[nFrames][nChannels];
+						//						double[][] distance = new double[nFrames][nChannels];
 						int[][] count 	  	= new int[nFrames][nChannels];
 						for (int Ch = 1; Ch <= nChannels; Ch++)
 						{
@@ -194,8 +203,8 @@ public class PRILMfitting {
 												short dx = (short)(result.get(i).x - result.get(idx).x); // diff in x dimension.
 												short dy = (short)(result.get(i).y - result.get(idx).y); // diff in y dimension.
 												angle[(int)(result.get(i).frame-1)][Ch-1] += (Math.atan2(dy, dx)); // angle between points and horizontal axis.
-												if (Math.sqrt(dx*dx + dy*dy) > distance[(int)(result.get(i).frame-1)][Ch-1])
-													distance[(int)(result.get(i).frame-1)][Ch-1] = Math.sqrt(dx*dx + dy*dy);
+												//												if (Math.sqrt(dx*dx + dy*dy) > distance[(int)(result.get(i).frame-1)][Ch-1])
+												//													distance[(int)(result.get(i).frame-1)][Ch-1] = Math.sqrt(dx*dx + dy*dy);
 												count[(int)(result.get(i).frame-1)][Ch-1]++;
 
 											}
@@ -217,7 +226,8 @@ public class PRILMfitting {
 							}
 						}
 						int minLength = 40;			
-						double[][] calibration = interpolate(angle, minLength, nChannels);
+						//double[][] calibration = interpolate(angle, minLength, nChannels);
+						double[][] calibration = makeCalibrationCurve(angle,minLength,nChannels,false,false);
 						if (calibrationLength < calibration.length)
 						{
 							calibrationLength = calibration.length;
@@ -300,7 +310,7 @@ public class PRILMfitting {
 				}
 			}
 		}
-		double[] values = new double[count.length];
+
 		for (int Ch = 1; Ch <= nChannels; Ch++)
 		{
 			for(int i = 0; i < count.length; i++)
@@ -308,20 +318,19 @@ public class PRILMfitting {
 				if (count[i][Ch-1]>0)
 				{					 
 					angle[i][Ch-1] 	/= count[i][Ch-1]; // mean angle for this z-depth.
-					if (Ch == 1)
-						values[i] =angle[i][Ch-1];
+
 				}
 			}
 		}
-		
-		correctDrift.plot(values);
+
+
 		int minLength = 40;			
-		double[][] calibration = interpolate(angle, minLength, nChannels);
-				
+		//	double[][] calibration = interpolate(angle, minLength, nChannels);
+		double[][] calibration = makeCalibrationCurve(angle,minLength,nChannels,true,false);
 		/*
 		 * STORE calibration file:
 		 */
-		
+
 		ij.Prefs.set("SMLocalizer.calibration.PRILM.window",finalGWindow);
 		ij.Prefs.set("SMLocalizer.calibration.PRILM.sigma",finalSigma);
 		ij.Prefs.set("SMLocalizer.calibration.PRILM.distance",finalDist);
@@ -337,37 +346,129 @@ public class PRILMfitting {
 			}
 		} 
 		ij.Prefs.savePreferences(); // store settings.
-		System.out.println("length: " + calibration.length);
+
+
+		/*
+		 * Pass result to fit function. Set PRILM.offset.x.ChId and PRILM.offset.y.ChId to 0 and determine this value through nearest neighbor between channels.
+		 */
+
+		ArrayList<Particle> resultCalib = fit(result);
+		TableIO.Store(resultCalib);
+		/*
+		 * Go through central part of the fit for each channel and calculate offset in XY for each channel.
+		 */
+		
+		if (nChannels > 1)
+		{
+			int[] z = {zStep*(calibration.length/2 - 5),zStep*(calibration.length/2 + 5)}; // lower and upper bounds for z.
+			double[][] offset = new double[3][nChannels-1];
+			int[] counter = new int[nChannels-1];
+			for (int i = 0; i < resultCalib.size(); i++)
+			{
+				if (resultCalib.get(i).channel == 1) // first channel.
+				{
+					if (resultCalib.get(i).z > z[0] && resultCalib.get(i).z < z[1]) // within center part of the calibration file.						
+					{
+						int ch = 2;
+						while (ch <= nChannels) // reference all subsequent channels against the first one.
+						{
+							double particleDistance = inputPixelSize*inputPixelSize;
+							int nearestNeighbor = 0;
+							for (int j = i+1; j < resultCalib.size(); j++)
+							{
+								if (resultCalib.get(j).channel == ch)
+								{
+									if (resultCalib.get(i).x - resultCalib.get(j).x < inputPixelSize &&
+											resultCalib.get(i).y - resultCalib.get(j).y < inputPixelSize)
+									{
+										double tempDist = Math.sqrt((resultCalib.get(i).x - resultCalib.get(j).x)*(resultCalib.get(i).x - resultCalib.get(j).x) + 
+												(resultCalib.get(i).y - resultCalib.get(j).y)*(resultCalib.get(i).y - resultCalib.get(j).y) + 
+												(resultCalib.get(i).z - resultCalib.get(j).z)*(resultCalib.get(i).z - resultCalib.get(j).z) 
+												);
+										if(tempDist < particleDistance)
+										{
+											nearestNeighbor = j;
+											particleDistance = tempDist;
+										}
+									}
+								}
+							}
+							counter[ch-2]++;
+							offset[0][ch-2] += (resultCalib.get(nearestNeighbor).x - resultCalib.get(i).x); // remove this offset from channel ch.
+							offset[1][ch-2] += (resultCalib.get(nearestNeighbor).y - resultCalib.get(i).y); // remove this offset from channel ch.
+							offset[2][ch-2] += (resultCalib.get(nearestNeighbor).z - resultCalib.get(i).z); // remove this offset from channel ch.
+							ch++;
+						}
+					}
+				}
+			}
+			for(int i = 0; i < nChannels-1; i ++)
+			{
+				offset[0][i] /=counter[i];
+				offset[1][i] /=counter[i];
+				offset[2][i] /=counter[i];
+			}
+			for (int i = 1; i < nChannels; i++)
+			{
+				ij.Prefs.set("SMLocalizer.calibration.PRILM.ChOffsetX"+i,offset[0][i-1]);
+				ij.Prefs.set("SMLocalizer.calibration.PRILM.ChOffsetY"+i,offset[1][i-1]);
+				ij.Prefs.set("SMLocalizer.calibration.PRILM.ChOffsetZ"+i,offset[2][i-1]);
+			}
+			ij.Prefs.savePreferences(); // store settings.
+		}else
+		{
+			for (int i = 1; i < 10; i++)
+			{
+				ij.Prefs.set("SMLocalizer.calibration.PRILM.ChOffsetX"+i,0);
+				ij.Prefs.set("SMLocalizer.calibration.PRILM.ChOffsetY"+i,0);
+				ij.Prefs.set("SMLocalizer.calibration.PRILM.ChOffsetZ"+i,0);
+			}
+			ij.Prefs.savePreferences(); // store settings.
+		}
+		
 		double[] printout = new double[calibration.length];
 		for (int i = 0; i < printout.length; i++)
 			printout[i] = calibration[i][0];
 		correctDrift.plot(printout);
-		 
+
 
 	} // calibrate.
-
+	public static double[][] getOffset()
+	{
+		double[][] offset = new double[3][(int) ij.Prefs.get("SMLocalizer.calibration.PRILM.channels",0)];
+		for (int i = 1; i < offset[0].length; i++)
+		{
+			offset[0][i-1] = ij.Prefs.get("SMLocalizer.calibration.PRILM.ChOffsetX"+i,0);
+			offset[1][i-1] = ij.Prefs.get("SMLocalizer.calibration.PRILM.ChOffsetY"+i,0);
+			offset[2][i-1] = ij.Prefs.get("SMLocalizer.calibration.PRILM.ChOffsetZ"+i,0);
+		}
+		
+		return offset;
+	}
 	public static double getZ (double[][] calibration, int channel, double angle)
 	{
 		double z = 0;
-		int idx = 0;
-		while (calibration[idx][channel-1] < angle && idx < calibration.length)
+		int idx = 1;		
+		while (idx < calibration.length -1 && calibration[idx][channel-1] < angle)
 		{
 			idx++;
-		}
+		}		
 		if (idx == calibration.length -1 && angle > calibration[idx][channel-1])
 			z = -1;
 		else if (calibration[idx][channel-1] == angle)
 			z = idx;
 		else if (calibration[0][channel-1] == angle)
 			z = 0;
+		else if (calibration[0][channel-1] > angle)
+			z = -1;
 		else // interpolate
 		{
 			double diff = calibration[idx][channel-1] - calibration[idx - 1][channel-1];
 			double fraction = (angle - calibration[idx - 1][channel-1]) / diff;
 			z = idx - 1 + fraction;
 		} 					
-
-		z *= ij.Prefs.get("SMLocalizer.calibration.PRILM.step",0); // scale.
+		if (z > -1)
+			z *= ij.Prefs.get("SMLocalizer.calibration.PRILM.step",0); // scale.
 		return z;
 	}
 
@@ -387,46 +488,232 @@ public class PRILMfitting {
 		return calibration;
 	}
 
-	
-	public static double[][] interpolate(double[][] result, int minLength, int nChannels)
+
+
+
+
+	/*
+	 * Get calibration curve through 5 point moving mean.
+	 */
+
+	public static double[][] makeCalibrationCurve(double[][] result, int minLength, int nChannels,boolean printout, boolean full)
 	{
 		int[] start = new int[nChannels];
 		int[] end 	= new int[nChannels];
-		int counter = 0;
+		//double[] startValue = new double[nChannels];
+		//double[] endValue = new double[nChannels];		
 		int maxCounter = 0;
 		int channelIdx = 1;
-		while (channelIdx <= nChannels)
+
+		while (channelIdx <= nChannels)		
 		{
+			double[] tempVector = new double[result.length];
+
 			int idx = 0;
 			boolean iterate = true;
-			while (idx < result.length && iterate)
+
+			while (idx < result.length)
 			{
-				if (result[idx][channelIdx-1] < 0)
+				if (idx == 0)
 				{
-					counter++;
-					if (counter == minLength) // if we've passed the set number of points.
-						start[channelIdx-1] = idx - minLength + 1;
-					if (counter > minLength)
-						end[channelIdx-1] = idx;
-				}
-				else if (result[idx][channelIdx-1] >= 0) 
+					int included = 0;
+					if (result[idx][channelIdx-1] != 0)
+						included++;
+					if (result[idx + 1][channelIdx-1] != 0)
+						included++;
+					if (result[idx + 2][channelIdx-1] != 0)
+						included++;
+					if (included > 0)
+					{
+						tempVector[idx] = (result[idx][channelIdx-1]
+								+ result[idx + 1][channelIdx-1] 
+										+ result[idx + 2][channelIdx-1])/included;
+
+
+					}
+					else
+					{
+						tempVector[idx] = 0;
+					}
+				}else if (idx == 1)
 				{
-					if (counter < minLength)
-						counter = 0;
-					if (counter >= minLength)
-						iterate = false;
+					int included = 0;					
+					if (result[idx - 1][channelIdx-1] != 0)
+						included++;
+					if (result[idx][channelIdx-1] != 0)
+						included++;
+					if (result[idx + 1][channelIdx-1] != 0)
+						included++;
+					if (result[idx + 2][channelIdx-1] != 0)
+						included++;
+					if (included > 0)
+					{
+						tempVector[idx] = (result[idx - 1][channelIdx-1]
+								+ result[idx][channelIdx-1]
+										+ result[idx + 1][channelIdx-1] 
+												+ result[idx + 2][channelIdx-1])/included;
+
+					}
+					else
+					{
+						tempVector[idx] = 0;
+
+					}
+				}else if (idx == result.length - 2)
+				{
+					int included = 0;
+					if (result[idx - 2][channelIdx-1] != 0)
+						included++;
+					if (result[idx - 1][channelIdx-1] != 0)
+						included++;
+					if (result[idx][channelIdx-1] != 0)
+						included++;
+					if (result[idx + 1][channelIdx-1] != 0)
+						included++;
+					if (included > 0)
+					{
+						tempVector[idx] = (result[idx - 2][channelIdx-1]
+								+ result[idx - 1][channelIdx-1]
+										+ result[idx][channelIdx-1] 
+												+ result[idx + 1][channelIdx-1])/included;
+
+					}
+					else
+					{
+						tempVector[idx] = 0;
+
+					}
+				}else if (idx == result.length - 1)
+				{
+					int included = 0;
+					if (result[idx - 2][channelIdx-1] != 0)
+						included++;
+					if (result[idx - 1][channelIdx-1] != 0)
+						included++;
+					if (result[idx][channelIdx-1] != 0)
+						included++;
+					if (included > 0)
+					{
+						tempVector[idx] = (result[idx - 2][channelIdx-1]
+								+ result[idx - 1][channelIdx-1]
+										+ result[idx][channelIdx-1])/included;
+
+					}
+					else
+					{
+						tempVector[idx] = 0;
+
+					}
+				}else if (idx < result.length - 2)
+				{
+					int included = 0;
+					if (result[idx - 2][channelIdx-1] != 0)
+						included++;
+					if (result[idx - 1][channelIdx-1] != 0)
+						included++;
+					if (result[idx][channelIdx-1] != 0)
+						included++;
+					if (result[idx + 1][channelIdx-1] != 0)
+						included++;
+					if (result[idx + 2][channelIdx-1] != 0)
+						included++;
+					if (included > 0)
+					{
+						tempVector[idx] = (result[idx - 2][channelIdx-1]
+								+ result[idx - 1][channelIdx-1]
+										+ result[idx][channelIdx-1] 
+												+ result[idx + 1][channelIdx-1]
+														+ result[idx + 2][channelIdx-1])/included;
+
+					}
+					else
+					{
+						tempVector[idx] = 0;
+
+					}
 				}
 				idx++;
-			}
-			if (counter > maxCounter)
-				maxCounter = counter;
 
+			} // tempVector populated.
+
+			// find first and last position for both result and selectionParameter vectors.
+
+			idx = 1;
+			int counter = 0;			
+			while (idx < result.length && iterate)
+			{
+				if (tempVector[idx] >= 0)
+				{
+					counter = 0; // reset
+					if (counter > minLength)
+					{
+						end[channelIdx-1] = idx - 1;
+						iterate = false;
+
+					}
+
+				}
+
+				else
+				{
+					if (tempVector[idx] > tempVector[idx - 1]) 
+						counter++;
+					if (tempVector[idx] < tempVector[idx - 1])
+					{
+						if (counter > minLength)
+						{
+							end[channelIdx-1] = idx - 1;
+							iterate = false;
+
+						}
+						else
+							counter = 0;
+					}
+				}
+				if (counter == minLength)
+				{
+					start[channelIdx-1] = idx - minLength + 1;
+				}
+
+				idx++;
+				if (idx == result.length && iterate)
+				{
+					if (counter > minLength)
+						end[channelIdx-1] = idx-1;
+				}
+			}
+			if (start[channelIdx-1] == 1)
+			{
+				if (tempVector[0] < tempVector[1])
+					start[channelIdx-1] = 0;
+			}
 			channelIdx++;
-		}	
+		}
+
+
+		if(printout)
+		{				
+			channelIdx--;
+			System.out.println("start: " + start[channelIdx-1] + " end: " + end[channelIdx-1] + " length: " + (end[channelIdx-1] - start[channelIdx-1] + 1));
+		}
+
+		for (int i = 0; i < nChannels; i++)
+		{
+			if (maxCounter < end[i] - start[i] + 1)
+			{
+				maxCounter = end[i] - start[i] + 1;
+			}
+		}
+		if (full)
+		{
+			end[0] = result.length-1;
+			start[0] = 0;
+			maxCounter = end[0] - start[0] + 1;	
+		}
+		if (maxCounter < 0)
+			maxCounter = 0;
 		if (maxCounter >= minLength)
 		{
-
-
 			double[][] calibration = new double[maxCounter][nChannels];
 			channelIdx = 1;
 
@@ -439,33 +726,110 @@ public class PRILMfitting {
 					// 5 point smoothing:
 					if (idx == start[channelIdx-1])
 					{
-						calibration[count][channelIdx-1] = (result[idx][channelIdx-1]
-								+ result[idx + 1][channelIdx-1] 
-										+ result[idx + 2][channelIdx-1])/3;
+						int included = 0;
+						if (result[idx][channelIdx-1] != 0)
+							included++;
+						if (result[idx + 1][channelIdx-1] != 0)
+							included++;
+						if (result[idx + 2][channelIdx-1] != 0)
+							included++;
+						if (included > 0)
+							calibration[count][channelIdx-1] = (result[idx][channelIdx-1]
+									+ result[idx + 1][channelIdx-1] 
+											+ result[idx + 2][channelIdx-1])/included;
+						else
+							calibration[count][channelIdx-1] = 0;
+						//						calibration[count][channelIdx-1] = (result[idx][channelIdx-1]
+						//								+ result[idx + 1][channelIdx-1] 
+						//										+ result[idx + 2][channelIdx-1])/3;
 					}else if (idx == start[channelIdx-1] + 1)
 					{
-						calibration[count][channelIdx-1] = (result[idx - 1][channelIdx-1]
-								+ result[idx][channelIdx-1]
-										+ result[idx + 1][channelIdx-1] 
-												+ result[idx + 2][channelIdx-1])/4;
+						int included = 0;					
+						if (result[idx - 1][channelIdx-1] != 0)
+							included++;
+						if (result[idx][channelIdx-1] != 0)
+							included++;
+						if (result[idx + 1][channelIdx-1] != 0)
+							included++;
+						if (result[idx + 2][channelIdx-1] != 0)
+							included++;
+						if (included > 0)
+							calibration[count][channelIdx-1] = (result[idx - 1][channelIdx-1]
+									+ result[idx][channelIdx-1]
+											+ result[idx + 1][channelIdx-1] 
+													+ result[idx + 2][channelIdx-1])/included;
+						else
+							calibration[count][channelIdx-1] = 0;
+						//						calibration[count][channelIdx-1] = (result[idx - 1][channelIdx-1]
+						//								+ result[idx][channelIdx-1]
+						//										+ result[idx + 1][channelIdx-1] 
+						//												+ result[idx + 2][channelIdx-1])/4;
 					}else if (idx == end[channelIdx-1] - 1)
 					{
-						calibration[count][channelIdx-1] = (result[idx - 2][channelIdx-1]
-								+ result[idx - 1][channelIdx-1]
-										+ result[idx][channelIdx-1] 
-												+ result[idx + 1][channelIdx-1])/4;
+						int included = 0;
+						if (result[idx - 2][channelIdx-1] != 0)
+							included++;
+						if (result[idx - 1][channelIdx-1] != 0)
+							included++;
+						if (result[idx][channelIdx-1] != 0)
+							included++;
+						if (result[idx + 1][channelIdx-1] != 0)
+							included++;
+						if (included > 0)
+							calibration[count][channelIdx-1] = (result[idx - 2][channelIdx-1]
+									+ result[idx - 1][channelIdx-1]
+											+ result[idx][channelIdx-1] 
+													+ result[idx + 1][channelIdx-1])/included;
+						else
+							calibration[count][channelIdx-1] = 0;
+						//						calibration[count][channelIdx-1] = (result[idx - 2][channelIdx-1]
+						//								+ result[idx - 1][channelIdx-1]
+						//										+ result[idx][channelIdx-1] 
+						//												+ result[idx + 1][channelIdx-1])/4;
 					}else if (idx == end[channelIdx-1])
 					{
-						calibration[count][channelIdx-1] = (result[idx - 2][channelIdx-1]
-								+ result[idx - 1][channelIdx-1]
-										+ result[idx][channelIdx-1])/3;
+						int included = 0;
+						if (result[idx - 2][channelIdx-1] != 0)
+							included++;
+						if (result[idx - 1][channelIdx-1] != 0)
+							included++;
+						if (result[idx][channelIdx-1] != 0)
+							included++;
+						if (included > 0)
+							calibration[count][channelIdx-1] = (result[idx - 2][channelIdx-1]
+									+ result[idx - 1][channelIdx-1]
+											+ result[idx][channelIdx-1])/included;
+						else
+							calibration[count][channelIdx-1] = 0;
+						//						calibration[count][channelIdx-1] = (result[idx - 2][channelIdx-1]
+						//								+ result[idx - 1][channelIdx-1]
+						//										+ result[idx][channelIdx-1])/3;
 					}else if (idx < end[channelIdx-1] - 1)
 					{
-						calibration[count][channelIdx-1] = (result[idx - 2][channelIdx-1]
-								+ result[idx - 1][channelIdx-1]
-										+ result[idx][channelIdx-1] 
-												+ result[idx + 1][channelIdx-1]
-														+ result[idx + 2][channelIdx-1])/5;
+						int included = 0;
+						if (result[idx - 2][channelIdx-1] != 0)
+							included++;
+						if (result[idx - 1][channelIdx-1] != 0)
+							included++;
+						if (result[idx][channelIdx-1] != 0)
+							included++;
+						if (result[idx + 1][channelIdx-1] != 0)
+							included++;
+						if (result[idx + 2][channelIdx-1] != 0)
+							included++;
+						if (included > 0)
+							calibration[count][channelIdx-1] = (result[idx - 2][channelIdx-1]
+									+ result[idx - 1][channelIdx-1]
+											+ result[idx][channelIdx-1] 
+													+ result[idx + 1][channelIdx-1]
+															+ result[idx + 2][channelIdx-1])/included;
+						else
+							calibration[count][channelIdx-1] = 0;
+						//						calibration[count][channelIdx-1] = (result[idx - 2][channelIdx-1]
+						//								+ result[idx - 1][channelIdx-1]
+						//										+ result[idx][channelIdx-1] 
+						//												+ result[idx + 1][channelIdx-1]
+						//														+ result[idx + 2][channelIdx-1])/5;
 					}
 					count++;
 					idx++;
@@ -481,84 +845,4 @@ public class PRILMfitting {
 			return calibration;
 		}
 	}
-
-	
-	
-	
-	/*
-	 * Used in generation of calibration file. Smoothes out fitted results, 5 point moving window mean.
-	 
-	public static double[][] interpolate(double[][] result, int minLength, int Channels)
-	{
-		int start 	= 0;
-		int end 	= 0;
-		int counter = 0;
-		int maxCounter = 0;
-		for (int Ch = 1; Ch <= Channels; Ch++)
-		{
-			for (int i = 0; i < result.length; i++) // loop over all and determine start and end
-			{
-				if (result[i][Ch-1] < 0)
-				{
-					counter++;
-				}
-				if (result[i][Ch-1] >= 0)
-				{
-					if (counter >= minLength)
-						end = i-1;
-					counter = 0;
-
-				}
-				if (counter == minLength)
-				{
-					start = i-minLength + 1;
-				}
-			}
-			if ((end-start+1) > maxCounter)
-				maxCounter = end-start+1;
-		}
-
-		double[][] calibration = new double[maxCounter][Channels];		
-
-		start 	= 0;
-		end 	= 0;
-		counter = 0;
-		for (int Ch = 1; Ch <= Channels; Ch++)
-		{
-			for (int i = 0; i < result.length; i++) // loop over all and determine start and end
-			{
-				if (result[i][Ch-1] < 0)
-				{
-					counter++;
-				}
-				if (result[i][Ch-1] >= 0)
-				{
-					if (counter >= minLength)
-						end = i-1;
-					counter = 0;
-
-				}
-				if (counter == minLength)
-				{
-					start = i-minLength + 1;
-				}
-			}
-
-			for (int i = 0; i < calibration.length; i++)
-			{
-				if (i == 0) 
-					calibration[i][Ch-1] = (result[start][Ch-1] + result[start + 1][Ch-1] + result[start + 2][Ch-1]) / 3;
-				else if (i == 1)
-					calibration[i][Ch-1] = (result[start][Ch-1] + result[start + 1][Ch-1] + result[start + 2][Ch-1] + result[start + 3][Ch-1]) / 4;
-				else if (i == calibration.length-2)
-					calibration[i][Ch-1] = (result[start + i + 1][Ch-1] + result[start + i][Ch-1] + result[start + i - 1][Ch-1] + result[start + i - 2][Ch-1])/4;
-				else if (i == calibration.length-1)
-					calibration[i][Ch-1] = (result[start + i][Ch-1] + result[start + i - 1][Ch-1]+ result[start + i - 2][Ch-1])/3;
-				else
-					calibration[i][Ch-1] = (result[start + i][Ch-1] + result[start + i - 1][Ch-1] + result[start + i + 1][Ch-1] + result[start + i - 2][Ch-1] + result[start + i + 2][Ch-1])/5;
-			}
-		}
-
-		return calibration;
-	}*/
 }

@@ -363,7 +363,7 @@ public class SMLocalizerProcess {
 		{
 			BackgroundCorrection.medianFiltering(window,WindowManager.getCurrentImage(),0); // correct background.
 			ij.IJ.log("background ok");
-			double maxSigma = 2; // 2D
+//			double maxSigma = 2; // 2D
 //			localizeAndFit.run(signalStrength, gWindow, pixelSize,minPixelOverBkgrnd,totalGain,selectedModel,maxSigma);  //locate and fit all particles.
 			ij.IJ.log("localize ok");
 		} // end CPU processing

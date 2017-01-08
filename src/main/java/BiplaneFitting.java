@@ -25,7 +25,7 @@
  */
 
 
-// TODO: angle calculated correctly but somehow not passed. Check interpolate function for error.
+
 import java.util.ArrayList;
 
 import ij.ImagePlus;
@@ -33,24 +33,24 @@ import ij.WindowManager;
 import ij.process.ImageProcessor;
 import ij.process.ImageStatistics;
 
-
 public class BiplaneFitting {
 	public static ArrayList<Particle> fit(ArrayList<Particle> inputResults, int inputPixelSize, int[] totalGain)
 	{
 		ImagePlus image = WindowManager.getCurrentImage();
-		int frameWidth 	= image.getWidth()*inputPixelSize;
+		int frameWidth 	= (int) (0.5*image.getWidth()*inputPixelSize);
+
 		ArrayList<Particle> results = new ArrayList<Particle>();
 		double[][] calibration 		= getCalibration();
 		
-		
+		double[][] offset = getOffset();
 		double offsetX 	= ij.Prefs.get("SMLocalizer.calibration.Biplane.finalOffsetX",0);
 		double offsetY 	= ij.Prefs.get("SMLocalizer.calibration.Biplane.finalOffsetY",0);
 		int gWindow 	= (int) ij.Prefs.get("SMLocalizer.calibration.Biplane.sigma",0);
-		
+
 		for (int i = 0; i < inputResults.size()-1; i++) // loop over all entries
 		{
 			double searchX = inputResults.get(i).x;
-			double searchY = inputResults.get(i).y;
+			double searchY = inputResults.get(i).y;			
 			if (inputResults.get(i).include == 1)
 			{
 				inputResults.get(i).include = 2; // checked.
@@ -69,12 +69,13 @@ public class BiplaneFitting {
 					searchY -= - offsetY;
 				}
 				// find if any object are close to searchX,searchY.
-				//for (int j = i + 1; j < result.size(); j++ )
+
 				int j = i + 1;
 				boolean search = true;
-				//ArrayList<Particle> correctedResult = new ArrayList<Particle>();
+
 				double z = 0;
 				int photon = 0;
+				
 				while (search)
 				{
 					if (inputResults.get(j).channel == inputResults.get(i).channel &&  // if the same channel
@@ -93,16 +94,79 @@ public class BiplaneFitting {
 
 									double photonLeft 	= getPhotons(image, inputResults.get(i).x/inputPixelSize,inputResults.get(i).y/inputPixelSize, inputResults.get(i).frame, inputResults.get(i).channel, gWindow,totalGain);
 									double photonRight 	= getPhotons(image, inputResults.get(j).x/inputPixelSize,inputResults.get(j).y/inputPixelSize, inputResults.get(i).frame, inputResults.get(i).channel, gWindow,totalGain);
-									photon = (int) (photonLeft + photonRight);
-									z = getZ(calibration, inputResults.get(i).channel, photonLeft/photonRight);
+									photon = (int) (photonLeft + photonRight);			
+									z = getZ(calibration, inputResults.get(i).channel, photonLeft/photonRight);									
 								}else
 								{
 									double photonLeft 	= getPhotons(image, inputResults.get(j).x/inputPixelSize,inputResults.get(j).y/inputPixelSize, inputResults.get(i).frame, inputResults.get(i).channel, gWindow,totalGain);
 									double photonRight 	= getPhotons(image, inputResults.get(i).x/inputPixelSize,inputResults.get(i).y/inputPixelSize, inputResults.get(i).frame, inputResults.get(i).channel, gWindow,totalGain);
-									photon = (int) (photonLeft + photonRight);
-									z = getZ(calibration, inputResults.get(i).channel, photonLeft/photonRight);							
+									photon = (int) (photonLeft + photonRight);									
+									z = getZ(calibration, inputResults.get(i).channel, photonLeft/photonRight);									
 								}
 								search = false;
+								if (inputResults.get(i).r_square > inputResults.get(j).r_square)
+								{
+									Particle temp 	= new Particle();
+									temp.channel 	= inputResults.get(i).channel;
+									temp.z 		 	= z;
+									temp.frame 	 	= inputResults.get(i).frame;
+									temp.photons 	= photon;
+									temp.x			= inputResults.get(i).x;
+									temp.y			= inputResults.get(i).y;
+									temp.sigma_x 	= inputResults.get(i).sigma_x; 		// fitted sigma in x direction.
+									temp.sigma_y 	= inputResults.get(i).sigma_y; 		// fitted sigma in x direction.					
+									temp.precision_x= inputResults.get(i).precision_x; 	// precision of fit for x coordinate.
+									temp.precision_y= inputResults.get(i).precision_y; 	// precision of fit for y coordinate.
+									temp.precision_z= 600 / Math.sqrt(temp.photons); 			// precision of fit for z coordinate.
+									temp.r_square 	= inputResults.get(i).r_square; 	// Goodness of fit.
+									temp.include	= 1; 		// If this particle should be included in analysis and plotted.
+									if (inputResults.get(i).x > frameWidth)
+										{
+											inputResults.get(i).x -= (offsetX + frameWidth);
+											inputResults.get(i).y -= offsetY;
+										}
+									if(temp.z != -1 && temp.channel>1)
+									{
+										temp.x -= offset[0][temp.channel-1];
+										temp.y -= offset[1][temp.channel-1];
+										temp.z -= offset[2][temp.channel-1];
+										results.add(temp);
+									}
+									
+									if (temp.z != -1 && temp.channel==1)
+										results.add(temp);
+								}else
+								{
+									Particle temp 	= new Particle();
+									temp.channel 	= inputResults.get(j).channel;
+									temp.z 		 	= z;
+									temp.frame 	 	= inputResults.get(j).frame;
+									temp.photons 	= photon;
+									temp.x			= inputResults.get(j).x;
+									temp.y			= inputResults.get(j).y;
+									temp.sigma_x 	= inputResults.get(j).sigma_x; 		// fitted sigma in x direction.
+									temp.sigma_y 	= inputResults.get(j).sigma_y; 		// fitted sigma in x direction.					
+									temp.precision_x= inputResults.get(j).precision_x; 	// precision of fit for x coordinate.
+									temp.precision_y= inputResults.get(j).precision_y; 	// precision of fit for y coordinate.
+									temp.precision_z= 600 / Math.sqrt(temp.photons); 			// precision of fit for z coordinate.
+									temp.r_square 	= inputResults.get(j).r_square; 	// Goodness of fit.
+									temp.include	= 1; 		// If this particle should be included in analysis and plotted.
+									if (inputResults.get(j).x > frameWidth)
+										{
+											inputResults.get(j).x -= (offsetX + frameWidth);
+											inputResults.get(j).y -= offsetY;
+										}
+									if(temp.z != -1 && temp.channel>1)
+									{
+										temp.x -= offset[0][temp.channel-1];
+										temp.y -= offset[1][temp.channel-1];
+										temp.z -= offset[2][temp.channel-1];
+										results.add(temp);
+									}
+									
+									if (temp.z != -1 && temp.channel==1)
+										results.add(temp);
+								}
 							}
 						}
 					}
@@ -126,50 +190,52 @@ public class BiplaneFitting {
 							photon = (int) (photonLeft + photonRight);
 							z = getZ(calibration, inputResults.get(i).channel, photonLeft/photonRight);							
 						}
+						if (inputResults.get(i).x < frameWidth)
+						{
+							Particle temp 	= new Particle();
+							temp.channel 	= inputResults.get(i).channel;
+							temp.z 		 	= z;
+							temp.frame 	 	= inputResults.get(i).frame;
+							temp.photons 	= photon;
+							temp.x			= inputResults.get(i).x;
+							temp.y			= inputResults.get(i).y;
+							temp.sigma_x 	= inputResults.get(i).sigma_x; 		// fitted sigma in x direction.
+							temp.sigma_y 	= inputResults.get(i).sigma_y; 		// fitted sigma in x direction.					
+							temp.precision_x= inputResults.get(i).precision_x; 	// precision of fit for x coordinate.
+							temp.precision_y= inputResults.get(i).precision_y; 	// precision of fit for y coordinate.
+							temp.precision_z= 600 / Math.sqrt(temp.photons); 			// precision of fit for z coordinate.
+							temp.r_square 	= inputResults.get(i).r_square; 	// Goodness of fit.
+							temp.include	= 1; 		// If this particle should be included in analysis and plotted.
+							if (temp.z != -1)
+								results.add(temp);
+						}else
+						{
+							Particle temp 	= new Particle();
+							temp.channel 	= inputResults.get(i).channel;
+							temp.z 		 	= z;
+							temp.frame 	 	= inputResults.get(i).frame;
+							temp.photons 	= photon;
+							temp.x			= inputResults.get(i).x - frameWidth - offsetX;
+							temp.y			= inputResults.get(i).y - offsetY;
+							temp.sigma_x 	= inputResults.get(i).sigma_x; 		// fitted sigma in x direction.
+							temp.sigma_y 	= inputResults.get(i).sigma_y; 		// fitted sigma in x direction.					
+							temp.precision_x= inputResults.get(i).precision_x; 	// precision of fit for x coordinate.
+							temp.precision_y= inputResults.get(i).precision_y; 	// precision of fit for y coordinate.
+							temp.precision_z= 600 / Math.sqrt(temp.photons); 			// precision of fit for z coordinate.
+							temp.r_square 	= inputResults.get(i).r_square; 	// Goodness of fit.
+							temp.include	= 1; 		// If this particle should be included in analysis and plotted.
+							if (temp.z != -1)
+								results.add(temp);
+						}
 					}
 				}
-				if (inputResults.get(i).r_square > inputResults.get(j).r_square)
-				{
-					Particle temp 	= new Particle();
-					temp.channel 	= inputResults.get(i).channel;
-					temp.z 		 	= z;
-					temp.frame 	 	= inputResults.get(i).frame;
-					temp.photons 	= photon;
-					temp.x			= inputResults.get(i).x;
-					temp.y			= inputResults.get(i).y;
-					temp.sigma_x 	= inputResults.get(i).sigma_x; 		// fitted sigma in x direction.
-					temp.sigma_y 	= inputResults.get(i).sigma_y; 		// fitted sigma in x direction.					
-					temp.precision_x= inputResults.get(i).precision_x; 	// precision of fit for x coordinate.
-					temp.precision_y= inputResults.get(i).precision_y; 	// precision of fit for y coordinate.
-					temp.precision_z= 600 / Math.sqrt(temp.photons); 			// precision of fit for z coordinate.
-					temp.r_square 	= inputResults.get(i).r_square; 	// Goodness of fit.
-					temp.include	= 1; 		// If this particle should be included in analysis and plotted.
-					if (temp.z != -1)
-						results.add(temp);
-				}else
-				{
-					Particle temp 	= new Particle();
-					temp.channel 	= inputResults.get(j).channel;
-					temp.z 		 	= z;
-					temp.frame 	 	= inputResults.get(j).frame;
-					temp.photons 	= photon;
-					temp.x			= inputResults.get(j).x;
-					temp.y			= inputResults.get(j).y;
-					temp.sigma_x 	= inputResults.get(j).sigma_x; 		// fitted sigma in x direction.
-					temp.sigma_y 	= inputResults.get(j).sigma_y; 		// fitted sigma in x direction.					
-					temp.precision_x= inputResults.get(j).precision_x; 	// precision of fit for x coordinate.
-					temp.precision_y= inputResults.get(j).precision_y; 	// precision of fit for y coordinate.
-					temp.precision_z= 600 / Math.sqrt(temp.photons); 			// precision of fit for z coordinate.
-					temp.r_square 	= inputResults.get(j).r_square; 	// Goodness of fit.
-					temp.include	= 1; 		// If this particle should be included in analysis and plotted.
-					if (temp.z != -1)
-						results.add(temp);
-				}
+
 
 			}
 		}		
-		
-		
+
+//		TableIO.Store(results);
+
 		return results;
 	}
 
@@ -414,15 +480,8 @@ public class BiplaneFitting {
 												result.get(j).x > (searchX - inputPixelSize))
 										{											
 											result.get(j).include = 2; // this entry has been covered.
-											if (result.get(j).r_square > result.get(i).r_square)
-											{
-												// for fitting, use j entry for calculations.
-											}
 											if(result.get(i).x < frameWidth)
 											{																							
-
-												//ratio[result.get(i).frame][result.get(i).channel-1] += (double)(result.get(i).photons) / (double)(result.get(j).photons);
-
 												double photonLeft 	= getPhotons(image, result.get(i).x/inputPixelSize,result.get(i).y/inputPixelSize, result.get(i).frame, result.get(i).channel, gWindow,totalGain);
 												double photonRight 	= getPhotons(image, result.get(j).x/inputPixelSize,result.get(j).y/inputPixelSize, result.get(i).frame, result.get(i).channel, gWindow,totalGain);												
 												ratio[result.get(i).frame][result.get(i).channel-1] += photonLeft/photonRight;
@@ -439,7 +498,6 @@ public class BiplaneFitting {
 									}
 								}
 
-
 								j++;
 
 								if (j == result.size() || 							// if we're at the end of the list and still have not found any other located events that match.
@@ -448,9 +506,6 @@ public class BiplaneFitting {
 									search = false;
 									if(result.get(i).x < frameWidth)
 									{																							
-
-										//ratio[result.get(i).frame][result.get(i).channel-1] += (double)(result.get(i).photons) / (double)(result.get(j).photons);
-
 										double photonLeft 	= getPhotons(image, result.get(i).x/inputPixelSize,result.get(i).y/inputPixelSize, result.get(i).frame, result.get(i).channel, gWindow,totalGain);
 										double photonRight 	= getPhotons(image, searchX/inputPixelSize,searchY/inputPixelSize, result.get(i).frame, result.get(i).channel, gWindow,totalGain);												
 										ratio[result.get(i).frame][result.get(i).channel-1] += photonLeft/photonRight;
@@ -480,7 +535,7 @@ public class BiplaneFitting {
 
 
 					int minLength = 40;			
-					double[][] calibration = interpolateBiplane(ratio, minLength, nChannels,false);
+					double[][] calibration = makeCalibrationCurve(ratio, minLength, nChannels,false,false);
 					if (calibrationLength < calibration.length)
 					{
 						calibrationLength = calibration.length;
@@ -516,7 +571,6 @@ public class BiplaneFitting {
 		ImageStatistics IMstat 	= image.getStatistics(); 
 		int[] MinLevel 			= {(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel)};		
 		Fit3D.fit(MinLevel,finalGWindow,inputPixelSize,totalGain,finalSigma);
-		//localizeAndFit.run(MinLevel, finalGWindow, inputPixelSize, totalGain, selectedModel, finalSigma,"PRILM");
 		/*
 		 * clean out fits based on goodness of fit:
 		 */
@@ -531,7 +585,7 @@ public class BiplaneFitting {
 		}
 		TableIO.Store(result);
 		result = TableIO.Load();
-		//int id = 2;		
+
 		double[][] ratio	= new double[nFrames][nChannels];	
 		int[][] count 	  	= new int[nFrames][nChannels];
 
@@ -557,10 +611,8 @@ public class BiplaneFitting {
 					searchY -= - finalOffsetY;
 				}
 				// find if any object are close to searchX,searchY.
-				//for (int j = i + 1; j < result.size(); j++ )
 				int j = i + 1;
 				boolean search = true;
-				//ArrayList<Particle> correctedResult = new ArrayList<Particle>();
 				while (search)
 				{
 					if (result.get(j).channel == result.get(i).channel &&  // if the same channel
@@ -573,10 +625,7 @@ public class BiplaneFitting {
 									result.get(j).x > (searchX - 100))
 							{											
 								result.get(j).include = 2; // this entry has been covered.
-								if (result.get(j).r_square > result.get(i).r_square)
-								{
-									// for fitting, use j entry for calculations.
-								}
+
 								if(result.get(i).x < frameWidth)
 								{																							
 
@@ -599,8 +648,6 @@ public class BiplaneFitting {
 							}
 						}
 					}
-
-
 					j++;
 
 					if (j == result.size() || 							// if we're at the end of the list and still have not found any other located events that match.
@@ -609,9 +656,6 @@ public class BiplaneFitting {
 						search = false;
 						if(result.get(i).x < frameWidth)
 						{																							
-
-							//ratio[result.get(i).frame][result.get(i).channel-1] += (double)(result.get(i).photons) / (double)(result.get(j).photons);
-
 							double photonLeft 	= getPhotons(image, result.get(i).x/inputPixelSize,result.get(i).y/inputPixelSize, result.get(i).frame, result.get(i).channel, gWindow,totalGain);
 							double photonRight 	= getPhotons(image, searchX/inputPixelSize,searchY/inputPixelSize, result.get(i).frame, result.get(i).channel, gWindow,totalGain);												
 							ratio[result.get(i).frame][result.get(i).channel-1] += photonLeft/photonRight;
@@ -640,18 +684,16 @@ public class BiplaneFitting {
 				if (count[i][Ch-1]>0)
 				{
 					ratio[i][Ch-1] 	/= count[i][Ch-1]; // mean ratio for this z-depth.
-					//		System.out.println(angle[i][Ch-1]);
 				}
 			}
 		}
 		int minLength = 40;			
-		double[][] calibration = interpolateBiplane(ratio, minLength, nChannels,false);
-
+		double[][] calibration = makeCalibrationCurve(ratio, minLength, nChannels,false,false);
 
 		/*
 		 * STORE calibration file:
 		 */
-		System.out.print(calibration.length);
+	//	System.out.print(calibration.length);
 		ij.Prefs.set("SMLocalizer.calibration.Biplane.window",finalGWindow);
 		ij.Prefs.set("SMLocalizer.calibration.Biplane.sigma",finalSigma);		
 		ij.Prefs.set("SMLocalizer.calibration.Biplane.height",calibration.length);
@@ -669,6 +711,82 @@ public class BiplaneFitting {
 		} 
 		ij.Prefs.savePreferences(); // store settings. 
 
+		for (int i = 0; i < result.size(); i++)
+			result.get(i).include = 1;
+		ArrayList<Particle> resultCalib = fit(result,inputPixelSize, totalGain);
+		TableIO.Store(resultCalib);
+		/*
+		 * Go through central part of the fit for each channel and calculate offset in XY for each channel.
+		 */
+		if (nChannels > 1)
+		{
+			int[] z = {zStep*(calibration.length/2 - 5),zStep*(calibration.length/2 + 5)}; // lower and upper bounds for z.
+			double[][] offset = new double[3][nChannels-1];
+			int[] counter = new int[nChannels-1];
+			for (int i = 0; i < resultCalib.size(); i++)
+			{
+				if (resultCalib.get(i).channel == 1) // first channel.
+				{
+					if (resultCalib.get(i).z > z[0] && resultCalib.get(i).z < z[1]) // within center part of the calibration file.						
+					{
+						int ch = 2;
+						while (ch <= nChannels) // reference all subsequent channels against the first one.
+						{
+							double particleDistance = inputPixelSize*inputPixelSize;
+							int nearestNeighbor = 0;
+							for (int j = i+1; j < resultCalib.size(); j++)
+							{
+								if (resultCalib.get(j).channel == ch)
+								{
+									if (resultCalib.get(i).x - resultCalib.get(j).x < inputPixelSize &&
+											resultCalib.get(i).y - resultCalib.get(j).y < inputPixelSize)
+									{
+										double tempDist = Math.sqrt((resultCalib.get(i).x - resultCalib.get(j).x)*(resultCalib.get(i).x - resultCalib.get(j).x) + 
+												(resultCalib.get(i).y - resultCalib.get(j).y)*(resultCalib.get(i).y - resultCalib.get(j).y) + 
+												(resultCalib.get(i).z - resultCalib.get(j).z)*(resultCalib.get(i).z - resultCalib.get(j).z) 
+												);
+										if(tempDist < particleDistance)
+										{
+											nearestNeighbor = j;
+											particleDistance = tempDist;
+										}
+									}
+								}
+							}
+							counter[ch-2]++;
+							offset[0][ch-2] += (resultCalib.get(nearestNeighbor).x - resultCalib.get(i).x); // remove this offset from channel ch.
+							offset[1][ch-2] += (resultCalib.get(nearestNeighbor).y - resultCalib.get(i).y); // remove this offset from channel ch.
+							offset[2][ch-2] += (resultCalib.get(nearestNeighbor).z - resultCalib.get(i).z); // remove this offset from channel ch.
+							ch++;
+						}
+					}
+				}
+			}
+			for(int i = 0; i < nChannels-1; i ++)
+			{
+				offset[0][i] /=counter[i];
+				offset[1][i] /=counter[i];
+				offset[2][i] /=counter[i];
+			}
+			for (int i = 1; i < nChannels; i++)
+			{
+				ij.Prefs.set("SMLocalizer.calibration.Biplane.ChOffsetX"+i,offset[0][i-1]);
+				ij.Prefs.set("SMLocalizer.calibration.Biplane.ChOffsetY"+i,offset[1][i-1]);
+				ij.Prefs.set("SMLocalizer.calibration.Biplane.ChOffsetZ"+i,offset[2][i-1]);
+			}
+			ij.Prefs.savePreferences(); // store settings.
+		}else
+		{
+			for (int i = 1; i < 10; i++)
+			{
+				ij.Prefs.set("SMLocalizer.calibration.Biplane.ChOffsetX"+i,0);
+				ij.Prefs.set("SMLocalizer.calibration.Biplane.ChOffsetY"+i,0);
+				ij.Prefs.set("SMLocalizer.calibration.Biplane.ChOffsetZ"+i,0);
+			}
+			ij.Prefs.savePreferences(); // store settings.
+		}
+		
+		
 		double[] printout = new double[calibration.length];
 		for (int i = 0; i < printout.length; i++){
 			printout[i] = calibration[i][0];
@@ -714,29 +832,44 @@ public class BiplaneFitting {
 
 		return photons;
 	}
-
+	public static double[][] getOffset()
+	{
+		double[][] offset = new double[3][(int) ij.Prefs.get("SMLocalizer.calibration.Biplane.channels",0)];
+		for (int i = 1; i < offset[0].length; i++)
+		{
+			offset[0][i-1] = ij.Prefs.get("SMLocalizer.calibration.Biplane.ChOffsetX"+i,0);
+			offset[1][i-1] = ij.Prefs.get("SMLocalizer.calibration.Biplane.ChOffsetY"+i,0);
+			offset[2][i-1] = ij.Prefs.get("SMLocalizer.calibration.Biplane.ChOffsetZ"+i,0);
+		}
+		
+		return offset;
+	}
 	public static double getZ (double[][] calibration, int channel, double ratio)
 	{
 		double z = 0;
-		int idx = 0;
-		while (calibration[idx][channel-1] > ratio && idx < calibration.length)
+		int idx = 1;
+		while (idx < calibration.length - 1 && calibration[idx][channel-1] > ratio)
 		{
 			idx++;
 		}
-		if (idx == calibration.length -1 && ratio > calibration[idx][channel-1])
+		if (idx == calibration.length -1 && ratio < calibration[idx][channel-1])		
 			z = -1;
 		else if (calibration[idx][channel-1] == ratio)
 			z = idx;
 		else if (calibration[0][channel-1] == ratio)
 			z = 0;
+		else if (calibration[0][channel-1] < ratio)
+			z = -1;
 		else // interpolate
 		{
 			double diff = calibration[idx-1][channel-1] - calibration[idx][channel-1];
 			double fraction = (ratio - calibration[idx][channel-1]) / diff;
 			z = idx - 1 + fraction;
 		} 					
-
-		z *= ij.Prefs.get("SMLocalizer.calibration.Biplane.step",0); // scale.
+		
+		if(z != -1)
+			z *= ij.Prefs.get("SMLocalizer.calibration.Biplane.step",0); // scale.
+		
 		return z;
 	}
 
@@ -759,12 +892,10 @@ public class BiplaneFitting {
 	/*
 	 * Used in generation of calibration file. Smoothes out fitted results, 5 point moving window mean.
 	 */
-	public static double[][] interpolateBiplane(double[][] result, int minLength, int nChannels,boolean printout)
+	public static double[][] makeCalibrationCurve(double[][] result, int minLength, int nChannels,boolean printout, boolean full)
 	{
 		int[] start = new int[nChannels];
 		int[] end 	= new int[nChannels];
-		double[] startValue = new double[nChannels];
-		double[] endValue = new double[nChannels];		
 		int maxCounter = 0;
 		int channelIdx = 1;
 
@@ -870,71 +1001,149 @@ public class BiplaneFitting {
 
 			} // tempVector populated.
 
-			// find first and last positive value.
-			idx = 0;
+			idx = 1;
+			int counter = 0;
+
 			while (idx < result.length && iterate)
 			{
-				if (tempVector[idx] > 0)
-				{					
-					startValue[channelIdx-1] = tempVector[idx];//(tempVector[idx] + tempVector[idx + 1] + tempVector[idx + 2]) / 3;
-					startValue[channelIdx-1] /= 1.1;
-					idx += 2;
-					if(printout)
-						System.out.println("startvalue: " + startValue[channelIdx-1] );
-					while (iterate)
-					{
-						idx++;
-						if (tempVector[idx] < startValue[channelIdx-1])
-						{
-							start[channelIdx-1] = idx;
-							if(printout)
-								System.out.println("start: " + start[channelIdx-1] );
-							iterate = false;
-						}
-						if (printout)
-						{
-							for (int i = 0; i < 30; i++)
-								System.out.println(tempVector[i] + " vs " + result[i][channelIdx-1]);
-						}
-
-					}
-
-				}
-				idx++;
-			}
-			idx = result.length-1;
-			if(printout)
-				System.out.println("idx: " + idx);
-			iterate = true;
-			while (idx > start[channelIdx-1] + 2 && iterate)
-			{
-				if (tempVector[idx] > 0)
+				if (tempVector[idx] <= 0)
 				{
-					endValue[channelIdx-1] = (tempVector[idx] + tempVector[idx - 1] + tempVector[idx - 2]) / 3;
-					endValue[channelIdx-1] *= 1.1;
-					idx -= 2;
-					if(printout)
-						System.out.println("endvalue: " + endValue[channelIdx-1] );
-					while (iterate)
+					counter = 0; // reset
+					if (counter > minLength)
 					{
-						idx--;
-						if (tempVector[idx] > endValue[channelIdx-1])
-						{
-							end[channelIdx-1] = idx;
-							if(printout)
-								System.out.println("end: " + end[channelIdx-1] );
-							iterate = false;
-							if (end[channelIdx-1] - start[channelIdx-1] + 1> maxCounter)
-								maxCounter = end[channelIdx-1] - start[channelIdx-1] + 1;
-						}
+						end[channelIdx-1] = idx - 1;
+						iterate = false;
 
 					}
 				}
-				idx--;
+
+				else
+				{
+					if (tempVector[idx] < tempVector[idx - 1]) 
+						counter++;
+					if (tempVector[idx] > tempVector[idx - 1])
+					{
+						if (counter > minLength)
+						{
+							end[channelIdx-1] = idx - 1;
+							iterate = false;
+						}
+						else
+							counter = 0;
+					}
+				}
+				if (counter == minLength)
+				{
+					start[channelIdx-1] = idx - minLength + 1;
+				}
+
+				idx++;
+				if (idx == result.length && iterate)
+				{
+					if (counter > minLength)
+						end[channelIdx-1] = idx-1;
+				}
+			}
+			if (start[channelIdx-1] == 1)
+			{
+				if (tempVector[0] > tempVector[1])
+					start[channelIdx-1] = 0;
+			}
+			double low = tempVector[start[channelIdx-1]];
+			double high = tempVector[end[channelIdx-1]];
+			/*
+			 * find the first unambiguous value and set that as start.
+			 */
+			for (int i = 0; i < start[channelIdx-1];i++)
+			{
+				if (low > tempVector[i])
+					low = tempVector[i];
+			}
+			if(printout)
+			{
+				System.out.println("low: " + low);
+			}
+			if (low < tempVector[start[channelIdx-1]])
+			{
+				idx = start[channelIdx-1] + 1;
+				iterate = true;
+				while (iterate)
+				{
+					if (tempVector[idx] < low)
+					{
+						start[channelIdx-1] = idx;
+						iterate = false;
+					}
+					idx++;
+					if (idx == end[channelIdx-1])
+					{
+						iterate = false;
+						start[channelIdx-1] = end[channelIdx-1];
+
+					}
+				}
+			}
+			/*
+			 * identify the smallest unambiguous value for the end section.
+			 */
+			for (int i = end[channelIdx-1]; i < tempVector.length ;i++)
+			{
+				if (high < tempVector[i])
+					high = tempVector[i];
+			}
+			if(printout)
+			{
+				System.out.println("high: " + high);
+			}
+			if (high > tempVector[end[channelIdx-1]])
+			{
+				idx = end[channelIdx-1] - 1;
+				iterate = true;
+				while (iterate)
+				{
+					if(printout)
+					{
+						System.out.println("tempVector: "  + tempVector[idx]  + " vs " + high);
+					}
+					if (tempVector[idx] > high)
+					{
+						end[channelIdx-1] = idx;
+						iterate = false;
+					}
+					idx--;
+					if (idx == start[channelIdx-1])						
+					{
+						iterate = false;
+						end[channelIdx-1] = 0;
+					}
+				}
 			}
 
 			channelIdx++;
+
 		}
+		if(printout)
+		{				
+			channelIdx--;
+			System.out.println("start: " + start[channelIdx-1] + " end: " + end[channelIdx-1] + " length: " + (end[channelIdx-1] - start[channelIdx-1] + 1));
+		}
+		for (int i = 0; i < nChannels; i++)
+		{
+			if (maxCounter < end[i] - start[i] + 1)
+			{
+				maxCounter = end[i] - start[i] + 1;
+			}
+		}
+
+
+		if (full)
+		{
+			end[0] = result.length-1;
+			start[0] = 0;
+			maxCounter = end[0] - start[0] + 1;	
+		}
+		if (maxCounter < 0)
+			maxCounter = 0;
 
 		if (maxCounter >= minLength)
 		{

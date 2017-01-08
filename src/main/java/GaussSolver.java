@@ -368,11 +368,11 @@ public class GaussSolver {
 		Localized.z				= pixelSize*0;	// no 3D information.
 		Localized.sigma_x		= pixelSize*P[3];
 		Localized.sigma_y		= pixelSize*P[4];
-		Localized.sigma_z		= pixelSize*0; // no 3D information.
+//		Localized.sigma_z		= pixelSize*0; // no 3D information.
 		Localized.photons		= (int) (tempRsquare/totalGain);
 		Localized.precision_x 	= Localized.sigma_x/Math.sqrt(Localized.photons);
 		Localized.precision_y 	= Localized.sigma_y/Math.sqrt(Localized.photons);
-		Localized.precision_z 	= Localized.sigma_z/Math.sqrt(Localized.photons);	
+//		Localized.precision_z 	= Localized.sigma_z/Math.sqrt(Localized.photons);	
 
 		return Localized;
 	}	

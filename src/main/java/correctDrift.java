@@ -270,7 +270,7 @@ public class correctDrift {
 					tempPart.precision_z= locatedParticles.get(idx).precision_z;
 					tempPart.sigma_x 	= locatedParticles.get(idx).sigma_x;
 					tempPart.sigma_y 	= locatedParticles.get(idx).sigma_y;
-					tempPart.sigma_z 	= locatedParticles.get(idx).sigma_z;
+				//	tempPart.sigma_z 	= locatedParticles.get(idx).sigma_z;
 					tempPart.channel 	= locatedParticles.get(idx).channel;
 					if ((bin+1)*binSize <= locatedParticles.get(idx).frame)										
 						bin++;						
@@ -594,7 +594,7 @@ public class correctDrift {
 						tempPart.precision_z= locatedParticles.get(idx).precision_z;
 						tempPart.sigma_x 	= locatedParticles.get(idx).sigma_x;
 						tempPart.sigma_y 	= locatedParticles.get(idx).sigma_y;
-						tempPart.sigma_z 	= locatedParticles.get(idx).sigma_z;
+	//					tempPart.sigma_z 	= locatedParticles.get(idx).sigma_z;
 						tempPart.channel 	= locatedParticles.get(idx).channel;
 						if ((bin+1)*binSize <= locatedParticles.get(idx).frame)										
 							bin++;						

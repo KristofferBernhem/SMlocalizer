@@ -95,7 +95,7 @@ public class DBClust {
 						tab.addValue("channel", InpParticle.get(i).channel);
 						tab.addValue("sigma_x", InpParticle.get(i).sigma_x);
 						tab.addValue("sigma_y", InpParticle.get(i).sigma_y);
-						tab.addValue("sigma_z", InpParticle.get(i).sigma_z);
+					//	tab.addValue("sigma_z", InpParticle.get(i).sigma_z);
 						tab.addValue("precision_x", InpParticle.get(i).precision_x);
 						tab.addValue("precision_y", InpParticle.get(i).precision_y);
 						tab.addValue("precision_z", InpParticle.get(i).precision_z);

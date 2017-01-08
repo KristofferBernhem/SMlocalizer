@@ -99,8 +99,7 @@ public class localizeAndFit {
 		else if (modality.equals("Astigmatism"))
 		{
 			// get calibrated values for gWindow.
-			minPosPixels = gWindow*gWindow - 4; // update to relevant numbers for this modality.		
-			
+			minPosPixels = gWindow*gWindow - 4; // update to relevant numbers for this modality.					
 		}
 
 		
@@ -257,7 +256,7 @@ public class localizeAndFit {
 			
 			if (modality.equals("2D"))
 			{
-				// no 2D specific processing required.
+				cleanResults = BasicFittingCorrections.compensate(cleanResults); // change 2D data to 3D data based on calibration data.
 			}
 			else if (modality.equals("PRILM"))
 			{
@@ -268,14 +267,13 @@ public class localizeAndFit {
 				cleanResults = BiplaneFitting.fit(cleanResults,inputPixelSize,totalGain); // change 2D data to 3D data based on calibration data.
 			}
 			else if (modality.equals("Double Helix"))
-			{				
+			{
 				cleanResults = DoubleHelixFitting.fit(cleanResults); // change 2D data to 3D data based on calibration data.
 			}
 			else if (modality.equals("Astigmatism"))
 			{
-				// get calibrated values for gWindow.
+				cleanResults =AstigmatismFitting.fit(cleanResults); // change 2D data to 3D data based on calibration data.
 			}
-			
 			ij.measure.ResultsTable tab = Analyzer.getResultsTable();
 			tab.reset();		
 			tab.incrementCounter();
@@ -546,11 +544,11 @@ public class localizeAndFit {
 								Localized.z				= inputPixelSize*0;	// no 3D information.
 								Localized.sigma_x		= inputPixelSize*hostOutput[n*7+3];
 								Localized.sigma_y		= inputPixelSize*hostOutput[n*7+4];
-								Localized.sigma_z		= inputPixelSize*0; // no 3D information.
+						//		Localized.sigma_z		= inputPixelSize*0; // no 3D information.
 								Localized.photons		= (int) (hostOutput[n*7]/totalGain[Ch-1]);
 								Localized.precision_x 	= Localized.sigma_x/Math.sqrt(Localized.photons);
 								Localized.precision_y 	= Localized.sigma_y/Math.sqrt(Localized.photons);
-								Localized.precision_z 	= Localized.sigma_z/Math.sqrt(Localized.photons);
+						//		Localized.precision_z 	= Localized.sigma_z/Math.sqrt(Localized.photons);
 								Results.add(Localized);
 							}					
 						}else if ( Frame == nFrames) // final part if chunks were loaded.
@@ -714,11 +712,11 @@ public class localizeAndFit {
 								Localized.z				= inputPixelSize*0;	// no 3D information.
 								Localized.sigma_x		= inputPixelSize*hostOutput[n*7+3];
 								Localized.sigma_y		= inputPixelSize*hostOutput[n*7+4];
-								Localized.sigma_z		= inputPixelSize*0; // no 3D information.
+//								Localized.sigma_z		= inputPixelSize*0; // no 3D information.
 								Localized.photons		= (int) (hostOutput[n*7]/totalGain[Ch-1]);
 								Localized.precision_x 	= Localized.sigma_x/Math.sqrt(Localized.photons);
 								Localized.precision_y 	= Localized.sigma_y/Math.sqrt(Localized.photons);
-								Localized.precision_z 	= Localized.sigma_z/Math.sqrt(Localized.photons);
+	//							Localized.precision_z 	= Localized.sigma_z/Math.sqrt(Localized.photons);
 								Results.add(Localized);
 							}				
 						}
@@ -790,7 +788,7 @@ public class localizeAndFit {
 
 				if (modality.equals("2D"))
 				{
-					// no 2D specific processing required.
+					cleanResults = BasicFittingCorrections.compensate(cleanResults); // change 2D data to 3D data based on calibration data.
 				}
 				else if (modality.equals("PRILM"))
 				{
@@ -806,7 +804,7 @@ public class localizeAndFit {
 				}
 				else if (modality.equals("Astigmatism"))
 				{
-					// get calibrated values for gWindow.
+					cleanResults =AstigmatismFitting.fit(cleanResults); // change 2D data to 3D data based on calibration data.
 				}
 				
 				ij.measure.ResultsTable tab = Analyzer.getResultsTable();
