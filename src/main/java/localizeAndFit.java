@@ -64,19 +64,6 @@ public class localizeAndFit {
 		if (nFrames == 1)
 			nFrames 						= image.getNSlices();
 
-		
-		/*
-		 if (modality.getSelectedIndex() == 0)
-			 modalityChoice = "2D";
-		 else if(modality.getSelectedIndex() == 1)
-			 modalityChoice = "PRILM";
-		 else if(modality.getSelectedIndex() == 2)
-			 modalityChoice = "Biplane";
-		 else if(modality.getSelectedIndex() == 3)
-			 modalityChoice = "Double Helix";
-		 else if(modality.getSelectedIndex() == 4)
-			 modalityChoice = "Astigmatism";
-		 */
 		int minPosPixels = 0;
 		if (modality.equals("2D"))
 		{
@@ -265,6 +252,7 @@ public class localizeAndFit {
 			else if (modality.equals("Biplane"))
 			{
 				cleanResults = BiplaneFitting.fit(cleanResults,inputPixelSize,totalGain); // change 2D data to 3D data based on calibration data.
+				columns /= 2;
 			}
 			else if (modality.equals("Double Helix"))
 			{
@@ -272,7 +260,7 @@ public class localizeAndFit {
 			}
 			else if (modality.equals("Astigmatism"))
 			{
-				cleanResults =AstigmatismFitting.fit(cleanResults); // change 2D data to 3D data based on calibration data.
+				cleanResults = AstigmatismFitting.fit(cleanResults); // change 2D data to 3D data based on calibration data.
 			}
 			ij.measure.ResultsTable tab = Analyzer.getResultsTable();
 			tab.reset();		
@@ -340,12 +328,16 @@ public class localizeAndFit {
 					//ArrayList<fitParameters> fitThese = new ArrayList<fitParameters>();
 					int dataIdx = 0;
 					int idx = 0;					
+					double lowXY = gWindow/2 - 2;
+					if (lowXY < 1)
+						lowXY = 1;
+					double highXY = gWindow/2 +  2;
 					double[] bounds = { // bounds for gauss fitting.
-							0.5			, 1.5,				// amplitude.
-							1	,(gWindow-1),			// x.
-							1	, (gWindow-1),			// y.
-							0.7			,  (gWindow / 2.0),		// sigma x.
-							0.7			,  (gWindow / 2.0),		// sigma y.
+							0.6			, 1.4,				// amplitude.
+							lowXY	, highXY,			// x.
+							lowXY	, highXY,			// y.
+							0.8			,  maxSigma,		// sigma x.
+							0.8			,  maxSigma,		// sigma y.
 							(-0.5*Math.PI) , (0.5*Math.PI),	// theta.
 							-0.5		, 0.5				// offset.
 					};
@@ -469,10 +461,10 @@ public class localizeAndFit {
 								P[i*7+6] = 0;
 								P[i*7+6] = 0;
 								stepSize[i * 7] = 0.1;// amplitude
-								stepSize[i * 7 + 1] = 0.25; // x center.
-								stepSize[i * 7 + 2] = 0.25; // y center.
-								stepSize[i * 7 + 3] = 0.25; // sigma x.
-								stepSize[i * 7 + 4] = 0.25; // sigma y.
+								stepSize[i * 7 + 1] = 0.25*100/inputPixelSize; // x center.
+								stepSize[i * 7 + 2] = 0.25*100/inputPixelSize; // y center.
+								stepSize[i * 7 + 3] = 0.25*100/inputPixelSize; // sigma x.
+								stepSize[i * 7 + 4] = 0.25*100/inputPixelSize; // sigma y.
 								stepSize[i * 7 + 5] = 0.19625; // Theta.
 								stepSize[i * 7 + 6] = 0.01; // offset.   
 								int k = locatedCenter[i] - (gWindow / 2) * (columns + 1); // upper left corner.
@@ -544,11 +536,9 @@ public class localizeAndFit {
 								Localized.z				= inputPixelSize*0;	// no 3D information.
 								Localized.sigma_x		= inputPixelSize*hostOutput[n*7+3];
 								Localized.sigma_y		= inputPixelSize*hostOutput[n*7+4];
-						//		Localized.sigma_z		= inputPixelSize*0; // no 3D information.
 								Localized.photons		= (int) (hostOutput[n*7]/totalGain[Ch-1]);
 								Localized.precision_x 	= Localized.sigma_x/Math.sqrt(Localized.photons);
 								Localized.precision_y 	= Localized.sigma_y/Math.sqrt(Localized.photons);
-						//		Localized.precision_z 	= Localized.sigma_z/Math.sqrt(Localized.photons);
 								Results.add(Localized);
 							}					
 						}else if ( Frame == nFrames) // final part if chunks were loaded.
@@ -636,10 +626,10 @@ public class localizeAndFit {
 								P[i*7+6] = 0;
 								P[i*7+6] = 0;
 								stepSize[i * 7] = 0.1;// amplitude
-								stepSize[i * 7 + 1] = 0.25; // x center.
-								stepSize[i * 7 + 2] = 0.25; // y center.
-								stepSize[i * 7 + 3] = 0.25; // sigma x.
-								stepSize[i * 7 + 4] = 0.25; // sigma y.
+								stepSize[i * 7 + 1] = 0.25*100/inputPixelSize; // x center.
+								stepSize[i * 7 + 2] = 0.25*100/inputPixelSize; // y center.
+								stepSize[i * 7 + 3] = 0.25*100/inputPixelSize; // sigma x.
+								stepSize[i * 7 + 4] = 0.25*100/inputPixelSize; // sigma y.
 								stepSize[i * 7 + 5] = 0.19625; // Theta.
 								stepSize[i * 7 + 6] = 0.01; // offset.   
 								int k = locatedCenter[i] - (gWindow / 2) * (columns + 1); // upper left corner.
@@ -712,11 +702,9 @@ public class localizeAndFit {
 								Localized.z				= inputPixelSize*0;	// no 3D information.
 								Localized.sigma_x		= inputPixelSize*hostOutput[n*7+3];
 								Localized.sigma_y		= inputPixelSize*hostOutput[n*7+4];
-//								Localized.sigma_z		= inputPixelSize*0; // no 3D information.
 								Localized.photons		= (int) (hostOutput[n*7]/totalGain[Ch-1]);
 								Localized.precision_x 	= Localized.sigma_x/Math.sqrt(Localized.photons);
 								Localized.precision_y 	= Localized.sigma_y/Math.sqrt(Localized.photons);
-	//							Localized.precision_z 	= Localized.sigma_z/Math.sqrt(Localized.photons);
 								Results.add(Localized);
 							}				
 						}
@@ -797,6 +785,7 @@ public class localizeAndFit {
 				else if (modality.equals("Biplane"))
 				{
 					cleanResults = BiplaneFitting.fit(cleanResults,inputPixelSize,totalGain); // change 2D data to 3D data based on calibration data.
+					columns /= 2;
 				}
 				else if (modality.equals("Double Helix"))
 				{
@@ -804,7 +793,7 @@ public class localizeAndFit {
 				}
 				else if (modality.equals("Astigmatism"))
 				{
-					cleanResults =AstigmatismFitting.fit(cleanResults); // change 2D data to 3D data based on calibration data.
+					cleanResults = AstigmatismFitting.fit(cleanResults); // change 2D data to 3D data based on calibration data.
 				}
 				
 				ij.measure.ResultsTable tab = Analyzer.getResultsTable();

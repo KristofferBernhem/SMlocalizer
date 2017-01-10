@@ -46,10 +46,12 @@ extern "C" __global__  void gaussFitter( int* gaussVector, int gaussVectorLen0, 
 		double num20 = P[(num2)] * bounds[(13)];
 		stepSize[(num2)] *= P[(num2)];
 		stepSize[(num2 + 6)] *= P[(num2)];
-		for (double num21 = P[(num2 + 3)] - 3.0 * stepSize[(num2 + 3)]; num21 <= P[(num2 + 3)] + 2.0 * stepSize[(num2 + 3)]; num21 += stepSize[(num2 + 3)])
+		double num21 = bounds[(6)];
+		double num22 = bounds[(8)];
+		while (num21 <= bounds[(7)])
 		{
 			num12 = 1.0 / (2.0 * num21 * num21);
-			for (double num22 = P[(num2 + 4)] - 3.0 * stepSize[(num2 + 4)]; num22 <= P[(num2 + 4)] + 2.0 * stepSize[(num2 + 4)]; num22 += stepSize[(num2 + 4)])
+			while (num22 <= bounds[(9)])
 			{
 				num14 = 1.0 / (2.0 * num22 * num22);
 				num15 = 0.0;
@@ -57,22 +59,21 @@ extern "C" __global__  void gaussFitter( int* gaussVector, int gaussVectorLen0, 
 				{
 					int num23 = k % (int)windowWidth;
 					int num24 = k / (int)windowWidth;
-					double num25 = P[(num2)] * exp(-(num12 * ((double)num23 - P[(num2 + 1)]) * ((double)num23 - P[(num2 + 1)]) - 2.0 * num13 * ((double)num23 - P[(num2 + 1)]) * ((double)num24 - P[(num2 + 2)]) + num14 * ((double)num24 - P[(num2 + 2)]) * ((double)num24 - P[(num2 + 2)]))) - (double)gaussVector[(num3 + k)];
+					double num25 = P[(num2)] * exp(-(num12 * ((double)num23 - P[(num2 + 1)]) * ((double)num23 - P[(num2 + 1)]) + num14 * ((double)num24 - P[(num2 + 2)]) * ((double)num24 - P[(num2 + 2)]))) - (double)gaussVector[(num3 + k)];
 					num15 += num25 * num25;
 				}
 				num15 /= num7;
 				if (num15 < num9)
 				{
 					num9 = num15;
-					num17 = num21;
-					num18 = num22;
+					P[(num2 + 3)] = num21;
+					P[(num2 + 4)] = num22;
 				}
+				num22 += stepSize[(num2 + 4)];
 			}
+			num21 += stepSize[(num2 + 3)];
+			num22 = bounds[(8)];
 		}
-		P[(num2 + 3)] = num17;
-		P[(num2 + 4)] = num18;
-		num17 = P[(num2)] * bounds[(0)];
-		num18 = P[(num2)] * bounds[(1)];
 		num9 = 1.0;
 		num12 = 1.0 / (2.0 * P[(num2 + 3)] * P[(num2 + 3)]);
 		num13 = 0.0;

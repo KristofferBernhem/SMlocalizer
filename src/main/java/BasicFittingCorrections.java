@@ -37,7 +37,6 @@ public class BasicFittingCorrections {
 					result.get(i).y -= offset[1][result.get(i).channel-1];
 			 }
 		 }
-		 TableIO.Store(result);
 		 return result;
 	}
 	public static double[][] getOffset()

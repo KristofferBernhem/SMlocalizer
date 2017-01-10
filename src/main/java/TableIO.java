@@ -35,7 +35,6 @@ public class TableIO {
 			int channel = (int) tab.getValue("channel", i);
 			double sigma_x = tab.getValue("sigma_x", i);
 			double sigma_y = tab.getValue("sigma_y", i);
-		//	double sigma_z = tab.getValue("sigma_z", i);
 			double precision_x = tab.getValue("precision_x", i);
 			double precision_y = tab.getValue("precision_y", i);
 			double precision_z = tab.getValue("precision_z", i);
@@ -55,9 +54,7 @@ public class TableIO {
 		tab.reset();		
 
 		for (int i = 0; i < Results.size(); i++){
-
 				tab.incrementCounter();
-
 				tab.addValue("x0", Results.get(i).x);
 				tab.addValue("y0", Results.get(i).y);
 				tab.addValue("z0", Results.get(i).z);
@@ -65,7 +62,6 @@ public class TableIO {
 				tab.addValue("channel", Results.get(i).channel);
 				tab.addValue("sigma_x", Results.get(i).sigma_x);
 				tab.addValue("sigma_y", Results.get(i).sigma_y);
-			//	tab.addValue("sigma_z", Results.get(i).sigma_z);
 				tab.addValue("precision_x", Results.get(i).precision_x);
 				tab.addValue("precision_y", Results.get(i).precision_y);
 				tab.addValue("precision_z", Results.get(i).precision_z);

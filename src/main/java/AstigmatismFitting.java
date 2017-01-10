@@ -30,20 +30,20 @@ import java.util.ArrayList;
 import ij.ImagePlus;
 import ij.WindowManager;
 import ij.process.ImageStatistics;
-//TODO Look over interpolate and rename.
+
 public class AstigmatismFitting {
 	public static ArrayList<Particle> fit(ArrayList<Particle> inputResults)
 	{
-		ArrayList<Particle> results = new ArrayList<Particle>();
-		double[][] calibration 		= getCalibration();
-		double[] maxDim 			= getMaxDim();
-		double[][] offset = getOffset();
+		ArrayList<Particle> results = new ArrayList<Particle>(); // output.
+		double[][] calibration 		= getCalibration();	// get calibration table.
+		double[] maxDim 			= getMaxDim();		// get max sigma for each channel.
+		double[][] offset 			= getOffset(); 		// get xyz offset from channel 1.
 		for (int i = 0; i < inputResults.size(); i++)
 		{
 			// check maxDim before proceeding.
 			if (Math.max(inputResults.get(i).sigma_x, inputResults.get(i).sigma_y) < maxDim[inputResults.get(i).channel-1]) // if within ok range for max sigma dimension for this channel.
 			{
-				double z = getZ(calibration, inputResults.get(i).channel, inputResults.get(i).sigma_x/inputResults.get(i).sigma_y);
+				double z = getZ(calibration, inputResults.get(i).channel, inputResults.get(i).sigma_x/inputResults.get(i).sigma_y); // get z position based on calibration data.
 				Particle temp 	= new Particle();
 				temp.channel 	= inputResults.get(i).channel;
 				temp.z 		 	= z;
@@ -52,235 +52,269 @@ public class AstigmatismFitting {
 				temp.x			= inputResults.get(i).x;
 				temp.y			= inputResults.get(i).y;
 				temp.sigma_x 	= inputResults.get(i).sigma_x; 		// fitted sigma in x direction.
-				temp.sigma_y 	= inputResults.get(i).sigma_y; 		// fitted sigma in x direction.					
+				temp.sigma_y 	= inputResults.get(i).sigma_y; 		// fitted sigma in y direction.					
 				temp.precision_x= inputResults.get(i).precision_x; 	// precision of fit for x coordinate.
 				temp.precision_y= inputResults.get(i).precision_y; 	// precision of fit for y coordinate.
 				temp.precision_z= 600 / Math.sqrt(temp.photons); 			// precision of fit for z coordinate.
 				temp.r_square 	= inputResults.get(i).r_square; 	// Goodness of fit.
 				temp.include	= 1; 		// If this particle should be included in analysis and plotted.
-				if(temp.z != -1 && temp.channel>1)
+				if(temp.z != -1 && temp.channel>1)	// if within ok z range. For all but first channel, move all particles by x,y,z offset for that channel to align all to first channel.
 				{
 					temp.x -= offset[0][temp.channel-1];
 					temp.y -= offset[1][temp.channel-1];
 					temp.z -= offset[2][temp.channel-1];
 					results.add(temp);
 				}
-				
-				if (temp.z != -1 && temp.channel==1)
+
+				if (temp.z != -1 && temp.channel==1)	// if within ok z range. Don't shift first channel.
 					results.add(temp);
 			}
 		}
-	//	TableIO.Store(results);
 		return results;
 	}
 
+
+	/*
+	 * Create calibration file. Astigmatism images are fitted for z position based on ratio between sigma x and sigma y. Further constraints based on the maximum dimension. 
+	 */
+
 	public static void calibrate(int inputPixelSize,int zStep)
 	{		
-		ImagePlus image 					= WindowManager.getCurrentImage();
-		int nFrames 						= image.getNFrames();
-		if (nFrames == 1)
-			nFrames 						= image.getNSlices(); 
-		if (image.getNFrames() == 1)
+		ImagePlus image 			= WindowManager.getCurrentImage(); 	// get current image, the calibration stack.
+		int nFrames 				= image.getNFrames();				// number of frames in stack.
+		if (nFrames == 1)														// different systems can store stacks in different ways, as frames or slices.
+			nFrames 				= image.getNSlices(); 				// if stack stored as multislice image, use slice count instead of stack count.
+		if (image.getNFrames() == 1)											// if multislice image. Shift current frame to middle of stack.
 		{
 			image.setPosition(							
-					1,			// channel.
-					(int) nFrames/2,			// slice.
-					1);		// frame.
+					1,					// channel.
+					(int) nFrames/2,	// slice.
+					1);					// frame.
 		}
-		else
+		else																	// if multistack image. Shift current frame to middle of stack.
 		{														
 			image.setPosition(
-					1,			// channel.
-					1,			// slice.
-					(int) nFrames/2);		// frame.
+					1,					// channel.
+					1,					// slice.
+					(int) nFrames/2);	// frame.
 		}
-		int nChannels 			= image.getNChannels();
-		int[] totalGain 		= {100,100,100,100,100,100,100,100,100,100};		
-		double meanRsquare 		= 0;
-		int calibrationLength 	= 0;
-		boolean[][] include = new boolean[6][10];
-		double[][] lb 		= new double[6][10];
-		double[][] ub 		= new double[6][10];
-		for (int i = 0; i < 10; i++)
+		int nChannels 			= image.getNChannels();							// number of channels for calibration.
+		int[] totalGain 		= {100,100,100,100,100,100,100,100,100,100}; 	// gain is not relevant for fitting, but fitting algorithms require this value to be sent.
+		double meanRsquare 		= 0;											// used to determine if a new set of parameters yield a better calibration.
+		int calibrationLength 	= 0;											// height in z obtained by the calibration.
+		boolean[][] include 	= new boolean[6][10];							// for filtering of fitted results.
+		double[][] lb 			= new double[6][10];							// for filtering of fitted results.
+		double[][] ub 			= new double[6][10];							// for filtering of fitted results.
+		for (int i = 0; i < 10; i++)											// populate "include", "lb" and "ub".
 		{
+			// logical list of which parameters to filter against.
 			include[0][i] 		= false;
 			include[1][i] 		= false;
-			include[2][i] 		= true;
+			include[2][i] 		= true;		// r_square.
 			include[3][i] 		= false;
 			include[4][i] 		= false;
 			include[5][i] 		= false;
-
-
+			// lower bounds.
 			lb[0][i]			= 0;
 			lb[1][i]			= 0;
-			lb[2][i]			= 0.8;
+			lb[2][i]			= 0.8;		// r_square.
 			lb[3][i]			= 0;
 			lb[4][i]			= 0;
 			lb[5][i]			= 0;
-
-
+			// upper bounds.
 			ub[0][i]			= 0;
 			ub[1][i]			= 0;
-			ub[2][i]			= 1.0;
+			ub[2][i]			= 1.0;		// r_square.
 			ub[3][i]			= 0;
 			ub[4][i]			= 0;
 			ub[5][i]			= 0;
 
 		}
 
-		double finalLevel = 0;
-		double finalSigma = 0;		
-		int gWindow = 7;
-		if (inputPixelSize < 100)
+		double finalLevel = 0;			// final intensity used for creation of the calibration file.
+		double finalSigma = 0;			// final max sigma used for creation of the calibration file.
+		int gWindow 	  = 7;			// initial window width for fitting.
+		if (inputPixelSize < 100) 		// if smaller pixels then 100x100 nm, increase window width.
 		{
-			gWindow = (int) Math.ceil(700 / inputPixelSize); // 1500 nm wide window.
+			gWindow = (int) Math.ceil(700 / inputPixelSize); // 700 nm wide window.
 
-			if (gWindow%2 == 0)
+			if (gWindow%2 == 0)			// gWindow needs to be odd.
 				gWindow++;	
 		}
-		int finalGWindow = gWindow;
-		int loopC = 0;
+		int finalGWindow = gWindow;		// final window for fitting.
+		int loopC = 0;					// loop counter.
 
-		while (loopC < 2)
+		/*
+		 * Optimize variables.
+		 */
+		while (loopC < 2)				// loop through twice, each time with larger window width for fitting.
 		{
-
-			for (double level = 0.7; level > 0.5; level -= 0.1)
+			for (double level = 0.7; level > 0.5; level -= 0.1)	// decrease intensity required for fitting.
 			{
-				for (double maxSigma = 4; maxSigma <= 8; maxSigma += 1)
+				for (double maxSigma = 4; maxSigma <= 8; maxSigma += 1) // increase maximal sigma for fitting, lower value results in faster fitting.
 				{									
-					ImageStatistics IMstat 	= image.getStatistics();
-					int[] MinLevel 			= {(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level),(int) (IMstat.max*level)};	
+					int[] MinLevel 			= new int[10]; // precast.
+					for (int ch = 1; ch <= nChannels; ch++) // set level in a channel by channel specific manner.
+					{
+						if (image.getNFrames() == 1)
+						{
+							image.setPosition(							
+									ch,			// channel.
+									(int) nFrames/2,			// slice.
+									1);		// frame.
+						}
+						else
+						{														
+							image.setPosition(
+									ch,			// channel.
+									1,			// slice.
+									(int) nFrames/2);		// frame.
+						}
+						ImageStatistics IMstat 	= image.getStatistics(); 					
+						MinLevel[ch-1] = (int)(IMstat.max*level);
+					}					
 
-					Fit3D.fit(MinLevel,gWindow,inputPixelSize,totalGain,maxSigma);
+					Fit3D.fit(MinLevel,gWindow,inputPixelSize,totalGain,maxSigma);	// fit data based on current parameters.
 					/*
 					 * clean out fits based on goodness of fit:
 					 */
-
-
-					cleanParticleList.run(lb,ub,include);
+					cleanParticleList.run(lb,ub,include);			// remove all fits that fail to fullfill criteria.
 					cleanParticleList.delete();
-					ArrayList<Particle> result = TableIO.Load();					
+					ArrayList<Particle> result = TableIO.Load(); 	// reload fits.
 
-					for (int i = 0; i < result.size(); i++)
+					for (int i = 0; i < result.size(); i++) 		// loop over all entries.
 					{
-						result.get(i).z = (result.get(i).frame-1)*zStep;
+						result.get(i).z = (result.get(i).frame-1)*zStep; // set z to the current slice*slice step size.
 					}
 
 
-					TableIO.Store(result);
-					result = TableIO.Load();					
-					double[][] ratio = new double[nFrames][nChannels];
-					double[][] maxDim = new double[nFrames][nChannels];
-					int[][] count = new int[nFrames][nChannels];
-					for (int Ch = 1; Ch <= nChannels; Ch++)
+					TableIO.Store(result);							
+					result 				= TableIO.Load();					
+					double[][] ratio 	= new double[nFrames][nChannels];	// ratio between sigma x and sigma y.
+					double[][] maxDim 	= new double[nFrames][nChannels];	// max of sigma x and sigma y.
+					int[][] count 		= new int[nFrames][nChannels];		// number of entries for this channel and z-slice.
+					for (int Ch = 1; Ch <= nChannels; Ch++)					// Loop over all channels.
 					{
-						for (int i = 0; i < result.size(); i++)
+						for (int i = 0; i < result.size(); i++)				// loop over all entries.
 						{
-							if (result.get(i).channel == Ch)
+							if (result.get(i).channel == Ch)				// if correct channel.
 							{
-								ratio[(int)(result.get(i).z/zStep)][Ch-1] += result.get(i).sigma_x/result.get(i).sigma_y;
-								maxDim[(int)(result.get(i).z/zStep)][Ch-1] += Math.max(result.get(i).sigma_x,result.get(i).sigma_y);
-								count[(int)(result.get(i).z/zStep)][Ch-1]++;
+								ratio[(int)(result.get(i).z/zStep)][Ch-1] 	+= result.get(i).sigma_x/result.get(i).sigma_y;				// add up ratio.
+								maxDim[(int)(result.get(i).z/zStep)][Ch-1]  += Math.max(result.get(i).sigma_x,result.get(i).sigma_y);	// take the max of sigma x and sigma y.
+								count[(int)(result.get(i).z/zStep)][Ch-1]++;															// keep track of number of entries.
 							}
 						}
 					}
-					for (int Ch = 1; Ch <= nChannels; Ch++)
+					// normalize.
+					for (int Ch = 1; Ch <= nChannels; Ch++)					// loop over all channels.
 					{
-						for (int i = 0; i < nFrames; i++)
+						for (int i = 0; i < nFrames; i++)					// loop over all frames.
 						{
-							if (count[i][Ch-1]>0)
+							if (count[i][Ch-1]>0)							// if any ratio was added.
 							{
-								ratio[i][Ch-1] /= count[i][Ch-1]; // normalize.
-								maxDim[i][Ch-1] /= (count[i][Ch-1]);							
+								ratio[i][Ch-1] /= count[i][Ch-1]; 			// normalize.
+								maxDim[i][Ch-1] /= (count[i][Ch-1]);		// normalize.		
 							}
-
 						}
 					}
 
+					int minLength = 40;										// minimum length of calibration range.
 
-					int minLength = 40;			
-			//		System.out.println("level: " + level + " sigma: " + maxSigma + " gWindow: " + gWindow);
-					double[][] calibration = makeCalibrationCurve(ratio, maxDim, minLength, nChannels, false,false, false);
-					if (calibrationLength < calibration.length)
+					double[][] calibration = makeCalibrationCurve(ratio, maxDim, minLength, nChannels, false,false, false);	// create calibration curve.
+					if (calibrationLength < calibration.length)				// if the new calibration using current parameter settings covers a larger range.
 					{
-						calibrationLength = calibration.length;
-						meanRsquare = 0;
+						calibrationLength = calibration.length;				// update best z range.
+						meanRsquare = 0;									// set quailty check to 0.						
 					}
-					if (calibrationLength == calibration.length)
+					if (calibrationLength == calibration.length) 			// if of equal length (or if it was just updated).
 					{
 						double rsquare = 0;
 						for (int i = 0; i < result.size(); i++)
 						{
-							rsquare +=result.get(i).r_square;
+							rsquare +=result.get(i).r_square;				// calculate mean quality of fit for this parameter set.
 						}
-						rsquare /= result.size();
-						if (rsquare > meanRsquare)
+						rsquare /= result.size();							
+						if (rsquare > meanRsquare)							// if the new parameters yield better avarage fit.
 						{							
-			//				System.out.println("Updated!");
-							meanRsquare = rsquare;							
-							finalLevel = level;
-							finalSigma = maxSigma;								
-							finalGWindow = gWindow;
+							meanRsquare = rsquare;							// update.						
+							finalLevel = level;								// update.
+							finalSigma = maxSigma;							// update.
+							finalGWindow = gWindow;							// update.
 						}
-
 					}					
 				} // iterate over maxSigma
 			} // iterate over level.
 			loopC++;
 			gWindow = gWindow + 2; // increase window size each loop.
 		}
-	//	System.out.println("Final level: " + finalLevel + " sigma: " + finalSigma + " gWindow: " + finalGWindow);
 
-
-		ImageStatistics IMstat 	= image.getStatistics(); 
-		int[] MinLevel 			= {(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel),(int) (IMstat.max*finalLevel)};		
-		Fit3D.fit(MinLevel,finalGWindow,inputPixelSize,totalGain,finalSigma);
+		/*
+		 * Create calibration curve based on optimal parameters iterated over in the above code.
+		 */
+		int[] MinLevel 			= new int[10]; // precast.
+		for (int ch = 1; ch <= nChannels; ch++) // set level in a channel by channel specific manner.
+		{
+			if (image.getNFrames() == 1)
+			{
+				image.setPosition(							
+						ch,			// channel.
+						(int) nFrames/2,			// slice.
+						1);		// frame.
+			}
+			else
+			{														
+				image.setPosition(
+						ch,			// channel.
+						1,			// slice.
+						(int) nFrames/2);		// frame.
+			}
+			ImageStatistics IMstat 	= image.getStatistics(); 					
+			MinLevel[ch-1] = (int)(IMstat.max*finalLevel);
+		}
+		Fit3D.fit(MinLevel,finalGWindow,inputPixelSize,totalGain,finalSigma);	// fit all particles.
 
 		/*
 		 * clean out fits based on goodness of fit:
 		 */
 
-
 		cleanParticleList.run(lb,ub,include);
 		cleanParticleList.delete();
 		ArrayList<Particle> result = TableIO.Load();
-		for (int i = 0; i < result.size(); i++)
+		for (int i = 0; i < result.size(); i++)				// loop over all entries.
 		{
-			result.get(i).z = (result.get(i).frame-1)*zStep;
+			result.get(i).z = (result.get(i).frame-1)*zStep; // set z to zStep in nm * frame index.
 		}
 		TableIO.Store(result);
 		result = TableIO.Load();
-		double[][] ratio = new double[nFrames][nChannels];
-		double[][] maxDim = new double[nFrames][nChannels];
-		int[][] count = new int[nFrames][nChannels];
-		for (int Ch = 1; Ch <= nChannels; Ch++)
+		double[][] ratio 	= new double[nFrames][nChannels];	// ratio between sigma x and sigma y.
+		double[][] maxDim 	= new double[nFrames][nChannels];	// max of sigma x and sigma y.
+		int[][] count 		= new int[nFrames][nChannels];		// number of entries for this channel and z-slice.
+		for (int Ch = 1; Ch <= nChannels; Ch++)					// loop over all channels.
 		{
-			for (int i = 0; i < result.size(); i++)
+			for (int i = 0; i < result.size(); i++)				// loop over all entries.
 			{
-				if (result.get(i).channel == Ch)
+				if (result.get(i).channel == Ch)				// if correct channel.
 				{
-					ratio[(int)(result.get(i).z/zStep)][Ch-1] += result.get(i).sigma_x/result.get(i).sigma_y;
-					maxDim[(int)(result.get(i).z/zStep)][Ch-1] += Math.max(result.get(i).sigma_x,result.get(i).sigma_y);
-					count[(int)(result.get(i).z/zStep)][Ch-1]++;
+					ratio[(int)(result.get(i).z/zStep)][Ch-1] += result.get(i).sigma_x/result.get(i).sigma_y;				// calculate and add ratio of sigma x and sigma y.
+					maxDim[(int)(result.get(i).z/zStep)][Ch-1] += Math.max(result.get(i).sigma_x,result.get(i).sigma_y);	// take the maximum of sigma x and sigma y.
+					count[(int)(result.get(i).z/zStep)][Ch-1]++;															// keep track of number of entries.
 				}
 			}
 		}
-		for (int Ch = 1; Ch <= nChannels; Ch++)
+		for (int Ch = 1; Ch <= nChannels; Ch++)				// loop over all channels.
 		{
-			for (int i = 0; i < nFrames; i++)
+			for (int i = 0; i < nFrames; i++)				// loop over all frames.
 			{
-				if (count[i][Ch-1]>0)
+				if (count[i][Ch-1]>0)						// if we've added data,
 				{
-					ratio[i][Ch-1] /= count[i][Ch-1]; // normalize.
-					maxDim[i][Ch-1] /= (count[i][Ch-1]);							
+					ratio[i][Ch-1] /= count[i][Ch-1]; 		// normalize.	
+					maxDim[i][Ch-1] /= (count[i][Ch-1]);	// normalize.						
 				}
-
 			}
 		}
 
-		int minLength = 40;			
-		//double[][] calibration = interpolate(ratio, minLength, nChannels);
-		double[][] calibration = makeCalibrationCurve(ratio, maxDim, minLength, nChannels, false,false,true);		
+		int minLength = 40;									// minimum length of calibration range.
+		double[][] calibration = makeCalibrationCurve(ratio, maxDim, minLength, nChannels, false,false,true);	// create calibration curve.
 		/*
 		 * STORE calibration file:
 		 */
@@ -299,15 +333,19 @@ public class AstigmatismFitting {
 			}
 		} 
 
+		for (int i = 2; i < 11; i++)
+		{
+			ij.Prefs.set("SMLocalizer.calibration.Astigmatism.ChOffsetX"+i,0);
+			ij.Prefs.set("SMLocalizer.calibration.Astigmatism.ChOffsetY"+i,0);
+			ij.Prefs.set("SMLocalizer.calibration.Astigmatism.ChOffsetZ"+i,0);
+		}
 		ij.Prefs.savePreferences(); // store settings.
-	//	System.out.println("length: " + calibration.length);
-		
-		ArrayList<Particle> resultCalib = fit(result);
-		TableIO.Store(resultCalib);
+		ArrayList<Particle> resultCalib = fit(result);		// call the fit function to update all localized events with the actual z-position it will recieve.
+		TableIO.Store(resultCalib);							// display results.
 		/*
 		 * Go through central part of the fit for each channel and calculate offset in XY for each channel.
 		 */
-		
+
 		if (nChannels > 1)
 		{
 			int[] z = {zStep*(calibration.length/2 - 5),zStep*(calibration.length/2 + 5)}; // lower and upper bounds for z.
@@ -331,14 +369,15 @@ public class AstigmatismFitting {
 									if (resultCalib.get(i).x - resultCalib.get(j).x < inputPixelSize &&
 											resultCalib.get(i).y - resultCalib.get(j).y < inputPixelSize)
 									{
+										// calculate distance between particle i and j.
 										double tempDist = Math.sqrt((resultCalib.get(i).x - resultCalib.get(j).x)*(resultCalib.get(i).x - resultCalib.get(j).x) + 
 												(resultCalib.get(i).y - resultCalib.get(j).y)*(resultCalib.get(i).y - resultCalib.get(j).y) + 
 												(resultCalib.get(i).z - resultCalib.get(j).z)*(resultCalib.get(i).z - resultCalib.get(j).z) 
 												);
-										if(tempDist < particleDistance)
+										if(tempDist < particleDistance) 	// if j is closer then the previous neighbor.
 										{
-											nearestNeighbor = j;
-											particleDistance = tempDist;
+											nearestNeighbor = j;			// update which object is closest to i.
+											particleDistance = tempDist;	// update the distance from i to j.
 										}
 									}
 								}
@@ -352,22 +391,24 @@ public class AstigmatismFitting {
 					}
 				}
 			}
+			// normalize.
 			for(int i = 0; i < nChannels-1; i ++)
 			{
 				offset[0][i] /=counter[i];
 				offset[1][i] /=counter[i];
 				offset[2][i] /=counter[i];
 			}
+			// store x y and z offsets for each channel.
 			for (int i = 1; i < nChannels; i++)
 			{
-				ij.Prefs.set("SMLocalizer.calibration.Astigmatism.ChOffsetX"+i,offset[0][i-1]);
-				ij.Prefs.set("SMLocalizer.calibration.Astigmatism.ChOffsetY"+i,offset[1][i-1]);
-				ij.Prefs.set("SMLocalizer.calibration.Astigmatism.ChOffsetZ"+i,offset[2][i-1]);
+				ij.Prefs.set("SMLocalizer.calibration.Astigmatism.ChOffsetX"+(i+1),offset[0][i-1]);
+				ij.Prefs.set("SMLocalizer.calibration.Astigmatism.ChOffsetY"+(i+1),offset[1][i-1]);
+				ij.Prefs.set("SMLocalizer.calibration.Astigmatism.ChOffsetZ"+(i+1),offset[2][i-1]);
 			}
 			ij.Prefs.savePreferences(); // store settings.
 		}else
 		{
-			for (int i = 1; i < 10; i++)
+			for (int i = 2; i < 11; i++)
 			{
 				ij.Prefs.set("SMLocalizer.calibration.Astigmatism.ChOffsetX"+i,0);
 				ij.Prefs.set("SMLocalizer.calibration.Astigmatism.ChOffsetY"+i,0);
@@ -375,29 +416,26 @@ public class AstigmatismFitting {
 			}
 			ij.Prefs.savePreferences(); // store settings.
 		}
-		
-		double[] printout = new double[calibration.length];
+
+/*		double[] printout = new double[calibration.length];
 		for (int i = 0; i < printout.length; i++)
 			printout[i] = calibration[i][0];
-		correctDrift.plot(printout);
-
-
-
+		correctDrift.plot(printout);*/
 	} // calibrate.
 
 	public static double[][] getOffset()
 	{
 		double[][] offset = new double[3][(int) ij.Prefs.get("SMLocalizer.calibration.Astigmatism.channels",0)];
-		for (int i = 1; i < offset[0].length; i++)
+		for (int i = 2; i <= offset[0].length; i++)
 		{
-			offset[0][i-1] = ij.Prefs.get("SMLocalizer.calibration.Astigmatism.ChOffsetX"+i,0);
-			offset[1][i-1] = ij.Prefs.get("SMLocalizer.calibration.Astigmatism.ChOffsetY"+i,0);
-			offset[2][i-1] = ij.Prefs.get("SMLocalizer.calibration.Astigmatism.ChOffsetZ"+i,0);
+			offset[0][i-2] = ij.Prefs.get("SMLocalizer.calibration.Astigmatism.ChOffsetX"+i,0);
+			offset[1][i-2] = ij.Prefs.get("SMLocalizer.calibration.Astigmatism.ChOffsetY"+i,0);
+			offset[2][i-2] = ij.Prefs.get("SMLocalizer.calibration.Astigmatism.ChOffsetZ"+i,0);
 		}
-		
+
 		return offset;
 	}
-	
+
 	public static double getZ (double[][] calibration, int channel, double ratio)
 	{
 		double z = 0;
@@ -416,15 +454,13 @@ public class AstigmatismFitting {
 			z = -1;
 		else // interpolate
 		{
-			double diff = calibration[idx][channel-1] - calibration[idx - 1][channel-1];
+			double diff 	= calibration[idx][channel-1] - calibration[idx - 1][channel-1];
 			double fraction = (ratio - calibration[idx - 1][channel-1]) / diff;
 			z = idx - 1 + fraction;
 		} 		
-		
+
 		if (z != -1)
 			z *= ij.Prefs.get("SMLocalizer.calibration.Astigmatism.step",0); // scale.
-	//	if (z < 300)
-	//		System.out.println("idx: " + idx + " z: " + z + " ratio: " + ratio);
 		return z;
 	}
 
@@ -456,24 +492,23 @@ public class AstigmatismFitting {
 	}
 	public static double[][] makeCalibrationCurve(double[][] result, double[][] selectionParameter, int minLength, int nChannels,boolean printout, boolean full, boolean store)
 	{
-		int[] start = new int[nChannels];
-		int[] end 	= new int[nChannels];
-		//double[] startValue = new double[nChannels];
-		//double[] endValue = new double[nChannels];		
-		int maxCounter = 0;
-		int channelIdx = 1;
-		double[] maxSelectionParameter = new double[nChannels];
-		double leftSelectionParameter = 0;
-		double rightSelectionParameter = 0;
-		while (channelIdx <= nChannels)		
+		int[] start 					= new int[nChannels]; 	// start index for calibration, channel specific.
+		int[] end 						= new int[nChannels]; 	// end index for calibration, channel specific.
+		int maxCounter 					= 0;					
+		int channelIdx 					= 1;					// current channel.
+		double[] maxSelectionParameter 	= new double[nChannels];// max value of sigma x and y for given channel.
+		double leftSelectionParameter 	= 0;					// holds the max allowed value of sigma x and y for the current channel to make the left part of the calibration curve unambiguous.
+		double rightSelectionParameter 	= 0;					// holds the max allowed value of sigma x and y for the current channel to make the left part of the calibration curve unambiguous.
+		while (channelIdx <= nChannels)							// loop over all channels.
 		{
-			double[] tempVector = new double[result.length];
-			double[] selectionpVector = new double[result.length];
-			int idx = 0;
-			boolean iterate = true;
+			double[] tempVector 		= new double[result.length];	// 5 point smoothed data.
+			double[] selectionVector 	= new double[result.length];	// max sigma for the current channel, 5 point smoothed.
+			int idx 					= 0;							// index variable.
+			boolean iterate 			= true;							// loop variable.
 
-			while (idx < result.length)
+			while (idx < result.length)									// step through the current channel-
 			{
+				// 5 point smoothing with edge handling.
 				if (idx == 0)
 				{
 					int included = 0;
@@ -488,7 +523,7 @@ public class AstigmatismFitting {
 						tempVector[idx] = (result[idx][channelIdx-1]
 								+ result[idx + 1][channelIdx-1] 
 										+ result[idx + 2][channelIdx-1])/included;
-						selectionpVector[idx] = (selectionParameter[idx][channelIdx-1]
+						selectionVector[idx] = (selectionParameter[idx][channelIdx-1]
 								+ selectionParameter[idx + 1][channelIdx-1] 
 										+ selectionParameter[idx + 2][channelIdx-1])/included;
 
@@ -496,7 +531,7 @@ public class AstigmatismFitting {
 					else
 					{
 						tempVector[idx] = 0;
-						selectionpVector[idx] = 0;
+						selectionVector[idx] = 0;
 					}
 				}else if (idx == 1)
 				{
@@ -515,7 +550,7 @@ public class AstigmatismFitting {
 								+ result[idx][channelIdx-1]
 										+ result[idx + 1][channelIdx-1] 
 												+ result[idx + 2][channelIdx-1])/included;
-						selectionpVector[idx] = (selectionParameter[idx - 1][channelIdx-1]
+						selectionVector[idx] = (selectionParameter[idx - 1][channelIdx-1]
 								+ selectionParameter[idx][channelIdx-1]
 										+ selectionParameter[idx + 1][channelIdx-1] 
 												+ selectionParameter[idx + 2][channelIdx-1])/included;
@@ -523,7 +558,7 @@ public class AstigmatismFitting {
 					else
 					{
 						tempVector[idx] = 0;
-						selectionpVector[idx] = 0;
+						selectionVector[idx] = 0;
 					}
 				}else if (idx == result.length - 2)
 				{
@@ -542,7 +577,7 @@ public class AstigmatismFitting {
 								+ result[idx - 1][channelIdx-1]
 										+ result[idx][channelIdx-1] 
 												+ result[idx + 1][channelIdx-1])/included;
-						selectionpVector[idx] = (selectionParameter[idx - 2][channelIdx-1]
+						selectionVector[idx] = (selectionParameter[idx - 2][channelIdx-1]
 								+ selectionParameter[idx - 1][channelIdx-1]
 										+ selectionParameter[idx][channelIdx-1] 
 												+ selectionParameter[idx + 1][channelIdx-1])/included;
@@ -550,7 +585,7 @@ public class AstigmatismFitting {
 					else
 					{
 						tempVector[idx] = 0;
-						selectionpVector[idx] = 0;
+						selectionVector[idx] = 0;
 					}
 				}else if (idx == result.length - 1)
 				{
@@ -566,14 +601,14 @@ public class AstigmatismFitting {
 						tempVector[idx] = (result[idx - 2][channelIdx-1]
 								+ result[idx - 1][channelIdx-1]
 										+ result[idx][channelIdx-1])/included;
-						selectionpVector[idx] = (selectionParameter[idx - 2][channelIdx-1]
+						selectionVector[idx] = (selectionParameter[idx - 2][channelIdx-1]
 								+ selectionParameter[idx - 1][channelIdx-1]
 										+ selectionParameter[idx][channelIdx-1])/included;
 					}
 					else
 					{
 						tempVector[idx] = 0;
-						selectionpVector[idx] = 0;
+						selectionVector[idx] = 0;
 					}
 				}else if (idx < result.length - 2)
 				{
@@ -595,7 +630,7 @@ public class AstigmatismFitting {
 										+ result[idx][channelIdx-1] 
 												+ result[idx + 1][channelIdx-1]
 														+ result[idx + 2][channelIdx-1])/included;
-						selectionpVector[idx] = (selectionParameter[idx - 2][channelIdx-1]
+						selectionVector[idx] = (selectionParameter[idx - 2][channelIdx-1]
 								+ selectionParameter[idx - 1][channelIdx-1]
 										+ selectionParameter[idx][channelIdx-1] 
 												+ selectionParameter[idx + 1][channelIdx-1]
@@ -604,7 +639,7 @@ public class AstigmatismFitting {
 					else
 					{
 						tempVector[idx] = 0;
-						selectionpVector[idx] = 0;
+						selectionVector[idx] = 0;
 					}
 				}
 				idx++;
@@ -613,8 +648,8 @@ public class AstigmatismFitting {
 
 			// find first and last position for both result and selectionParameter vectors.
 
-			idx = 1;
-			int counter = 0;			
+			idx 		= 1;		// reset.
+			int counter = 0;		// counter to keep track of how long the calibration curve is continuous for.
 			while (idx < result.length && iterate)
 			{
 				if (tempVector[idx] <= 0)
@@ -624,9 +659,7 @@ public class AstigmatismFitting {
 					{
 						end[channelIdx-1] = idx - 1;
 						iterate = false;
-
 					}
-
 				}
 
 				else
@@ -639,7 +672,6 @@ public class AstigmatismFitting {
 						{
 							end[channelIdx-1] = idx - 1;
 							iterate = false;
-
 						}
 						else
 							counter = 0;
@@ -665,10 +697,10 @@ public class AstigmatismFitting {
 			boolean optimize = true;
 			while(optimize)
 			{				
-				boolean verify = true;
-				leftSelectionParameter = selectionParameter[start[channelIdx-1]][channelIdx-1];
-				rightSelectionParameter= selectionParameter[end[channelIdx-1]][channelIdx-1];
-				int tempIdx = start[channelIdx-1]-1;
+				boolean verify 			= true;
+				leftSelectionParameter 	= selectionParameter[start[channelIdx-1]][channelIdx-1];	// low end max sigma allowed for unambiguous selection from tempVector.
+				rightSelectionParameter	= selectionParameter[end[channelIdx-1]][channelIdx-1];		// high end max sigma allowed for unambiguous selection from tempVector.
+				int tempIdx 			= start[channelIdx-1]-1;									// loop index for while loop.
 				while(verify)
 				{
 					if(leftSelectionParameter < selectionParameter[tempIdx][channelIdx-1] || selectionParameter[tempIdx][channelIdx-1] == 0)
@@ -699,10 +731,10 @@ public class AstigmatismFitting {
 
 				int tempIdx = end[channelIdx-1]+1;
 				if (tempIdx >= selectionParameter.length-1)
-					{
-						optimize = false;
-						verify = false;
-					}
+				{
+					optimize = false;
+					verify = false;
+				}
 				while(verify)
 				{
 					if(rightSelectionParameter < selectionParameter[tempIdx][channelIdx-1] || selectionParameter[tempIdx][channelIdx-1] == 0)
@@ -770,7 +802,7 @@ public class AstigmatismFitting {
 		}
 
 		maxCounter = end[0] - start[0] + 1;
-		if (full)
+		if (full)	// if true, set start and end to cover full range.
 		{
 			end[0] = result.length-1;
 			start[0] = 0;
@@ -787,7 +819,7 @@ public class AstigmatismFitting {
 				int count = 0;
 				while (idx <= end[channelIdx-1])				
 				{
-					// 5 point smoothing:
+					// 5 point smoothing with edge handling:
 					if (idx == start[channelIdx-1])
 					{
 						int included = 0;
@@ -803,9 +835,6 @@ public class AstigmatismFitting {
 											+ result[idx + 2][channelIdx-1])/included;
 						else
 							calibration[count][channelIdx-1] = 0;
-						//						calibration[count][channelIdx-1] = (result[idx][channelIdx-1]
-						//								+ result[idx + 1][channelIdx-1] 
-						//										+ result[idx + 2][channelIdx-1])/3;
 					}else if (idx == start[channelIdx-1] + 1)
 					{
 						int included = 0;					
@@ -824,10 +853,6 @@ public class AstigmatismFitting {
 													+ result[idx + 2][channelIdx-1])/included;
 						else
 							calibration[count][channelIdx-1] = 0;
-						//						calibration[count][channelIdx-1] = (result[idx - 1][channelIdx-1]
-						//								+ result[idx][channelIdx-1]
-						//										+ result[idx + 1][channelIdx-1] 
-						//												+ result[idx + 2][channelIdx-1])/4;
 					}else if (idx == end[channelIdx-1] - 1)
 					{
 						int included = 0;
@@ -846,10 +871,6 @@ public class AstigmatismFitting {
 													+ result[idx + 1][channelIdx-1])/included;
 						else
 							calibration[count][channelIdx-1] = 0;
-						//						calibration[count][channelIdx-1] = (result[idx - 2][channelIdx-1]
-						//								+ result[idx - 1][channelIdx-1]
-						//										+ result[idx][channelIdx-1] 
-						//												+ result[idx + 1][channelIdx-1])/4;
 					}else if (idx == end[channelIdx-1])
 					{
 						int included = 0;
@@ -865,9 +886,7 @@ public class AstigmatismFitting {
 											+ result[idx][channelIdx-1])/included;
 						else
 							calibration[count][channelIdx-1] = 0;
-						//						calibration[count][channelIdx-1] = (result[idx - 2][channelIdx-1]
-						//								+ result[idx - 1][channelIdx-1]
-						//										+ result[idx][channelIdx-1])/3;
+
 					}else if (idx < end[channelIdx-1] - 1)
 					{
 						int included = 0;
@@ -889,11 +908,6 @@ public class AstigmatismFitting {
 															+ result[idx + 2][channelIdx-1])/included;
 						else
 							calibration[count][channelIdx-1] = 0;
-						//						calibration[count][channelIdx-1] = (result[idx - 2][channelIdx-1]
-						//								+ result[idx - 1][channelIdx-1]
-						//										+ result[idx][channelIdx-1] 
-						//												+ result[idx + 1][channelIdx-1]
-						//														+ result[idx + 2][channelIdx-1])/5;
 					}
 					count++;
 					idx++;
@@ -903,106 +917,10 @@ public class AstigmatismFitting {
 			return calibration;
 		}
 
-		else
+		else // if calibration failed.
 		{
 			double[][] calibration = new double[maxCounter][nChannels];
 			return calibration;
 		}
 	}
-
-	public static double[][] makeCalibrationCurve(double[][] result, int minLength, int nChannels)
-	{
-		int[] start = new int[nChannels];
-		int[] end 	= new int[nChannels];
-		int counter = 0;
-		int maxCounter = 0;
-		int channelIdx = 1;
-		while (channelIdx <= nChannels)
-		{
-			int idx = 0;
-			boolean iterate = true;
-			while (idx < result.length && iterate)
-			{
-				if (result[idx][channelIdx-1] > 0)
-				{
-					counter++;
-					if (counter == minLength) // if we've passed the set number of points.
-						start[channelIdx-1] = idx - minLength + 1;
-					if (counter > minLength)
-						end[channelIdx-1] = idx;
-				}
-				else if (result[idx][channelIdx-1] <= 0) 
-				{
-					if (counter < minLength)
-						counter = 0;
-					if (counter >= minLength)
-						iterate = false;
-				}
-				idx++;
-			}
-			if (counter > maxCounter)
-				maxCounter = counter;
-
-			channelIdx++;
-		}	
-		if (maxCounter >= minLength)
-		{
-
-
-			double[][] calibration = new double[maxCounter][nChannels];
-			channelIdx = 1;
-
-			while (channelIdx <= nChannels)
-			{
-				int idx = start[channelIdx-1];
-				int count = 0;
-				while (idx <= end[channelIdx-1])				
-				{
-					// 5 point smoothing:
-					if (idx == start[channelIdx-1])
-					{
-						calibration[count][channelIdx-1] = (result[idx][channelIdx-1]
-								+ result[idx + 1][channelIdx-1] 
-										+ result[idx + 2][channelIdx-1])/3;
-					}else if (idx == start[channelIdx-1] + 1)
-					{
-						calibration[count][channelIdx-1] = (result[idx - 1][channelIdx-1]
-								+ result[idx][channelIdx-1]
-										+ result[idx + 1][channelIdx-1] 
-												+ result[idx + 2][channelIdx-1])/4;
-					}else if (idx == end[channelIdx-1] - 1)
-					{
-						calibration[count][channelIdx-1] = (result[idx - 2][channelIdx-1]
-								+ result[idx - 1][channelIdx-1]
-										+ result[idx][channelIdx-1] 
-												+ result[idx + 1][channelIdx-1])/4;
-					}else if (idx == end[channelIdx-1])
-					{
-						calibration[count][channelIdx-1] = (result[idx - 2][channelIdx-1]
-								+ result[idx - 1][channelIdx-1]
-										+ result[idx][channelIdx-1])/3;
-					}else if (idx < end[channelIdx-1] - 1)
-					{
-						calibration[count][channelIdx-1] = (result[idx - 2][channelIdx-1]
-								+ result[idx - 1][channelIdx-1]
-										+ result[idx][channelIdx-1] 
-												+ result[idx + 1][channelIdx-1]
-														+ result[idx + 2][channelIdx-1])/5;
-					}
-					count++;
-					idx++;
-				}
-				channelIdx++;
-			}
-			return calibration;
-		}
-
-		else
-		{
-			double[][] calibration = new double[maxCounter][nChannels];
-			return calibration;
-		}
-	}
-
-
 }

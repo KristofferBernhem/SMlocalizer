@@ -52,7 +52,7 @@ import jcuda.driver.CUmodule;
  */
 public class processMedianFit {
 
-	public static void run(final int[] W, ImagePlus image, int[] MinLevel, int pixelSize, int[] totalGain, String modality)
+	public static void run(final int[] W, ImagePlus image, int[] MinLevel, int pixelSize, int[] totalGain,double maxSigma, int gWindow, String modality)
 	{
 		int columns 						= image.getWidth();
 		int rows 							= image.getHeight();		
@@ -63,33 +63,31 @@ public class processMedianFit {
 		double convCriteria = 1E-8; // how large improvement from one step to next we require.
 		int maxIterations = 1000;  // stop if an individual fit reaches this number of iterati
 		ArrayList<Particle> Results 		= new ArrayList<Particle>();		// Fitted results array list.
-		int gWindow = 5;
-		/*
-		 if (modality.getSelectedIndex() == 0)
-			 modalityChoice = "2D";
-		 else if(modality.getSelectedIndex() == 1)
-			 modalityChoice = "PRILM";
-		 else if(modality.getSelectedIndex() == 2)
-			 modalityChoice = "Biplane";
-		 else if(modality.getSelectedIndex() == 3)
-			 modalityChoice = "Double Helix";
-		 else if(modality.getSelectedIndex() == 4)
-			 modalityChoice = "Astigmatism";
-		*/
+
+		int minPosPixels = gWindow*gWindow - 4;
 		if (modality.equals("2D"))
 		{
-			if (pixelSize < 100)
-			{
-				gWindow = (int) Math.ceil(500 / pixelSize); // 500 nm wide window.
-				
-			}
+			minPosPixels = gWindow*gWindow - 4; // update to relevant numbers for this modality.
 		}
 		else if (modality.equals("PRILM"))
 		{
-			// get calibrated values for gWindow.
+			minPosPixels = gWindow*gWindow - 4; // update to relevant numbers for this modality.
 		}
-		int minPosPixels = gWindow*gWindow - 4;
-		
+		else if (modality.equals("Biplane"))
+		{
+			// get calibrated values for gWindow.
+			minPosPixels = gWindow*gWindow - 4; // update to relevant numbers for this modality.
+		}
+		else if (modality.equals("Double Helix"))
+		{
+			// get calibrated values for gWindow.
+			minPosPixels = gWindow*gWindow - 4; // update to relevant numbers for this modality.
+		}
+		else if (modality.equals("Astigmatism"))
+		{
+			// get calibrated values for gWindow.
+			minPosPixels = gWindow*gWindow - 4; // update to relevant numbers for this modality.					
+		}
 		// Initialize the driver and create a context for the first device.
 		cuInit(0);
 		CUdevice device = new CUdevice();
@@ -149,13 +147,17 @@ public class processMedianFit {
 			if (endFrame > nFrames)
 				endFrame = nFrames;
 			CUdeviceptr device_window 		= CUDA.allocateOnDevice((float)((2 * W[Ch-1] + 1) * rows * columns)); // swap vector.
+			int lowXY = gWindow/2 - 2;
+			if (lowXY < 1)
+				lowXY = 1;
+			int highXY = gWindow/2 +  2;
 			double[] bounds = { // bounds for gauss fitting.
-					0.5			, 1.5,				// amplitude.
-					1	,(gWindow-1),			// x.
-					1	, (gWindow-1),			// y.
-					0.7			,  (gWindow / 2.0),		// sigma x.
-					0.7			,  (gWindow / 2.0),		// sigma y.
-					 (-0.5*Math.PI) , (0.5*Math.PI),	// theta.
+					0.6			, 1.4,				// amplitude.
+					lowXY	, highXY,			// x.
+					lowXY	, highXY,			// y.
+					0.8			,  maxSigma,		// sigma x.
+					0.8			,  maxSigma,		// sigma y.
+					(-0.5*Math.PI) , (0.5*Math.PI),	// theta.
 					-0.5		, 0.5				// offset.
 			};
 			CUdeviceptr deviceBounds 		= CUDA.copyToDevice(bounds);	
@@ -323,10 +325,10 @@ public class processMedianFit {
 					P[i*7+6] = 0;
 					P[i*7+6] = 0;
 					stepSize[i * 7] = 0.1;// amplitude
-					stepSize[i * 7 + 1] = 0.25; // x center.
-					stepSize[i * 7 + 2] = 0.25; // y center.
-					stepSize[i * 7 + 3] = 0.25; // sigma x.
-					stepSize[i * 7 + 4] = 0.25; // sigma y.
+					stepSize[i * 7 + 1] = 0.25*100/pixelSize; // x center.
+					stepSize[i * 7 + 2] = 0.25*100/pixelSize; // y center.
+					stepSize[i * 7 + 3] = 0.25*100/pixelSize; // sigma x.
+					stepSize[i * 7 + 4] = 0.25*100/pixelSize; // sigma y.
 					stepSize[i * 7 + 5] = 0.19625; // Theta.
 					stepSize[i * 7 + 6] = 0.01; // offset.   
 					int k = locatedCenter[i] - (gWindow / 2) * (columns + 1); // upper left corner.
@@ -377,15 +379,14 @@ public class processMedianFit {
 						0, null,               		// Shared memory size and stream
 						kernelParametersGaussFit, null 		// Kernel- and extra parameters
 						);
-				//cuCtxSynchronize(); 
+				cuCtxSynchronize(); 
 
 				double hostParameterOutput[] = new double[newN*7];
 
 				// Pull data from device.
 				cuMemcpyDtoH(Pointer.to(hostParameterOutput), deviceP,
 						newN*7 * Sizeof.DOUBLE);
-				//		for(int i = 0; i < hostOutput.length; i+=7)
-				//			System.out.println(hostOutput[i]);
+
 				// Free up memory allocation on device, housekeeping.
 				cuMemFree(deviceGaussVector);   
 				cuMemFree(deviceP);    
@@ -403,11 +404,9 @@ public class processMedianFit {
 					Localized.z				= pixelSize*0;	// no 3D information.
 					Localized.sigma_x		= pixelSize*hostParameterOutput[n*7+3];
 					Localized.sigma_y		= pixelSize*hostParameterOutput[n*7+4];
-					//Localized.sigma_z		= pixelSize*0; // no 3D information.
 					Localized.photons		= (int) (hostParameterOutput[n*7]/totalGain[Ch-1]);
 					Localized.precision_x 	= Localized.sigma_x/Math.sqrt(Localized.photons);
 					Localized.precision_y 	= Localized.sigma_y/Math.sqrt(Localized.photons);
-					//Localized.precision_z 	= Localized.sigma_z/Math.sqrt(Localized.photons);
 					Results.add(Localized);
 				}		
 				startFrame = endFrame-W[Ch-1]; // include W more frames to ensure that border errors from median calculations dont occur ore often then needed.
@@ -446,6 +445,7 @@ public class processMedianFit {
 		else if (modality.equals("Biplane"))
 		{
 			cleanResults = BiplaneFitting.fit(cleanResults,pixelSize,totalGain); // change 2D data to 3D data based on calibration data.
+			columns /= 2;
 		}
 		else if (modality.equals("Double Helix"))
 		{

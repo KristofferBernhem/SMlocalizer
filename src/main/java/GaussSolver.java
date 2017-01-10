@@ -222,14 +222,11 @@ public class GaussSolver {
 		///////////////////////////////////////////////////////////////////
 		double sigmaX = bounds[6];
 		double sigmaY = bounds[8];
-//		for (double sigmaX = P[3] - 3*stepSize[3]; sigmaX <= P[3] + 3*stepSize[3]; sigmaX += stepSize[3])
 		while (sigmaX <= bounds[7])
 		{
-	//		for (double sigmaY = P[4] - 3*stepSize[4]; sigmaY <= P[4] + 3*stepSize[4]; sigmaY += stepSize[4])
+			ThetaA = 1/(2*sigmaX*sigmaX);
 			while (sigmaY <= bounds[9])
 			{
-
-				ThetaA = 1/(2*sigmaX*sigmaX);
 				ThetaC = 1/(2*sigmaY*sigmaY);
 				for (int xyIndex = 0; xyIndex < width * width; xyIndex++)
 				{
