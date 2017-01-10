@@ -3420,6 +3420,10 @@ import ij.WindowManager;
 		 double[][] lb = lbParameters();
 		 double[][] ub = ubParameters();
 		 cleanParticleList.run(lb,ub,include);
+		 for (int ch = 1; ch <= 10; ch++)
+		 {
+			 doCluster[ch-1] = true;
+		 }
 		 //	nearestNeighbour.analyse();
 		 DBClust.Ident(epsilon, minPts,desiredPixelSize,doCluster); // change call to include no loop but checks for number of channels within DBClust.
 	 }                                               
@@ -3636,8 +3640,7 @@ import ij.WindowManager;
 			 maxSigma 		= (int)ij.Prefs.get("SMLocalizer.calibration.Astigmatism.sigma", 0);
 		 }
 
-		 ArrayList<Particle> Results = localizeAndFit.run(signalStrength, gWindow, pixelSize,  totalGain , selectedModel, maxSigma, modalityChoice);  //locate and fit all particles.		  	   	  
-//		 TableIO.Store(Results);
+		 localizeAndFit.run(signalStrength, gWindow, pixelSize,  totalGain , selectedModel, maxSigma, modalityChoice);  //locate and fit all particles.		  	   	  
 	 }                                            
 
 	 private void cleanTableActionPerformed(java.awt.event.ActionEvent evt) {                                           

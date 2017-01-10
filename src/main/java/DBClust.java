@@ -43,7 +43,7 @@ public class DBClust {
 		double width = tab.getValue("width", 0);
 		double height = tab.getValue("height", 0);
 		tab.reset();
-		tab.incrementCounter();
+//		tab.incrementCounter();
 
 		for (int Ch = 1; Ch <=InpParticle.get(InpParticle.size()-1).channel; Ch++){
 			if (doCluster[Ch-1])
@@ -81,12 +81,6 @@ public class DBClust {
 					if(InpParticle.get(i).channel == Ch)
 					{
 						tab.incrementCounter();
-						if(first)
-						{
-							first = false;
-							tab.addValue("width", width);
-							tab.addValue("height", height);
-						}
 						tab.addValue("Cluster", IndexList[i]);
 						tab.addValue("x0", InpParticle.get(i).x);
 						tab.addValue("y0", InpParticle.get(i).y);
@@ -95,12 +89,18 @@ public class DBClust {
 						tab.addValue("channel", InpParticle.get(i).channel);
 						tab.addValue("sigma_x", InpParticle.get(i).sigma_x);
 						tab.addValue("sigma_y", InpParticle.get(i).sigma_y);
-					//	tab.addValue("sigma_z", InpParticle.get(i).sigma_z);
 						tab.addValue("precision_x", InpParticle.get(i).precision_x);
 						tab.addValue("precision_y", InpParticle.get(i).precision_y);
 						tab.addValue("precision_z", InpParticle.get(i).precision_z);
 						tab.addValue("r_square", InpParticle.get(i).r_square);
 						tab.addValue("photons", InpParticle.get(i).photons);
+						tab.addValue("include", InpParticle.get(i).include);
+						if(first)
+						{
+							first = false;
+							tab.addValue("width", width);
+							tab.addValue("height", height);
+						}
 					}
 				}
 			}

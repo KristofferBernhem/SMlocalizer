@@ -51,10 +51,30 @@ public class TableIO {
 		ij.measure.ResultsTable tab = Analyzer.getResultsTable();
 		double width = tab.getValue("width", 0);
 		double height = tab.getValue("height", 0);
+		double[] clusters = new double[tab.size()];
+		boolean cluster = false;
+		try{
+			tab.getValue("Cluster", 0);
+			cluster = true;
+			for( int i = 0; i < clusters.length; i++)
+			{
+				clusters[i]  = tab.getValue("Cluster", i);
+			}
+		}catch (IllegalArgumentException e)
+		{
+			
+		}
+		finally
+		{
+			
+		}
+		
 		tab.reset();		
 
 		for (int i = 0; i < Results.size(); i++){
 				tab.incrementCounter();
+				if(cluster)
+					tab.addValue("Cluster", clusters[i]);
 				tab.addValue("x0", Results.get(i).x);
 				tab.addValue("y0", Results.get(i).y);
 				tab.addValue("z0", Results.get(i).z);
