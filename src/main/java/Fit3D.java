@@ -22,7 +22,7 @@ public class Fit3D {
 		int nFrames 						= image.getNFrames();
 		if (nFrames == 1)
 			nFrames 						= image.getNSlices();
-
+		
 		int minPosPixels = (gWindow*gWindow - 4); // update to relevant numbers for this modality.
 		ImageProcessor IP = image.getProcessor();
 		ArrayList<Particle> Results 		= new ArrayList<Particle>();		// Fitted results array list.
@@ -114,7 +114,7 @@ public class Fit3D {
 		ArrayList<Particle> cleanResults = new ArrayList<Particle>();
 		/*
 		 * Remove non-realistic fits.
-		 */			
+		 */		
 		for (int i = 0; i < Results.size(); i++)
 		{
 			if (Results.get(i).x > 0 &&
@@ -133,7 +133,6 @@ public class Fit3D {
 		int currFrame = -1;
 		int i  = 0;
 		int j  = 0;	
-		
 		int pixelDistance = 2*inputPixelSize*inputPixelSize;
 		while( i < cleanResults.size())
 		{							
@@ -174,7 +173,7 @@ public class Fit3D {
 		tab.addValue("height", rows*inputPixelSize);
 		tab.show("Results");
 		
-		TableIO.Store(cleanResults);
+		TableIO.Store(cleanResults);		
 		return cleanResults; // end parallel computation by returning results.
 	}
 }

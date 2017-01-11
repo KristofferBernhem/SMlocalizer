@@ -51,11 +51,11 @@ public class AstigmatismFitting {
 				temp.photons 	= inputResults.get(i).photons;
 				temp.x			= inputResults.get(i).x;
 				temp.y			= inputResults.get(i).y;
-				temp.sigma_x 	= inputResults.get(i).sigma_x; 		// fitted sigma in x direction.
-				temp.sigma_y 	= inputResults.get(i).sigma_y; 		// fitted sigma in y direction.					
-				temp.precision_x= inputResults.get(i).precision_x; 	// precision of fit for x coordinate.
-				temp.precision_y= inputResults.get(i).precision_y; 	// precision of fit for y coordinate.
-				temp.precision_z= 600 / Math.sqrt(temp.photons); 			// precision of fit for z coordinate.
+				temp.sigma_x 	= Math.min(inputResults.get(i).sigma_x,inputResults.get(i).sigma_y); 		// fitted sigma in x direction.
+				temp.sigma_y 	= Math.min(inputResults.get(i).sigma_x,inputResults.get(i).sigma_y); 		// fitted sigma in y direction.					
+				temp.precision_x= Math.min(inputResults.get(i).precision_x,inputResults.get(i).precision_y); 	// precision of fit for x coordinate.
+				temp.precision_y= Math.min(inputResults.get(i).precision_x,inputResults.get(i).precision_y); 	// precision of fit for y coordinate.
+				temp.precision_z= Math.max(inputResults.get(i).precision_x,inputResults.get(i).precision_y); 			// precision of fit for z coordinate.
 				temp.r_square 	= inputResults.get(i).r_square; 	// Goodness of fit.
 				temp.include	= 1; 		// If this particle should be included in analysis and plotted.
 				if(temp.z != -1 && temp.channel>1)	// if within ok z range. For all but first channel, move all particles by x,y,z offset for that channel to align all to first channel.
@@ -654,12 +654,12 @@ public class AstigmatismFitting {
 			{
 				if (tempVector[idx] <= 0)
 				{
-					counter = 0; // reset
 					if (counter > minLength)
 					{
 						end[channelIdx-1] = idx - 1;
 						iterate = false;
 					}
+					counter = 0; // reset
 				}
 
 				else

@@ -63,8 +63,8 @@ public class DoubleHelixFitting {
 					temp.y			= (inputResults.get(i).y + inputResults.get(j).y) / 2;
 					temp.sigma_x 	= (inputResults.get(i).sigma_x + inputResults.get(j).sigma_x) / 2; 				// fitted sigma in x direction.
 					temp.sigma_y 	= (inputResults.get(i).sigma_y + inputResults.get(j).sigma_y) / 2; 				// fitted sigma in y direction.
-					temp.precision_x= Math.min(inputResults.get(i).precision_x,inputResults.get(j).precision_x); 	// precision of fit for x coordinate.
-					temp.precision_y= Math.min(inputResults.get(i).precision_y,inputResults.get(j).precision_y); 	// precision of fit for y coordinate.
+					temp.precision_x= Math.max(inputResults.get(i).precision_x,inputResults.get(j).precision_x); 	// precision of fit for x coordinate.
+					temp.precision_y= Math.max(inputResults.get(i).precision_y,inputResults.get(j).precision_y); 	// precision of fit for y coordinate.
 					temp.precision_z= 600 / Math.sqrt(temp.photons); 												// precision of fit for z coordinate.
 					temp.r_square 	= Math.min(inputResults.get(i).r_square,inputResults.get(j).r_square);; 		// Goodness of fit.
 					temp.include	= 1; 																			// If this particle should be included in analysis and plotted.
@@ -658,12 +658,13 @@ public class DoubleHelixFitting {
 			{
 				if (tempVector[idx] >= 0)
 				{
-					counter = 0; // reset
+
 					if (counter > minLength)
 					{
 						end[channelIdx-1] = idx - 1;
 						iterate = false;
 					}
+					counter = 0; // reset
 				}
 
 				else
