@@ -102,6 +102,8 @@ public class generateImage {
 			Calibration cal = new Calibration(Image);
 			cal.pixelHeight = pixelSize[0]; 
 			cal.pixelWidth 	= pixelSize[0];
+			cal.pixelDepth = pixelSize[1];
+			cal.setZUnit("nm");
 			cal.setXUnit("nm");
 			cal.setYUnit("nm");
 

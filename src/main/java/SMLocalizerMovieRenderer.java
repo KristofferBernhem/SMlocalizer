@@ -41,15 +41,18 @@ public class SMLocalizerMovieRenderer{// implements PlugIn {
 		height 								= (int) Math.ceil(height/pixelSize[0]);				// rescale image.
 		ImageStack imstack 					= new ImageStack(width,height);						// generate image stack that will become the final output.
 		int nChannels 						= ParticleList.get(ParticleList.size()-1).channel; 	// number of channels
+
 		int[] idxChannelStart 				= new int[nChannels+1];								// start index for channels.
 		idxChannelStart[0] 					= 0;
 		idxChannelStart[nChannels] 			= ParticleList.size();
 		int maxFrame						= 1;
 		int count = 0;
+
 		for (int i = 0; i < ParticleList.size(); i++)
 		{
 			if (ParticleList.get(i).frame > maxFrame)
 				maxFrame = ParticleList.get(i).frame;
+
 			if (ParticleList.get(i).channel > ParticleList.get(idxChannelStart[count]).channel)
 			{
 				count++;
@@ -57,41 +60,55 @@ public class SMLocalizerMovieRenderer{// implements PlugIn {
 			}
 		}
 		int frame = 1;
-		while (frame <= maxFrame)
-		{
-			for (int channel = 1; channel <= nChannels; channel++)
-			{
-				ByteProcessor IP  = new ByteProcessor(width,height);	// 8 bit frame.
-				IP.set(0);
-				for (int idx = idxChannelStart[channel-1]; idx < idxChannelStart[channel]; idx++)
+		double lowZ = 0;
+		double highZ = 0;
+		int zSlice = 0;
+		int frameCount = 0;
+	
+			while (frame <= maxFrame)
+			{			
+				for (int channel = 1; channel <= nChannels; channel++)
 				{
-					if (ParticleList.get(idx).frame <= frame)
-					{
-						int x = (int) Math.round(ParticleList.get(idx).x/pixelSize[0]);
-						int y = (int) Math.round(ParticleList.get(idx).y/pixelSize[0]);						
-						IP.putPixel(x, y, (IP.get(x, y) + 1));
-					} // frame check.
-				} // idx for loop.
-				if (GaussFilter){ // if user wants gaussian smoothing.
-					IP.multiply(50); 			
-					IP.blurGaussian(2);			
-				}
-				imstack.addSlice(IP);
-			} // channel loop.
-			frame+=frameBinSize;  // Frame step size. Increase to decrease movie size.
-		} // main loop over all frames.
+					ByteProcessor IP  = new ByteProcessor(width,height);	// 8 bit frame.
+					IP.set(0);
 
+					if (highZ == pixelSize[1])
+						frameCount++;
+
+					for (int idx = idxChannelStart[channel-1]; idx < idxChannelStart[channel]; idx++)
+					{
+						if (ParticleList.get(idx).frame <= frame && ParticleList.get(idx).include == 1)
+						{
+							int x = (int) Math.round(ParticleList.get(idx).x/pixelSize[0]);
+							int y = (int) Math.round(ParticleList.get(idx).y/pixelSize[0]);						
+							IP.putPixel(x, y, (IP.get(x, y) + 1));			
+						} // frame check.
+					} // idx for loop.
+					if (GaussFilter){ // if user wants gaussian smoothing.
+						IP.multiply(50); 			
+						IP.blurGaussian(2);			
+					}
+					imstack.addSlice(IP);
+
+				} // channel loop.
+				frame+=frameBinSize;  // Frame step size. Increase to decrease movie size.
+			
+		} // main loop over all frames.
+		System.out.println("stacksize " + imstack.getSize());
+		System.out.println(zSlice + " : " + frameCount +" channel: " + nChannels + " : " + lowZ + " : " +  highZ);
 		ImagePlus Image = ij.IJ.createHyperStack("", 
 				width, 
 				height, 
 				nChannels, 
 				1, 
-				maxFrame, 
+				frameCount, 
 				8);
 		Image.setStack(imstack);
 		Calibration cal = new Calibration(Image);
 		cal.pixelHeight = pixelSize[0]; 
 		cal.pixelWidth 	= pixelSize[0];
+		cal.pixelDepth = pixelSize[1];
+		cal.setZUnit("nm");
 		cal.setXUnit("nm");
 		cal.setYUnit("nm");
 

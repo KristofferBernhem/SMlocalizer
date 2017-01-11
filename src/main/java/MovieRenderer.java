@@ -23,13 +23,13 @@
 import ij.IJ;
 import ij.plugin.PlugIn;
 
-public class MovieRenderer_ implements PlugIn {
+public class MovieRenderer implements PlugIn {
 
 	public static void main(final String... args) throws Exception {
 				
 		final ij.ImageJ ij = new ij.ImageJ();
 		ij.setVisible(true);
-		Class<?> clazz = MovieRenderer_.class;
+		Class<?> clazz = MovieRenderer.class;
 		String url = clazz.getResource("/" + clazz.getName().replace('.', '/') + ".class").toString();
 		String pluginsDir = url.substring("file:".length(), url.length() - clazz.getName().length() - ".class".length());
 		System.setProperty("plugins.dir", pluginsDir);				
