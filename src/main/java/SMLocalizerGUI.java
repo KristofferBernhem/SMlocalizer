@@ -4462,7 +4462,7 @@ import ij.WindowManager;
 
 	 private boolean[][] IncludeParameters()
 	 {
-		 boolean[][] Include = new boolean[7][10];
+		 boolean[][] Include = new boolean[6][10];
 		 for (int id = 0; id < Include[0].length; id++)
 		 {        	
 			 if(doPhotonCountChList.getItem(id).getText().equals("1"))
@@ -4472,27 +4472,23 @@ import ij.WindowManager;
 			 if(doSigmaXYChList.getItem(id).getText().equals("1"))
 				 Include[1][id] = true;
 			 else
-				 Include[1][id] = false;
-			 if(doSigmaZChList.getItem(id).getText().equals("1"))
+				 Include[1][id] = false;			 
+			 if(doRsquareChList.getItem(id).getText().equals("1"))
 				 Include[2][id] = true;
 			 else
 				 Include[2][id] = false;
-			 if(doRsquareChList.getItem(id).getText().equals("1"))
+			 if(doPrecisionXYChList.getItem(id).getText().equals("1"))
 				 Include[3][id] = true;
 			 else
 				 Include[3][id] = false;
-			 if(doPrecisionXYChList.getItem(id).getText().equals("1"))
+			 if(doPrecisionZChList.getItem(id).getText().equals("1"))
 				 Include[4][id] = true;
 			 else
 				 Include[4][id] = false;
-			 if(doPrecisionZChList.getItem(id).getText().equals("1"))
+			 if(doFrameChList.getItem(id).getText().equals("1"))
 				 Include[5][id] = true;
 			 else
 				 Include[5][id] = false;
-			 if(doFrameChList.getItem(id).getText().equals("1"))
-				 Include[6][id] = true;
-			 else
-				 Include[6][id] = false;
 		 }
 		 return Include;
 	 }

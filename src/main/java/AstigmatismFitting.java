@@ -26,9 +26,12 @@
 
 
 
+import java.awt.Color;
 import java.util.ArrayList;
 import ij.ImagePlus;
 import ij.WindowManager;
+import ij.gui.Plot;
+import ij.plugin.filter.Analyzer;
 import ij.process.ImageStatistics;
 
 public class AstigmatismFitting {
@@ -36,14 +39,18 @@ public class AstigmatismFitting {
 	{
 		ArrayList<Particle> results = new ArrayList<Particle>(); // output.
 		double[][] calibration 		= getCalibration();	// get calibration table.
-		double[] maxDim 			= getMaxDim();		// get max sigma for each channel.
+	//	double[] maxDim 			= getMaxDim();		// get max sigma for each channel.
+		double[] zOffset 			= getZoffset();     // get where z=0 is for each channel in the calibration file.
 		double[][] offset 			= getOffset(); 		// get xyz offset from channel 1.
+
+
+		//System.out.println(inputResults.size() + " : " + maxDim[0]);
 		for (int i = 0; i < inputResults.size(); i++)
 		{
 			// check maxDim before proceeding.
-			if (Math.max(inputResults.get(i).sigma_x, inputResults.get(i).sigma_y) < maxDim[inputResults.get(i).channel-1]) // if within ok range for max sigma dimension for this channel.
-			{
-				double z = getZ(calibration, inputResults.get(i).channel, inputResults.get(i).sigma_x/inputResults.get(i).sigma_y); // get z position based on calibration data.
+			//if (Math.max(inputResults.get(i).sigma_x, inputResults.get(i).sigma_y) < maxDim[inputResults.get(i).channel-1]) // if within ok range for max sigma dimension for this channel.
+			//{
+				double z = getZ(calibration, zOffset, inputResults.get(i).channel, inputResults.get(i).sigma_x/inputResults.get(i).sigma_y); // get z position based on calibration data.
 				Particle temp 	= new Particle();
 				temp.channel 	= inputResults.get(i).channel;
 				temp.z 		 	= z;
@@ -58,7 +65,7 @@ public class AstigmatismFitting {
 				temp.precision_z= Math.max(inputResults.get(i).precision_x,inputResults.get(i).precision_y); 			// precision of fit for z coordinate.
 				temp.r_square 	= inputResults.get(i).r_square; 	// Goodness of fit.
 				temp.include	= 1; 		// If this particle should be included in analysis and plotted.
-				if(temp.z != -1 && temp.channel>1)	// if within ok z range. For all but first channel, move all particles by x,y,z offset for that channel to align all to first channel.
+				if(temp.z != 1E6 && temp.channel>1)	// if within ok z range. For all but first channel, move all particles by x,y,z offset for that channel to align all to first channel.
 				{
 					temp.x -= offset[0][temp.channel-1];
 					temp.y -= offset[1][temp.channel-1];
@@ -66,9 +73,11 @@ public class AstigmatismFitting {
 					results.add(temp);
 				}
 
-				if (temp.z != -1 && temp.channel==1)	// if within ok z range. Don't shift first channel.
+				if (temp.z != 1E6 && temp.channel==1)	// if within ok z range. Don't shift first channel.
 					results.add(temp);
-			}
+				
+			//}
+
 		}
 		return results;
 	}
@@ -117,7 +126,7 @@ public class AstigmatismFitting {
 			// lower bounds.
 			lb[0][i]			= 0;
 			lb[1][i]			= 0;
-			lb[2][i]			= 0.8;		// r_square.
+			lb[2][i]			= 0.6;		// r_square.
 			lb[3][i]			= 0;
 			lb[4][i]			= 0;
 			lb[5][i]			= 0;
@@ -147,9 +156,9 @@ public class AstigmatismFitting {
 		/*
 		 * Optimize variables.
 		 */
-		while (loopC < 2)				// loop through twice, each time with larger window width for fitting.
+		while (loopC < 3)				// loop through twice, each time with larger window width for fitting.
 		{
-			for (double level = 0.7; level > 0.5; level -= 0.1)	// decrease intensity required for fitting.
+			for (double level = 0.5; level > 0.3; level -= 0.1)	// decrease intensity required for fitting.
 			{
 				for (double maxSigma = 4; maxSigma <= 8; maxSigma += 1) // increase maximal sigma for fitting, lower value results in faster fitting.
 				{									
@@ -239,7 +248,7 @@ public class AstigmatismFitting {
 							meanRsquare = rsquare;							// update.						
 							finalLevel = level;								// update.
 							finalSigma = maxSigma;							// update.
-							finalGWindow = gWindow;							// update.
+							finalGWindow = gWindow;							// update.							
 						}
 					}					
 				} // iterate over maxSigma
@@ -295,7 +304,7 @@ public class AstigmatismFitting {
 			{
 				if (result.get(i).channel == Ch)				// if correct channel.
 				{
-					ratio[(int)(result.get(i).z/zStep)][Ch-1] += result.get(i).sigma_x/result.get(i).sigma_y;				// calculate and add ratio of sigma x and sigma y.
+					ratio[(int)(result.get(i).z/zStep)][Ch-1] += result.get(i).sigma_x/result.get(i).sigma_y;				// calculate and add ratio of sigma x and sigma y.					
 					maxDim[(int)(result.get(i).z/zStep)][Ch-1] += Math.max(result.get(i).sigma_x,result.get(i).sigma_y);	// take the maximum of sigma x and sigma y.
 					count[(int)(result.get(i).z/zStep)][Ch-1]++;															// keep track of number of entries.
 				}
@@ -307,8 +316,9 @@ public class AstigmatismFitting {
 			{
 				if (count[i][Ch-1]>0)						// if we've added data,
 				{
-					ratio[i][Ch-1] /= count[i][Ch-1]; 		// normalize.	
-					maxDim[i][Ch-1] /= (count[i][Ch-1]);	// normalize.						
+					ratio[i][Ch-1] /= count[i][Ch-1]; 		// normalize.					
+					maxDim[i][Ch-1] /= (count[i][Ch-1]);	// normalize.		
+				//	System.out.println(i+": " + maxDim[i][Ch-1]);
 				}
 			}
 		}
@@ -341,7 +351,9 @@ public class AstigmatismFitting {
 		}
 		ij.Prefs.savePreferences(); // store settings.
 		ArrayList<Particle> resultCalib = fit(result);		// call the fit function to update all localized events with the actual z-position it will recieve.
-		TableIO.Store(resultCalib);							// display results.
+		ij.measure.ResultsTable tab = Analyzer.getResultsTable();
+		tab.reset();
+		tab.show("Results");
 		/*
 		 * Go through central part of the fit for each channel and calculate offset in XY for each channel.
 		 */
@@ -416,11 +428,39 @@ public class AstigmatismFitting {
 			}
 			ij.Prefs.savePreferences(); // store settings.
 		}
+		Plot plot = new Plot("Astigmatism calibration", "z [nm]", "Ratio");
+		double[] zOffset = getZoffset();
+		for (int ch = 0; ch < calibration[0].length; ch++)
+		{
+			double[] printout = new double[calibration.length];
+			double[] x = new double[printout.length];
+			for (int i = 0; i < printout.length; i++)
+			{
+				printout[i] = calibration[i][ch];
+				x[i] = (i-zOffset[ch])*zStep;
+			}
+			if (ch == 0)
+				plot.setColor(Color.BLACK);
+			if (ch == 1)
+				plot.setColor(Color.BLUE);
+			if (ch == 2)
+				plot.setColor(Color.RED);
+			if (ch == 3)
+				plot.setColor(Color.GREEN);
+			if (ch == 4)
+				plot.setColor(Color.MAGENTA);
+			plot.addPoints(x,printout, Plot.LINE);
+		}
+		if (calibration[0].length == 1)
+			plot.addLegend("Ch 1 \n Ch 2");
+		if (calibration[0].length == 2)
+			plot.addLegend("Ch 1 \n Ch 2 \n Ch 3");		
+		if (calibration[0].length == 3)
+			plot.addLegend("Ch 1 \n Ch 2 \n Ch 3 \n Ch 4");
+		if (calibration[0].length == 4)
+			plot.addLegend("Ch 1 \n Ch 2 \n Ch 3 \n Ch 4 \n Ch 5");
+		plot.show();
 
-/*		double[] printout = new double[calibration.length];
-		for (int i = 0; i < printout.length; i++)
-			printout[i] = calibration[i][0];
-		correctDrift.plot(printout);*/
 	} // calibrate.
 
 	public static double[][] getOffset()
@@ -436,7 +476,7 @@ public class AstigmatismFitting {
 		return offset;
 	}
 
-	public static double getZ (double[][] calibration, int channel, double ratio)
+	public static double getZ (double[][] calibration, double[] zOffset, int channel, double ratio)
 	{
 		double z = 0;
 		int idx = 1;
@@ -445,13 +485,13 @@ public class AstigmatismFitting {
 			idx++;
 		}
 		if (idx == calibration.length -1 && ratio > calibration[idx][channel-1])
-			z = -1;
+			z = 1E6;
 		else if (calibration[idx][channel-1] == ratio)
 			z = idx;
 		else if (calibration[0][channel-1] == ratio)
 			z = 0;
 		else if (calibration[0][channel-1] > ratio)
-			z = -1;
+			z = 1E6;
 		else // interpolate
 		{
 			double diff 	= calibration[idx][channel-1] - calibration[idx - 1][channel-1];
@@ -459,8 +499,11 @@ public class AstigmatismFitting {
 			z = idx - 1 + fraction;
 		} 		
 
-		if (z != -1)
+		if (z != 1E6)
+		{
+			z -= zOffset[channel-1];
 			z *= ij.Prefs.get("SMLocalizer.calibration.Astigmatism.step",0); // scale.
+		}
 		return z;
 	}
 
@@ -482,7 +525,7 @@ public class AstigmatismFitting {
 	// returns maxDimension[channel]
 	public static double[] getMaxDim()
 	{
-		int nChannels = (int)ij.Prefs.get("SMLocalizer.calibration.PRILM.channels",0);
+		int nChannels = (int)ij.Prefs.get("SMLocalizer.calibration.Astigmatism.channels",0);
 		double[] maxDim = new double[nChannels];
 		for (int Ch = 1; Ch <= nChannels; Ch++)
 		{		
@@ -490,6 +533,18 @@ public class AstigmatismFitting {
 		} 	
 		return maxDim;
 	}
+	// returns z-offset[channel]
+	public static double[] getZoffset()
+	{
+		int nChannels = (int)ij.Prefs.get("SMLocalizer.calibration.Astigmatism.channels",0);
+		double[] zOffset = new double[nChannels];
+		for (int Ch = 1; Ch <= nChannels; Ch++)
+		{		
+			zOffset[Ch-1] = ij.Prefs.get("SMLocalizer.calibration.Astigmatism.center.Ch"+Ch,0);
+		} 	
+		return zOffset;
+	}
+	
 	public static double[][] makeCalibrationCurve(double[][] result, double[][] selectionParameter, int minLength, int nChannels,boolean printout, boolean full, boolean store)
 	{
 		int[] start 					= new int[nChannels]; 	// start index for calibration, channel specific.
@@ -497,8 +552,8 @@ public class AstigmatismFitting {
 		int maxCounter 					= 0;					
 		int channelIdx 					= 1;					// current channel.
 		double[] maxSelectionParameter 	= new double[nChannels];// max value of sigma x and y for given channel.
-		double leftSelectionParameter 	= 0;					// holds the max allowed value of sigma x and y for the current channel to make the left part of the calibration curve unambiguous.
-		double rightSelectionParameter 	= 0;					// holds the max allowed value of sigma x and y for the current channel to make the left part of the calibration curve unambiguous.
+//		double leftSelectionParameter 	= 0;					// holds the max allowed value of sigma x and y for the current channel to make the left part of the calibration curve unambiguous.
+//		double rightSelectionParameter 	= 0;					// holds the max allowed value of sigma x and y for the current channel to make the left part of the calibration curve unambiguous.
 		while (channelIdx <= nChannels)							// loop over all channels.
 		{
 			double[] tempVector 		= new double[result.length];	// 5 point smoothed data.
@@ -692,7 +747,7 @@ public class AstigmatismFitting {
 
 			/*
 			 * Use selectionParameter values to make z-fitting unambiguous. 
-			 */
+			 
 
 			boolean optimize = true;
 			while(optimize)
@@ -779,21 +834,14 @@ public class AstigmatismFitting {
 						optimize = false;
 				}
 			}
+			*/
 			if(printout)
 			{				
 				System.out.println("Selection: " + maxSelectionParameter[channelIdx-1]);
 			}
 			channelIdx++;
 		}
-		if (store)
-		{
 
-			for (int Ch = 1; Ch <= nChannels; Ch++)
-			{				
-				ij.Prefs.set("SMLocalizer.calibration.Astigmatism.maxDim.Ch"+Ch,maxSelectionParameter[Ch-1]);				
-			} 			
-			ij.Prefs.savePreferences(); // store settings.
-		}
 
 		if(printout)
 		{				
@@ -808,6 +856,17 @@ public class AstigmatismFitting {
 			start[0] = 0;
 			maxCounter = end[0] - start[0] + 1;	
 		}
+		if (store)
+		{
+			for (int Ch = 1; Ch <= nChannels; Ch++)
+			{				
+				ij.Prefs.set("SMLocalizer.calibration.Astigmatism.center.Ch"+Ch,Math.round(result.length/2)-start[Ch-1]);
+				//				ij.Prefs.set("SMLocalizer.calibration.Astigmatism.maxDim.Ch"+Ch,maxSelectionParameter[Ch-1]);				
+			} 			
+			ij.Prefs.savePreferences(); // store settings.
+		}
+		if (maxCounter < 0)
+			maxCounter = 0;
 		if (maxCounter >= minLength)
 		{
 			double[][] calibration = new double[maxCounter][nChannels];

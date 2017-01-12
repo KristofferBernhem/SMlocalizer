@@ -26,10 +26,13 @@
 
 
 
+import java.awt.Color;
 import java.util.ArrayList;
 
 import ij.ImagePlus;
 import ij.WindowManager;
+import ij.gui.Plot;
+import ij.plugin.filter.Analyzer;
 import ij.process.ImageStatistics;
 
 public class PRILMfitting {
@@ -40,6 +43,7 @@ public class PRILMfitting {
 		int distance 				= (int)ij.Prefs.get("SMLocalizer.calibration.PRILM.distance",0);
 		distance *= distance; 										// square max distance between centers.
 		double[][] offset 			= getOffset(); // get xyz offset from channel 1.
+		double[] zOffset 			= getZoffset();     // get where z=0 is for each channel in the calibration file.
 		for (int i = 0; i < inputResults.size(); i++)
 		{
 			int j = i+1;
@@ -56,7 +60,7 @@ public class PRILMfitting {
 					// translate angle to z:
 					Particle temp 	= new Particle();														
 					temp.channel 	= inputResults.get(i).channel;
-					temp.z 		 	= getZ(calibration, temp.channel, angle);								// get z-position based on angle and calibration file.
+					temp.z 		 	= getZ(calibration, zOffset, temp.channel, angle);								// get z-position based on angle and calibration file.
 					temp.frame 	 	= inputResults.get(i).frame;
 					temp.photons 	= inputResults.get(i).photons + inputResults.get(j).photons;
 					temp.x			= (inputResults.get(i).x + inputResults.get(j).x) / 2;
@@ -68,7 +72,7 @@ public class PRILMfitting {
 					temp.precision_z= 600 / Math.sqrt(temp.photons); 												// precision of fit for z coordinate.
 					temp.r_square 	= Math.min(inputResults.get(i).r_square,inputResults.get(j).r_square);; 		// Goodness of fit.
 					temp.include	= 1; 																			// If this particle should be included in analysis and plotted.
-					if(temp.z != -1 && temp.channel>1) // if within ok z range. For all but first channel, move all particles by x,y,z offset for that channel to align all to first channel.
+					if(temp.z != 1E6 && temp.channel>1) // if within ok z range. For all but first channel, move all particles by x,y,z offset for that channel to align all to first channel.
 					{
 						temp.x -= offset[0][temp.channel-1];
 						temp.y -= offset[1][temp.channel-1];
@@ -76,7 +80,7 @@ public class PRILMfitting {
 						results.add(temp);
 					}
 					
-					if (temp.z != -1 && temp.channel==1) // if within ok z range. Don't shift first channel.
+					if (temp.z != 1E6 && temp.channel==1) // if within ok z range. Don't shift first channel.
 						results.add(temp);
 				}	
 				j++;
@@ -230,7 +234,7 @@ public class PRILMfitting {
 							}
 						}
 						int minLength = 40;															// minimum length of calibration range.		
-						double[][] calibration = makeCalibrationCurve(angle,minLength,nChannels,false,false);// create calibration curve.
+						double[][] calibration = makeCalibrationCurve(angle,minLength,nChannels,false,false,false);// create calibration curve.
 						if (calibrationLength < calibration.length)				// if the new calibration using current parameter settings covers a larger range.
 						{
 							calibrationLength = calibration.length;				// update best z range.
@@ -348,7 +352,7 @@ public class PRILMfitting {
 
 
 		int minLength = 40;									// minimum length of calibration range.				
-		double[][] calibration = makeCalibrationCurve(angle,minLength,nChannels,false,false);	// create calibration curve.
+		double[][] calibration = makeCalibrationCurve(angle,minLength,nChannels,false,false,true);	// create calibration curve.
 		/*
 		 * STORE calibration file:
 		 */
@@ -378,7 +382,9 @@ public class PRILMfitting {
 		}
 		ij.Prefs.savePreferences(); // store settings.
 		ArrayList<Particle> resultCalib = fit(result);
-		TableIO.Store(resultCalib);
+		ij.measure.ResultsTable tab = Analyzer.getResultsTable();
+		tab.reset();
+		tab.show("Results");
 		/*
 		 * Go through central part of the fit for each channel and calculate offset in XY for each channel.
 		 */
@@ -454,10 +460,38 @@ public class PRILMfitting {
 			ij.Prefs.savePreferences(); // store settings.
 		}
 		
-/*		double[] printout = new double[calibration.length];
-		for (int i = 0; i < printout.length; i++)
-			printout[i] = calibration[i][0];
-		correctDrift.plot(printout);*/
+		Plot plot = new Plot("PRILM calibration", "z [nm]", "Angle [rad]");
+		double[] zOffset = getZoffset();
+		for (int ch = 0; ch < calibration[0].length; ch++)
+		{
+			double[] printout = new double[calibration.length];
+			double[] x = new double[printout.length];
+			for (int i = 0; i < printout.length; i++)
+			{
+				printout[i] = calibration[i][ch];
+				x[i] = (i-zOffset[ch])*zStep;
+			}
+			if (ch == 0)
+				plot.setColor(Color.BLACK);
+			if (ch == 1)
+				plot.setColor(Color.BLUE);
+			if (ch == 2)
+				plot.setColor(Color.RED);
+			if (ch == 3)
+				plot.setColor(Color.GREEN);
+			if (ch == 4)
+				plot.setColor(Color.MAGENTA);
+			plot.addPoints(x,printout, Plot.LINE);
+		}
+		if (calibration[0].length == 1)
+			plot.addLegend("Ch 1 \n Ch 2");
+		if (calibration[0].length == 2)
+			plot.addLegend("Ch 1 \n Ch 2 \n Ch 3");		
+		if (calibration[0].length == 3)
+			plot.addLegend("Ch 1 \n Ch 2 \n Ch 3 \n Ch 4");
+		if (calibration[0].length == 4)
+			plot.addLegend("Ch 1 \n Ch 2 \n Ch 3 \n Ch 4 \n Ch 5");
+		plot.show();
 	} // calibrate.
 	public static double[][] getOffset()
 	{
@@ -471,7 +505,17 @@ public class PRILMfitting {
 		
 		return offset;
 	}
-	public static double getZ (double[][] calibration, int channel, double angle)
+	public static double[] getZoffset()
+	{
+		int nChannels = (int)ij.Prefs.get("SMLocalizer.calibration.PRILM.channels",0);
+		double[] zOffset = new double[nChannels];
+		for (int Ch = 1; Ch <= nChannels; Ch++)
+		{		
+			zOffset[Ch-1] = ij.Prefs.get("SMLocalizer.calibration.PRILM.center.Ch"+Ch,0);
+		} 	
+		return zOffset;
+	}
+	public static double getZ (double[][] calibration, double[] zOffset, int channel, double angle)
 	{
 		double z = 0;
 		int idx = 1;		
@@ -480,21 +524,24 @@ public class PRILMfitting {
 			idx++;
 		}		
 		if (idx == calibration.length -1 && angle > calibration[idx][channel-1])
-			z = -1;
+			z = 1E6;
 		else if (calibration[idx][channel-1] == angle)
 			z = idx;
 		else if (calibration[0][channel-1] == angle)
 			z = 0;
 		else if (calibration[0][channel-1] > angle)
-			z = -1;
+			z = 1E6;
 		else // interpolate
 		{
 			double diff = calibration[idx][channel-1] - calibration[idx - 1][channel-1];
 			double fraction = (angle - calibration[idx - 1][channel-1]) / diff;
 			z = idx - 1 + fraction;
 		} 					
-		if (z != -1)
+		if (z != 1E6)
+		{
+			z -= zOffset[channel-1];
 			z *= ij.Prefs.get("SMLocalizer.calibration.PRILM.step",0); // scale.
+		}
 		return z;
 	}
 
@@ -518,7 +565,7 @@ public class PRILMfitting {
 	 * Get calibration curve through 5 point moving mean.
 	 */
 
-	public static double[][] makeCalibrationCurve(double[][] result, int minLength, int nChannels,boolean printout, boolean full)
+	public static double[][] makeCalibrationCurve(double[][] result, int minLength, int nChannels,boolean printout, boolean full,boolean store)
 	{
 		int[] start 	= new int[nChannels]; 	// start index for calibration, channel specific.
 		int[] end 		= new int[nChannels]; 	// end index for calibration, channel specific.
@@ -718,6 +765,15 @@ public class PRILMfitting {
 			end[0] = result.length-1;
 			start[0] = 0;
 			maxCounter = end[0] - start[0] + 1;	
+		}
+		if (store)
+		{
+			for (int Ch = 1; Ch <= nChannels; Ch++)
+			{				
+				ij.Prefs.set("SMLocalizer.calibration.PRILM.center.Ch"+Ch,Math.round(result.length/2)-start[Ch-1]);
+				//				ij.Prefs.set("SMLocalizer.calibration.Astigmatism.maxDim.Ch"+Ch,maxSelectionParameter[Ch-1]);				
+			} 			
+			ij.Prefs.savePreferences(); // store settings.
 		}
 		if (maxCounter < 0)	// error check.
 			maxCounter = 0;

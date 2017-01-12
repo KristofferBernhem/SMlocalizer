@@ -52,13 +52,21 @@ public class generateImage {
 			/*
 			 * Loop over all particles, add the ones that has the correct channel and z-range. Increase channel until all channels are done then update z-range
 			 */
+			int lowZ = 0; // low limit
+
 			int Ch = 1;
+			for (idx = 0; idx < ParticleList.size(); idx++)
+			{
+				if (ParticleList.get(idx).z < lowZ)
+					lowZ = (int) Math.floor(ParticleList.get(idx).z);
+				
+			}
+			int highZ = lowZ + pixelSize[1]; // high limit
 			while (particleCounter < ParticleList.size())
 			{
 				ShortProcessor IP  = new ShortProcessor(width,height);					
 				IP.set(0); // set all pixel values to 0 as default.
-				int lowZ = zSlice*pixelSize[1]; // low limit
-				int highZ = (zSlice+1)*pixelSize[1]; // high limit
+
 				for (idx = 0; idx < ParticleList.size(); idx++)
 				{
 					if (ParticleList.get(idx).channel == Ch &&
@@ -71,8 +79,8 @@ public class generateImage {
 								y >= 0 && y <= height)
 						{
 							IP.putPixel(x, y, (IP.get(x, y) + 1));
-							particleCounter++; // keep track of number of added particles.
 						}						
+						particleCounter++; // keep track of number of added particles.
 					}
 				}
 				if(gSmoothing)
@@ -86,6 +94,8 @@ public class generateImage {
 				{
 					Ch = 1;
 					zSlice++;
+					lowZ = highZ;
+					highZ += pixelSize[1];
 				}
 
 				imstack.addSlice(IP);

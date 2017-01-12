@@ -26,10 +26,13 @@
 
 
 
+import java.awt.Color;
 import java.util.ArrayList;
 
 import ij.ImagePlus;
 import ij.WindowManager;
+import ij.gui.Plot;
+import ij.plugin.filter.Analyzer;
 import ij.process.ImageProcessor;
 import ij.process.ImageStatistics;
 
@@ -40,7 +43,7 @@ public class BiplaneFitting {
 		int frameWidth 	= (int) (0.5*image.getWidth()*inputPixelSize);	// output frame width.
 		ArrayList<Particle> results = new ArrayList<Particle>();		// Output.
 		double[][] calibration 		= getCalibration(); 				// get calibration table.
-
+		double[] zOffset 			= getZoffset();     // get where z=0 is for each channel in the calibration file.
 		double[][] offset = getOffset();								// get xyz offset from channel 1.
 		double offsetX 	= ij.Prefs.get("SMLocalizer.calibration.Biplane.finalOffsetX",0);
 		double offsetY 	= ij.Prefs.get("SMLocalizer.calibration.Biplane.finalOffsetY",0);
@@ -95,13 +98,13 @@ public class BiplaneFitting {
 									double photonLeft 	= getPhotons(image, inputResults.get(i).x/inputPixelSize,inputResults.get(i).y/inputPixelSize, inputResults.get(i).frame, inputResults.get(i).channel, gWindow,totalGain);
 									double photonRight 	= getPhotons(image, inputResults.get(j).x/inputPixelSize,inputResults.get(j).y/inputPixelSize, inputResults.get(i).frame, inputResults.get(i).channel, gWindow,totalGain);
 									photon = (int) (photonLeft + photonRight);			
-									z = getZ(calibration, inputResults.get(i).channel, photonLeft/photonRight);									
+									z = getZ(calibration, zOffset, inputResults.get(i).channel, photonLeft/photonRight);									
 								}else
 								{
 									double photonLeft 	= getPhotons(image, inputResults.get(j).x/inputPixelSize,inputResults.get(j).y/inputPixelSize, inputResults.get(i).frame, inputResults.get(i).channel, gWindow,totalGain);
 									double photonRight 	= getPhotons(image, inputResults.get(i).x/inputPixelSize,inputResults.get(i).y/inputPixelSize, inputResults.get(i).frame, inputResults.get(i).channel, gWindow,totalGain);
 									photon = (int) (photonLeft + photonRight);									
-									z = getZ(calibration, inputResults.get(i).channel, photonLeft/photonRight);									
+									z = getZ(calibration, zOffset, inputResults.get(i).channel, photonLeft/photonRight);									
 								}
 								search = false;
 								if (inputResults.get(i).r_square > inputResults.get(j).r_square)	// use the x-y coordinates from the best fit.
@@ -125,7 +128,7 @@ public class BiplaneFitting {
 										temp.x -= (offsetX + frameWidth);
 										temp.y -= offsetY;
 									}
-									if(temp.z != -1 && temp.channel>1)	// for all but first channel, shift coordinates to compensate for chromatic shift.
+									if(temp.z != 1E6 && temp.channel>1)	// for all but first channel, shift coordinates to compensate for chromatic shift.
 									{
 										temp.x -= offset[0][temp.channel-1];
 										temp.y -= offset[1][temp.channel-1];
@@ -133,7 +136,7 @@ public class BiplaneFitting {
 										results.add(temp);
 									}
 
-									if (temp.z != -1 && temp.channel==1)	// if ok z and first channel.
+									if (temp.z != 1E6 && temp.channel==1)	// if ok z and first channel.
 										results.add(temp);
 								}else
 								{
@@ -156,7 +159,7 @@ public class BiplaneFitting {
 										temp.x -= (offsetX + frameWidth);
 										temp.y -= offsetY;
 									}
-									if(temp.z != -1 && temp.channel>1)	// for all but first channel, shift coordinates to compensate for chromatic shift.
+									if(temp.z != 1E6 && temp.channel>1)	// for all but first channel, shift coordinates to compensate for chromatic shift.
 									{
 										temp.x -= offset[0][temp.channel-1];
 										temp.y -= offset[1][temp.channel-1];
@@ -164,7 +167,7 @@ public class BiplaneFitting {
 										results.add(temp);
 									}
 
-									if (temp.z != -1 && temp.channel==1)	// if ok z and first channel.
+									if (temp.z != 1E6 && temp.channel==1)	// if ok z and first channel.
 										results.add(temp);
 								}
 							}
@@ -185,13 +188,13 @@ public class BiplaneFitting {
 							double photonLeft 	= getPhotons(image, inputResults.get(i).x/inputPixelSize,inputResults.get(i).y/inputPixelSize, inputResults.get(i).frame, inputResults.get(i).channel, gWindow,totalGain);
 							double photonRight 	= getPhotons(image, searchX/inputPixelSize,searchY/inputPixelSize, inputResults.get(i).frame, inputResults.get(i).channel, gWindow,totalGain);
 							photon = (int) (photonLeft + photonRight);
-							z = getZ(calibration, inputResults.get(i).channel, photonLeft/photonRight);																
+							z = getZ(calibration, zOffset, inputResults.get(i).channel, photonLeft/photonRight);																
 						}else 	// if particle is on right side.
 						{
 							double photonLeft 	= getPhotons(image, searchX/inputPixelSize,searchY/inputPixelSize, inputResults.get(i).frame, inputResults.get(i).channel, gWindow,totalGain);
 							double photonRight 	= getPhotons(image, inputResults.get(i).x/inputPixelSize,inputResults.get(i).y/inputPixelSize, inputResults.get(i).frame, inputResults.get(i).channel, gWindow,totalGain);
 							photon = (int) (photonLeft + photonRight);
-							z = getZ(calibration, inputResults.get(i).channel, photonLeft/photonRight);							
+							z = getZ(calibration, zOffset, inputResults.get(i).channel, photonLeft/photonRight);							
 						}
 						if (inputResults.get(i).x < frameWidth)				// if particle is on the left side, no need to shift by framewidth.
 						{
@@ -209,7 +212,7 @@ public class BiplaneFitting {
 							temp.precision_z= 600 / Math.sqrt(temp.photons); 	// precision of fit for z coordinate.
 							temp.r_square 	= inputResults.get(i).r_square; 	// Goodness of fit.
 							temp.include	= 1; 								// If this particle should be included in analysis and plotted.
-							if(temp.z != -1 && temp.channel>1)	// for all but first channel, shift coordinates to compensate for chromatic shift.
+							if(temp.z != 1E6 && temp.channel>1)	// for all but first channel, shift coordinates to compensate for chromatic shift.
 							{
 								temp.x -= offset[0][temp.channel-1];
 								temp.y -= offset[1][temp.channel-1];
@@ -217,7 +220,7 @@ public class BiplaneFitting {
 								results.add(temp);
 							}
 
-							if (temp.z != -1 && temp.channel==1)	// if ok z and first channel.
+							if (temp.z != 1E6 && temp.channel==1)	// if ok z and first channel.
 								results.add(temp);
 						}else
 						{
@@ -235,7 +238,7 @@ public class BiplaneFitting {
 							temp.precision_z= 600 / Math.sqrt(temp.photons); 	// precision of fit for z coordinate.
 							temp.r_square 	= inputResults.get(i).r_square; 	// Goodness of fit.
 							temp.include	= 1; 								// If this particle should be included in analysis and plotted.
-							if(temp.z != -1 && temp.channel>1)	// for all but first channel, shift coordinates to compensate for chromatic shift.
+							if(temp.z != 1E6 && temp.channel>1)	// for all but first channel, shift coordinates to compensate for chromatic shift.
 							{
 								temp.x -= offset[0][temp.channel-1];
 								temp.y -= offset[1][temp.channel-1];
@@ -243,7 +246,7 @@ public class BiplaneFitting {
 								results.add(temp);
 							}
 
-							if (temp.z != -1 && temp.channel==1)	// if ok z and first channel.
+							if (temp.z != 1E6 && temp.channel==1)	// if ok z and first channel.
 								results.add(temp);
 						}
 					}
@@ -568,7 +571,7 @@ public class BiplaneFitting {
 
 
 					int minLength = 40;										// minimum length of calibration range.				
-					double[][] calibration = makeCalibrationCurve(ratio, minLength, nChannels,false,false);// create calibration curve.
+					double[][] calibration = makeCalibrationCurve(ratio, minLength, nChannels,false,false,false);// create calibration curve.
 
 					if (calibrationLength < calibration.length)				// if the new calibration using current parameter settings covers a larger range.
 					{
@@ -626,8 +629,6 @@ public class BiplaneFitting {
 		/*
 		 * clean out fits based on goodness of fit:
 		 */
-
-	//	localizeAndFit.run(MinLevel, finalGWindow, inputPixelSize, totalGain, 0, finalSigma, "2D");
 		cleanParticleList.run(lb,ub,include);
 		cleanParticleList.delete();
 		ArrayList<Particle> result = TableIO.Load();
@@ -736,7 +737,7 @@ public class BiplaneFitting {
 			}
 		}
 		int minLength = 40;			
-		double[][] calibration = makeCalibrationCurve(ratio, minLength, nChannels,false,false);
+		double[][] calibration = makeCalibrationCurve(ratio, minLength, nChannels,false,false,true);
 
 		/*
 		 * STORE calibration file:
@@ -763,7 +764,9 @@ public class BiplaneFitting {
 
 
 		ArrayList<Particle> resultCalib = fit(result,inputPixelSize, totalGain);
-		TableIO.Store(resultCalib);
+		ij.measure.ResultsTable tab = Analyzer.getResultsTable();
+		tab.reset();
+		tab.show("Results");
 		/*
 		 * Go through central part of the fit for each channel and calculate offset in XY for each channel.
 		 */ 
@@ -835,12 +838,38 @@ public class BiplaneFitting {
 			}
 			ij.Prefs.savePreferences(); // store settings.
 		}
-		double[] printout = new double[calibration.length];
-		for (int i = 0; i < printout.length; i++){
-			printout[i] = calibration[i][0];
-
+		Plot plot = new Plot("Biplane calibration", "z [nm]", "Ratio");
+		double[] zOffset = getZoffset();
+		for (int ch = 0; ch < calibration[0].length; ch++)
+		{
+			double[] printout = new double[calibration.length];
+			double[] x = new double[printout.length];
+			for (int i = 0; i < printout.length; i++)
+			{
+				printout[i] = calibration[i][ch];
+				x[i] = (i-zOffset[ch])*zStep;
+			}
+			if (ch == 0)
+				plot.setColor(Color.BLACK);
+			if (ch == 1)
+				plot.setColor(Color.BLUE);
+			if (ch == 2)
+				plot.setColor(Color.RED);
+			if (ch == 3)
+				plot.setColor(Color.GREEN);
+			if (ch == 4)
+				plot.setColor(Color.MAGENTA);
+			plot.addPoints(x,printout, Plot.LINE);
 		}
- 		correctDrift.plot(printout);
+		if (calibration[0].length == 1)
+			plot.addLegend("Ch 1 \n Ch 2");
+		if (calibration[0].length == 2)
+			plot.addLegend("Ch 1 \n Ch 2 \n Ch 3");		
+		if (calibration[0].length == 3)
+			plot.addLegend("Ch 1 \n Ch 2 \n Ch 3 \n Ch 4");
+		if (calibration[0].length == 4)
+			plot.addLegend("Ch 1 \n Ch 2 \n Ch 3 \n Ch 4 \n Ch 5");
+		plot.show();
 
 	} // calibrate.
 
@@ -891,7 +920,17 @@ public class BiplaneFitting {
 
 		return offset;
 	}
-	public static double getZ (double[][] calibration, int channel, double ratio)
+	public static double[] getZoffset()
+	{
+		int nChannels = (int)ij.Prefs.get("SMLocalizer.calibration.Biplane.channels",0);
+		double[] zOffset = new double[nChannels];
+		for (int Ch = 1; Ch <= nChannels; Ch++)
+		{		
+			zOffset[Ch-1] = ij.Prefs.get("SMLocalizer.calibration.Biplane.center.Ch"+Ch,0);
+		} 	
+		return zOffset;
+	}
+	public static double getZ (double[][] calibration, double[] zOffset, int channel, double ratio)
 	{
 		double z = 0;
 		int idx = 1;
@@ -900,13 +939,13 @@ public class BiplaneFitting {
 			idx++;
 		}
 		if (idx == calibration.length -1 && ratio < calibration[idx][channel-1])		
-			z = -1;
+			z = 1E6;
 		else if (calibration[idx][channel-1] == ratio)
 			z = idx;
 		else if (calibration[0][channel-1] == ratio)
 			z = 0;
 		else if (calibration[0][channel-1] < ratio)
-			z = -1;
+			z = 1E6;
 		else // interpolate
 		{
 			double diff = calibration[idx-1][channel-1] - calibration[idx][channel-1];
@@ -914,9 +953,11 @@ public class BiplaneFitting {
 			z = idx - 1 + fraction;
 		} 					
 
-		if(z != -1)
+		if (z != 1E6)
+		{
+			z -= zOffset[channel-1];
 			z *= ij.Prefs.get("SMLocalizer.calibration.Biplane.step",0); // scale.
-
+		}
 		return z;
 	}
 
@@ -939,7 +980,7 @@ public class BiplaneFitting {
 	/*
 	 * Used in generation of calibration file. Smoothes out fitted results, 5 point moving window mean.
 	 */
-	public static double[][] makeCalibrationCurve(double[][] result, int minLength, int nChannels,boolean printout, boolean full)
+	public static double[][] makeCalibrationCurve(double[][] result, int minLength, int nChannels,boolean printout, boolean full ,boolean store)
 	{
 		int[] start = new int[nChannels];
 		int[] end 	= new int[nChannels];
@@ -1173,14 +1214,22 @@ public class BiplaneFitting {
 				maxCounter = end[i] - start[i] + 1;
 			}
 		}
-
-
 		if (full)
 		{
 			end[0] = result.length-1;
 			start[0] = 0;
 			maxCounter = end[0] - start[0] + 1;	
 		}
+		if (store)
+		{
+			for (int Ch = 1; Ch <= nChannels; Ch++)
+			{				
+				ij.Prefs.set("SMLocalizer.calibration.Biplane.center.Ch"+Ch,Math.round(result.length/2)-start[Ch-1]);			
+			} 			
+			ij.Prefs.savePreferences(); // store settings.
+		}
+
+
 		if (maxCounter < 0)
 			maxCounter = 0;
 
