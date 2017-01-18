@@ -56,13 +56,7 @@ public class cleanParticleList {
 				}else
 					remove++;
 			}
-		/*	if (Include[2][Ch]){ 
-				if(Results.get(i).sigma_z >= lb[2][Ch] &&
-						Results.get(i).sigma_z <= ub[2][Ch]){
 
-				}else
-					remove++;
-			}*/
 			if (Include[2][Ch]){
 				if(Results.get(i).r_square >= lb[2][Ch] &&			
 						Results.get(i).r_square <= ub[2][Ch]){
@@ -93,6 +87,13 @@ public class cleanParticleList {
 				}else
 					remove++;
 			}	
+			if (Include[6][Ch]){ 
+				if(Results.get(i).z >= lb[6][Ch] &&
+						Results.get(i).z <= ub[6][Ch]){
+
+				}else
+					remove++;
+			}
 			if(remove == 0){
 				Results.get(i).include = 1; // Include particle.
 			}else {

@@ -287,9 +287,9 @@ public class correctDrift {
 					tempPart.z = locatedParticles.get(idx).z - lambda[tempPart.frame-1][2];*/
 					if(tempPart.x >= 0){
 						if(tempPart.y >= 0){
-							if(tempPart.z >= 0){
-								correctedResults.add(tempPart);
-							}
+
+							correctedResults.add(tempPart);
+
 						}
 					}				
 					idx++;
@@ -611,9 +611,9 @@ public class correctDrift {
 						tempPart.z = locatedParticles.get(idx).z - lambda[tempPart.frame-1][2];*/
 						if(tempPart.x >= 0){
 							if(tempPart.y >= 0){
-								if(tempPart.z >= 0){
-									correctedResults.add(tempPart);
-								}
+
+								correctedResults.add(tempPart);
+
 							}
 						}				
 						idx++;

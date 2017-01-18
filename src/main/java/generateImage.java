@@ -49,6 +49,7 @@ public class generateImage {
 			int nChannels = ParticleList.get(ParticleList.size()-1).channel; // number of channels
 			int zSlice = 0; // counter for number of slices.
 			int particleCounter = 0;
+			int particleCountTotal = 0;
 			/*
 			 * Loop over all particles, add the ones that has the correct channel and z-range. Increase channel until all channels are done then update z-range
 			 */
@@ -57,21 +58,27 @@ public class generateImage {
 			int Ch = 1;
 			for (idx = 0; idx < ParticleList.size(); idx++)
 			{
-				if (ParticleList.get(idx).z < lowZ)
-					lowZ = (int) Math.floor(ParticleList.get(idx).z);
+				if (ParticleList.get(idx).include == 1 && renderCh[ParticleList.get(idx).channel-1])
+				{
+					particleCountTotal++;
+					if (ParticleList.get(idx).z < lowZ)
+						lowZ = (int) Math.floor(ParticleList.get(idx).z);
+				}
 				
 			}
 			int highZ = lowZ + pixelSize[1]; // high limit
-			while (particleCounter < ParticleList.size())
+			while (particleCounter < particleCountTotal)
 			{
 				ShortProcessor IP  = new ShortProcessor(width,height);					
 				IP.set(0); // set all pixel values to 0 as default.
 
 				for (idx = 0; idx < ParticleList.size(); idx++)
 				{
-					if (ParticleList.get(idx).channel == Ch &&
+					if (ParticleList.get(idx).include == 1 &&
+							ParticleList.get(idx).channel == Ch &&
 							ParticleList.get(idx).z >= lowZ &&
-							ParticleList.get(idx).z < highZ)
+							ParticleList.get(idx).z < highZ &&
+							renderCh[ParticleList.get(idx).channel-1])
 					{
 						int x = (int) Math.round(ParticleList.get(idx).x/pixelSize[0]);
 						int y = (int) Math.round(ParticleList.get(idx).y/pixelSize[0]);												

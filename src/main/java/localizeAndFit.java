@@ -87,6 +87,8 @@ public class localizeAndFit {
 		{
 			// get calibrated values for gWindow.
 			minPosPixels = gWindow*gWindow - 4; // update to relevant numbers for this modality.					
+			if (minPosPixels > 50)
+				minPosPixels = 50;
 		}
 
 		
@@ -260,7 +262,7 @@ public class localizeAndFit {
 			}
 			else if (modality.equals("Astigmatism"))
 			{
-				cleanResults = AstigmatismFitting.fit(cleanResults); // change 2D data to 3D data based on calibration data.
+				cleanResults = AstigmatismFitting.fit(cleanResults); // change 2D data to 3D data based on calibration data.	
 			}
 			ij.measure.ResultsTable tab = Analyzer.getResultsTable();
 			tab.reset();		

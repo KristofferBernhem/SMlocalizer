@@ -43,16 +43,35 @@ public class DoubleHelixFitting {
 		int distance 				= (int)ij.Prefs.get("SMLocalizer.calibration.DoubleHelix.distance",0);
 		distance *= distance; // square max distance between centers.
 		double[][] offset = getOffset();
-		double[] zOffset 			= getZoffset();     // get where z=0 is for each channel in the calibration file.
+		double[] zOffset  = getZoffset();     // get where z=0 is for each channel in the calibration file.
+
 		for (int i = 0; i < inputResults.size(); i++)
 		{
+			inputResults.get(i).include = 2;
 			int j = i+1;
+			int closest = 0;
+			double NNdistance = distance;
 			while (j < inputResults.size() && inputResults.get(i).frame == inputResults.get(j).frame
 					&& inputResults.get(i).channel == inputResults.get(j).channel)
 			{
-				if (((inputResults.get(i).x - inputResults.get(j).x)*(inputResults.get(i).x - inputResults.get(j).x) + 
-						(inputResults.get(i).y - inputResults.get(j).y)*(inputResults.get(i).y - inputResults.get(j).y)) < distance)
+				if (inputResults.get(j).include == 1)
 				{
+					double currentDistance =(inputResults.get(i).x - inputResults.get(j).x)*(inputResults.get(i).x - inputResults.get(j).x) + 
+							(inputResults.get(i).y - inputResults.get(j).y)*(inputResults.get(i).y - inputResults.get(j).y); 
+					if (currentDistance < NNdistance)
+						closest = j;
+				}
+				j++;
+			}
+			if (closest != 0)
+				j = closest;
+			if (closest != 0 &&
+					inputResults.get(i).photons < 1.2*inputResults.get(j).photons &&
+					inputResults.get(i).photons > 0.8*inputResults.get(j).photons )
+			{	
+				
+				{
+					inputResults.get(j).include = 2;
 					short dx 		= (short)(inputResults.get(i).x - inputResults.get(j).x); // diff in x dimension.
 					short dy 		= (short)(inputResults.get(i).y - inputResults.get(j).y); // diff in y dimension.
 					double angle 	= (Math.atan2(dy, dx));
@@ -69,7 +88,7 @@ public class DoubleHelixFitting {
 					temp.precision_x= Math.max(inputResults.get(i).precision_x,inputResults.get(j).precision_x); 	// precision of fit for x coordinate.
 					temp.precision_y= Math.max(inputResults.get(i).precision_y,inputResults.get(j).precision_y); 	// precision of fit for y coordinate.
 					temp.precision_z= 600 / Math.sqrt(temp.photons); 												// precision of fit for z coordinate.
-					temp.r_square 	= Math.min(inputResults.get(i).r_square,inputResults.get(j).r_square);; 		// Goodness of fit.
+					temp.r_square 	= Math.max(inputResults.get(i).r_square,inputResults.get(j).r_square);; 		// Goodness of fit.
 					temp.include	= 1; 																			// If this particle should be included in analysis and plotted.
 					if(temp.z != 1E6 && temp.channel>1)// if within ok z range. For all but first channel, move all particles by x,y,z offset for that channel to align all to first channel.
 					{
@@ -81,11 +100,12 @@ public class DoubleHelixFitting {
 
 					if (temp.z != 1E6 && temp.channel==1) // if within ok z range. Don't shift first channel.
 						results.add(temp);
-				}	
-				j++;
+				}
 			}
 
+
 		}
+		results = shiftXY(results);
 		return results;
 	}
 	/*
@@ -101,33 +121,36 @@ public class DoubleHelixFitting {
 		int[] totalGain 		= {100,100,100,100,100,100,100,100,100,100}; 	// gain is not relevant for fitting, but fitting algorithms require this value to be sent.
 		double meanRsquare 		= 0;											// used to determine if a new set of parameters yield a better calibration.
 		int calibrationLength 	= 0;											// height in z obtained by the calibration.
-		boolean[][] include 	= new boolean[6][10];							// for filtering of fitted results.
-		double[][] lb 			= new double[6][10];							// for filtering of fitted results.
-		double[][] ub 			= new double[6][10];							// for filtering of fitted results.
-		for (int i = 0; i < 10; i++)											// populate "include", "lb" and "ub".		
+		boolean[][] include 	= new boolean[7][10];							// for filtering of fitted results.
+		double[][] lb 			= new double[7][10];							// for filtering of fitted results.
+		double[][] ub 			= new double[7][10];							// for filtering of fitted results.
+		for (int i = 0; i < 10; i++)											// populate "include", "lb" and "ub".
 		{
+			// logical list of which parameters to filter against.
 			include[0][i] 		= false;
 			include[1][i] 		= false;
-			include[2][i] 		= true;
+			include[2][i] 		= true;		// r_square.
 			include[3][i] 		= false;
 			include[4][i] 		= false;
 			include[5][i] 		= false;
-
-
+			include[6][i] 		= false;
+			// lower bounds.
 			lb[0][i]			= 0;
 			lb[1][i]			= 0;
-			lb[2][i]			= 0.8;
+			lb[2][i]			= 0.8;		// r_square.
 			lb[3][i]			= 0;
 			lb[4][i]			= 0;
 			lb[5][i]			= 0;
-
-
+			lb[6][i]			= 0;
+			// upper bounds.
 			ub[0][i]			= 0;
 			ub[1][i]			= 0;
-			ub[2][i]			= 1.0;
+			ub[2][i]			= 1.0;		// r_square.
 			ub[3][i]			= 0;
 			ub[4][i]			= 0;
 			ub[5][i]			= 0;
+			ub[6][i]			= 0;
+
 		}
 
 		double finalLevel 	= 0;			// final intensity used for creation of the calibration file.
@@ -153,7 +176,7 @@ public class DoubleHelixFitting {
 			{
 				for (double maxSigma = 2.5; maxSigma < 4; maxSigma += 0.5)
 				{
-					for (int maxDist = 600; maxDist < 1600; maxDist += 200)
+					for (int maxDist = 600; maxDist <= 1200; maxDist += 200)
 					{
 						int maxSqdist = maxDist * maxDist;
 						int[] MinLevel 			= new int[10]; // precast.
@@ -198,29 +221,41 @@ public class DoubleHelixFitting {
 						{
 							for (int i = 0; i < result.size(); i++)
 							{			
+								double NNdistance = maxSqdist;
 								if (result.get(i).include == 1 && result.get(i).channel == Ch) // if the current entry is within ok range and has not yet been assigned.
 								{
 									int idx = i + 1;
+									int j = 0;
 									while (idx < result.size() && result.get(i).channel == result.get(idx).channel)
 									{
 										if (result.get(i).frame == result.get(idx).frame && result.get(idx).include == 1)
 										{
-											if (((result.get(i).x - result.get(idx).x)*(result.get(i).x - result.get(idx).x) +
-													(result.get(i).y - result.get(idx).y)*(result.get(i).y - result.get(idx).y)) < maxSqdist)
+											double currentDistance = (result.get(i).x - result.get(idx).x)*(result.get(i).x - result.get(idx).x) +
+													(result.get(i).y - result.get(idx).y)*(result.get(i).y - result.get(idx).y);
+											if (currentDistance < NNdistance)
 											{
-												result.get(idx).include = id;
-												result.get(i).include 	= id;								
-												short dx = (short)(result.get(i).x - result.get(idx).x); // diff in x dimension.
-												short dy = (short)(result.get(i).y - result.get(idx).y); // diff in y dimension.
-												angle[(int)(result.get(i).frame-1)][Ch-1] += (Math.atan2(dy, dx)); // angle between points and horizontal axis.
-												if (Math.sqrt(dx*dx + dy*dy) > distance[(int)(result.get(i).frame-1)][Ch-1])
-													distance[(int)(result.get(i).frame-1)][Ch-1] = Math.sqrt(dx*dx + dy*dy);
-												count[(int)(result.get(i).frame-1)][Ch-1]++;												
+												j = idx;
 											}
 										}
 										idx ++;
-									}    				    				
-									id++;
+									}
+
+
+									if (j != 0)
+										idx = j;
+
+									if (j != 0)
+									{									
+										result.get(idx).include = id;
+										result.get(i).include 	= id;								
+										short dx = (short)(result.get(i).x - result.get(idx).x); // diff in x dimension.
+										short dy = (short)(result.get(i).y - result.get(idx).y); // diff in y dimension.
+										angle[(int)(result.get(i).frame-1)][Ch-1] += (Math.atan2(dy, dx)); // angle between points and horizontal axis.
+										if (Math.sqrt(dx*dx + dy*dy) > distance[(int)(result.get(i).frame-1)][Ch-1])
+											distance[(int)(result.get(i).frame-1)][Ch-1] = Math.sqrt(dx*dx + dy*dy);
+										count[(int)(result.get(i).frame-1)][Ch-1]++;												
+										id++;
+									}
 								}
 							}
 						}
@@ -253,7 +288,16 @@ public class DoubleHelixFitting {
 							{								
 								meanRsquare = rsquare;							// update.													
 								finalLevel = level;								// update.						
-								finalSigma = maxSigma;							// update.						
+								finalSigma = maxSigma;							// update.	
+								maxDist = 0;
+								for (int ch = 0; ch < nChannels; ch++)
+								{
+									for (int i = 0; i < nFrames; i++)
+									{
+										if (distance[i][ch] > maxDist)
+											maxDist = (int) distance[i][ch];
+									}
+								}
 								finalDist = maxDist;							// update.						
 								finalGWindow = gWindow;							// update.	
 							}
@@ -303,35 +347,49 @@ public class DoubleHelixFitting {
 		result = TableIO.Load();
 		int id = 2;		
 		double[][] angle	= new double[nFrames][nChannels];
+		//		double[][][] xyOffset	= new double[2][nFrames][nChannels]; // xy(z) offset. xy(0) = 0;
 		double[][] distance = new double[nFrames][nChannels];
 		int[][] count 	  	= new int[nFrames][nChannels];
 		for (int Ch = 1; Ch <= nChannels; Ch++)
 		{
+
 			for (int i = 0; i < result.size(); i++)
-			{			
+			{		
+				double NNdistance = maxSqdist;
 				if (result.get(i).include == 1 && result.get(i).channel == Ch) // if the current entry is within ok range and has not yet been assigned.
 				{
 					int idx = i + 1;
+					int j = 0;
 					while (idx < result.size() && result.get(i).channel == result.get(idx).channel)
 					{
 						if (result.get(i).frame == result.get(idx).frame && result.get(idx).include == 1)
 						{
-							if (((result.get(i).x - result.get(idx).x)*(result.get(i).x - result.get(idx).x) +
-									(result.get(i).y - result.get(idx).y)*(result.get(i).y - result.get(idx).y)) < maxSqdist)
+							double currentDistance = (result.get(i).x - result.get(idx).x)*(result.get(i).x - result.get(idx).x) +
+									(result.get(i).y - result.get(idx).y)*(result.get(i).y - result.get(idx).y);
+							if (currentDistance < NNdistance)
 							{
-								result.get(idx).include = id;
-								result.get(i).include 	= id;								
-								short dx = (short)(result.get(i).x - result.get(idx).x); // diff in x dimension.
-								short dy = (short)(result.get(i).y - result.get(idx).y); // diff in y dimension.
-								angle[(int)(result.get(i).frame-1)][Ch-1] += (Math.atan2(dy, dx)); // angle between points and horizontal axis.						
-								count[(int)(result.get(i).frame-1)][Ch-1]++;
-								if (Math.sqrt(dx*dx + dy*dy) > distance[(int)(result.get(i).frame-1)][Ch-1])
-									distance[(int)(result.get(i).frame-1)][Ch-1] = Math.sqrt(dx*dx + dy*dy);
+								j = idx;
 							}
 						}
 						idx ++;
-					}    				    				
-					id++;
+					}
+
+
+					if (j != 0)
+						idx = j;
+
+					if (j != 0)
+					{									
+						result.get(idx).include = id;
+						result.get(i).include 	= id;								
+						short dx = (short)(result.get(i).x - result.get(idx).x); // diff in x dimension.
+						short dy = (short)(result.get(i).y - result.get(idx).y); // diff in y dimension.
+						angle[(int)(result.get(i).frame-1)][Ch-1] += (Math.atan2(dy, dx)); // angle between points and horizontal axis.
+						if (Math.sqrt(dx*dx + dy*dy) > distance[(int)(result.get(i).frame-1)][Ch-1])
+							distance[(int)(result.get(i).frame-1)][Ch-1] = Math.sqrt(dx*dx + dy*dy);
+						count[(int)(result.get(i).frame-1)][Ch-1]++;												
+						id++;
+					}
 				}
 			}
 		}
@@ -372,9 +430,25 @@ public class DoubleHelixFitting {
 			ij.Prefs.set("SMLocalizer.calibration.DoubleHelix.ChOffsetY"+i,0);
 			ij.Prefs.set("SMLocalizer.calibration.DoubleHelix.ChOffsetZ"+i,0);
 		}
+		for (int ch = 1; ch <= nChannels; ch++)
+		{
+			for (int i = 0; i < calibration.length; i++)
+			{
+				ij.Prefs.set("SMLocalizer.calibration.DoubleHelix.xOffset.Ch"+ch+"."+i,0);  // reset.
+				ij.Prefs.set("SMLocalizer.calibration.DoubleHelix.yOffset.Ch"+ch+"."+i,0);	// reset.
+			}
+		}
 		ij.Prefs.savePreferences(); // store settings.
-
+		for (int idx = 0; idx < result.size(); idx++)
+		{
+			result.get(idx).include = 1;
+		}
 		ArrayList<Particle> resultCalib = fit(result);
+		TableIO.Store(resultCalib);
+		cleanParticleList.run(lb,ub,include);
+		cleanParticleList.delete();
+		resultCalib = TableIO.Load();
+		double[][][] xyOffset = getXYoffset(resultCalib,calibration,nFrames);
 		ij.measure.ResultsTable tab = Analyzer.getResultsTable();
 		tab.reset();
 		tab.show("Results");
@@ -382,6 +456,17 @@ public class DoubleHelixFitting {
 		 * Go through central part of the fit for each channel and calculate offset in XY for each channel.
 		 */
 
+		for (int ch = 1; ch <= nChannels; ch++)
+		{
+			for (int i = 0; i < calibration.length; i++)
+			{
+				ij.Prefs.set("SMLocalizer.calibration.DoubleHelix.xOffset.Ch"+ch+"."+i,xyOffset[0][i][ch-1]);
+				ij.Prefs.set("SMLocalizer.calibration.DoubleHelix.yOffset.Ch"+ch+"."+i,xyOffset[1][i][ch-1]);
+			}
+		}
+		ij.Prefs.savePreferences(); // store settings.
+
+		resultCalib = shiftXY(resultCalib);
 		if (nChannels > 1)
 		{
 			int[] z = {zStep*(calibration.length/2 - 5),zStep*(calibration.length/2 + 5)}; // lower and upper bounds for z.
@@ -482,7 +567,7 @@ public class DoubleHelixFitting {
 		if (calibration[0].length == 4)
 			plot.addLegend("Ch 1 \n Ch 2 \n Ch 3 \n Ch 4 \n Ch 5");
 		plot.show();
-		 
+
 
 	} // calibrate.
 
@@ -544,7 +629,43 @@ public class DoubleHelixFitting {
 
 		return calibration;
 	}
+	public static ArrayList<Particle> shiftXY(ArrayList<Particle> inputList)
+	{
+		double[][][] xyOffset = new double[2][(int) ij.Prefs.get("SMLocalizer.calibration.DoubleHelix.height",0)][(int) ij.Prefs.get("SMLocalizer.calibration.DoubleHelix.channels",0)]; // precast.
+		for(int ch = 1; ch <= xyOffset[0][0].length; ch++) // load in correction table.
+		{
+			for (int i = 0; i < xyOffset[0].length; i++)	// loop over all z positions.
 
+			{
+				xyOffset[0][i][ch-1] =  ij.Prefs.get("SMLocalizer.calibration.DoubleHelix.xOffset.Ch"+ch+"."+i,0);
+				xyOffset[1][i][ch-1] =  ij.Prefs.get("SMLocalizer.calibration.DoubleHelix.yOffset.Ch"+ch+"."+i,0);
+			}
+		}	
+		double zStep =  ij.Prefs.get("SMLocalizer.calibration.DoubleHelix.step",0);
+		double[] center = getZoffset();
+		for (int idx = 0; idx < inputList.size(); idx++)		 // loop over all particles.
+		{
+			double z = inputList.get(idx).z /zStep;				// normalize z position based on calibration z-step size.
+			z += center[inputList.get(idx).channel-1];			// shift z by center to get back approximate frame number from stack. Use this to know what value to use from the offset table.
+			double shiftX = 0;
+			double shiftY = 0;
+			if (z >= 0 && z < xyOffset[0].length)				// if within ok range.
+			{
+				shiftX = xyOffset[0][(int)Math.floor(z)][inputList.get(idx).channel-1];
+				shiftX += (xyOffset[0][(int)(Math.floor(z)+1)][inputList.get(idx).channel-1] -xyOffset[0][(int)z][inputList.get(idx).channel-1]) * (Math.floor(z+1)-(int)(Math.floor(z)));
+				shiftY = xyOffset[1][(int)Math.floor(z)][inputList.get(idx).channel-1];
+				shiftY += (xyOffset[1][(int)(Math.floor(z)+1)][inputList.get(idx).channel-1] -xyOffset[1][(int)z][inputList.get(idx).channel-1]) * (Math.floor(z+1)-(int)(Math.floor(z)));
+			}else if ((int)z == xyOffset[0].length) // special case if we're at the end of the table.
+			{
+				shiftX = xyOffset[0][(int)Math.floor(z)][inputList.get(idx).channel-1];
+				shiftY = xyOffset[1][(int)Math.floor(z)][inputList.get(idx).channel-1];			
+			}
+			inputList.get(idx).x +=shiftX;	// add the compensation to x.
+			inputList.get(idx).y +=shiftY;  // add the compensation to y.
+		}
+
+		return inputList;	// return corrected result.
+	}
 	public static double[] getZoffset()
 	{
 		int nChannels = (int)ij.Prefs.get("SMLocalizer.calibration.DoubleHelix.channels",0);
@@ -555,7 +676,716 @@ public class DoubleHelixFitting {
 		} 	
 		return zOffset;
 	}
+	public static double[][][] getXYoffset(ArrayList<Particle> inputParticle,double[][] calibration, int nFrames)
+	{
+		double[][][] xyOffset 	= new double[2][calibration.length][calibration[0].length]; // x-y (z,ch). 
+		double[] center 		= getZoffset();			// get info of where z=0 is in the calibration file.
+		nFrames /= 2; // center frame.
+		//	System.out.println("center frame: " +nFrames + " vs "  + center[0] + " : "+calibration.length);
+		for (int ch = 0; ch < calibration[0].length; ch++)	// over all channels.
+		{
+			int chStart 	= -1;
+			int nCenter 	= 0; // number of locations to search after.
+			for (int idx 	= 0; idx < inputParticle.size(); idx++)
+			{				
+				if (inputParticle.get(idx).channel == ch+1 && inputParticle.get(idx).frame >= (nFrames - center[ch]) && chStart == -1)
+					chStart = idx;
+				if (inputParticle.get(idx).frame == nFrames && inputParticle.get(idx).channel == ch+1) // if we're at the frame corresponding to z = 0 and in the correct channel.
+					//					if (inputParticle.get(idx).frame == center[ch] && inputParticle.get(idx).channel == ch+1) // if we're at the frame corresponding to z = 0 and in the correct channel.
+				{
+					nCenter++;
+				}
+			}
+			if (nCenter > 0)	// if we found centers.
+			{				
+				double[][] localZeroXY = new double[2][nCenter];	// array to store all individual offsets.
+				int counter  = 0;	
+				for (int idx = 0; idx < inputParticle.size(); idx++)
+				{
+					if (inputParticle.get(idx).frame == nFrames && inputParticle.get(idx).channel == ch+1)	// if we're at the center frame.
+						//						if (inputParticle.get(idx).frame == center[ch] && inputParticle.get(idx).channel == ch+1)	// if we're at the center frame.
+					{
+						localZeroXY[0][counter] = inputParticle.get(idx).x;	// store x coordinate.
+						localZeroXY[1][counter] = inputParticle.get(idx).y;	// store y coordinate.
+						counter++;
+					}
+				}// localZeroXY now contains x-y coordinates for central slice particles.
+				/*
+				 * Find smallest offset against localZeroXY for each particle in stack for this channel. Take mean, remove outliers.
+				 */
+				int startIdx = chStart; // which inded to start from.
+				while (inputParticle.get(startIdx).channel != ch+1) // jump forward to first index for the current channel,
+					startIdx ++;
+				int endIdx		 = startIdx; // final index for this frame and channel.
+				boolean optimize = true;	// loop whilst this is true.
 
+				while (optimize)
+				{
+					counter = 0;	// keep track of number of added corrections.
+					endIdx = startIdx;	// restart.
+					boolean loop = true;	// exit flag for final frame and channel.
+					if (inputParticle.size() > endIdx+1) // if we're not at the end of the list.
+					{
+						while (inputParticle.get(startIdx).frame == inputParticle.get(endIdx).frame && inputParticle.get(endIdx).channel == ch+1 && loop) // as long as we're within the same frame and channel.
+						{
+							if (inputParticle.size() > endIdx+2) // if we're not at the end
+							{
+								endIdx++;						 // step forward
+
+							}else
+								loop = false; // exit for final frame and channel.
+						}
+					}
+					double[][] frameOffset = new double[2][endIdx-startIdx + 1]; // preallocate
+					double meanX = 0;	// mean x offset.
+					double meanY = 0;	// mean y offset.
+					while (startIdx <= endIdx) // whilst we're not done with this frame.
+					{
+						double z = inputParticle.get(startIdx).z / ij.Prefs.get("SMLocalizer.calibration.DoubleHelix.step",0);  // get back approximate frame.
+						//	z += center[ch];																						// shift by center to get frame number.
+						z += nFrames;																						// shift by center to get frame number.
+						//			System.out.println(inputParticle.get(startIdx).frame + " vs  " + z   ); 
+						if (z > (inputParticle.get(startIdx).frame - 4) && z < (inputParticle.get(startIdx).frame + 4)) 		// if we're within +/- 3 frames of the current one (ie if the fit worked with 3*zStep precision)
+						{
+							double distance = 500; // max distance to be considered in nm.
+							for (int i = 0; i < localZeroXY[0].length; i ++) // loop over all particles from center frame.
+							{
+								double tempDistance = Math.sqrt((inputParticle.get(startIdx).x - localZeroXY[0][i])*(inputParticle.get(startIdx).x - localZeroXY[0][i]) + // calculate distance from current particle to the current center frame particle.
+										(inputParticle.get(startIdx).y - localZeroXY[1][i])*(inputParticle.get(startIdx).y - localZeroXY[1][i]));
+								if (tempDistance < distance) // if the particles are closer then the previous loops (or start value)
+								{
+									frameOffset[0][counter] = localZeroXY[0][i] - inputParticle.get(startIdx).x;	// update offset for this particle
+									frameOffset[1][counter] = localZeroXY[1][i] - inputParticle.get(startIdx).y;	// update offset for this particle
+									distance = tempDistance;														// update distance.
+								}
+							} // nearest neighbor found.
+							meanX += frameOffset[0][counter]; 	// add offset in x to mean.
+							meanY += frameOffset[1][counter]; 	// add offset in y to mean.
+							counter ++;						 	// step forward in the array
+						}
+						startIdx++;								// next particle within the frame.
+					}
+					double sigmaX = 0;	// std of x offsets.
+					double sigmaY = 0; 	// std of y offsets.
+					if (counter > 0)	// if we've added values (ie found particles close enough to the center frame particles)
+					{
+						if (counter > 1) // sample requires more then 1 entry.
+						{
+							for (int i = 0; i < frameOffset[0].length; i++)	// loop over all offsets in this frame.
+							{
+								sigmaX += ((frameOffset[0][i] - meanX/counter)*(frameOffset[0][i] - meanX/counter))/(counter-1);	// add (Xi-µ)/(n-1)
+								sigmaY += ((frameOffset[1][i] - meanY/counter)*(frameOffset[1][i] - meanY/counter))/(counter-1);	// add (Yi-µ)/(n-1)
+							}
+							sigmaX = Math.sqrt(sigmaX);	// square root of sigmax^2.
+							sigmaY = Math.sqrt(sigmaY);	// square root of sigmay^2.	
+							//			System.out.println("frame: " + inputParticle.get(endIdx).frame + " mean" + meanX/counter + " x " + meanY/counter + " sigma: " + sigmaX + " x " + sigmaY);
+							for (int i = 0; i < frameOffset[0].length; i++)	// loop over all offsets in this frame.
+							{	
+								//			System.out.println(frameOffset[0][i] + " x " + frameOffset[1][i]);
+								if ((frameOffset[0][i]) < (meanX/counter - sigmaX*3) &&			// if we're not within 3 sigma away from mean.
+										(frameOffset[0][i]) > (meanX/counter + sigmaX*3) &&
+										(frameOffset[1][i]) < (meanY/counter - sigmaY*3) &&
+										(frameOffset[1][i]) > (meanY/counter + sigmaY*3))
+								{
+									meanX -= frameOffset[0][i];		// remove this entry
+									meanY -= frameOffset[1][i];		// remove this entry
+									counter--;						// decrease.
+								}
+							}
+						}
+						if (counter > 0)
+						{
+							meanX /= counter;	// calculate mean.
+							meanY /= counter;	// calculate mean
+							xyOffset[0][inputParticle.get(startIdx).frame - inputParticle.get(chStart).frame][ch] = meanX; // remove this value from x for this z (or rather frame) and channel.
+							xyOffset[1][inputParticle.get(startIdx).frame - inputParticle.get(chStart).frame][ch] = meanY; // remove this value from x for this z (or rather frame) and channel.
+						}
+					}
+					//			System.out.println(idxCounter + " : "+ xyOffset[0][idxCounter][ch] + " x " + xyOffset[1][idxCounter][ch] + " : " + startIdx);
+					startIdx++;	// step to the next frame.
+					if (startIdx >= inputParticle.size())	// if we're done.
+						optimize = false;
+					else if ((inputParticle.get(startIdx).frame - inputParticle.get(chStart).frame) >= calibration.length-1)
+						optimize = false;
+					else if (inputParticle.get(startIdx).channel != ch + 1)	// if we've changed channel.
+						optimize = false;					
+				} // while(optimize)
+
+			} // if there are any centers in the central slice.
+		}
+		/*		for (int idx =0; idx < calibration.length; idx++)
+		{
+			System.out.println(idx + " : " + xyOffset[0][idx][0] + " x " + xyOffset[1][idx][0]);
+		}
+		/*
+		 * interpolate
+		 */
+		for (int ch = 0; ch <  calibration[0].length; ch++)
+		{
+			for (int XY = 0; XY < 2; XY++)
+			{
+				for (int idx = 0; idx < calibration.length; idx++)
+				{
+					if (xyOffset[XY][idx][ch] == 0 && idx != nFrames)
+					{
+						if (idx == 0) // if the first entry is 0
+						{
+							int tempIdx = idx+1;
+							int added = 0;
+							double total = 0;
+							while (added < 2 && tempIdx != calibration.length)
+							{
+								if (xyOffset[XY][tempIdx][ch] != 0)
+								{
+									added++;
+									if (added == 1)
+										total -= xyOffset[XY][tempIdx][ch];
+									else
+										total += xyOffset[XY][tempIdx][ch];
+									//	System.out.println("adding " + xyOffset[XY][tempIdx][ch] + " from " + tempIdx);
+								}
+								tempIdx++;
+							}
+
+							tempIdx--;
+							//System.out.println("corr: " + (tempIdx-idx)+ " total: " + total );
+							total /= (tempIdx-idx);
+
+							while (tempIdx >= idx)
+							{
+								if (xyOffset[XY][tempIdx][ch] == 0)
+								{
+									xyOffset[XY][tempIdx][ch] = xyOffset[XY][tempIdx+1][ch] - total;	
+									//System.out.println(xyOffset[XY][tempIdx][ch] + " from " + xyOffset[XY][tempIdx+1][ch] + " - " + total);
+
+								}
+								tempIdx--;
+							}
+						}else if (idx == calibration.length-1)
+						{
+							double total = xyOffset[XY][idx-1][ch] - xyOffset[XY][idx-2][ch];														
+							xyOffset[XY][idx][ch] = xyOffset[XY][idx-1][ch] + total;
+						}
+						else // central part.
+						{
+							double total = -xyOffset[XY][idx-1][ch];
+							int added = 1;
+							int tempIdx = idx + 1;
+							while (added < 2 && tempIdx != calibration.length)
+							{
+								if (xyOffset[XY][tempIdx][ch] != 0)
+								{
+									added++;
+									total += xyOffset[XY][tempIdx][ch];								
+								}
+								tempIdx++;
+							}
+							if (tempIdx != calibration.length)
+							{
+								tempIdx--;
+								total /= (tempIdx-idx);
+								while (tempIdx >= idx)
+								{
+									if (xyOffset[XY][tempIdx][ch] == 0)
+									{
+										xyOffset[XY][tempIdx][ch] = xyOffset[XY][tempIdx+1][ch] - total;	
+									}
+									tempIdx--;
+								}
+							}else if (added == 1) // if we do not have a value at the end.
+							{
+								total = xyOffset[XY][idx-1][ch] - xyOffset[XY][idx-2][ch];
+								tempIdx = idx + 1;
+								while (tempIdx < calibration.length)
+								{
+									xyOffset[XY][tempIdx][ch] = xyOffset[XY][tempIdx-1][ch] + total;
+									tempIdx++;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		/*		for (int idx =0; idx < calibration.length; idx++)
+		{
+			System.out.println(idx + " : " + xyOffset[0][idx][0] + " x " + xyOffset[1][idx][0]);
+		}
+		 */	
+
+		/*
+		 * 5 point mean filtering.
+		 */
+		for (int ch = 0; ch < calibration[0].length; ch++)
+		{
+			double[] tempVector = new double[xyOffset[0].length];	// 5 point smoothed data.
+			for (int XY = 0; XY < 2; XY++)
+			{
+				int idx = 0;										// index variable.				
+
+				while (idx < tempVector.length)
+				{
+					// 5 point smoothing:
+					if (idx == 0)
+					{
+						int included = 0;
+						if (xyOffset[XY][idx][ch] != 0)
+							included++;
+						if (xyOffset[XY][idx + 1][ch] != 0)
+							included++;
+						if (xyOffset[XY][idx + 2][ch] != 0)
+							included++;
+						if (included > 0)
+						{
+							tempVector[idx] = (xyOffset[XY][idx][ch]
+									+ xyOffset[XY][idx + 1][ch] 
+											+ xyOffset[XY][idx + 2][ch])/included;
+						}
+						else
+						{
+							tempVector[idx] = 0;
+						}
+					}else if (idx == 1)
+					{
+						int included = 0;					
+						if (xyOffset[XY][idx - 1][ch] != 0)
+							included++;
+						if (xyOffset[XY][idx][ch] != 0)
+							included++;
+						if (xyOffset[XY][idx + 1][ch] != 0)
+							included++;
+						if (xyOffset[XY][idx + 2][ch] != 0)
+							included++;
+						if (included > 0)
+						{
+							tempVector[idx] = (xyOffset[XY][idx - 1][ch]
+									+ xyOffset[XY][idx][ch]
+											+ xyOffset[XY][idx + 1][ch] 
+													+ xyOffset[XY][idx + 2][ch])/included;
+						}
+						else
+						{
+							tempVector[idx] = 0;
+
+						}
+					}else if (idx == xyOffset[XY].length - 2)
+					{
+						int included = 0;
+						if (xyOffset[XY][idx - 2][ch] != 0)
+							included++;
+						if (xyOffset[XY][idx - 1][ch] != 0)
+							included++;
+						if (xyOffset[XY][idx][ch] != 0)
+							included++;
+						if (xyOffset[XY][idx + 1][ch] != 0)
+							included++;
+						if (included > 0)
+						{
+							tempVector[idx] = (xyOffset[XY][idx - 2][ch]
+									+ xyOffset[XY][idx - 1][ch]
+											+ xyOffset[XY][idx][ch] 
+													+ xyOffset[XY][idx + 1][ch])/included;
+						}
+						else
+						{
+							tempVector[idx] = 0;
+
+						}
+					}else if (idx == xyOffset[XY].length - 1)
+					{
+						int included = 0;
+						if (xyOffset[XY][idx - 2][ch] != 0)
+							included++;
+						if (xyOffset[XY][idx - 1][ch] != 0)
+							included++;
+						if (xyOffset[XY][idx][ch] != 0)
+							included++;
+						if (included > 0)
+						{
+							tempVector[idx] = (xyOffset[XY][idx - 2][ch]
+									+ xyOffset[XY][idx - 1][ch]
+											+ xyOffset[XY][idx][ch])/included;
+						}
+						else
+						{
+							tempVector[idx] = 0;
+
+						}
+					}else if (idx < xyOffset[XY].length - 2)
+					{
+						int included = 0;
+						if (xyOffset[XY][idx - 2][ch] != 0)
+							included++;
+						if (xyOffset[XY][idx - 1][ch] != 0)
+							included++;
+						if (xyOffset[XY][idx][ch] != 0)
+							included++;
+						if (xyOffset[XY][idx + 1][ch] != 0)
+							included++;
+						if (xyOffset[XY][idx + 2][ch] != 0)
+							included++;
+						if (included > 0)
+						{
+							tempVector[idx] = (xyOffset[XY][idx - 2][ch]
+									+ xyOffset[XY][idx - 1][ch]
+											+ xyOffset[XY][idx][ch] 
+													+ xyOffset[XY][idx + 1][ch]
+															+ xyOffset[XY][idx + 2][ch])/included;
+						}
+						else
+						{
+							tempVector[idx] = 0;
+
+						}
+					}
+					idx++;
+
+				} // tempVector populated.
+				for (int i = 0; i < tempVector.length; i++ ) // Transfer temp variable back to main vector.
+					xyOffset[XY][i][ch] = tempVector[i];
+			}// loop over x and y
+
+
+		}// channel loop.
+
+		/*
+		Plot plot = new Plot("PRILM calibration", "z [nm]", "Angle [rad]");
+		double[] zOffset = getZoffset();
+		for (int ch = 0; ch < 2; ch++)
+		{
+			double[] printout = new double[calibration.length];
+			double[] x = new double[printout.length];
+			for (int i = 0; i < printout.length; i++)
+			{
+				printout[i] = xyOffset[ch][i][0];
+				x[i] = (i-zOffset[0]);
+			}
+			if (ch == 0)
+				plot.setColor(Color.BLACK);
+			if (ch == 1)
+				plot.setColor(Color.BLUE);
+			if (ch == 2)
+				plot.setColor(Color.RED);
+			if (ch == 3)
+				plot.setColor(Color.GREEN);
+			if (ch == 4)
+				plot.setColor(Color.MAGENTA);
+			plot.addPoints(x,printout, Plot.LINE);
+		}
+		if (calibration[0].length == 1)
+			plot.addLegend("Ch 1 \n Ch 2");
+		if (calibration[0].length == 2)
+			plot.addLegend("Ch 1 \n Ch 2 \n Ch 3");		
+		if (calibration[0].length == 3)
+			plot.addLegend("Ch 1 \n Ch 2 \n Ch 3 \n Ch 4");
+		if (calibration[0].length == 4)
+			plot.addLegend("Ch 1 \n Ch 2 \n Ch 3 \n Ch 4 \n Ch 5");
+		plot.show();
+		/*	for (int i = 0; i < calibration.length; i++)
+		{
+			System.out.println("idx: " + i + " offset: " + xyOffset[0][i][0] + " x " +xyOffset[1][i][0]);
+		}
+		 */
+		return xyOffset;
+	}
+	public static double[][][] getXYoffset2(ArrayList<Particle> inputParticle,double[][] calibration)
+	{
+		double[][][] xyOffset 	= new double[2][calibration.length][calibration[0].length]; // x-y (z,ch). 
+		double[] center 		= getZoffset();			// get info of where z=0 is in the calibration file.
+
+		for (int ch = 0; ch < calibration[0].length; ch++)	// over all channels.
+		{
+			int nCenter 	= 0; // number of locations to search after.
+			for (int idx 	= 0; idx < inputParticle.size(); idx++)
+			{				
+				if (inputParticle.get(idx).frame == center[ch] && inputParticle.get(idx).channel == ch+1) // if we're at the frame corresponding to z = 0 and in the correct channel.
+				{
+					nCenter++;
+				}
+			}
+			if (nCenter > 0)	// if we found centers.
+			{
+				double[][] localZeroXY = new double[2][nCenter];	// array to store all individual offsets.
+				int counter  = 0;	
+				for (int idx = 0; idx < inputParticle.size(); idx++)
+				{
+					if (inputParticle.get(idx).frame == center[ch] && inputParticle.get(idx).channel == ch+1)	// if we're at the center frame.
+					{
+						localZeroXY[0][counter] = inputParticle.get(idx).x;	// store x coordinate.
+						localZeroXY[1][counter] = inputParticle.get(idx).y;	// store y coordinate.
+						counter++;
+					}
+				}// localZeroXY now contains x-y coordinates for central slice particles.
+				/*
+				 * Find smallest offset against localZeroXY for each particle in stack for this channel. Take mean, remove outliers.
+				 */
+				int startIdx = 0; // which inded to start from.
+				while (inputParticle.get(startIdx).channel != ch+1) // jump forward to first index for the current channel,
+					startIdx ++;
+				int endIdx		 = startIdx; // final index for this frame and channel.
+				boolean optimize = true;	// loop whilst this is true.
+				while (optimize)
+				{
+					counter = 0;	// keep track of number of added corrections.
+					endIdx = startIdx;	// restart.
+					boolean loop = true;	// exit flag for final frame and channel.
+					if (inputParticle.size() > endIdx+1) // if we're not at the end of the list.
+					{
+						while (inputParticle.get(startIdx).frame == inputParticle.get(endIdx).frame && inputParticle.get(endIdx).channel == ch+1 && loop) // as long as we're within the same frame and channel.
+						{
+							if (inputParticle.size() > endIdx+1) // if we're not at the end
+							{
+								endIdx++;						 // step forward
+
+							}else
+								loop = false; // exit for final frame and channel.
+						}
+					}
+					double[][] frameOffset = new double[2][endIdx-startIdx + 1]; // preallocate
+					double meanX = 0;	// mean x offset.
+					double meanY = 0;	// mean y offset.
+					while (startIdx <= endIdx) // whilst we're not done with this frame.
+					{
+						double z = inputParticle.get(startIdx).z / ij.Prefs.get("SMLocalizer.calibration.DoubleHelix.step",0);  // get back approximate frame.
+						z += center[ch];																						// shift by center to get frame number.
+						if (z > (inputParticle.get(startIdx).frame - 3) && z < (inputParticle.get(startIdx).frame + 3)) 		// if we're within +/- 3 frames of the current one (ie if the fit worked with 3*zStep precision)
+						{
+							double distance = 200; // max distance to be considered in nm.
+							for (int i = 0; i < localZeroXY[0].length; i ++) // loop over all particles from center frame.
+							{
+								double tempDistance = Math.sqrt((inputParticle.get(startIdx).x - localZeroXY[0][i])*(inputParticle.get(startIdx).x - localZeroXY[0][i]) + // calculate distance from current particle to the current center frame particle.
+										(inputParticle.get(startIdx).y - localZeroXY[1][i])*(inputParticle.get(startIdx).y - localZeroXY[1][i]));
+								if (tempDistance < distance) // if the particles are closer then the previous loops (or start value)
+								{
+									frameOffset[0][counter] = localZeroXY[0][i] - inputParticle.get(startIdx).x;	// update offset for this particle
+									frameOffset[1][counter] = localZeroXY[1][i] - inputParticle.get(startIdx).y;	// update offset for this particle
+									distance = tempDistance;														// update distance.
+								}
+							} // nearest neighbor found.
+							meanX += frameOffset[0][counter]; 	// add offset in x to mean.
+							meanY += frameOffset[1][counter]; 	// add offset in y to mean.
+							counter ++;						 	// step forward in the array
+						}
+						startIdx++;								// next particle within the frame.
+					}
+					double sigmaX = 0;	// std of x offsets.
+					double sigmaY = 0; 	// std of y offsets.
+					if (counter > 0)	// if we've added values (ie found particles close enough to the center frame particles)
+					{
+						if (counter > 1) // sample requires more then 1 entry.
+						{
+							for (int i = 0; i < frameOffset[0].length; i++)	// loop over all offsets in this frame.
+							{
+								sigmaX += ((frameOffset[0][i] - meanX/counter)*(frameOffset[0][i] - meanX/counter))/(counter-1);	// add (Xi-µ)/(n-1)
+								sigmaY += ((frameOffset[1][i] - meanY/counter)*(frameOffset[1][i] - meanY/counter))/(counter-1);	// add (Yi-µ)/(n-1)
+							}
+							sigmaX = Math.sqrt(sigmaX);	// square root of sigmax^2.
+							sigmaY = Math.sqrt(sigmaY);	// square root of sigmay^2.
+							for (int i = 0; i < frameOffset[0].length; i++)	// loop over all offsets in this frame.
+							{								
+								if ((frameOffset[0][i]) < (meanX/counter - sigmaX*3) &&			// if we're not within 3 sigma away from mean.
+										(frameOffset[0][i]) > (meanX/counter + sigmaX*3) &&
+										(frameOffset[1][i]) < (meanY/counter - sigmaY*3) &&
+										(frameOffset[1][i]) > (meanY/counter + sigmaY*3))
+								{
+									meanX -= frameOffset[0][i];		// remove this entry
+									meanY -= frameOffset[1][i];		// remove this entry
+									counter--;						// decrease.
+								}
+							}
+						}
+						if (counter > 0)
+						{
+							meanX /= counter;	// calculate mean.
+							meanY /= counter;	// calculate mean
+							xyOffset[0][inputParticle.get(endIdx).frame-1][ch] = meanX; // remove this value from x for this z (or rather frame) and channel.
+							xyOffset[1][inputParticle.get(endIdx).frame-1][ch] = meanY; // remove this value from x for this z (or rather frame) and channel.
+						}
+					}
+					startIdx++;	// step to the next frame.
+					if (startIdx >= inputParticle.size())	// if we're done.
+						optimize = false;
+					else if (inputParticle.get(startIdx).channel != ch + 1)	// if we've changed channel.
+						optimize = false;					
+				} // while(optimize)
+
+			} // if there are any centers in the central slice.
+		}
+		/*
+		 * 5 point mean filtering.
+		 */
+		for (int ch = 0; ch < calibration[0].length; ch++)
+		{
+			double[] tempVector = new double[xyOffset[0].length];	// 5 point smoothed data.
+			for (int XY = 0; XY < 2; XY++)
+			{
+				int idx = 0;										// index variable.				
+
+				while (idx < tempVector.length)
+				{
+					// 5 point smoothing:
+					if (idx == 0)
+					{
+						int included = 0;
+						if (xyOffset[XY][idx][ch] != 0)
+							included++;
+						if (xyOffset[XY][idx + 1][ch] != 0)
+							included++;
+						if (xyOffset[XY][idx + 2][ch] != 0)
+							included++;
+						if (included > 0)
+						{
+							tempVector[idx] = (xyOffset[XY][idx][ch]
+									+ xyOffset[XY][idx + 1][ch] 
+											+ xyOffset[XY][idx + 2][ch])/included;
+						}
+						else
+						{
+							tempVector[idx] = 0;
+						}
+					}else if (idx == 1)
+					{
+						int included = 0;					
+						if (xyOffset[XY][idx - 1][ch] != 0)
+							included++;
+						if (xyOffset[XY][idx][ch] != 0)
+							included++;
+						if (xyOffset[XY][idx + 1][ch] != 0)
+							included++;
+						if (xyOffset[XY][idx + 2][ch] != 0)
+							included++;
+						if (included > 0)
+						{
+							tempVector[idx] = (xyOffset[XY][idx - 1][ch]
+									+ xyOffset[XY][idx][ch]
+											+ xyOffset[XY][idx + 1][ch] 
+													+ xyOffset[XY][idx + 2][ch])/included;
+						}
+						else
+						{
+							tempVector[idx] = 0;
+
+						}
+					}else if (idx == xyOffset[XY].length - 2)
+					{
+						int included = 0;
+						if (xyOffset[XY][idx - 2][ch] != 0)
+							included++;
+						if (xyOffset[XY][idx - 1][ch] != 0)
+							included++;
+						if (xyOffset[XY][idx][ch] != 0)
+							included++;
+						if (xyOffset[XY][idx + 1][ch] != 0)
+							included++;
+						if (included > 0)
+						{
+							tempVector[idx] = (xyOffset[XY][idx - 2][ch]
+									+ xyOffset[XY][idx - 1][ch]
+											+ xyOffset[XY][idx][ch] 
+													+ xyOffset[XY][idx + 1][ch])/included;
+						}
+						else
+						{
+							tempVector[idx] = 0;
+
+						}
+					}else if (idx == xyOffset[XY].length - 1)
+					{
+						int included = 0;
+						if (xyOffset[XY][idx - 2][ch] != 0)
+							included++;
+						if (xyOffset[XY][idx - 1][ch] != 0)
+							included++;
+						if (xyOffset[XY][idx][ch] != 0)
+							included++;
+						if (included > 0)
+						{
+							tempVector[idx] = (xyOffset[XY][idx - 2][ch]
+									+ xyOffset[XY][idx - 1][ch]
+											+ xyOffset[XY][idx][ch])/included;
+						}
+						else
+						{
+							tempVector[idx] = 0;
+
+						}
+					}else if (idx < xyOffset[XY].length - 2)
+					{
+						int included = 0;
+						if (xyOffset[XY][idx - 2][ch] != 0)
+							included++;
+						if (xyOffset[XY][idx - 1][ch] != 0)
+							included++;
+						if (xyOffset[XY][idx][ch] != 0)
+							included++;
+						if (xyOffset[XY][idx + 1][ch] != 0)
+							included++;
+						if (xyOffset[XY][idx + 2][ch] != 0)
+							included++;
+						if (included > 0)
+						{
+							tempVector[idx] = (xyOffset[XY][idx - 2][ch]
+									+ xyOffset[XY][idx - 1][ch]
+											+ xyOffset[XY][idx][ch] 
+													+ xyOffset[XY][idx + 1][ch]
+															+ xyOffset[XY][idx + 2][ch])/included;
+						}
+						else
+						{
+							tempVector[idx] = 0;
+
+						}
+					}
+					idx++;
+
+				} // tempVector populated.
+				for (int i = 0; i < tempVector.length; i++ ) // Transfer temp variable back to main vector.
+					xyOffset[XY][i][ch] = tempVector[i];
+			}// loop over x and y
+
+
+		}// channel loop.
+
+
+		Plot plot = new Plot("Double helix calibration", "z [nm]", "Angle [rad]");
+		double[] zOffset = getZoffset();
+		for (int ch = 0; ch < 2; ch++)
+		{
+			double[] printout = new double[calibration.length];
+			double[] x = new double[printout.length];
+			for (int i = 0; i < printout.length; i++)
+			{
+				printout[i] = xyOffset[ch][i][0];
+				x[i] = (i-zOffset[0]);
+			}
+			if (ch == 0)
+				plot.setColor(Color.BLACK);
+			if (ch == 1)
+				plot.setColor(Color.BLUE);
+			if (ch == 2)
+				plot.setColor(Color.RED);
+			if (ch == 3)
+				plot.setColor(Color.GREEN);
+			if (ch == 4)
+				plot.setColor(Color.MAGENTA);
+			plot.addPoints(x,printout, Plot.LINE);
+		}
+		if (calibration[0].length == 1)
+			plot.addLegend("Ch 1 \n Ch 2");
+		if (calibration[0].length == 2)
+			plot.addLegend("Ch 1 \n Ch 2 \n Ch 3");		
+		if (calibration[0].length == 3)
+			plot.addLegend("Ch 1 \n Ch 2 \n Ch 3 \n Ch 4");
+		if (calibration[0].length == 4)
+			plot.addLegend("Ch 1 \n Ch 2 \n Ch 3 \n Ch 4 \n Ch 5");
+		plot.show();
+		/*	for (int i = 0; i < calibration.length; i++)
+		{
+			System.out.println("idx: " + i + " offset: " + xyOffset[0][i][0] + " x " +xyOffset[1][i][0]);
+		}
+		 */
+		return xyOffset;
+	}
 	/*
 	 * Used in generation of calibration file. Smoothes out fitted results, 5 point moving window mean.
 	 */
