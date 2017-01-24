@@ -3805,8 +3805,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		doZ.setSelected(false);
 		minZ.setText("-1000");
 		maxZ.setText("1000");
-		for (int id = 0; id < 10; id++) // verify correct loading.
-			checkUserInp(id);
+
 	}                                                   
 
 	private void resetBasicInputActionPerformed(java.awt.event.ActionEvent evt) {                                                

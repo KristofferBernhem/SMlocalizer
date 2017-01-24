@@ -36,5 +36,10 @@
 	<classpathentry kind="lib" path="lib/jcusparse-natives-0.8.0-windows-x86_64.jar"/>
 	<classpathentry kind="lib" path="lib/jnvgraph-0.8.0.jar"/>
 	<classpathentry kind="lib" path="lib/jnvgraph-natives-0.8.0-windows-x86_64.jar"/>
+	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/resources">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
