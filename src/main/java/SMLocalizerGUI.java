@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with SMLocalizer.  If not, see <http://www.gnu.org/licenses/>.
  */
-import java.util.ArrayList;
+
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -22,46 +22,9 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import ij.IJ;
 import ij.WindowManager;
 
-
-/*TODO x-mas 2016:
- * Implement 3D calibrations:
- * 		DONE Write new fit call to bypass regular localize/process calls.
- * 		DONE Implement chromatic offset correction in 3D fit algorithms 
- * 		PRILM: preliminary complete.
- * 		Biplane: preliminary complete.
- * 		Double helix: preliminary complete.
- * 		Astigmatism: preliminary complete.
- * DONE_ Implement chromatic offset correction in 2D fit algorithms
- * DONE: Calibrate push button implemented
- * DONE: ROI size based on pixelsize and modality
- * DONE: Set pixels over background based on ROI size.
- * DONE: Update GPU fitting code to handle 3D (new initial search and input)
- * Check errors in cluster analysis.
- * DONE: Add fiducial checkbox saving of choice. fiducialsChList
- * DONE: Add doCorrelativeChList for choice of channel alignment method.
- * DONE: Add doChromaticChList for choice of channel alignment method.
- * DONE: set default correlativeCorr and chromaticCorr
- * update tooltips (align channel incorrect)
- * Make fiducial track applied during initial fitting. Move fiducial checkbox to basic settings.
- * DONE: Remove channel independent pixel size.
- * DONE: (error loading default file). ERROR: Not loading values correctly in UBUNTU with java 1.8.0_101. Check with newer version.
- * DONE: Remove sigmaZ from parameter list in code.
- * 
- * 
- * 
- * 
- * BONUS:
- * GPU transfer function for speedup.
- * Possible multi-emitter fitting.
- * Transfer function to LAMA
- * 
- * Manuscript: 
- * Compare with ground truth
- * 
- * 
- */
 
 /**
  *
@@ -76,8 +39,11 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 
 		try{			
 			String loadThis = ij.Prefs.get("SMLocalizer.CurrentSetting", "");
-			if (!loadThis.equals(""))				 
+			if (!loadThis.equals("")){
 				loadParameters(loadThis); // current.
+				verifyParameterSet(); // check that the set loaded is ok.
+				updateList(0); // set channel to first.
+			}
 			else
 			{
 				outputPixelSize.setText("5");
@@ -217,10 +183,12 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 				ij.Prefs.set("SMLocalizer.calibration.Astigmatism.maxDim.Ch0",0);		
 				ij.Prefs.savePreferences(); // store settings.
 				int id = 0; 		// set current ch to 1.
-				updateVisible(id);  // update fields that user can see.
+
 				String name = "default";
 				ij.Prefs.set("SMLocalizer.settingsEntries", 1);
 				ij.Prefs.set("SMLocalizer.settingsName"+1, name); // add storename
+				verifyParameterSet();
+				updateVisible(id);  // update fields that user can see.
 				setParameters(name);
 			}
 
@@ -363,10 +331,11 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			ij.Prefs.set("SMLocalizer.calibration.Astigmatism.maxDim.Ch0",0);		
 			ij.Prefs.savePreferences(); // store settings.
 			int id = 0; 		// set current ch to 1.
-			updateVisible(id);  // update fields that user can see.
 			String name = "default";
 			ij.Prefs.set("SMLocalizer.settingsEntries", 1);
 			ij.Prefs.set("SMLocalizer.settingsName"+1, name); // add storename
+			verifyParameterSet();
+			updateVisible(id);  // update fields that user can see.
 			setParameters(name);
 		} finally{
 
@@ -3445,36 +3414,89 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 
 		if (modality.getSelectedIndex() == 0)
 		{
-			int[] totalGain 		= getTotalGain();
-			BasicFittingCorrections.calibrate(Integer.parseInt(inputPixelSize.getText()),totalGain);
+			try
+			{
+				int[] totalGain 		= getTotalGain();
+				BasicFittingCorrections.calibrate(Integer.parseInt(inputPixelSize.getText()),totalGain);
+			}catch (NumberFormatException e)
+			{
+				IJ.log("no  calibration performed.");
+			}
+			catch (NullPointerException e)
+			{
+				IJ.log("no  calibration performed, failed to load image");
+			}
+
 		} // 2D.
 		else if(modality.getSelectedIndex() == 1)
 		{
 			// PRILM.
-			int zStep = Integer.parseInt(JOptionPane.showInputDialog("z step for calibration file? [nm]",
+			try
+			{
+				int zStep = Integer.parseInt(JOptionPane.showInputDialog("z step for calibration file? [nm]",			
 					"10"));
-			PRILMfitting.calibrate(Integer.parseInt(inputPixelSize.getText()), zStep);
+				PRILMfitting.calibrate(Integer.parseInt(inputPixelSize.getText()), zStep);
+			}catch (NumberFormatException e)
+			{
+				IJ.log("no  calibration performed.");
+			}
+			catch (NullPointerException e)
+			{
+				IJ.log("no  calibration performed, failed to load image");
+			}			
 		}
 		else if(modality.getSelectedIndex() == 2)
 		{
 			// Biplane.
-			int zStep = Integer.parseInt(JOptionPane.showInputDialog("z step for calibration file? [nm]",
-					"10"));
-			BiplaneFitting.calibrate(Integer.parseInt(inputPixelSize.getText()), zStep);
+			try
+			{
+				int zStep = Integer.parseInt(JOptionPane.showInputDialog("z step for calibration file? [nm]",
+						"10"));
+				BiplaneFitting.calibrate(Integer.parseInt(inputPixelSize.getText()), zStep);
+			}catch (NumberFormatException e)
+			{
+				IJ.log("no  calibration performed.");
+			}
+			catch (NullPointerException e)
+			{
+				IJ.log("no  calibration performed, failed to load image");
+			}
+
+			
 		}
 		else if(modality.getSelectedIndex() == 3)
 		{
 			// Double helix.
-			int zStep = Integer.parseInt(JOptionPane.showInputDialog("z step for calibration file? [nm]",
-					"10"));
-			DoubleHelixFitting.calibrate(Integer.parseInt(inputPixelSize.getText()), zStep);
+			try
+			{
+				int zStep = Integer.parseInt(JOptionPane.showInputDialog("z step for calibration file? [nm]",
+						"10"));
+				DoubleHelixFitting.calibrate(Integer.parseInt(inputPixelSize.getText()), zStep);
+			}catch (NumberFormatException e)
+			{
+				IJ.log("no  calibration performed.");
+			}
+			catch (NullPointerException e)
+			{
+				IJ.log("no  calibration performed, failed to load image");
+			}
 		}
 		else if(modality.getSelectedIndex() == 4)
 		{
 			// Astigmatism.
-			int zStep = Integer.parseInt(JOptionPane.showInputDialog("z step for calibration file? [nm]",
-					"10"));
-			AstigmatismFitting.calibrate(Integer.parseInt(inputPixelSize.getText()), zStep);
+			try
+			{
+				int zStep = Integer.parseInt(JOptionPane.showInputDialog("z step for calibration file? [nm]",
+						"10"));
+				AstigmatismFitting.calibrate(Integer.parseInt(inputPixelSize.getText()), zStep);
+			}catch (NumberFormatException e)
+			{
+				IJ.log("no  calibration performed.");
+			}
+			catch (NullPointerException e)
+			{
+				IJ.log("no  calibration performed, failed to load image");
+			}
 		}
 
 	} 
@@ -3484,6 +3506,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		 */
 
 		updateList(channelId.getSelectedIndex()-1); // store current settings.
+		
 		int pixelSize = Integer.parseInt(inputPixelSize.getText());
 
 		int[] totalGain 		= getTotalGain();
@@ -3532,58 +3555,65 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			maxSigma 		= (int)ij.Prefs.get("SMLocalizer.calibration.Astigmatism.sigma", 0);
 		}
 
+		try{
+			if (parallelComputation.isSelected()) // parallel computation.
+			{
+				selectedModel = 0;			
 
-		if (parallelComputation.isSelected()) // parallel computation.
+				BackgroundCorrection.medianFiltering(window,WindowManager.getCurrentImage(),selectedModel); // correct background.			 
+				localizeAndFit.run(signalStrength, gWindow, pixelSize,  totalGain , selectedModel, maxSigma, modalityChoice);  //locate and fit all particles.
+				//			ArrayList<Particle> Results = localizeAndFit.run(signalStrength, minDistance, gWindow, pixelSize,minPixelOverBkgrnd,totalGain,selectedModel);  //locate and fit all particles.
+				//	TableIO.Store(Results);			
+			}
+			else if (GPUcomputation.isSelected()) // GPU accelerated computation.
+			{
+				selectedModel = 2;
+				processMedianFit.run(window, WindowManager.getCurrentImage(), signalStrength, pixelSize, totalGain, maxSigma, gWindow, modalityChoice); // GPU specific call. 
+			}
+
+
+			boolean[][] include = IncludeParameters();
+			double[][] lb 		= lbParameters();
+			double[][] ub 		= ubParameters();
+
+			cleanParticleList.run(lb,ub,include);
+
+			if (doDriftCorrect.isSelected())
+			{
+				int[] minParticles = getDriftCorrBinLowCount();
+				int[] maxParticles = getDriftCorrBinHighCount();
+				int[] bins         = getNumberOfBinsDriftCorr();
+				int[][] boundry    = getDriftCorrShift();            
+				correctDrift.run(boundry, bins, maxParticles, minParticles, selectedModel); // drift correct all channels.
+			}
+			if (doChannelAlign.isSelected())
+			{
+
+				int[][] boundry = getChAlignShift();
+				int[] minParticles = getChAlignBinLowCount();
+				int[] maxParticles = getChAlignBinHighCount();
+				correctDrift.ChannelAlign(boundry, maxParticles, minParticles,selectedModel); // drift correct all channels.
+			}
+
+			boolean[] doCluster = getDoClusterAnalysis();
+			double[] epsilon     = getEpsilon();
+			int[] minPts        = getMinPtsCluster();
+			boolean doClusterAnalysis = false;
+			for (int ch = 0; ch < 10; ch++){
+				if (doCluster[ch])
+					doClusterAnalysis = true;
+			}
+			if (doClusterAnalysis)
+				DBClust.Ident(epsilon, minPts,desiredPixelSize,doCluster); // change call to include no loop but checks for number of channels within DBClust.	
+
+			RenderIm.run(getDoRender(),desiredPixelSize,doGaussianSmoothing.isSelected()); // Not 3D yet
+
+		}		
+		catch (NullPointerException e)
 		{
-			selectedModel = 0;			
-
-			BackgroundCorrection.medianFiltering(window,WindowManager.getCurrentImage(),selectedModel); // correct background.			 
-			localizeAndFit.run(signalStrength, gWindow, pixelSize,  totalGain , selectedModel, maxSigma, modalityChoice);  //locate and fit all particles.
-			//			ArrayList<Particle> Results = localizeAndFit.run(signalStrength, minDistance, gWindow, pixelSize,minPixelOverBkgrnd,totalGain,selectedModel);  //locate and fit all particles.
-			//	TableIO.Store(Results);			
+			IJ.log("No image found.");
 		}
-		else if (GPUcomputation.isSelected()) // GPU accelerated computation.
-		{
-			selectedModel = 2;
-			processMedianFit.run(window, WindowManager.getCurrentImage(), signalStrength, pixelSize, totalGain, maxSigma, gWindow, modalityChoice); // GPU specific call. 
-		}
-
-		boolean[][] include = IncludeParameters();
-		double[][] lb 		= lbParameters();
-		double[][] ub 		= ubParameters();
-
-		cleanParticleList.run(lb,ub,include);
-
-		if (doDriftCorrect.isSelected())
-		{
-			int[] minParticles = getDriftCorrBinLowCount();
-			int[] maxParticles = getDriftCorrBinHighCount();
-			int[] bins         = getNumberOfBinsDriftCorr();
-			int[][] boundry    = getDriftCorrShift();            
-			correctDrift.run(boundry, bins, maxParticles, minParticles, selectedModel); // drift correct all channels.
-		}
-		if (doChannelAlign.isSelected())
-		{
-
-			int[][] boundry = getChAlignShift();
-			int[] minParticles = getChAlignBinLowCount();
-			int[] maxParticles = getChAlignBinHighCount();
-			correctDrift.ChannelAlign(boundry, maxParticles, minParticles,selectedModel); // drift correct all channels.
-		}
-
-		boolean[] doCluster = getDoClusterAnalysis();
-		double[] epsilon     = getEpsilon();
-		int[] minPts        = getMinPtsCluster();
-		boolean doClusterAnalysis = false;
-		for (int ch = 0; ch < 10; ch++){
-			if (doCluster[ch])
-				doClusterAnalysis = true;
-		}
-		if (doClusterAnalysis)
-			DBClust.Ident(epsilon, minPts,desiredPixelSize,doCluster); // change call to include no loop but checks for number of channels within DBClust.	
-
-		RenderIm.run(getDoRender(),desiredPixelSize,doGaussianSmoothing.isSelected()); // Not 3D yet
-
+		
 	}                                       
 	private void doDriftCorrectActionPerformed(java.awt.event.ActionEvent evt) {                                               
 
@@ -3596,20 +3626,28 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 	}  
 	private void clusterAnalysisActionPerformed(java.awt.event.ActionEvent evt) {                                                
 		updateList(channelId.getSelectedIndex()-1);
-		int[] desiredPixelSize = getOutputPixelSize();
-		boolean[] doCluster = getDoClusterAnalysis();
-		double[] epsilon     = getEpsilon();
-		int[] minPts        = getMinPtsCluster();
-		boolean[][] include = IncludeParameters();
-		double[][] lb = lbParameters();
-		double[][] ub = ubParameters();
-		cleanParticleList.run(lb,ub,include);
-		for (int ch = 1; ch <= 10; ch++)
+		try
 		{
-			doCluster[ch-1] = true;
+			int[] desiredPixelSize = getOutputPixelSize();
+			boolean[] doCluster = getDoClusterAnalysis();
+			double[] epsilon     = getEpsilon();
+			int[] minPts        = getMinPtsCluster();
+			boolean[][] include = IncludeParameters();
+			double[][] lb = lbParameters();
+			double[][] ub = ubParameters();
+			cleanParticleList.run(lb,ub,include);
+			for (int ch = 1; ch <= 10; ch++)
+			{
+				doCluster[ch-1] = true;
+			}
+			//	nearestNeighbour.analyse();
+			DBClust.Ident(epsilon, minPts,desiredPixelSize,doCluster); // change call to include no loop but checks for number of channels within DBClust.
+
+		}		
+		catch (NullPointerException e)
+		{
+			IJ.log("No table found.");
 		}
-		//	nearestNeighbour.analyse();
-		DBClust.Ident(epsilon, minPts,desiredPixelSize,doCluster); // change call to include no loop but checks for number of channels within DBClust.
 	}                                               
 
 	private void driftCorrBinHighCountActionPerformed(java.awt.event.ActionEvent evt) {                                                      
@@ -3618,6 +3656,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 
 	private void driftCorrectActionPerformed(java.awt.event.ActionEvent evt) {                                             
 		updateList(channelId.getSelectedIndex()-1);
+
 		int selectedModel = 5;
 		if (parallelComputation.isSelected()) // parallel computation.
 			selectedModel = 0;
@@ -3634,26 +3673,40 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		int[] bins         = getNumberOfBinsDriftCorr();
 		int[][] boundry     = getDriftCorrShift();            
 
-
-		correctDrift.run(boundry, bins, maxParticles, minParticles, selectedModel); // drift correct all channels.
+		try
+		{
+			correctDrift.run(boundry, bins, maxParticles, minParticles, selectedModel); // drift correct all channels.
+		}		
+		catch (NullPointerException e)
+		{
+			IJ.log("No table found.");
+		}
 	}                                            
 
 	private void alignChannelsActionPerformed(java.awt.event.ActionEvent evt) {                                              
 		updateList(channelId.getSelectedIndex()-1);
-		int selectedModel = 5;
-		if (parallelComputation.isSelected()) // parallell computation.
-			selectedModel = 0;
-		else if (GPUcomputation.isSelected()) // GPU accelerated computation.
-			selectedModel = 2;
+		try
+		{
+			int selectedModel = 5;
+			if (parallelComputation.isSelected()) // parallell computation.
+				selectedModel = 0;
+			else if (GPUcomputation.isSelected()) // GPU accelerated computation.
+				selectedModel = 2;
 
-		boolean[][] include = IncludeParameters();
-		double[][] lb = lbParameters();
-		double[][] ub = ubParameters();
-		cleanParticleList.run(lb,ub,include);
-		int[][] boundry = getChAlignShift();
-		int[] minParticles = getChAlignBinLowCount();
-		int[] maxParticles = getChAlignBinHighCount();
-		correctDrift.ChannelAlign(boundry, maxParticles, minParticles, selectedModel); // drift correct all channels.
+			boolean[][] include = IncludeParameters();
+			double[][] lb = lbParameters();
+			double[][] ub = ubParameters();
+			cleanParticleList.run(lb,ub,include);
+			int[][] boundry = getChAlignShift();
+			int[] minParticles = getChAlignBinLowCount();
+			int[] maxParticles = getChAlignBinHighCount();
+
+			correctDrift.ChannelAlign(boundry, maxParticles, minParticles, selectedModel); // drift correct all channels.
+		}		
+		catch (NullPointerException e)
+		{
+			IJ.log("No table found.");
+		}
 	}                                            
 	private void minimalSignalActionPerformed(java.awt.event.ActionEvent evt) {                                              
 
@@ -3694,13 +3747,11 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 	}                                             
 
 	private void channelIdActionPerformed(java.awt.event.ActionEvent evt) {                                          
-		int id = channelId.getSelectedIndex();
-
+		int id = channelId.getSelectedIndex();		
 		if (id == 0) // if we should add a channel
 		{
 			if (channelId.getItemCount() < 11) // if we have 10 channels already, enough is enough.
 			{
-
 				channelId.addItem("Channel " + Integer.toString(channelId.getItemCount()));    // add one entry.                                    
 				id = channelId.getItemCount() - 1; // last entry.
 				updateVisible(id-1); // update variables.
@@ -3713,14 +3764,16 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 				channelId.setSelectedIndex(id);
 			}
 		}else // change channel.
-		{                    
+		{    
+	//		updateList(id-1); // store latest variables.
 			updateVisible(id-1); // update variables.
 		}          
 	}                                         
 
 	private void channelIdMouseClicked(java.awt.event.MouseEvent evt) {                                       
-		int id = channelId.getSelectedIndex();        
+		int id = channelId.getSelectedIndex();        			
 		updateList(id-1); // store latest variables.
+		//updateVisible(id-1);
 	}                                      
 
 	private void resetParameterRangeActionPerformed(java.awt.event.ActionEvent evt) {                                                    
@@ -3752,6 +3805,8 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		doZ.setSelected(false);
 		minZ.setText("-1000");
 		maxZ.setText("1000");
+		for (int id = 0; id < 10; id++) // verify correct loading.
+			checkUserInp(id);
 	}                                                   
 
 	private void resetBasicInputActionPerformed(java.awt.event.ActionEvent evt) {                                                
@@ -3763,15 +3818,21 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 	}                                               
 
 	private void renderImageActionPerformed(java.awt.event.ActionEvent evt) {      
+		try
+		{
+			updateList(channelId.getSelectedIndex()-1);        
+			int[] desiredPixelSize = getOutputPixelSize();        
+			boolean[][] include = IncludeParameters();
+			double[][] lb = lbParameters();
+			double[][] ub = ubParameters();        
+			cleanParticleList.run(lb,ub,include);
 
-		updateList(channelId.getSelectedIndex()-1);        
-		int[] desiredPixelSize = getOutputPixelSize();        
-		boolean[][] include = IncludeParameters();
-		double[][] lb = lbParameters();
-		double[][] ub = ubParameters();        
-		cleanParticleList.run(lb,ub,include);
-
-		RenderIm.run(getDoRender(),desiredPixelSize,doGaussianSmoothing.isSelected()); // Not 3D yet, how to implement? Need to find out how multi channel images are organized for multi channel functions.
+			RenderIm.run(getDoRender(),desiredPixelSize,doGaussianSmoothing.isSelected()); // Not 3D yet, how to implement? Need to find out how multi channel images are organized for multi channel functions.
+		}		
+		catch (NullPointerException e)
+		{
+			IJ.log("No table found.");
+		}
 	}            
 
 	private void correctBackgroundActionPerformed(java.awt.event.ActionEvent evt) {                                                  
@@ -3784,7 +3845,15 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 
 
 		int[] Window = getWindowWidth(); // get user input, (W-1)/2.                
-		BackgroundCorrection.medianFiltering(Window,WindowManager.getCurrentImage(),selectedModel); // correct background.		 
+		try{
+			BackgroundCorrection.medianFiltering(Window,WindowManager.getCurrentImage(),selectedModel); // correct background.		 
+		}		
+		catch (NullPointerException e)
+		{
+			IJ.log("No image found.");
+		}
+		
+				
 	}                                                 
 
 	private void localize_FitActionPerformed(java.awt.event.ActionEvent evt) {                                             
@@ -3836,17 +3905,31 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			gWindow 		= (int)ij.Prefs.get("SMLocalizer.calibration.Astigmatism.window", 0);
 			maxSigma 		= (int)ij.Prefs.get("SMLocalizer.calibration.Astigmatism.sigma", 0);			 			
 		}
+		try{
+			localizeAndFit.run(signalStrength, gWindow, pixelSize,  totalGain , selectedModel, maxSigma, modalityChoice);  //locate and fit all particles.		  	   	  
+		}		
+		catch (NullPointerException e)
+		{
+			IJ.log("No image found.");
+		}
 
-		localizeAndFit.run(signalStrength, gWindow, pixelSize,  totalGain , selectedModel, maxSigma, modalityChoice);  //locate and fit all particles.		  	   	  
 	}                                            
 
-	private void cleanTableActionPerformed(java.awt.event.ActionEvent evt) {                                           
+	private void cleanTableActionPerformed(java.awt.event.ActionEvent evt) {     
 		updateList(channelId.getSelectedIndex()-1);
 		boolean[][] include = IncludeParameters();
 		double[][] lb = lbParameters();
-		double[][] ub = ubParameters();        
-		cleanParticleList.run(lb,ub,include);
-		cleanParticleList.delete();
+		double[][] ub = ubParameters();     
+		try {
+			cleanParticleList.run(lb,ub,include);
+			cleanParticleList.delete();
+		}
+		catch (IllegalArgumentException e)
+		{
+			IJ.log("No result table found.");
+		}
+
+
 	}                                          
 
 	private void driftCorrShiftZActionPerformed(java.awt.event.ActionEvent evt) {                                                
@@ -4149,10 +4232,6 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		minZ.setText(minZChList.getItem(id).getText());
 		maxZ.setText(maxZChList.getItem(id).getText());        
 	}
-
-	/*
-	 *       Check that user has not tried to set incorrect settings (text instead of numbers etc)
-	 */
 	private void checkUserInp(int id)
 	{
 		/*
@@ -4406,7 +4485,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		}           
 		// Z
 		try {
-			int I = Integer.parseInt(minZ.getText());        		
+			Integer.parseInt(minZ.getText());        		
 
 		} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
 			minZ.setText(minZChList.getItem(id).getText()); 		// Update.
@@ -4419,6 +4498,195 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			maxZ.setText(maxZChList.getItem(id).getText()); 		// Update.
 		}       
 	}
+
+	/*
+	 *       Check that user has not tried to set incorrect settings (text instead of numbers etc)
+	 */
+	private void verifyParameterSet()
+	{
+
+		for (int id = 0; id < 10; id ++) // loop over all channels.
+		{
+			/*
+			 *   Basic input settings
+			 */
+			try {
+				Integer.parseInt(pixelSizeChList.getItem(id).getText());        					
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
+				pixelSizeChList.getItem(id).setText("100"); 		// Update.
+			}
+			try {
+				Integer.parseInt(totalGainChList.getItem(id).getText());        					
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
+				totalGainChList.getItem(id).setText("100"); 		// Update.
+			}
+			try {
+				Integer.parseInt(minimalSignalChList.getItem(id).getText());        					
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
+				minimalSignalChList.getItem(id).setText("800"); 		// Update.
+			}
+			try {
+				Integer.parseInt(windowWidthChList.getItem(id).getText());        					
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
+				windowWidthChList.getItem(id).setText("101"); 		// Update.
+			}
+			/*
+			 *       Cluster analysis settings.
+			 */
+			try {
+				Integer.parseInt(epsilonChList.getItem(id).getText());        					
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
+				epsilonChList.getItem(id).setText("10"); 		// Update.
+			}
+			try {
+				Integer.parseInt(minPtsClusterChList.getItem(id).getText());        					
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
+				minPtsClusterChList.getItem(id).setText("10"); 		// Update.
+			}
+			/*
+			 *       Render image settings.
+			 */
+			try {
+				Integer.parseInt(outputPixelSize.getText());                 
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
+				outputPixelSize.setText("5"); 		// Update.
+			} 
+			try {
+				Integer.parseInt(outputPixelSizeZ.getText());                 
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
+				outputPixelSizeZ.setText("10"); 		// Update.
+			} 
+
+			/*
+			 *       Drift and channel correction settings.
+			 */
+			try {
+				Integer.parseInt(driftCorrBinLowCountChList.getItem(id).getText());        					
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
+				driftCorrBinLowCountChList.getItem(id).setText("500"); 		// Update.
+			}
+			try {
+				Integer.parseInt(driftCorrBinHighCountChList.getItem(id).getText());        					
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
+				driftCorrBinHighCountChList.getItem(id).setText("1000"); 		// Update.
+			}
+			try {
+				Integer.parseInt(driftCorrShiftXYChList.getItem(id).getText());        					
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
+				driftCorrShiftXYChList.getItem(id).setText("100"); 		// Update.
+			}
+			try {
+				Integer.parseInt(driftCorrShiftZChList.getItem(id).getText());        					
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
+				driftCorrShiftZChList.getItem(id).setText("100"); 		// Update.
+			}
+			try {
+				Integer.parseInt(numberOfBinsDriftCorrChList.getItem(id).getText());        					
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
+				numberOfBinsDriftCorrChList.getItem(id).setText("25"); 		// Update.
+			}						
+			try {
+				Integer.parseInt(chAlignBinLowCountChList.getItem(id).getText());        					
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
+				chAlignBinLowCountChList.getItem(id).setText("500"); 		// Update.
+			}
+			try {
+				Integer.parseInt(chAlignBinHighCountChList.getItem(id).getText());        					
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
+				chAlignBinHighCountChList.getItem(id).setText("1000"); 		// Update.
+			}
+			try {
+				Integer.parseInt(chAlignShiftXYChList.getItem(id).getText());        					
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
+				chAlignShiftXYChList.getItem(id).setText("150"); 		// Update.
+			}
+			try {
+				Integer.parseInt(chAlignShiftZChList.getItem(id).getText());        					
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
+				chAlignShiftZChList.getItem(id).setText("150"); 		// Update.
+			}
+			/*
+			 *   Parameter settings
+			 */
+			//Photon count
+			try {
+				Integer.parseInt(minPhotonCountChList.getItem(id).getText());        					
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
+				minPhotonCountChList.getItem(id).setText("100"); 		// Update.
+			}
+			try {
+				Integer.parseInt(maxPhotonCountChList.getItem(id).getText());        					
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
+				maxPhotonCountChList.getItem(id).setText("1000"); 		// Update.
+			}
+			// Sigma XY
+			try {
+				Integer.parseInt(minSigmaXYChList.getItem(id).getText());        					
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
+				minSigmaXYChList.getItem(id).setText("100"); 		// Update.
+			}
+			try {
+				Integer.parseInt(maxSigmaXYChList.getItem(id).getText());        					
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
+				maxSigmaXYChList.getItem(id).setText("200"); 		// Update.
+			}
+			// Rsquare
+			try {
+				Integer.parseInt(minRsquareChList.getItem(id).getText());        					
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
+				minRsquareChList.getItem(id).setText("0.85"); 		// Update.
+			}
+			try {
+				Integer.parseInt(maxRsquareChList.getItem(id).getText());        					
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
+				maxRsquareChList.getItem(id).setText("1.0"); 		// Update.
+			}
+			// PrecisionXY
+			try {
+				Integer.parseInt(minPrecisionXYChList.getItem(id).getText());        					
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
+				minPrecisionXYChList.getItem(id).setText("5"); 		// Update.
+			}
+			try {
+				Integer.parseInt(maxPrecisionXYChList.getItem(id).getText());        					
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
+				maxPrecisionXYChList.getItem(id).setText("50"); 		// Update.
+			}
+			// PrecisionZ
+			try {
+				Integer.parseInt(minPrecisionZChList.getItem(id).getText());        					
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
+				minPrecisionZChList.getItem(id).setText("5"); 		// Update.
+			}
+			try {
+				Integer.parseInt(maxPrecisionZChList.getItem(id).getText());        					
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
+				maxPrecisionZChList.getItem(id).setText("75"); 		// Update.
+			}
+			// Frame
+			try {
+				Integer.parseInt(minFrameChList.getItem(id).getText());        					
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
+				minFrameChList.getItem(id).setText("0"); 		// Update.
+			}
+			try {
+				Integer.parseInt(maxFrameChList.getItem(id).getText());        					
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
+				maxFrameChList.getItem(id).setText("100000"); 		// Update.
+			}
+			// Z
+			try {
+				Integer.parseInt(minZChList.getItem(id).getText());        					
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
+				minZChList.getItem(id).setText("-1000"); 		// Update.
+			}
+			try {
+				Integer.parseInt(maxZChList.getItem(id).getText());        					
+			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
+				maxZChList.getItem(id).setText("1000"); 		// Update.
+			}
+		}
+    }
 
 	/*
 	 ****************************************************************************
@@ -4449,6 +4717,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		for (int id = 0; id < data.length; id++)
 		{
 			data[id] = Integer.parseInt(minimalSignalChList.getItem(id).getText());
+		
 		}
 		return data;
 	}
@@ -4462,6 +4731,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		for (int id = 0; id < data.length; id++)
 		{
 			data[id] = (Integer.parseInt(windowWidthChList.getItem(id).getText())-1)/2;
+					
 		}
 		return data;
 	}

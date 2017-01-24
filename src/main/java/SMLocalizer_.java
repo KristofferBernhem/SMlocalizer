@@ -27,7 +27,6 @@ public class SMLocalizer_ implements PlugIn {
 
 	public static void main(final String... args) throws Exception {
 		// create the ImageJ application context with all available services				
-		
 		final ij.ImageJ ij = new ij.ImageJ();
 		ij.setVisible(true);
 		Class<?> clazz = SMLocalizer_.class;

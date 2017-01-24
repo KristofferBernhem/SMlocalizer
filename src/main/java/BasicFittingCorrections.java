@@ -28,16 +28,27 @@ public class BasicFittingCorrections {
 
 	public static ArrayList<Particle> compensate(ArrayList<Particle> result)
 	{		 
-		 double[][] offset = getOffset();
-		 for (int i = 0; i < result.size(); i++)
-		 {
-			 if(result.get(i).channel > 1)
-			 {
-					result.get(i).x -= offset[0][result.get(i).channel-1];
-					result.get(i).y -= offset[1][result.get(i).channel-1];
-			 }
-		 }
-		 return result;
+		if (ij.Prefs.get("SMLocalizer.calibration.2D.channels",0) >= result.get(result.size()-1).channel) // verify that calibration data exists for all channels.
+		{
+			try{
+
+
+				double[][] offset = getOffset();
+				for (int i = 0; i < result.size(); i++)
+				{
+					if(result.get(i).channel > 1)
+					{
+						result.get(i).x -= offset[0][result.get(i).channel-1];
+						result.get(i).y -= offset[1][result.get(i).channel-1];
+					}
+				}
+			}
+			catch (ArrayIndexOutOfBoundsException e)
+			{
+
+			}
+		}
+		return result;
 	}
 	public static double[][] getOffset()
 	{
@@ -47,7 +58,7 @@ public class BasicFittingCorrections {
 			offset[0][i-1] = ij.Prefs.get("SMLocalizer.calibration.2D.ChOffsetX"+i,0);
 			offset[1][i-1] = ij.Prefs.get("SMLocalizer.calibration.2D.ChOffsetY"+i,0);			
 		}
-		
+
 		return offset;
 	}
 	public static void calibrate(int pixelSize, int[] totalGain)
