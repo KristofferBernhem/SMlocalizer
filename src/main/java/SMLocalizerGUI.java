@@ -3827,8 +3827,10 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			double[][] lb = lbParameters();
 			double[][] ub = ubParameters();        
 			cleanParticleList.run(lb,ub,include);
-
-			RenderIm.run(getDoRender(),desiredPixelSize,doGaussianSmoothing.isSelected()); // Not 3D yet, how to implement? Need to find out how multi channel images are organized for multi channel functions.
+			boolean[] render = new boolean[10];
+			for (int i = 0; i < 10; i++)
+				render[i] = true;
+			RenderIm.run(render,desiredPixelSize,doGaussianSmoothing.isSelected()); // Not 3D yet, how to implement? Need to find out how multi channel images are organized for multi channel functions.
 		}		
 		catch (NullPointerException e)
 		{

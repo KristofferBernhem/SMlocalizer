@@ -139,7 +139,7 @@ public class PRILMfitting {
 			// lower bounds.
 			lb[0][i]			= 0;
 			lb[1][i]			= 0;
-			lb[2][i]			= 0.8;		// r_square.
+			lb[2][i]			= 0.7;		// r_square.
 			lb[3][i]			= 0;
 			lb[4][i]			= 0;
 			lb[5][i]			= 0;
@@ -174,7 +174,7 @@ public class PRILMfitting {
 		while (loopC < 2)				// loop through twice, each time with larger window width for fitting.
 		{
 			gWindow = gWindow + loopC*2; // increase window size each loop.
-			for (double level = 0.7; level > 0.4; level -= 0.1)	// decrease intensity required for fitting.
+			for (double level = 0.7; level > 0.1; level -= 0.1)	// decrease intensity required for fitting.
 			{
 				for (double maxSigma = 2.5; maxSigma < 4; maxSigma += 0.5) // increase maximal sigma for fitting, lower value results in faster fitting.
 				{
@@ -272,7 +272,7 @@ public class PRILMfitting {
 							}
 						}
 						int minLength = 40;															// minimum length of calibration range.		
-						double[][] calibration = makeCalibrationCurve(angle,minLength,nChannels,false,false,false);// create calibration curve.
+						double[][] calibration = makeCalibrationCurve(angle,minLength,nChannels,false,false,false);// create calibration curve.					
 						if (calibrationLength < calibration.length)				// if the new calibration using current parameter settings covers a larger range.
 						{
 							calibrationLength = calibration.length;				// update best z range.
@@ -309,7 +309,6 @@ public class PRILMfitting {
 			} // iterate over level.
 			loopC++;
 		}
-
 		/*
 		 * Create calibration curve based on optimal parameters iterated over in the above code.
 		 */
@@ -452,6 +451,8 @@ public class PRILMfitting {
 		{
 			result.get(idx).include = 1;
 		}
+		
+				
 		ArrayList<Particle> resultCalib = fit(result);		
 		TableIO.Store(resultCalib);
 		cleanParticleList.run(lb,ub,include);

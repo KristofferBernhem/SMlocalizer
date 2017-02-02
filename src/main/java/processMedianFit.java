@@ -139,8 +139,8 @@ public class processMedianFit {
 			int nCenter =(( columns*rows/(gWindow*gWindow)) / 2); // ~ 80 possible particles for a 64x64 frame. Lets the program scale with frame size.
 			int staticMemory = (2*W[Ch-1]+1*rows*columns)*Sizeof.FLOAT;
 			long framesPerBatch = (3*GB-staticMemory)/frameSize; // 3 GB memory allocation gives this numbers of frames. 					
-			if (framesPerBatch > 10000)
-				framesPerBatch = 10000;
+//			if (framesPerBatch > 10000)
+//				framesPerBatch = 10000;
 			int loadedFrames = 0;
 			int startFrame = 1;
 			int endFrame = (int)framesPerBatch;				
@@ -299,116 +299,128 @@ public class processMedianFit {
 						newN++;
 					}
 				}
-
-				int[] locatedCenter = new int[newN]; // cleaned vector with indexes of centras.
-				int counter = 0;
-				for (int j = 0; j < hostCenter.length; j++) // loop over all possible centers.
+				int loaded = 0;
+				while (loaded < newN)
 				{
-					if (hostCenter[j]> 0 && counter < newN) // if the center was added.
+					int maxLoad = 100000;
+					if ((newN - loaded) < maxLoad)
+						maxLoad = newN - loaded;
+
+
+
+					int[] locatedCenter = new int[maxLoad]; // cleaned vector with indexes of centras.
+					int counter = 0;
+
+					int j = loaded;
+					boolean fill = true;
+					while (fill)
 					{
-						locatedCenter[counter] = hostCenter[j];								
-						counter++;
+						if (hostCenter[j]> 0 )
+						{
+							locatedCenter[counter] = hostCenter[j];													
+							counter++;
+						}
+						j ++;
+						if (counter == maxLoad || j == hostCenter.length)
+							fill = false;										
+					}						
+
+					double[] P = new double[counter*7];
+					double[] stepSize = new double[counter*7];							
+					int[] gaussVector = new int[counter*gWindow*gWindow];
+
+					for (int i = 0; i < counter; i++)
+					{
+						P[i*7] = hostOutput[locatedCenter[i]];
+						P[i*7+1] = 2;
+						P[i*7+2] = 2;
+						P[i*7+3] = 1.5;
+						P[i*7+4] = 1.5;
+						P[i*7+6] = 0;
+						P[i*7+6] = 0;
+						stepSize[i * 7] = 0.1;// amplitude
+						stepSize[i * 7 + 1] = 0.25*100/pixelSize; // x center.
+						stepSize[i * 7 + 2] = 0.25*100/pixelSize; // y center.
+						stepSize[i * 7 + 3] = 0.25*100/pixelSize; // sigma x.
+						stepSize[i * 7 + 4] = 0.25*100/pixelSize; // sigma y.
+						stepSize[i * 7 + 5] = 0.19625; // Theta.
+						stepSize[i * 7 + 6] = 0.01; // offset.   
+						int k = locatedCenter[i] - (gWindow / 2) * (columns + 1); // upper left corner.
+						j = 0;
+						int loopC = 0;
+						while (k <= locatedCenter[i] + (gWindow / 2) * (columns + 1)) // loop over all relevant pixels. use this loop to extract data based on single indexing defined centers.
+						{
+							gaussVector[i * gWindow * gWindow + j] = (int) hostOutput[k]; // add data.
+							k++;
+							loopC++;
+							j++;
+							if (loopC == gWindow)
+							{
+								k += (columns - gWindow);
+								loopC = 0;
+							}
+						} // data pulled.
 					}
 
-				} // locatedCenter now populated.
-				double[] P = new double[newN*7];
-				double[] stepSize = new double[newN*7];							
-				int[] gaussVector = new int[newN*gWindow*gWindow];
+					CUdeviceptr deviceGaussVector 	= 		CUDA.copyToDevice(gaussVector);					
+					CUdeviceptr deviceP 			= 		CUDA.copyToDevice(P);
+					CUdeviceptr deviceStepSize 		= 		CUDA.copyToDevice(stepSize);							
 
-				for (int i = 0; i < newN; i++)
-				{
-					P[i*7] = hostOutput[locatedCenter[i]];
-					P[i*7+1] = 2;
-					P[i*7+2] = 2;
-					P[i*7+3] = 1.5;
-					P[i*7+4] = 1.5;
-					P[i*7+6] = 0;
-					P[i*7+6] = 0;
-					stepSize[i * 7] = 0.1;// amplitude
-					stepSize[i * 7 + 1] = 0.25*100/pixelSize; // x center.
-					stepSize[i * 7 + 2] = 0.25*100/pixelSize; // y center.
-					stepSize[i * 7 + 3] = 0.25*100/pixelSize; // sigma x.
-					stepSize[i * 7 + 4] = 0.25*100/pixelSize; // sigma y.
-					stepSize[i * 7 + 5] = 0.19625; // Theta.
-					stepSize[i * 7 + 6] = 0.01; // offset.   
-					int k = locatedCenter[i] - (gWindow / 2) * (columns + 1); // upper left corner.
-					int j = 0;
-					int loopC = 0;
-					while (k <= locatedCenter[i] + (gWindow / 2) * (columns + 1)) // loop over all relevant pixels. use this loop to extract data based on single indexing defined centers.
-					{
-						gaussVector[i * gWindow * gWindow + j] = hostOutput[k]; // add data.
-						k++;
-						loopC++;
-						j++;
-						if (loopC == gWindow)
-						{
-							k += (columns - gWindow);
-							loopC = 0;
-						}
-					} // data pulled.
+					/******************************************************************************
+					 * Gauss fitting.
+					 ******************************************************************************/
+
+					gridSizeX = (int) Math.ceil((Math.sqrt(counter)));
+					gridSizeY 	= gridSizeX;
+					Pointer kernelParametersGaussFit 		= Pointer.to(   
+							Pointer.to(deviceGaussVector),
+							Pointer.to(new int[]{counter * gWindow * gWindow}),
+							Pointer.to(deviceP),																											
+							Pointer.to(new double[]{counter*7}),
+							Pointer.to(new short[]{(short) gWindow}),
+							Pointer.to(deviceBounds),
+							Pointer.to(new double[]{bounds.length}),
+							Pointer.to(deviceStepSize),																											
+							Pointer.to(new double[]{counter*7}),
+							Pointer.to(new double[]{convCriteria}),
+							Pointer.to(new int[]{maxIterations}));	
+
+					cuLaunchKernel(fittingFcn,
+							gridSizeX,  gridSizeY, 1, 	// Grid dimension
+							blockSizeX, blockSizeY, 1,  // Block dimension
+							0, null,               		// Shared memory size and stream
+							kernelParametersGaussFit, null 		// Kernel- and extra parameters
+							);
+					cuCtxSynchronize(); 
+
+					double hostGaussOutput[] = new double[counter*7];
+
+					// Pull data from device.
+					cuMemcpyDtoH(Pointer.to(hostGaussOutput), deviceP,
+							counter*7 * Sizeof.DOUBLE);
+					// Free up memory allocation on device, housekeeping.
+					cuMemFree(deviceGaussVector);   
+					cuMemFree(deviceP);    
+					cuMemFree(deviceStepSize);							
+					for (int n = 0; n < counter; n++) //loop over all particles
+					{	    	
+						Particle Localized = new Particle();
+						Localized.include 		= 1;
+						Localized.channel 		= Ch;
+						Localized.frame   		= startFrame + locatedCenter[n]/(columns*rows);
+						Localized.r_square 		= hostGaussOutput[n*7+6];
+						Localized.x				= pixelSize*(hostGaussOutput[n*7+1] + (locatedCenter[n]%columns) - Math.round((gWindow)/2));
+						Localized.y				= pixelSize*(hostGaussOutput[n*7+2] + ((locatedCenter[n]/columns)%rows) - Math.round((gWindow)/2));
+						Localized.z				= pixelSize*0;	// no 3D information.
+						Localized.sigma_x		= pixelSize*hostGaussOutput[n*7+3];
+						Localized.sigma_y		= pixelSize*hostGaussOutput[n*7+4];
+						Localized.photons		= (int) (hostGaussOutput[n*7]/totalGain[Ch-1]);
+						Localized.precision_x 	= Localized.sigma_x/Math.sqrt(Localized.photons);
+						Localized.precision_y 	= Localized.sigma_y/Math.sqrt(Localized.photons);
+						Results.add(Localized);
+					}	
+					loaded += maxLoad;
 				}
-				CUdeviceptr deviceGaussVector 	= 		CUDA.copyToDevice(gaussVector);					
-				CUdeviceptr deviceP 			= 		CUDA.copyToDevice(P);
-				CUdeviceptr deviceStepSize 		= 		CUDA.copyToDevice(stepSize);
-
-				/********************************************************************************
-				 * 
-				 * 								Fit events
-				 * 
-				 ********************************************************************************/
-
-				gridSizeX = (int) Math.ceil((Math.sqrt(newN)));
-				gridSizeY 	= gridSizeX;
-				Pointer kernelParametersGaussFit 		= Pointer.to(   
-						Pointer.to(deviceGaussVector),
-						Pointer.to(new int[]{newN * gWindow * gWindow}),
-						Pointer.to(deviceP),																											
-						Pointer.to(new double[]{newN*7}),
-						Pointer.to(new short[]{(short) gWindow}),
-						Pointer.to(deviceBounds),
-						Pointer.to(new double[]{bounds.length}),
-						Pointer.to(deviceStepSize),																											
-						Pointer.to(new double[]{newN*7}),
-						Pointer.to(new double[]{convCriteria}),
-						Pointer.to(new int[]{maxIterations}));	
-
-
-				cuLaunchKernel(fittingFcn,
-						gridSizeX,  gridSizeY, 1, 	// Grid dimension
-						blockSizeX, blockSizeY, 1,  // Block dimension
-						0, null,               		// Shared memory size and stream
-						kernelParametersGaussFit, null 		// Kernel- and extra parameters
-						);
-				cuCtxSynchronize(); 
-
-				double hostParameterOutput[] = new double[newN*7];
-
-				// Pull data from device.
-				cuMemcpyDtoH(Pointer.to(hostParameterOutput), deviceP,
-						newN*7 * Sizeof.DOUBLE);
-
-				// Free up memory allocation on device, housekeeping.
-				cuMemFree(deviceGaussVector);   
-				cuMemFree(deviceP);    
-				cuMemFree(deviceStepSize);
-
-				for (int n = 0; n < newN; n++) //loop over all particles
-				{	    	
-					Particle Localized = new Particle();
-					Localized.include 		= 1;
-					Localized.channel 		= Ch;
-					Localized.frame   		= startFrame + locatedCenter[n]/(columns*rows);
-					Localized.r_square 		= hostParameterOutput[n*7+6];
-					Localized.x				= pixelSize*(hostParameterOutput[n*7+1] + (locatedCenter[n]%columns) - Math.round((gWindow)/2));
-					Localized.y				= pixelSize*(hostParameterOutput[n*7+2] + ((locatedCenter[n]/columns)%rows) - Math.round((gWindow)/2));
-					Localized.z				= pixelSize*0;	// no 3D information.
-					Localized.sigma_x		= pixelSize*hostParameterOutput[n*7+3];
-					Localized.sigma_y		= pixelSize*hostParameterOutput[n*7+4];
-					Localized.photons		= (int) (hostParameterOutput[n*7]/totalGain[Ch-1]);
-					Localized.precision_x 	= Localized.sigma_x/Math.sqrt(Localized.photons);
-					Localized.precision_y 	= Localized.sigma_y/Math.sqrt(Localized.photons);
-					Results.add(Localized);
-				}		
 				startFrame = endFrame-W[Ch-1]; // include W more frames to ensure that border errors from median calculations dont occur ore often then needed.
 				endFrame += framesPerBatch;					
 				if (endFrame > nFrames)

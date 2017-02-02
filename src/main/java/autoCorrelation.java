@@ -72,17 +72,24 @@ public class autoCorrelation {
 	 */
 	public static double[] maximize(ArrayList<Particle> referenceParticles, ArrayList<Particle> targetParticles, int[] maxShift)
 	{
-		double z = 0;
+		boolean threeD = false;
 		double[] corr = {0,0,0,0};
-		for (int i = 0; i < referenceParticles.size(); i++)
+		int i = 0;
+		while (i < referenceParticles.size() && !threeD)
 		{
-			z+= referenceParticles.get(i).z;
+			if (referenceParticles.get(i).z != 0)
+				threeD = true;
+			i++;
 		}
-		for (int i = 0; i < targetParticles.size(); i++)
+		i = 0;
+		while (i < targetParticles.size() && !threeD)
 		{
-			z+= targetParticles.get(i).z;
+			if (targetParticles.get(i).z != 0)
+				threeD = true;
+			i++;
 		}
-		if (z == 0) // 2D data. Significantly faster.
+		
+		if (!threeD) // 2D data. Significantly faster.
 		{
 			int[] shift = {0,0};		
 
@@ -109,11 +116,11 @@ public class autoCorrelation {
 			{
 				for (int yShift = -maxShift[0]; yShift <= maxShift[0]; yShift += 5)// loop over all possible shifts.
 				{
-					for (int zShift = -maxShift[1]; zShift <= maxShift[1]; zShift += 5)// loop over all possible shifts.
+					for (int zShift = -maxShift[1]; zShift <= maxShift[1]; zShift += 10)// loop over all possible shifts.
 					{
 						shift[0] = xShift;
 						shift[1] = yShift;
-						shift[2]  = zShift;
+						shift[2] = zShift;
 						double tempCorr = correlation3D(referenceParticles, targetParticles,shift); // calculate correlation for this shift.
 						if (tempCorr > corr[0]) // if the new correlation is better then the previous one, update array.
 						{
@@ -145,9 +152,11 @@ public class autoCorrelation {
 		ByteProcessor referenceIP = new ByteProcessor(width,height);
 		Pcenter.x = (int)(width/2);
 		Pcenter.y = (int)(height/2);
+		Pcenter.z = -100;
 		Pcenter2.x = (int)(width/2) + 100;
 		Pcenter2.y = (int)(height/2) + 100;
-		double[] drift = {0.1,0.2};
+		Pcenter2.z = 100;
+		double[] drift = {0.1,0.2,0.1};
 		int nFrames = 1000;
 		ArrayList<Particle> referenceList = new ArrayList<Particle>();
 		ArrayList<Particle> pList = new ArrayList<Particle>();
@@ -161,6 +170,7 @@ public class autoCorrelation {
 			Particle P = new Particle();
 			P.x = Pcenter.x+i*drift[0];
 			P.y = Pcenter.y+i*drift[1];
+			P.z = Pcenter.z+i*drift[2];
 			P.include = 1;
 			P.channel = 1;
 			pList.add(P);
@@ -169,13 +179,13 @@ public class autoCorrelation {
 			Particle P2 = new Particle();
 			P2.x = Pcenter2.x+i*drift[0];
 			P2.y = Pcenter2.y+i*drift[1];
+			P2.z = Pcenter2.z+i*drift[2];
 			P2.include = 1;
 			P2.channel = 1;
 			pList.add(P2);
 			referenceList.add(P2);
-
-
 		}
+		
 		short[][] targetIPShort  = new short[width][height];
 		ByteProcessor targetIP = new ByteProcessor(width,height);
 		ArrayList<Particle> targetList = new ArrayList<Particle>();
@@ -189,6 +199,8 @@ public class autoCorrelation {
 			Particle P = new Particle();
 			P.x = Pcenter.x+i*drift[0];
 			P.y = Pcenter.y+i*drift[1];
+			P.z = Pcenter.z+i*drift[2];
+
 			P.include = 1;
 			P.channel = 2;
 			pList.add(P);
@@ -197,6 +209,7 @@ public class autoCorrelation {
 			Particle P2 = new Particle();
 			P2.x = Pcenter2.x+i*drift[0];
 			P2.y = Pcenter2.y+i*drift[1];
+			P2.z = Pcenter2.z+i*drift[2];
 			P2.include = 1;
 			P2.channel = 2;
 			pList.add(P2);
@@ -209,14 +222,14 @@ public class autoCorrelation {
 		boolean gSmoothing = true;
 		referenceIP.blurGaussian(2);
 		targetIP.blurGaussian(2);
-		generateImage.create("", renderCh, pList, width, height, pixelSize, gSmoothing); // show test data.
+	//	generateImage.create("", renderCh, pList, width, height, pixelSize, gSmoothing); // show test data.
 
 
 
 		ArrayList<Particle> pList2 = new ArrayList<Particle>();
 		int[] maxShift = {250,250};
 		double[] shift3 = maximize(referenceList, targetList, maxShift);	
-		for (int i = 0; i < nFrames; i++)
+	/*	for (int i = 0; i < nFrames; i++)
 		{
 
 			Particle P = new Particle();
@@ -232,7 +245,7 @@ public class autoCorrelation {
 			P2.channel = 1;
 			pList2.add(P2);
 		}
-		for (int i = nFrames; i < 2*nFrames; i++)
+		*/for (int i = nFrames; i < 2*nFrames; i++)
 		{
 
 			Particle P = new Particle();

@@ -26,8 +26,11 @@ import java.util.ArrayList;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.measure.Calibration;
+import ij.process.FloatProcessor;
+import ij.process.ImageProcessor;
 import ij.process.ImageStatistics;
 import ij.process.ShortProcessor;
+import ij.plugin.filter.*;
 
 public class generateImage {
 
@@ -64,14 +67,22 @@ public class generateImage {
 					if (ParticleList.get(idx).z < lowZ)
 						lowZ = (int) Math.floor(ParticleList.get(idx).z);
 				}
-				
+
 			}
 			int highZ = lowZ + pixelSize[1]; // high limit
 			while (particleCounter < particleCountTotal)
 			{
 				ShortProcessor IP  = new ShortProcessor(width,height);					
 				IP.set(0); // set all pixel values to 0 as default.
-
+/*				if (zSlice == 0)
+				{
+					ShortProcessor IPtemp  = new ShortProcessor(width,height);					
+					IPtemp.set(0); // set all pixel values to 0 as default.
+					imstack.addSlice(IPtemp);
+					imstack.addSlice(IPtemp);
+					imstack.addSlice(IPtemp);
+				}
+*/
 				for (idx = 0; idx < ParticleList.size(); idx++)
 				{
 					if (ParticleList.get(idx).include == 1 &&
@@ -90,11 +101,10 @@ public class generateImage {
 						particleCounter++; // keep track of number of added particles.
 					}
 				}
-				if(gSmoothing)
+				if (gSmoothing)
 				{
 					IP.multiply(1000);
-					IP.blurGaussian(2);
-
+					IP.blurGaussian(2);	
 				}
 				Ch++;
 				if (Ch > nChannels)
@@ -104,10 +114,17 @@ public class generateImage {
 					lowZ = highZ;
 					highZ += pixelSize[1];
 				}
-
 				imstack.addSlice(IP);
 			}
-
+	/*		for (int ch = 1; ch <= nChannels; ch++)
+			{
+				ShortProcessor IP  = new ShortProcessor(width,height);					
+				IP.set(0); // set all pixel values to 0 as default.
+				imstack.addSlice(IP);
+				imstack.addSlice(IP);
+				imstack.addSlice(IP);
+			}
+		*/	
 			ImagePlus Image = ij.IJ.createHyperStack(Imtitle, 
 					width, 
 					height, 
@@ -115,20 +132,65 @@ public class generateImage {
 					zSlice, 
 					1, 
 					16);
-			Image.setStack(imstack);
-			Calibration cal = new Calibration(Image);
-			cal.pixelHeight = pixelSize[0]; 
-			cal.pixelWidth 	= pixelSize[0];
-			cal.pixelDepth = pixelSize[1];
-			cal.setZUnit("nm");
-			cal.setXUnit("nm");
-			cal.setYUnit("nm");
 
-			ImageStatistics ImStats = Image.getStatistics();
-			Image.setCalibration(cal);
-			Image.setDisplayRange(ImStats.min, ImStats.max);
-			Image.updateAndDraw();
-			Image.show();
+			try
+			{
+				if (gSmoothing) // 3D smoothing. Code taken directly from Gaussian Blur 3D from Wayne Rasband.
+				{					
+/*					for (int ch = 0; ch < nChannels; ch++) // pad data with zero image planes for 3D gaussian blur. Will be removed.
+					{
+						ShortProcessor IP  = new ShortProcessor(width,height);					
+						IP.set(0);
+						imstack.addSlice("", IP, 0);
+						imstack.addSlice("", IP, 0);
+						imstack.addSlice(IP);					
+						imstack.addSlice(IP);
+					}*/
+				/*	zSlice += 6*nChannels;
+					GaussianBlur gb = new GaussianBlur();					
+					double accuracy = 0.02;					
+					float[] zpixels = null;
+					FloatProcessor fp =null;
+					gb.showProgress(false);
+					int channels = nChannels;
+					for (int y=0; y<height; y++) {						
+						for (int channel=0; channel<channels; channel++) {
+							zpixels = imstack.getVoxels(0, y, 0, width, 1, zSlice, zpixels, channel);
+							if (fp==null)
+								fp = new FloatProcessor(width, zSlice, zpixels);
+							gb.blur1Direction(fp, 2, accuracy, false, 0);
+							imstack.setVoxels(0, y, 0, width, 1, zSlice, zpixels, channel);
+						}
+					}
+/*					for (int ch = 0; ch < nChannels; ch++) // Remove padding frames.
+					{
+						imstack.deleteSlice(0);						
+						imstack.deleteSlice(0);
+						imstack.deleteLastSlice();
+						imstack.deleteLastSlice();
+					}*/
+				}				
+				
+				Image.setStack(imstack);
+				Calibration cal = new Calibration(Image);
+				cal.pixelHeight = pixelSize[0]; 
+				cal.pixelWidth 	= pixelSize[0];
+				cal.pixelDepth = pixelSize[1];
+				cal.setZUnit("nm");
+				cal.setXUnit("nm");
+				cal.setYUnit("nm");
+
+
+				ImageStatistics ImStats = Image.getStatistics();
+				Image.setCalibration(cal);
+				Image.setDisplayRange(ImStats.min, ImStats.max);
+				Image.updateAndDraw();
+				Image.show();
+			} 
+			catch (IllegalArgumentException e)
+			{
+
+			}
 		} // 3D images end
 		else // if user wants to render 2D data.
 		{
@@ -195,29 +257,35 @@ public class generateImage {
 					} // if the channel should be drawn.
 
 				} // channel loop.
+				try
+				{
+					ImagePlus Image = ij.IJ.createHyperStack(Imtitle, 
+							width, 
+							height, 
+							(int) ParticleList.get(ParticleList.size()-1).channel, 
+							1, 
+							1, 
+							16);
+					Image.setStack(imstack);
+					Calibration cal = new Calibration(Image);
+					cal.pixelHeight = pixelSize[0]; 
+					cal.pixelWidth 	= pixelSize[0];
+					cal.setXUnit("nm");
+					cal.setYUnit("nm");
 
-				ImagePlus Image = ij.IJ.createHyperStack(Imtitle, 
-						width, 
-						height, 
-						(int) ParticleList.get(ParticleList.size()-1).channel, 
-						1, 
-						1, 
-						16);
-				Image.setStack(imstack);
-				Calibration cal = new Calibration(Image);
-				cal.pixelHeight = pixelSize[0]; 
-				cal.pixelWidth 	= pixelSize[0];
-				cal.setXUnit("nm");
-				cal.setYUnit("nm");
+					ImageStatistics ImStats = Image.getStatistics();
 
-				ImageStatistics ImStats = Image.getStatistics();
-
-				Image.setDisplayRange(ImStats.min, ImStats.max);
-				Image.updateAndDraw();
-				Image.setCalibration(cal);
+					Image.setDisplayRange(ImStats.min, ImStats.max);
+					Image.updateAndDraw();
+					Image.setCalibration(cal);
 
 
-				Image.show();
+					Image.show();
+				} 
+				catch (IllegalArgumentException e)
+				{
+
+				}
 			}// 2D images.
 		}
 	}	
