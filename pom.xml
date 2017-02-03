@@ -5,7 +5,7 @@
 	<groupId>KTH_CellPhysics</groupId>
 	<artifactId>SMlocalizer</artifactId>
 	<version>1.7.0</version>
-	<name>SM localizer</name>
+	<name>SMLocalizer</name>
 	<description>Single molecule microscopy localizer</description>
 	<organization>
 		<name>KTH Royal Institute of Technology</name>
