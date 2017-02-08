@@ -27,7 +27,21 @@ public class LocalMaxima {
 		ArrayList<int[]> Results = new ArrayList<int[]>();
 		//int[] XY = {5,3}; //Example of how results are organized.		
 		//Results.add(XY);
-	
+
+		// calculate mean value for the array:
+		double total = 0;
+		int count = 0;
+		for (int i = 0; i < Array.length; i++)
+
+		{
+			for(int j = 0; j < Array[0].length; j++)
+			{
+				total += Array[i][j];
+				if (Array[i][j]>0)
+					count++;
+			}
+		}
+		total /= (Array.length*Array[0].length);
 		int Border = (Window)/2;
 		for (int i = Border; i < Array.length-Border;i++){ // Look through all columns except outer border.
 			for (int j = Border; j < Array[0].length-Border; j++){ // Look through all rows except outer border.
@@ -53,20 +67,34 @@ public class LocalMaxima {
 			}
 		}
 
-//		Results = cleanList(Results,sqDistance);	
+		//		Results = cleanList(Results,sqDistance);	
 
 		return Results;
 	}
 	public static ArrayList<int[]> FindMaxima(ImageProcessor IP, int Window, int MinLevel, int minPosPixels){		
 		ArrayList<int[]> Results = new ArrayList<int[]>();
-		
+		// calculate mean value for the array:
+		double mean = 0;
+		int count = 0;
+
 		int columns = IP.getWidth();
 		int rows = IP.getHeight();
 		int[] data = new int[columns*rows];
 		for(int i = 0; i < columns*rows;i++) // loop over X then Y.
 		{
 			data[i] = IP.get(i);
+			mean += data[i];
+			if (data[i]> 0)
+				count++;
 		}	
+		double std = 0;
+		mean /= count;
+		for (int i = 0; i < columns*rows;i++)
+			std += (data[i] - mean)*(data[i] - mean);
+		std /= count;
+		std = Math.sqrt(std);
+		if (MinLevel == 0)
+			MinLevel = (int) (mean + 0.7*std); // set minlevel to 
 		int i = (Window / 2) * columns + Window / 2; // start windowWidth / 2 pixels in and windowWidth / 2 down.
 		int j = 0;
 		int k = 0;
@@ -99,15 +127,15 @@ public class LocalMaxima {
 				if(include)
 				{
 					int[] coord = {i%columns,i/columns};					
-					Results.add(coord);						
+					Results.add(coord);	
 				}
 			}
 			i++;
-			
+
 			if((i % columns )== (columns - Window/2 ))
 				i += Window-1;
 		}
-		
+
 		return Results;
 	}
 

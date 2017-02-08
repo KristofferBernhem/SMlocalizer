@@ -13,12 +13,45 @@ extern "C" __global__  void run( int* data, int dataLen0, int frameWidth, int fr
 		int num3 = 0;
 		bool flag = true;
 		int j = num * (frameWidth * frameHeight) + windowWidth / 2 * frameWidth + windowWidth / 2;
-		for (i = num * sizeCenter; i < (num + 1) * sizeCenter; i++)
+		i = num * sizeCenter;
+		if (minLevel == 0)
+		{
+			double num4 = 0.0;
+			double num5 = 0.0;
+			int num6 = 0;
+			while (j < (num + 1) * (frameWidth * frameHeight))
+			{
+				num4 += (double)data[(j)];
+				if (data[(j)] > 0)
+				{
+					num6++;
+				}
+				j++;
+			}
+			if (num6 > 0)
+			{
+				num4 /= (double)num6;
+				for (j = num * (frameWidth * frameHeight) + windowWidth / 2 * frameWidth + windowWidth / 2; j < (num + 1) * (frameWidth * frameHeight); j++)
+				{
+					num5 += ((double)data[(j)] - num4) * ((double)data[(j)] - num4);
+				}
+				num5 /= (double)num6;
+				num5 = sqrt(num5);
+				minLevel = (int)(num4 + 0.7 * num5);
+			}
+			else
+			{
+				minLevel = 1000;
+			}
+		}
+		j = num * (frameWidth * frameHeight) + windowWidth / 2 * frameWidth + windowWidth / 2;
+		while (i < (num + 1) * sizeCenter)
 		{
 			Center[(i)] = 0;
+			i++;
 		}
 		i = 0;
-		int num4 = 0;
+		int num7 = 0;
 		while (j < (num + 1) * (frameWidth * frameHeight) - windowWidth / 2 * frameWidth)
 		{
 			if (data[(j)] > minLevel)
@@ -26,7 +59,7 @@ extern "C" __global__  void run( int* data, int dataLen0, int frameWidth, int fr
 				i = 0;
 				num3 = j - windowWidth / 2 * (frameWidth + 1);
 				flag = true;
-				num4 = 0;
+				num7 = 0;
 				while (num3 <= j + windowWidth / 2 * (frameWidth + 1) && flag)
 				{
 					if (data[(num3)] > data[(j)])
@@ -38,11 +71,11 @@ extern "C" __global__  void run( int* data, int dataLen0, int frameWidth, int fr
 						i++;
 					}
 					num3++;
-					num4++;
-					if (num4 == windowWidth)
+					num7++;
+					if (num7 == windowWidth)
 					{
 						num3 += frameWidth - windowWidth;
-						num4 = 0;
+						num7 = 0;
 					}
 				}
 				if (i < minPosPixel)

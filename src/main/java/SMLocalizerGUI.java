@@ -57,9 +57,11 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 					 */
 					pixelSizeChList.getItem(id).setText("100");
 					totalGainChList.getItem(id).setText("100");                        
-					minimalSignalChList.getItem(id).setText("800");
-					gaussWindowChList.getItem(id).setText("1");
+					minimalSignalChList.getItem(id).setText("800");				
 					windowWidthChList.getItem(id).setText("101");				
+					doFilterWidthChList.getItem(id).setText("0");
+					doMinimalSignalChList.getItem(id).setText("0");
+					
 					/*
 					 *       Cluster analysis settings
 					 */
@@ -206,8 +208,9 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 				pixelSizeChList.getItem(id).setText("100");
 				totalGainChList.getItem(id).setText("100");                        
 				minimalSignalChList.getItem(id).setText("800");
-				gaussWindowChList.getItem(id).setText("1");
-				windowWidthChList.getItem(id).setText("101");				
+				windowWidthChList.getItem(id).setText("101");		
+				doFilterWidthChList.getItem(id).setText("1");
+				doMinimalSignalChList.getItem(id).setText("0");
 				/*
 				 *       Cluster analysis settings
 				 */
@@ -343,6 +346,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 
 	}	
 	 
+	 // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
     private void initComponents() {
 
         pixelSizeChList = new javax.swing.JMenu();
@@ -378,17 +382,6 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         minimalSignalData8 = new javax.swing.JMenuItem();
         minimalSignalData9 = new javax.swing.JMenuItem();
         minimalSignalData10 = new javax.swing.JMenuItem();
-        gaussWindowChList = new javax.swing.JMenu();
-        ROIsizeData1 = new javax.swing.JMenuItem();
-        ROIsizeData2 = new javax.swing.JMenuItem();
-        ROIsizeData3 = new javax.swing.JMenuItem();
-        ROIsizeData4 = new javax.swing.JMenuItem();
-        ROIsizeData5 = new javax.swing.JMenuItem();
-        ROIsizeData6 = new javax.swing.JMenuItem();
-        ROIsizeData7 = new javax.swing.JMenuItem();
-        ROIsizeData8 = new javax.swing.JMenuItem();
-        ROIsizeData9 = new javax.swing.JMenuItem();
-        ROIsizeData10 = new javax.swing.JMenuItem();
         windowWidthChList = new javax.swing.JMenu();
         windowWidthData1 = new javax.swing.JMenuItem();
         windowWidthData2 = new javax.swing.JMenuItem();
@@ -819,6 +812,28 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         doChromaticData8 = new javax.swing.JMenuItem();
         doChromaticData9 = new javax.swing.JMenuItem();
         doChromaticData10 = new javax.swing.JMenuItem();
+        doMinimalSignalChList = new javax.swing.JMenu();
+        doMinimalSignalData1 = new javax.swing.JMenuItem();
+        doMinimalSignalData2 = new javax.swing.JMenuItem();
+        doMinimalSignalData3 = new javax.swing.JMenuItem();
+        doMinimalSignalData4 = new javax.swing.JMenuItem();
+        doMinimalSignalData5 = new javax.swing.JMenuItem();
+        doMinimalSignalData6 = new javax.swing.JMenuItem();
+        doMinimalSignalData7 = new javax.swing.JMenuItem();
+        doMinimalSignalData8 = new javax.swing.JMenuItem();
+        doMinimalSignalData9 = new javax.swing.JMenuItem();
+        doMinimalSignalData10 = new javax.swing.JMenuItem();
+        doFilterWidthChList = new javax.swing.JMenu();
+        doFilterWidthData1 = new javax.swing.JMenuItem();
+        doFilterWidthData2 = new javax.swing.JMenuItem();
+        doFilterWidthData3 = new javax.swing.JMenuItem();
+        doFilterWidthData4 = new javax.swing.JMenuItem();
+        doFilterWidthData5 = new javax.swing.JMenuItem();
+        doFilterWidthData6 = new javax.swing.JMenuItem();
+        doFilterWidthData7 = new javax.swing.JMenuItem();
+        doFilterWidthData8 = new javax.swing.JMenuItem();
+        doFilterWidthData9 = new javax.swing.JMenuItem();
+        doFilterWidthData10 = new javax.swing.JMenuItem();
         Header = new javax.swing.JLabel();
         BasicInp = new javax.swing.JPanel();
         basicInput = new javax.swing.JLabel();
@@ -826,10 +841,6 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         inputPixelSize = new javax.swing.JTextField();
         totalGainLabel = new javax.swing.JLabel();
         totalGain = new javax.swing.JTextField();
-        minimalSignalLabel = new javax.swing.JLabel();
-        minimalSignal = new javax.swing.JTextField();
-        windowWidthLabel = new javax.swing.JLabel();
-        windowWidth = new javax.swing.JTextField();
         Process = new javax.swing.JButton();
         resetBasicInput = new javax.swing.JButton();
         calibrate = new javax.swing.JButton();
@@ -862,6 +873,10 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         doZ = new javax.swing.JCheckBox();
         minZ = new javax.swing.JTextField();
         maxZ = new javax.swing.JTextField();
+        windowWidth = new javax.swing.JTextField();
+        minimalSignal = new javax.swing.JTextField();
+        doFilterWidth = new javax.swing.JCheckBox();
+        doMinimalSignal = new javax.swing.JCheckBox();
         Analysis = new javax.swing.JPanel();
         doClusterAnalysis = new javax.swing.JCheckBox();
         epsilonLabel = new javax.swing.JLabel();
@@ -1039,48 +1054,6 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         minimalSignalData10.setText("100");
         minimalSignalData10.setToolTipText("");
         minimalSignalChList.add(minimalSignalData10);
-
-        gaussWindowChList.setText("jMenu1");
-
-        ROIsizeData1.setText("100");
-        ROIsizeData1.setToolTipText("");
-        gaussWindowChList.add(ROIsizeData1);
-
-        ROIsizeData2.setText("100");
-        ROIsizeData2.setToolTipText("");
-        gaussWindowChList.add(ROIsizeData2);
-
-        ROIsizeData3.setText("100");
-        ROIsizeData3.setToolTipText("");
-        gaussWindowChList.add(ROIsizeData3);
-
-        ROIsizeData4.setText("100");
-        ROIsizeData4.setToolTipText("");
-        gaussWindowChList.add(ROIsizeData4);
-
-        ROIsizeData5.setText("100");
-        ROIsizeData5.setToolTipText("");
-        gaussWindowChList.add(ROIsizeData5);
-
-        ROIsizeData6.setText("100");
-        ROIsizeData6.setToolTipText("");
-        gaussWindowChList.add(ROIsizeData6);
-
-        ROIsizeData7.setText("100");
-        ROIsizeData7.setToolTipText("");
-        gaussWindowChList.add(ROIsizeData7);
-
-        ROIsizeData8.setText("100");
-        ROIsizeData8.setToolTipText("");
-        gaussWindowChList.add(ROIsizeData8);
-
-        ROIsizeData9.setText("100");
-        ROIsizeData9.setToolTipText("");
-        gaussWindowChList.add(ROIsizeData9);
-
-        ROIsizeData10.setText("100");
-        ROIsizeData10.setToolTipText("");
-        gaussWindowChList.add(ROIsizeData10);
 
         windowWidthChList.setText("jMenu1");
 
@@ -2330,6 +2303,90 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         doChromaticData10.setText("jMenuItem1");
         doChromaticChList.add(doChromaticData10);
 
+        doMinimalSignalChList.setText("jMenu1");
+
+        doMinimalSignalData1.setText("100");
+        doMinimalSignalData1.setToolTipText("");
+        doMinimalSignalChList.add(doMinimalSignalData1);
+
+        doMinimalSignalData2.setText("100");
+        doMinimalSignalData2.setToolTipText("");
+        doMinimalSignalChList.add(doMinimalSignalData2);
+
+        doMinimalSignalData3.setText("100");
+        doMinimalSignalData3.setToolTipText("");
+        doMinimalSignalChList.add(doMinimalSignalData3);
+
+        doMinimalSignalData4.setText("100");
+        doMinimalSignalData4.setToolTipText("");
+        doMinimalSignalChList.add(doMinimalSignalData4);
+
+        doMinimalSignalData5.setText("100");
+        doMinimalSignalData5.setToolTipText("");
+        doMinimalSignalChList.add(doMinimalSignalData5);
+
+        doMinimalSignalData6.setText("100");
+        doMinimalSignalData6.setToolTipText("");
+        doMinimalSignalChList.add(doMinimalSignalData6);
+
+        doMinimalSignalData7.setText("100");
+        doMinimalSignalData7.setToolTipText("");
+        doMinimalSignalChList.add(doMinimalSignalData7);
+
+        doMinimalSignalData8.setText("100");
+        doMinimalSignalData8.setToolTipText("");
+        doMinimalSignalChList.add(doMinimalSignalData8);
+
+        doMinimalSignalData9.setText("100");
+        doMinimalSignalData9.setToolTipText("");
+        doMinimalSignalChList.add(doMinimalSignalData9);
+
+        doMinimalSignalData10.setText("100");
+        doMinimalSignalData10.setToolTipText("");
+        doMinimalSignalChList.add(doMinimalSignalData10);
+
+        doFilterWidthChList.setText("jMenu1");
+
+        doFilterWidthData1.setText("100");
+        doFilterWidthData1.setToolTipText("");
+        doFilterWidthChList.add(doFilterWidthData1);
+
+        doFilterWidthData2.setText("100");
+        doFilterWidthData2.setToolTipText("");
+        doFilterWidthChList.add(doFilterWidthData2);
+
+        doFilterWidthData3.setText("100");
+        doFilterWidthData3.setToolTipText("");
+        doFilterWidthChList.add(doFilterWidthData3);
+
+        doFilterWidthData4.setText("100");
+        doFilterWidthData4.setToolTipText("");
+        doFilterWidthChList.add(doFilterWidthData4);
+
+        doFilterWidthData5.setText("100");
+        doFilterWidthData5.setToolTipText("");
+        doFilterWidthChList.add(doFilterWidthData5);
+
+        doFilterWidthData6.setText("100");
+        doFilterWidthData6.setToolTipText("");
+        doFilterWidthChList.add(doFilterWidthData6);
+
+        doFilterWidthData7.setText("100");
+        doFilterWidthData7.setToolTipText("");
+        doFilterWidthChList.add(doFilterWidthData7);
+
+        doFilterWidthData8.setText("100");
+        doFilterWidthData8.setToolTipText("");
+        doFilterWidthChList.add(doFilterWidthData8);
+
+        doFilterWidthData9.setText("100");
+        doFilterWidthData9.setToolTipText("");
+        doFilterWidthChList.add(doFilterWidthData9);
+
+        doFilterWidthData10.setText("100");
+        doFilterWidthData10.setToolTipText("");
+        doFilterWidthChList.add(doFilterWidthData10);
+
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
 
@@ -2365,34 +2422,6 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         totalGain.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 totalGainActionPerformed(evt);
-            }
-        });
-
-        minimalSignalLabel.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
-        minimalSignalLabel.setText("Minimal signal");
-        minimalSignalLabel.setToolTipText("Miinimal intensity from center pixel required for fitting.");
-
-        minimalSignal.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-        minimalSignal.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        minimalSignal.setText("2000");
-        minimalSignal.setToolTipText("Miinimal intensity from center pixel required for fitting.");
-        minimalSignal.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                minimalSignalActionPerformed(evt);
-            }
-        });
-
-        windowWidthLabel.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
-        windowWidthLabel.setText("Filter width [frames]");
-        windowWidthLabel.setToolTipText("Filter window width in frames for time median background filtering.");
-
-        windowWidth.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-        windowWidth.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        windowWidth.setText("101");
-        windowWidth.setToolTipText("Filter window width in frames for time median background filtering.");
-        windowWidth.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                windowWidthActionPerformed(evt);
             }
         });
 
@@ -2454,34 +2483,24 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
                         .addGroup(BasicInpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(inputPixelSizeLabel)
                             .addComponent(totalGainLabel))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 59, Short.MAX_VALUE)
                         .addGroup(BasicInpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                             .addComponent(totalGain)
                             .addComponent(inputPixelSize)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, BasicInpLayout.createSequentialGroup()
-                        .addComponent(windowWidthLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(windowWidth, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE))
-                    .addGroup(BasicInpLayout.createSequentialGroup()
-                        .addComponent(minimalSignalLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(minimalSignal, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, BasicInpLayout.createSequentialGroup()
-                        .addGroup(BasicInpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(calibrate, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE)
-                            .addComponent(resetBasicInput, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(BasicInpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(channelId, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(modality, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(calibrate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(resetBasicInput, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, BasicInpLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(basicInput)
-                        .addGap(56, 56, 56)))
+                        .addGap(56, 56, 56))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, BasicInpLayout.createSequentialGroup()
+                        .addComponent(channelId, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(modality, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
-        BasicInpLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {inputPixelSize, minimalSignal, totalGain, windowWidth});
+        BasicInpLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {inputPixelSize, totalGain});
 
         BasicInpLayout.setVerticalGroup(
             BasicInpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2496,32 +2515,24 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
                 .addGroup(BasicInpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(totalGainLabel)
                     .addComponent(totalGain, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(BasicInpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(minimalSignalLabel)
-                    .addComponent(minimalSignal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(BasicInpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(windowWidth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(windowWidthLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addGroup(BasicInpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(channelId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(calibrate))
+                    .addComponent(modality, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(calibrate)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(BasicInpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(modality, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(resetBasicInput))
+                .addComponent(resetBasicInput)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(Process)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         ParameterRange.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, null, null, new java.awt.Color(204, 204, 204), new java.awt.Color(204, 204, 204)));
         ParameterRange.setToolTipText("Set the range of selected parameters to include in analysis.");
 
         ParameterLabel.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
-        ParameterLabel.setText("Parameter range");
+        ParameterLabel.setText("Parameter");
         ParameterLabel.setToolTipText("Set the range of selected parameters to include in analysis.");
 
         doPhotonCount.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
@@ -2697,36 +2708,89 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         maxZ.setText("1000");
         maxZ.setToolTipText("Include particles with z position wihtin this range.");
 
+        windowWidth.setFont(new java.awt.Font("Times New Roman", 0, 10)); // NOI18N
+        windowWidth.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        windowWidth.setText("101");
+        windowWidth.setToolTipText("Filter window width in frames for time median background filtering.");
+        windowWidth.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                windowWidthActionPerformed(evt);
+            }
+        });
+
+        minimalSignal.setFont(new java.awt.Font("Times New Roman", 0, 10)); // NOI18N
+        minimalSignal.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        minimalSignal.setText("2000");
+        minimalSignal.setToolTipText("Miinimal intensity from center pixel required for fitting.");
+        minimalSignal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                minimalSignalActionPerformed(evt);
+            }
+        });
+
+        doFilterWidth.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+        doFilterWidth.setText("Filter width [frames]");
+        doFilterWidth.setToolTipText("Include photon count parameter range in selection of what particles from result list to include in analysis.");
+        doFilterWidth.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                doFilterWidthActionPerformed(evt);
+            }
+        });
+
+        doMinimalSignal.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+        doMinimalSignal.setText("Minimal signal");
+        doMinimalSignal.setToolTipText("Include photon count parameter range in selection of what particles from result list to include in analysis.");
+        doMinimalSignal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                doMinimalSignalActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout ParameterRangeLayout = new javax.swing.GroupLayout(ParameterRange);
         ParameterRange.setLayout(ParameterRangeLayout);
         ParameterRangeLayout.setHorizontalGroup(
             ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ParameterRangeLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(ParameterLabel)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(ParameterRangeLayout.createSequentialGroup()
-                .addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(doPhotonCount)
-                    .addComponent(doSigmaXY)
-                    .addComponent(doRsquare)
-                    .addComponent(doPrecisionXY)
-                    .addComponent(doFrame)
-                    .addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(cleanTable)
-                        .addComponent(doPrecisionZ)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
                 .addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ParameterRangeLayout.createSequentialGroup()
-                        .addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                            .addComponent(minPhotonCount, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(minSigmaXY, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(minRsquare, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(minPrecisionXY, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(minPrecisionZ, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(minFrame, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(minLabel3)
-                            .addComponent(minZ, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(doFilterWidth)
+                            .addComponent(doMinimalSignal))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(windowWidth, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)
+                            .addComponent(minimalSignal, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(34, 34, 34))
+                    .addGroup(ParameterRangeLayout.createSequentialGroup()
+                        .addGap(21, 21, 21)
+                        .addComponent(cleanTable)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
+                        .addComponent(resetParameterRange, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18))
+                    .addGroup(ParameterRangeLayout.createSequentialGroup()
+                        .addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(ParameterRangeLayout.createSequentialGroup()
+                                .addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(doPhotonCount)
+                                    .addComponent(doSigmaXY)
+                                    .addComponent(doRsquare)
+                                    .addComponent(doPrecisionXY)
+                                    .addComponent(doFrame)
+                                    .addComponent(doPrecisionZ))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                                    .addComponent(minPhotonCount, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(minSigmaXY, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(minRsquare, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(minPrecisionXY, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(minPrecisionZ, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(minFrame, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(minLabel3)))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ParameterRangeLayout.createSequentialGroup()
+                                .addComponent(doZ)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(minZ, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
@@ -2738,23 +2802,33 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
                                 .addComponent(maxPhotonCount, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(maxLabel3))
                             .addComponent(maxZ, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap())
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ParameterRangeLayout.createSequentialGroup()
-                        .addComponent(resetParameterRange, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18))))
+                        .addContainerGap())))
             .addGroup(ParameterRangeLayout.createSequentialGroup()
-                .addComponent(doZ)
+                .addGap(98, 98, 98)
+                .addComponent(ParameterLabel)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
+
+        ParameterRangeLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {minimalSignal, windowWidth});
+
         ParameterRangeLayout.setVerticalGroup(
             ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ParameterRangeLayout.createSequentialGroup()
-                .addGap(12, 12, 12)
+                .addGap(8, 8, 8)
+                .addComponent(ParameterLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(doMinimalSignal)
+                    .addComponent(minimalSignal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(doFilterWidth)
+                    .addComponent(windowWidth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
                 .addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(minLabel3)
-                    .addComponent(maxLabel3)
-                    .addComponent(ParameterLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(maxLabel3))
+                .addGap(9, 9, 9)
                 .addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(minPhotonCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(maxPhotonCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -2789,10 +2863,10 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
                     .addComponent(doZ)
                     .addComponent(minZ, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(maxZ, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(resetParameterRange)
-                    .addComponent(cleanTable))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cleanTable)
+                    .addComponent(resetParameterRange))
                 .addContainerGap())
         );
 
@@ -2872,7 +2946,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
                 .addGroup(AnalysisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(minPtsLabel)
                     .addComponent(minPtsCluster, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(26, Short.MAX_VALUE))
         );
 
         jPanel1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, null, null, new java.awt.Color(153, 153, 153), new java.awt.Color(204, 204, 204)));
@@ -3004,7 +3078,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(19, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(driftCorrect)
                     .addComponent(doDriftCorrect))
@@ -3074,13 +3148,13 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(correctBackground, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(2, 2, 2)
+                .addComponent(localize_Fit, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(2, 2, 2)
+                .addComponent(storeSettings, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(localize_Fit, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(storeSettings, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(loadSettings, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addComponent(loadSettings, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(26, 26, 26))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -3091,7 +3165,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
                     .addComponent(localize_Fit)
                     .addComponent(storeSettings)
                     .addComponent(loadSettings))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
 
         jPanel3.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, null, null, null, new java.awt.Color(153, 153, 153)));
@@ -3330,7 +3404,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
                     .addComponent(minLabel4)
                     .addComponent(maxLabel4)
                     .addComponent(particlesPerBinLabel2))
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addContainerGap(25, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -3346,12 +3420,14 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
                                 .addComponent(BasicInp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(33, 33, 33)
-                                .addComponent(parallelComputation)))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(GPUcomputation)
+                                    .addComponent(parallelComputation))))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(ParameterRange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(6, 6, 6)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(ParameterRange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(6, 6, 6)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -3359,39 +3435,39 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(Analysis, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(GPUcomputation)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(455, 455, 455)
                         .addComponent(Header)))
-                .addContainerGap(11, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(Header)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(ParameterRange, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(BasicInp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(Header)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(ParameterRange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(BasicInp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(16, 16, 16)
+                                .addComponent(parallelComputation)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(GPUcomputation))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(Analysis, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addGap(10, 10, 10)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(GPUcomputation)
-                        .addComponent(parallelComputation))
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(Analysis, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(3, 3, 3))
         );
 
         pack();
@@ -3746,7 +3822,14 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 
 	private void doPhotonCountActionPerformed(java.awt.event.ActionEvent evt) {                                              
 
-	}                                             
+	}                               
+    private void doFilterWidthActionPerformed(java.awt.event.ActionEvent evt) {                                              
+
+    }                                             
+
+    private void doMinimalSignalActionPerformed(java.awt.event.ActionEvent evt) {                                                
+
+    }  
 
 	private void channelIdActionPerformed(java.awt.event.ActionEvent evt) {                                          
 		int id = channelId.getSelectedIndex();		
@@ -4042,6 +4125,17 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		minimalSignalChList.getItem(id).setText(minimalSignal.getText());
 		//	 gaussWindowChList.getItem(id).setText(String.valueOf(ROIsize.getSelectedIndex()));
 		windowWidthChList.getItem(id).setText(windowWidth.getText());        
+	
+		
+		if (doFilterWidth.isSelected())
+			doFilterWidthChList.getItem(id).setText("1");
+		else
+			doFilterWidthChList.getItem(id).setText("0");
+		if (doMinimalSignal.isSelected())
+			doMinimalSignalChList.getItem(id).setText("1");
+		else
+			doMinimalSignalChList.getItem(id).setText("0");
+		
 		/*
 		 *       Cluster analysis settings.
 		 */        
@@ -4145,6 +4239,18 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		minimalSignal.setText(minimalSignalChList.getItem(id).getText());
 		// ROIsize.setSelectedIndex(Integer.parseInt(gaussWindowChList.getItem(id).getText()));
 		windowWidth.setText( windowWidthChList.getItem(id).getText());
+	
+
+		if (doFilterWidthChList.getItem(id).getText().equals("1"))
+			doFilterWidth.setSelected(true);
+		else
+			doFilterWidth.setSelected(false);		
+		
+		
+		if (doMinimalSignalChList.getItem(id).getText().equals("1"))
+			doMinimalSignal.setSelected(true);
+		else
+			doMinimalSignal.setSelected(false);		
 		/*
 		 *       Cluster analysis settings.
 		 */
@@ -4719,7 +4825,10 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		int[] data = new int[10];
 		for (int id = 0; id < data.length; id++)
 		{
-			data[id] = Integer.parseInt(minimalSignalChList.getItem(id).getText());
+			if(doMinimalSignalChList.getItem(id).getText().equals("1"))
+				data[id] = Integer.parseInt(minimalSignalChList.getItem(id).getText());
+			else
+				data[id] = 0;
 		
 		}
 		return data;
@@ -4733,7 +4842,10 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		int[] data = new int[10];
 		for (int id = 0; id < data.length; id++)
 		{
-			data[id] = (Integer.parseInt(windowWidthChList.getItem(id).getText())-1)/2;
+			if (doFilterWidthChList.getItem(id).getText().equals("1"))
+				data[id] = (Integer.parseInt(windowWidthChList.getItem(id).getText())-1)/2;
+			else
+				data[id] = 101;
 					
 		}
 		return data;
@@ -5026,34 +5138,33 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			/*
 			 *   Basic input settings
 			 */		    		                           		   
-
+			
 
 			// total gain
 			totalGainChList.getItem(Ch).setText( 
 					ij.Prefs.get("SMLocalizer.settings."+storeName+
 							".totaGain."+Ch, 
 							""));		   
-			// minimum pixel over background
-			/*			minPixelOverBackgroundChList.getItem(Ch).setText( 
+			
+			doMinimalSignalChList.getItem(Ch).setText(
 					ij.Prefs.get("SMLocalizer.settings."+storeName+
-							".minPixelOverBackground."+Ch, 
-							""));		   */
+							".doMinimalSignal."+Ch, 
+							""));
 			// minimal signal
 			minimalSignalChList.getItem(Ch).setText( 
 					ij.Prefs.get("SMLocalizer.settings."+storeName+
 							".minimalSignal."+Ch, 
 							""));
-			// gauss window size
-			gaussWindowChList.getItem(Ch).setText( 
-					ij.Prefs.get("SMLocalizer.settings."+storeName+
-							".gaussWindow."+Ch, 
-							""));
-			// gauss window size
+
+			// filter window size
 			windowWidthChList.getItem(Ch).setText( 
 					ij.Prefs.get("SMLocalizer.settings."+storeName+
 							".windowWidth."+Ch, 
 							""));
-
+			doFilterWidthChList.getItem(Ch).setText( 
+					ij.Prefs.get("SMLocalizer.settings."+storeName+
+							".doWindowWidth."+Ch, 
+							""));
 			/*
 			 *       Cluster analysis settings
 			 */
@@ -5311,15 +5422,18 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			ij.Prefs.set("SMLocalizer.settings."+storeName+
 					".minimalSignal."+Ch, 
 					minimalSignalChList.getItem(Ch).getText());
-			// gauss window size
+			// minimal signal
 			ij.Prefs.set("SMLocalizer.settings."+storeName+
-					".gaussWindow."+Ch, 
-					gaussWindowChList.getItem(Ch).getText());
-			// gauss window size
+					".doMinimalSignal."+Ch, 
+					doMinimalSignalChList.getItem(Ch).getText());
+			// filter window size
 			ij.Prefs.set("SMLocalizer.settings."+storeName+
 					".windowWidth."+Ch, 
 					windowWidthChList.getItem(Ch).getText());
-
+			// filter window size
+			ij.Prefs.set("SMLocalizer.settings."+storeName+
+					".doWindowWidth."+Ch, 
+					doFilterWidthChList.getItem(Ch).getText());
 
 
 			/*
@@ -5515,574 +5629,586 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			}
 		});
 	}
-	// Variables declaration - do not modify                     
-	private javax.swing.JPanel Analysis;
-	private javax.swing.JPanel BasicInp;
-	private javax.swing.JRadioButton GPUcomputation;
-	private javax.swing.JLabel Header;
-	private javax.swing.JLabel ParameterLabel;
-	private javax.swing.JPanel ParameterRange;
-	private javax.swing.JButton Process;
-	private javax.swing.JMenuItem ROIsizeData1;
-	private javax.swing.JMenuItem ROIsizeData10;
-	private javax.swing.JMenuItem ROIsizeData2;
-	private javax.swing.JMenuItem ROIsizeData3;
-	private javax.swing.JMenuItem ROIsizeData4;
-	private javax.swing.JMenuItem ROIsizeData5;
-	private javax.swing.JMenuItem ROIsizeData6;
-	private javax.swing.JMenuItem ROIsizeData7;
-	private javax.swing.JMenuItem ROIsizeData8;
-	private javax.swing.JMenuItem ROIsizeData9;
-	private javax.swing.JLabel XYrenderLabel;
-	private javax.swing.JLabel ZrenderLabel;
-	private javax.swing.JButton alignChannels;
-	private javax.swing.JLabel basicInput;
-	private javax.swing.ButtonGroup buttonGroup2;
-	private javax.swing.JButton calibrate;
-	private javax.swing.JTextField chAlignBinHighCount;
-	private javax.swing.JMenu chAlignBinHighCountChList;
-	private javax.swing.JMenuItem chAlignBinHighCountData1;
-	private javax.swing.JMenuItem chAlignBinHighCountData10;
-	private javax.swing.JMenuItem chAlignBinHighCountData2;
-	private javax.swing.JMenuItem chAlignBinHighCountData3;
-	private javax.swing.JMenuItem chAlignBinHighCountData4;
-	private javax.swing.JMenuItem chAlignBinHighCountData5;
-	private javax.swing.JMenuItem chAlignBinHighCountData6;
-	private javax.swing.JMenuItem chAlignBinHighCountData7;
-	private javax.swing.JMenuItem chAlignBinHighCountData8;
-	private javax.swing.JMenuItem chAlignBinHighCountData9;
-	private javax.swing.JTextField chAlignBinLowCount;
-	private javax.swing.JMenu chAlignBinLowCountChList;
-	private javax.swing.JMenuItem chAlignBinLowCountData1;
-	private javax.swing.JMenuItem chAlignBinLowCountData10;
-	private javax.swing.JMenuItem chAlignBinLowCountData2;
-	private javax.swing.JMenuItem chAlignBinLowCountData3;
-	private javax.swing.JMenuItem chAlignBinLowCountData4;
-	private javax.swing.JMenuItem chAlignBinLowCountData5;
-	private javax.swing.JMenuItem chAlignBinLowCountData6;
-	private javax.swing.JMenuItem chAlignBinLowCountData7;
-	private javax.swing.JMenuItem chAlignBinLowCountData8;
-	private javax.swing.JMenuItem chAlignBinLowCountData9;
-	private javax.swing.JTextField chAlignShiftXY;
-	private javax.swing.JMenu chAlignShiftXYChList;
-	private javax.swing.JMenuItem chAlignShiftXYData1;
-	private javax.swing.JMenuItem chAlignShiftXYData10;
-	private javax.swing.JMenuItem chAlignShiftXYData2;
-	private javax.swing.JMenuItem chAlignShiftXYData3;
-	private javax.swing.JMenuItem chAlignShiftXYData4;
-	private javax.swing.JMenuItem chAlignShiftXYData5;
-	private javax.swing.JMenuItem chAlignShiftXYData6;
-	private javax.swing.JMenuItem chAlignShiftXYData7;
-	private javax.swing.JMenuItem chAlignShiftXYData8;
-	private javax.swing.JMenuItem chAlignShiftXYData9;
-	private javax.swing.JTextField chAlignShiftZ;
-	private javax.swing.JMenu chAlignShiftZChList;
-	private javax.swing.JMenuItem chAlignShiftZData1;
-	private javax.swing.JMenuItem chAlignShiftZData10;
-	private javax.swing.JMenuItem chAlignShiftZData2;
-	private javax.swing.JMenuItem chAlignShiftZData3;
-	private javax.swing.JMenuItem chAlignShiftZData4;
-	private javax.swing.JMenuItem chAlignShiftZData5;
-	private javax.swing.JMenuItem chAlignShiftZData6;
-	private javax.swing.JMenuItem chAlignShiftZData7;
-	private javax.swing.JMenuItem chAlignShiftZData8;
-	private javax.swing.JMenuItem chAlignShiftZData9;
-	private javax.swing.JComboBox<String> channelId;
-	private javax.swing.JButton cleanTable;
-	private javax.swing.JButton clusterAnalysis;
-	private javax.swing.JButton correctBackground;
-	private javax.swing.JCheckBox doChannelAlign;
-	private javax.swing.JMenu doChromaticChList;
-	private javax.swing.JMenuItem doChromaticData1;
-	private javax.swing.JMenuItem doChromaticData10;
-	private javax.swing.JMenuItem doChromaticData2;
-	private javax.swing.JMenuItem doChromaticData3;
-	private javax.swing.JMenuItem doChromaticData4;
-	private javax.swing.JMenuItem doChromaticData5;
-	private javax.swing.JMenuItem doChromaticData6;
-	private javax.swing.JMenuItem doChromaticData7;
-	private javax.swing.JMenuItem doChromaticData8;
-	private javax.swing.JMenuItem doChromaticData9;
-	private javax.swing.JCheckBox doClusterAnalysis;
-	private javax.swing.JMenu doClusterAnalysisChList;
-	private javax.swing.JMenuItem doClusterAnalysisData1;
-	private javax.swing.JMenuItem doClusterAnalysisData10;
-	private javax.swing.JMenuItem doClusterAnalysisData2;
-	private javax.swing.JMenuItem doClusterAnalysisData3;
-	private javax.swing.JMenuItem doClusterAnalysisData4;
-	private javax.swing.JMenuItem doClusterAnalysisData5;
-	private javax.swing.JMenuItem doClusterAnalysisData6;
-	private javax.swing.JMenuItem doClusterAnalysisData7;
-	private javax.swing.JMenuItem doClusterAnalysisData8;
-	private javax.swing.JMenuItem doClusterAnalysisData9;
-	private javax.swing.JMenu doCorrelativeChList;
-	private javax.swing.JMenuItem doCorrelativeData1;
-	private javax.swing.JMenuItem doCorrelativeData10;
-	private javax.swing.JMenuItem doCorrelativeData2;
-	private javax.swing.JMenuItem doCorrelativeData3;
-	private javax.swing.JMenuItem doCorrelativeData4;
-	private javax.swing.JMenuItem doCorrelativeData5;
-	private javax.swing.JMenuItem doCorrelativeData6;
-	private javax.swing.JMenuItem doCorrelativeData7;
-	private javax.swing.JMenuItem doCorrelativeData8;
-	private javax.swing.JMenuItem doCorrelativeData9;
-	private javax.swing.JCheckBox doDriftCorrect;
-	private javax.swing.JCheckBox doFrame;
-	private javax.swing.JMenu doFrameChList;
-	private javax.swing.JMenuItem doFrameData1;
-	private javax.swing.JMenuItem doFrameData10;
-	private javax.swing.JMenuItem doFrameData2;
-	private javax.swing.JMenuItem doFrameData3;
-	private javax.swing.JMenuItem doFrameData4;
-	private javax.swing.JMenuItem doFrameData5;
-	private javax.swing.JMenuItem doFrameData6;
-	private javax.swing.JMenuItem doFrameData7;
-	private javax.swing.JMenuItem doFrameData8;
-	private javax.swing.JMenuItem doFrameData9;
-	private javax.swing.JCheckBox doGaussianSmoothing;
-	private javax.swing.JCheckBox doPhotonCount;
-	private javax.swing.JMenu doPhotonCountChList;
-	private javax.swing.JMenuItem doPhotonCountData1;
-	private javax.swing.JMenuItem doPhotonCountData10;
-	private javax.swing.JMenuItem doPhotonCountData2;
-	private javax.swing.JMenuItem doPhotonCountData3;
-	private javax.swing.JMenuItem doPhotonCountData4;
-	private javax.swing.JMenuItem doPhotonCountData5;
-	private javax.swing.JMenuItem doPhotonCountData6;
-	private javax.swing.JMenuItem doPhotonCountData7;
-	private javax.swing.JMenuItem doPhotonCountData8;
-	private javax.swing.JMenuItem doPhotonCountData9;
-	private javax.swing.JCheckBox doPrecisionXY;
-	private javax.swing.JMenu doPrecisionXYChList;
-	private javax.swing.JMenuItem doPrecisionXYData1;
-	private javax.swing.JMenuItem doPrecisionXYData10;
-	private javax.swing.JMenuItem doPrecisionXYData2;
-	private javax.swing.JMenuItem doPrecisionXYData3;
-	private javax.swing.JMenuItem doPrecisionXYData4;
-	private javax.swing.JMenuItem doPrecisionXYData5;
-	private javax.swing.JMenuItem doPrecisionXYData6;
-	private javax.swing.JMenuItem doPrecisionXYData7;
-	private javax.swing.JMenuItem doPrecisionXYData8;
-	private javax.swing.JMenuItem doPrecisionXYData9;
-	private javax.swing.JCheckBox doPrecisionZ;
-	private javax.swing.JMenu doPrecisionZChList;
-	private javax.swing.JMenuItem doPrecisionZData1;
-	private javax.swing.JMenuItem doPrecisionZData10;
-	private javax.swing.JMenuItem doPrecisionZData2;
-	private javax.swing.JMenuItem doPrecisionZData3;
-	private javax.swing.JMenuItem doPrecisionZData4;
-	private javax.swing.JMenuItem doPrecisionZData5;
-	private javax.swing.JMenuItem doPrecisionZData6;
-	private javax.swing.JMenuItem doPrecisionZData7;
-	private javax.swing.JMenuItem doPrecisionZData8;
-	private javax.swing.JMenuItem doPrecisionZData9;
-	private javax.swing.JCheckBox doRenderImage;
-	private javax.swing.JMenu doRenderImageChList;
-	private javax.swing.JMenuItem doRenderImageData1;
-	private javax.swing.JMenuItem doRenderImageData10;
-	private javax.swing.JMenuItem doRenderImageData2;
-	private javax.swing.JMenuItem doRenderImageData3;
-	private javax.swing.JMenuItem doRenderImageData4;
-	private javax.swing.JMenuItem doRenderImageData5;
-	private javax.swing.JMenuItem doRenderImageData6;
-	private javax.swing.JMenuItem doRenderImageData7;
-	private javax.swing.JMenuItem doRenderImageData8;
-	private javax.swing.JMenuItem doRenderImageData9;
-	private javax.swing.JCheckBox doRsquare;
-	private javax.swing.JMenu doRsquareChList;
-	private javax.swing.JMenuItem doRsquareData1;
-	private javax.swing.JMenuItem doRsquareData10;
-	private javax.swing.JMenuItem doRsquareData2;
-	private javax.swing.JMenuItem doRsquareData3;
-	private javax.swing.JMenuItem doRsquareData4;
-	private javax.swing.JMenuItem doRsquareData5;
-	private javax.swing.JMenuItem doRsquareData6;
-	private javax.swing.JMenuItem doRsquareData7;
-	private javax.swing.JMenuItem doRsquareData8;
-	private javax.swing.JMenuItem doRsquareData9;
-	private javax.swing.JCheckBox doSigmaXY;
-	private javax.swing.JMenu doSigmaXYChList;
-	private javax.swing.JMenuItem doSigmaXYData1;
-	private javax.swing.JMenuItem doSigmaXYData10;
-	private javax.swing.JMenuItem doSigmaXYData2;
-	private javax.swing.JMenuItem doSigmaXYData3;
-	private javax.swing.JMenuItem doSigmaXYData4;
-	private javax.swing.JMenuItem doSigmaXYData5;
-	private javax.swing.JMenuItem doSigmaXYData6;
-	private javax.swing.JMenuItem doSigmaXYData7;
-	private javax.swing.JMenuItem doSigmaXYData8;
-	private javax.swing.JMenuItem doSigmaXYData9;
-	private javax.swing.JCheckBox doZ;
-	private javax.swing.JMenu doZChList;
-	private javax.swing.JMenuItem doZData1;
-	private javax.swing.JMenuItem doZData10;
-	private javax.swing.JMenuItem doZData2;
-	private javax.swing.JMenuItem doZData3;
-	private javax.swing.JMenuItem doZData4;
-	private javax.swing.JMenuItem doZData5;
-	private javax.swing.JMenuItem doZData6;
-	private javax.swing.JMenuItem doZData7;
-	private javax.swing.JMenuItem doZData8;
-	private javax.swing.JMenuItem doZData9;
-	private javax.swing.JTextField driftCorrBinHighCount;
-	private javax.swing.JMenu driftCorrBinHighCountChList;
-	private javax.swing.JMenuItem driftCorrBinHighCountData1;
-	private javax.swing.JMenuItem driftCorrBinHighCountData10;
-	private javax.swing.JMenuItem driftCorrBinHighCountData2;
-	private javax.swing.JMenuItem driftCorrBinHighCountData3;
-	private javax.swing.JMenuItem driftCorrBinHighCountData4;
-	private javax.swing.JMenuItem driftCorrBinHighCountData5;
-	private javax.swing.JMenuItem driftCorrBinHighCountData6;
-	private javax.swing.JMenuItem driftCorrBinHighCountData7;
-	private javax.swing.JMenuItem driftCorrBinHighCountData8;
-	private javax.swing.JMenuItem driftCorrBinHighCountData9;
-	private javax.swing.JTextField driftCorrBinLowCount;
-	private javax.swing.JMenu driftCorrBinLowCountChList;
-	private javax.swing.JMenuItem driftCorrBinLowCountData1;
-	private javax.swing.JMenuItem driftCorrBinLowCountData10;
-	private javax.swing.JMenuItem driftCorrBinLowCountData2;
-	private javax.swing.JMenuItem driftCorrBinLowCountData3;
-	private javax.swing.JMenuItem driftCorrBinLowCountData4;
-	private javax.swing.JMenuItem driftCorrBinLowCountData5;
-	private javax.swing.JMenuItem driftCorrBinLowCountData6;
-	private javax.swing.JMenuItem driftCorrBinLowCountData7;
-	private javax.swing.JMenuItem driftCorrBinLowCountData8;
-	private javax.swing.JMenuItem driftCorrBinLowCountData9;
-	private javax.swing.JTextField driftCorrShiftXY;
-	private javax.swing.JMenu driftCorrShiftXYChList;
-	private javax.swing.JMenuItem driftCorrShiftXYData1;
-	private javax.swing.JMenuItem driftCorrShiftXYData10;
-	private javax.swing.JMenuItem driftCorrShiftXYData2;
-	private javax.swing.JMenuItem driftCorrShiftXYData3;
-	private javax.swing.JMenuItem driftCorrShiftXYData4;
-	private javax.swing.JMenuItem driftCorrShiftXYData5;
-	private javax.swing.JMenuItem driftCorrShiftXYData6;
-	private javax.swing.JMenuItem driftCorrShiftXYData7;
-	private javax.swing.JMenuItem driftCorrShiftXYData8;
-	private javax.swing.JMenuItem driftCorrShiftXYData9;
-	private javax.swing.JTextField driftCorrShiftZ;
-	private javax.swing.JMenu driftCorrShiftZChList;
-	private javax.swing.JMenuItem driftCorrShiftZData1;
-	private javax.swing.JMenuItem driftCorrShiftZData10;
-	private javax.swing.JMenuItem driftCorrShiftZData2;
-	private javax.swing.JMenuItem driftCorrShiftZData3;
-	private javax.swing.JMenuItem driftCorrShiftZData4;
-	private javax.swing.JMenuItem driftCorrShiftZData5;
-	private javax.swing.JMenuItem driftCorrShiftZData6;
-	private javax.swing.JMenuItem driftCorrShiftZData7;
-	private javax.swing.JMenuItem driftCorrShiftZData8;
-	private javax.swing.JMenuItem driftCorrShiftZData9;
-	private javax.swing.JButton driftCorrect;
-	private javax.swing.JTextField epsilon;
-	private javax.swing.JMenu epsilonChList;
-	private javax.swing.JMenuItem epsilonData1;
-	private javax.swing.JMenuItem epsilonData10;
-	private javax.swing.JMenuItem epsilonData2;
-	private javax.swing.JMenuItem epsilonData3;
-	private javax.swing.JMenuItem epsilonData4;
-	private javax.swing.JMenuItem epsilonData5;
-	private javax.swing.JMenuItem epsilonData6;
-	private javax.swing.JMenuItem epsilonData7;
-	private javax.swing.JMenuItem epsilonData8;
-	private javax.swing.JMenuItem epsilonData9;
-	private javax.swing.JLabel epsilonLabel;
-	private javax.swing.JMenu fiducialsChList;
-	private javax.swing.JMenuItem fiducialsChoice1;
-	private javax.swing.JMenuItem fiducialsChoice10;
-	private javax.swing.JMenuItem fiducialsChoice2;
-	private javax.swing.JMenuItem fiducialsChoice3;
-	private javax.swing.JMenuItem fiducialsChoice4;
-	private javax.swing.JMenuItem fiducialsChoice5;
-	private javax.swing.JMenuItem fiducialsChoice6;
-	private javax.swing.JMenuItem fiducialsChoice7;
-	private javax.swing.JMenuItem fiducialsChoice8;
-	private javax.swing.JMenuItem fiducialsChoice9;
-	private javax.swing.JMenu gaussWindowChList;
-	private javax.swing.JTextField inputPixelSize;
-	private javax.swing.JLabel inputPixelSizeLabel;
-	private javax.swing.JPanel jPanel1;
-	private javax.swing.JPanel jPanel2;
-	private javax.swing.JPanel jPanel3;
-	private javax.swing.JPanel jPanel4;
-	private javax.swing.JButton loadSettings;
-	private javax.swing.JButton localize_Fit;
-	private javax.swing.JTextField maxFrame;
-	private javax.swing.JMenu maxFrameChList;
-	private javax.swing.JMenuItem maxFrameData1;
-	private javax.swing.JMenuItem maxFrameData10;
-	private javax.swing.JMenuItem maxFrameData2;
-	private javax.swing.JMenuItem maxFrameData3;
-	private javax.swing.JMenuItem maxFrameData4;
-	private javax.swing.JMenuItem maxFrameData5;
-	private javax.swing.JMenuItem maxFrameData6;
-	private javax.swing.JMenuItem maxFrameData7;
-	private javax.swing.JMenuItem maxFrameData8;
-	private javax.swing.JMenuItem maxFrameData9;
-	private javax.swing.JLabel maxLabel;
-	private javax.swing.JLabel maxLabel1;
-	private javax.swing.JLabel maxLabel2;
-	private javax.swing.JLabel maxLabel3;
-	private javax.swing.JLabel maxLabel4;
-	private javax.swing.JTextField maxPhotonCount;
-	private javax.swing.JMenu maxPhotonCountChList;
-	private javax.swing.JMenuItem maxPhotonCountData1;
-	private javax.swing.JMenuItem maxPhotonCountData10;
-	private javax.swing.JMenuItem maxPhotonCountData2;
-	private javax.swing.JMenuItem maxPhotonCountData3;
-	private javax.swing.JMenuItem maxPhotonCountData4;
-	private javax.swing.JMenuItem maxPhotonCountData5;
-	private javax.swing.JMenuItem maxPhotonCountData6;
-	private javax.swing.JMenuItem maxPhotonCountData7;
-	private javax.swing.JMenuItem maxPhotonCountData8;
-	private javax.swing.JMenuItem maxPhotonCountData9;
-	private javax.swing.JTextField maxPrecisionXY;
-	private javax.swing.JMenu maxPrecisionXYChList;
-	private javax.swing.JMenuItem maxPrecisionXYData1;
-	private javax.swing.JMenuItem maxPrecisionXYData10;
-	private javax.swing.JMenuItem maxPrecisionXYData2;
-	private javax.swing.JMenuItem maxPrecisionXYData3;
-	private javax.swing.JMenuItem maxPrecisionXYData4;
-	private javax.swing.JMenuItem maxPrecisionXYData5;
-	private javax.swing.JMenuItem maxPrecisionXYData6;
-	private javax.swing.JMenuItem maxPrecisionXYData7;
-	private javax.swing.JMenuItem maxPrecisionXYData8;
-	private javax.swing.JMenuItem maxPrecisionXYData9;
-	private javax.swing.JTextField maxPrecisionZ;
-	private javax.swing.JMenu maxPrecisionZChList;
-	private javax.swing.JMenuItem maxPrecisionZData1;
-	private javax.swing.JMenuItem maxPrecisionZData10;
-	private javax.swing.JMenuItem maxPrecisionZData2;
-	private javax.swing.JMenuItem maxPrecisionZData3;
-	private javax.swing.JMenuItem maxPrecisionZData4;
-	private javax.swing.JMenuItem maxPrecisionZData5;
-	private javax.swing.JMenuItem maxPrecisionZData6;
-	private javax.swing.JMenuItem maxPrecisionZData7;
-	private javax.swing.JMenuItem maxPrecisionZData8;
-	private javax.swing.JMenuItem maxPrecisionZData9;
-	private javax.swing.JTextField maxRsquare;
-	private javax.swing.JMenu maxRsquareChList;
-	private javax.swing.JMenuItem maxRsquareData1;
-	private javax.swing.JMenuItem maxRsquareData10;
-	private javax.swing.JMenuItem maxRsquareData2;
-	private javax.swing.JMenuItem maxRsquareData3;
-	private javax.swing.JMenuItem maxRsquareData4;
-	private javax.swing.JMenuItem maxRsquareData5;
-	private javax.swing.JMenuItem maxRsquareData6;
-	private javax.swing.JMenuItem maxRsquareData7;
-	private javax.swing.JMenuItem maxRsquareData8;
-	private javax.swing.JMenuItem maxRsquareData9;
-	private javax.swing.JTextField maxSigmaXY;
-	private javax.swing.JMenu maxSigmaXYChList;
-	private javax.swing.JMenuItem maxSigmaXYData1;
-	private javax.swing.JMenuItem maxSigmaXYData10;
-	private javax.swing.JMenuItem maxSigmaXYData2;
-	private javax.swing.JMenuItem maxSigmaXYData3;
-	private javax.swing.JMenuItem maxSigmaXYData4;
-	private javax.swing.JMenuItem maxSigmaXYData5;
-	private javax.swing.JMenuItem maxSigmaXYData6;
-	private javax.swing.JMenuItem maxSigmaXYData7;
-	private javax.swing.JMenuItem maxSigmaXYData8;
-	private javax.swing.JMenuItem maxSigmaXYData9;
-	private javax.swing.JTextField maxZ;
-	private javax.swing.JMenu maxZChList;
-	private javax.swing.JMenuItem maxZData1;
-	private javax.swing.JMenuItem maxZData10;
-	private javax.swing.JMenuItem maxZData2;
-	private javax.swing.JMenuItem maxZData3;
-	private javax.swing.JMenuItem maxZData4;
-	private javax.swing.JMenuItem maxZData5;
-	private javax.swing.JMenuItem maxZData6;
-	private javax.swing.JMenuItem maxZData7;
-	private javax.swing.JMenuItem maxZData8;
-	private javax.swing.JMenuItem maxZData9;
-	private javax.swing.JTextField minFrame;
-	private javax.swing.JMenu minFrameChList;
-	private javax.swing.JMenuItem minFrameData1;
-	private javax.swing.JMenuItem minFrameData10;
-	private javax.swing.JMenuItem minFrameData2;
-	private javax.swing.JMenuItem minFrameData3;
-	private javax.swing.JMenuItem minFrameData4;
-	private javax.swing.JMenuItem minFrameData5;
-	private javax.swing.JMenuItem minFrameData6;
-	private javax.swing.JMenuItem minFrameData7;
-	private javax.swing.JMenuItem minFrameData8;
-	private javax.swing.JMenuItem minFrameData9;
-	private javax.swing.JLabel minLabel;
-	private javax.swing.JLabel minLabel1;
-	private javax.swing.JLabel minLabel2;
-	private javax.swing.JLabel minLabel3;
-	private javax.swing.JLabel minLabel4;
-	private javax.swing.JTextField minPhotonCount;
-	private javax.swing.JMenu minPhotonCountChList;
-	private javax.swing.JMenuItem minPhotonCountData1;
-	private javax.swing.JMenuItem minPhotonCountData10;
-	private javax.swing.JMenuItem minPhotonCountData2;
-	private javax.swing.JMenuItem minPhotonCountData3;
-	private javax.swing.JMenuItem minPhotonCountData4;
-	private javax.swing.JMenuItem minPhotonCountData5;
-	private javax.swing.JMenuItem minPhotonCountData6;
-	private javax.swing.JMenuItem minPhotonCountData7;
-	private javax.swing.JMenuItem minPhotonCountData8;
-	private javax.swing.JMenuItem minPhotonCountData9;
-	private javax.swing.JTextField minPrecisionXY;
-	private javax.swing.JMenu minPrecisionXYChList;
-	private javax.swing.JMenuItem minPrecisionXYData1;
-	private javax.swing.JMenuItem minPrecisionXYData10;
-	private javax.swing.JMenuItem minPrecisionXYData2;
-	private javax.swing.JMenuItem minPrecisionXYData3;
-	private javax.swing.JMenuItem minPrecisionXYData4;
-	private javax.swing.JMenuItem minPrecisionXYData5;
-	private javax.swing.JMenuItem minPrecisionXYData6;
-	private javax.swing.JMenuItem minPrecisionXYData7;
-	private javax.swing.JMenuItem minPrecisionXYData8;
-	private javax.swing.JMenuItem minPrecisionXYData9;
-	private javax.swing.JTextField minPrecisionZ;
-	private javax.swing.JMenu minPrecisionZChList;
-	private javax.swing.JMenuItem minPrecisionZData1;
-	private javax.swing.JMenuItem minPrecisionZData10;
-	private javax.swing.JMenuItem minPrecisionZData2;
-	private javax.swing.JMenuItem minPrecisionZData3;
-	private javax.swing.JMenuItem minPrecisionZData4;
-	private javax.swing.JMenuItem minPrecisionZData5;
-	private javax.swing.JMenuItem minPrecisionZData6;
-	private javax.swing.JMenuItem minPrecisionZData7;
-	private javax.swing.JMenuItem minPrecisionZData8;
-	private javax.swing.JMenuItem minPrecisionZData9;
-	private javax.swing.JTextField minPtsCluster;
-	private javax.swing.JMenu minPtsClusterChList;
-	private javax.swing.JMenuItem minPtsClusterData1;
-	private javax.swing.JMenuItem minPtsClusterData10;
-	private javax.swing.JMenuItem minPtsClusterData2;
-	private javax.swing.JMenuItem minPtsClusterData3;
-	private javax.swing.JMenuItem minPtsClusterData4;
-	private javax.swing.JMenuItem minPtsClusterData5;
-	private javax.swing.JMenuItem minPtsClusterData6;
-	private javax.swing.JMenuItem minPtsClusterData7;
-	private javax.swing.JMenuItem minPtsClusterData8;
-	private javax.swing.JMenuItem minPtsClusterData9;
-	private javax.swing.JLabel minPtsLabel;
-	private javax.swing.JTextField minRsquare;
-	private javax.swing.JMenu minRsquareChList;
-	private javax.swing.JMenuItem minRsquareData1;
-	private javax.swing.JMenuItem minRsquareData10;
-	private javax.swing.JMenuItem minRsquareData2;
-	private javax.swing.JMenuItem minRsquareData3;
-	private javax.swing.JMenuItem minRsquareData4;
-	private javax.swing.JMenuItem minRsquareData5;
-	private javax.swing.JMenuItem minRsquareData6;
-	private javax.swing.JMenuItem minRsquareData7;
-	private javax.swing.JMenuItem minRsquareData8;
-	private javax.swing.JMenuItem minRsquareData9;
-	private javax.swing.JTextField minSigmaXY;
-	private javax.swing.JMenu minSigmaXYChList;
-	private javax.swing.JMenuItem minSigmaXYData1;
-	private javax.swing.JMenuItem minSigmaXYData10;
-	private javax.swing.JMenuItem minSigmaXYData2;
-	private javax.swing.JMenuItem minSigmaXYData3;
-	private javax.swing.JMenuItem minSigmaXYData4;
-	private javax.swing.JMenuItem minSigmaXYData5;
-	private javax.swing.JMenuItem minSigmaXYData6;
-	private javax.swing.JMenuItem minSigmaXYData7;
-	private javax.swing.JMenuItem minSigmaXYData8;
-	private javax.swing.JMenuItem minSigmaXYData9;
-	private javax.swing.JTextField minZ;
-	private javax.swing.JMenu minZChList;
-	private javax.swing.JMenuItem minZData1;
-	private javax.swing.JMenuItem minZData10;
-	private javax.swing.JMenuItem minZData2;
-	private javax.swing.JMenuItem minZData3;
-	private javax.swing.JMenuItem minZData4;
-	private javax.swing.JMenuItem minZData5;
-	private javax.swing.JMenuItem minZData6;
-	private javax.swing.JMenuItem minZData7;
-	private javax.swing.JMenuItem minZData8;
-	private javax.swing.JMenuItem minZData9;
-	private javax.swing.JTextField minimalSignal;
-	private javax.swing.JMenu minimalSignalChList;
-	private javax.swing.JMenuItem minimalSignalData1;
-	private javax.swing.JMenuItem minimalSignalData10;
-	private javax.swing.JMenuItem minimalSignalData2;
-	private javax.swing.JMenuItem minimalSignalData3;
-	private javax.swing.JMenuItem minimalSignalData4;
-	private javax.swing.JMenuItem minimalSignalData5;
-	private javax.swing.JMenuItem minimalSignalData6;
-	private javax.swing.JMenuItem minimalSignalData7;
-	private javax.swing.JMenuItem minimalSignalData8;
-	private javax.swing.JMenuItem minimalSignalData9;
-	private javax.swing.JLabel minimalSignalLabel;
-	private javax.swing.JComboBox<String> modality;
-	private javax.swing.JTextField numberOfBinsDriftCorr;
-	private javax.swing.JMenu numberOfBinsDriftCorrChList;
-	private javax.swing.JMenuItem numberOfBinsDriftCorrData1;
-	private javax.swing.JMenuItem numberOfBinsDriftCorrData10;
-	private javax.swing.JMenuItem numberOfBinsDriftCorrData2;
-	private javax.swing.JMenuItem numberOfBinsDriftCorrData3;
-	private javax.swing.JMenuItem numberOfBinsDriftCorrData4;
-	private javax.swing.JMenuItem numberOfBinsDriftCorrData5;
-	private javax.swing.JMenuItem numberOfBinsDriftCorrData6;
-	private javax.swing.JMenuItem numberOfBinsDriftCorrData7;
-	private javax.swing.JMenuItem numberOfBinsDriftCorrData8;
-	private javax.swing.JMenuItem numberOfBinsDriftCorrData9;
-	private javax.swing.JLabel numberOfBinsLabel;
-	private javax.swing.JTextField outputPixelSize;
-	private javax.swing.JMenu outputPixelSizeChList;
-	private javax.swing.JMenuItem outputPixelSizeData1;
-	private javax.swing.JMenuItem outputPixelSizeData10;
-	private javax.swing.JMenuItem outputPixelSizeData2;
-	private javax.swing.JMenuItem outputPixelSizeData3;
-	private javax.swing.JMenuItem outputPixelSizeData4;
-	private javax.swing.JMenuItem outputPixelSizeData5;
-	private javax.swing.JMenuItem outputPixelSizeData6;
-	private javax.swing.JMenuItem outputPixelSizeData7;
-	private javax.swing.JMenuItem outputPixelSizeData8;
-	private javax.swing.JMenuItem outputPixelSizeData9;
-	private javax.swing.JLabel outputPixelSizeLabel;
-	private javax.swing.JTextField outputPixelSizeZ;
-	private javax.swing.JRadioButton parallelComputation;
-	private javax.swing.JLabel particlesPerBinLabel;
-	private javax.swing.JLabel particlesPerBinLabel1;
-	private javax.swing.JLabel particlesPerBinLabel2;
-	private javax.swing.JLabel particlesPerBinLabelchAlign;
-	private javax.swing.JMenu pixelSizeChList;
-	private javax.swing.JMenuItem pixelSizeData1;
-	private javax.swing.JMenuItem pixelSizeData10;
-	private javax.swing.JMenuItem pixelSizeData2;
-	private javax.swing.JMenuItem pixelSizeData3;
-	private javax.swing.JMenuItem pixelSizeData4;
-	private javax.swing.JMenuItem pixelSizeData5;
-	private javax.swing.JMenuItem pixelSizeData6;
-	private javax.swing.JMenuItem pixelSizeData7;
-	private javax.swing.JMenuItem pixelSizeData8;
-	private javax.swing.JMenuItem pixelSizeData9;
-	private javax.swing.JButton renderImage;
-	private javax.swing.JButton resetBasicInput;
-	private javax.swing.JButton resetParameterRange;
-	private javax.swing.JButton storeSettings;
-	private javax.swing.JTextField totalGain;
-	private javax.swing.JMenu totalGainChList;
-	private javax.swing.JMenuItem totalGainData1;
-	private javax.swing.JMenuItem totalGainData10;
-	private javax.swing.JMenuItem totalGainData2;
-	private javax.swing.JMenuItem totalGainData3;
-	private javax.swing.JMenuItem totalGainData4;
-	private javax.swing.JMenuItem totalGainData5;
-	private javax.swing.JMenuItem totalGainData6;
-	private javax.swing.JMenuItem totalGainData7;
-	private javax.swing.JMenuItem totalGainData8;
-	private javax.swing.JMenuItem totalGainData9;
-	private javax.swing.JLabel totalGainLabel;
-	private javax.swing.JTextField windowWidth;
-	private javax.swing.JMenu windowWidthChList;
-	private javax.swing.JMenuItem windowWidthData1;
-	private javax.swing.JMenuItem windowWidthData10;
-	private javax.swing.JMenuItem windowWidthData2;
-	private javax.swing.JMenuItem windowWidthData3;
-	private javax.swing.JMenuItem windowWidthData4;
-	private javax.swing.JMenuItem windowWidthData5;
-	private javax.swing.JMenuItem windowWidthData6;
-	private javax.swing.JMenuItem windowWidthData7;
-	private javax.swing.JMenuItem windowWidthData8;
-	private javax.swing.JMenuItem windowWidthData9;
-	private javax.swing.JLabel windowWidthLabel;
-	// End of variables declaration                              
+
+    // Variables declaration - do not modify                     
+    private javax.swing.JPanel Analysis;
+    private javax.swing.JPanel BasicInp;
+    private javax.swing.JRadioButton GPUcomputation;
+    private javax.swing.JLabel Header;
+    private javax.swing.JLabel ParameterLabel;
+    private javax.swing.JPanel ParameterRange;
+    private javax.swing.JButton Process;
+    private javax.swing.JLabel XYrenderLabel;
+    private javax.swing.JLabel ZrenderLabel;
+    private javax.swing.JButton alignChannels;
+    private javax.swing.JLabel basicInput;
+    private javax.swing.ButtonGroup buttonGroup2;
+    private javax.swing.JButton calibrate;
+    private javax.swing.JTextField chAlignBinHighCount;
+    private javax.swing.JMenu chAlignBinHighCountChList;
+    private javax.swing.JMenuItem chAlignBinHighCountData1;
+    private javax.swing.JMenuItem chAlignBinHighCountData10;
+    private javax.swing.JMenuItem chAlignBinHighCountData2;
+    private javax.swing.JMenuItem chAlignBinHighCountData3;
+    private javax.swing.JMenuItem chAlignBinHighCountData4;
+    private javax.swing.JMenuItem chAlignBinHighCountData5;
+    private javax.swing.JMenuItem chAlignBinHighCountData6;
+    private javax.swing.JMenuItem chAlignBinHighCountData7;
+    private javax.swing.JMenuItem chAlignBinHighCountData8;
+    private javax.swing.JMenuItem chAlignBinHighCountData9;
+    private javax.swing.JTextField chAlignBinLowCount;
+    private javax.swing.JMenu chAlignBinLowCountChList;
+    private javax.swing.JMenuItem chAlignBinLowCountData1;
+    private javax.swing.JMenuItem chAlignBinLowCountData10;
+    private javax.swing.JMenuItem chAlignBinLowCountData2;
+    private javax.swing.JMenuItem chAlignBinLowCountData3;
+    private javax.swing.JMenuItem chAlignBinLowCountData4;
+    private javax.swing.JMenuItem chAlignBinLowCountData5;
+    private javax.swing.JMenuItem chAlignBinLowCountData6;
+    private javax.swing.JMenuItem chAlignBinLowCountData7;
+    private javax.swing.JMenuItem chAlignBinLowCountData8;
+    private javax.swing.JMenuItem chAlignBinLowCountData9;
+    private javax.swing.JTextField chAlignShiftXY;
+    private javax.swing.JMenu chAlignShiftXYChList;
+    private javax.swing.JMenuItem chAlignShiftXYData1;
+    private javax.swing.JMenuItem chAlignShiftXYData10;
+    private javax.swing.JMenuItem chAlignShiftXYData2;
+    private javax.swing.JMenuItem chAlignShiftXYData3;
+    private javax.swing.JMenuItem chAlignShiftXYData4;
+    private javax.swing.JMenuItem chAlignShiftXYData5;
+    private javax.swing.JMenuItem chAlignShiftXYData6;
+    private javax.swing.JMenuItem chAlignShiftXYData7;
+    private javax.swing.JMenuItem chAlignShiftXYData8;
+    private javax.swing.JMenuItem chAlignShiftXYData9;
+    private javax.swing.JTextField chAlignShiftZ;
+    private javax.swing.JMenu chAlignShiftZChList;
+    private javax.swing.JMenuItem chAlignShiftZData1;
+    private javax.swing.JMenuItem chAlignShiftZData10;
+    private javax.swing.JMenuItem chAlignShiftZData2;
+    private javax.swing.JMenuItem chAlignShiftZData3;
+    private javax.swing.JMenuItem chAlignShiftZData4;
+    private javax.swing.JMenuItem chAlignShiftZData5;
+    private javax.swing.JMenuItem chAlignShiftZData6;
+    private javax.swing.JMenuItem chAlignShiftZData7;
+    private javax.swing.JMenuItem chAlignShiftZData8;
+    private javax.swing.JMenuItem chAlignShiftZData9;
+    private javax.swing.JComboBox<String> channelId;
+    private javax.swing.JButton cleanTable;
+    private javax.swing.JButton clusterAnalysis;
+    private javax.swing.JButton correctBackground;
+    private javax.swing.JCheckBox doChannelAlign;
+    private javax.swing.JMenu doChromaticChList;
+    private javax.swing.JMenuItem doChromaticData1;
+    private javax.swing.JMenuItem doChromaticData10;
+    private javax.swing.JMenuItem doChromaticData2;
+    private javax.swing.JMenuItem doChromaticData3;
+    private javax.swing.JMenuItem doChromaticData4;
+    private javax.swing.JMenuItem doChromaticData5;
+    private javax.swing.JMenuItem doChromaticData6;
+    private javax.swing.JMenuItem doChromaticData7;
+    private javax.swing.JMenuItem doChromaticData8;
+    private javax.swing.JMenuItem doChromaticData9;
+    private javax.swing.JCheckBox doClusterAnalysis;
+    private javax.swing.JMenu doClusterAnalysisChList;
+    private javax.swing.JMenuItem doClusterAnalysisData1;
+    private javax.swing.JMenuItem doClusterAnalysisData10;
+    private javax.swing.JMenuItem doClusterAnalysisData2;
+    private javax.swing.JMenuItem doClusterAnalysisData3;
+    private javax.swing.JMenuItem doClusterAnalysisData4;
+    private javax.swing.JMenuItem doClusterAnalysisData5;
+    private javax.swing.JMenuItem doClusterAnalysisData6;
+    private javax.swing.JMenuItem doClusterAnalysisData7;
+    private javax.swing.JMenuItem doClusterAnalysisData8;
+    private javax.swing.JMenuItem doClusterAnalysisData9;
+    private javax.swing.JMenu doCorrelativeChList;
+    private javax.swing.JMenuItem doCorrelativeData1;
+    private javax.swing.JMenuItem doCorrelativeData10;
+    private javax.swing.JMenuItem doCorrelativeData2;
+    private javax.swing.JMenuItem doCorrelativeData3;
+    private javax.swing.JMenuItem doCorrelativeData4;
+    private javax.swing.JMenuItem doCorrelativeData5;
+    private javax.swing.JMenuItem doCorrelativeData6;
+    private javax.swing.JMenuItem doCorrelativeData7;
+    private javax.swing.JMenuItem doCorrelativeData8;
+    private javax.swing.JMenuItem doCorrelativeData9;
+    private javax.swing.JCheckBox doDriftCorrect;
+    private javax.swing.JCheckBox doFilterWidth;
+    private javax.swing.JMenu doFilterWidthChList;
+    private javax.swing.JMenuItem doFilterWidthData1;
+    private javax.swing.JMenuItem doFilterWidthData10;
+    private javax.swing.JMenuItem doFilterWidthData2;
+    private javax.swing.JMenuItem doFilterWidthData3;
+    private javax.swing.JMenuItem doFilterWidthData4;
+    private javax.swing.JMenuItem doFilterWidthData5;
+    private javax.swing.JMenuItem doFilterWidthData6;
+    private javax.swing.JMenuItem doFilterWidthData7;
+    private javax.swing.JMenuItem doFilterWidthData8;
+    private javax.swing.JMenuItem doFilterWidthData9;
+    private javax.swing.JCheckBox doFrame;
+    private javax.swing.JMenu doFrameChList;
+    private javax.swing.JMenuItem doFrameData1;
+    private javax.swing.JMenuItem doFrameData10;
+    private javax.swing.JMenuItem doFrameData2;
+    private javax.swing.JMenuItem doFrameData3;
+    private javax.swing.JMenuItem doFrameData4;
+    private javax.swing.JMenuItem doFrameData5;
+    private javax.swing.JMenuItem doFrameData6;
+    private javax.swing.JMenuItem doFrameData7;
+    private javax.swing.JMenuItem doFrameData8;
+    private javax.swing.JMenuItem doFrameData9;
+    private javax.swing.JCheckBox doGaussianSmoothing;
+    private javax.swing.JCheckBox doMinimalSignal;
+    private javax.swing.JMenu doMinimalSignalChList;
+    private javax.swing.JMenuItem doMinimalSignalData1;
+    private javax.swing.JMenuItem doMinimalSignalData10;
+    private javax.swing.JMenuItem doMinimalSignalData2;
+    private javax.swing.JMenuItem doMinimalSignalData3;
+    private javax.swing.JMenuItem doMinimalSignalData4;
+    private javax.swing.JMenuItem doMinimalSignalData5;
+    private javax.swing.JMenuItem doMinimalSignalData6;
+    private javax.swing.JMenuItem doMinimalSignalData7;
+    private javax.swing.JMenuItem doMinimalSignalData8;
+    private javax.swing.JMenuItem doMinimalSignalData9;
+    private javax.swing.JCheckBox doPhotonCount;
+    private javax.swing.JMenu doPhotonCountChList;
+    private javax.swing.JMenuItem doPhotonCountData1;
+    private javax.swing.JMenuItem doPhotonCountData10;
+    private javax.swing.JMenuItem doPhotonCountData2;
+    private javax.swing.JMenuItem doPhotonCountData3;
+    private javax.swing.JMenuItem doPhotonCountData4;
+    private javax.swing.JMenuItem doPhotonCountData5;
+    private javax.swing.JMenuItem doPhotonCountData6;
+    private javax.swing.JMenuItem doPhotonCountData7;
+    private javax.swing.JMenuItem doPhotonCountData8;
+    private javax.swing.JMenuItem doPhotonCountData9;
+    private javax.swing.JCheckBox doPrecisionXY;
+    private javax.swing.JMenu doPrecisionXYChList;
+    private javax.swing.JMenuItem doPrecisionXYData1;
+    private javax.swing.JMenuItem doPrecisionXYData10;
+    private javax.swing.JMenuItem doPrecisionXYData2;
+    private javax.swing.JMenuItem doPrecisionXYData3;
+    private javax.swing.JMenuItem doPrecisionXYData4;
+    private javax.swing.JMenuItem doPrecisionXYData5;
+    private javax.swing.JMenuItem doPrecisionXYData6;
+    private javax.swing.JMenuItem doPrecisionXYData7;
+    private javax.swing.JMenuItem doPrecisionXYData8;
+    private javax.swing.JMenuItem doPrecisionXYData9;
+    private javax.swing.JCheckBox doPrecisionZ;
+    private javax.swing.JMenu doPrecisionZChList;
+    private javax.swing.JMenuItem doPrecisionZData1;
+    private javax.swing.JMenuItem doPrecisionZData10;
+    private javax.swing.JMenuItem doPrecisionZData2;
+    private javax.swing.JMenuItem doPrecisionZData3;
+    private javax.swing.JMenuItem doPrecisionZData4;
+    private javax.swing.JMenuItem doPrecisionZData5;
+    private javax.swing.JMenuItem doPrecisionZData6;
+    private javax.swing.JMenuItem doPrecisionZData7;
+    private javax.swing.JMenuItem doPrecisionZData8;
+    private javax.swing.JMenuItem doPrecisionZData9;
+    private javax.swing.JCheckBox doRenderImage;
+    private javax.swing.JMenu doRenderImageChList;
+    private javax.swing.JMenuItem doRenderImageData1;
+    private javax.swing.JMenuItem doRenderImageData10;
+    private javax.swing.JMenuItem doRenderImageData2;
+    private javax.swing.JMenuItem doRenderImageData3;
+    private javax.swing.JMenuItem doRenderImageData4;
+    private javax.swing.JMenuItem doRenderImageData5;
+    private javax.swing.JMenuItem doRenderImageData6;
+    private javax.swing.JMenuItem doRenderImageData7;
+    private javax.swing.JMenuItem doRenderImageData8;
+    private javax.swing.JMenuItem doRenderImageData9;
+    private javax.swing.JCheckBox doRsquare;
+    private javax.swing.JMenu doRsquareChList;
+    private javax.swing.JMenuItem doRsquareData1;
+    private javax.swing.JMenuItem doRsquareData10;
+    private javax.swing.JMenuItem doRsquareData2;
+    private javax.swing.JMenuItem doRsquareData3;
+    private javax.swing.JMenuItem doRsquareData4;
+    private javax.swing.JMenuItem doRsquareData5;
+    private javax.swing.JMenuItem doRsquareData6;
+    private javax.swing.JMenuItem doRsquareData7;
+    private javax.swing.JMenuItem doRsquareData8;
+    private javax.swing.JMenuItem doRsquareData9;
+    private javax.swing.JCheckBox doSigmaXY;
+    private javax.swing.JMenu doSigmaXYChList;
+    private javax.swing.JMenuItem doSigmaXYData1;
+    private javax.swing.JMenuItem doSigmaXYData10;
+    private javax.swing.JMenuItem doSigmaXYData2;
+    private javax.swing.JMenuItem doSigmaXYData3;
+    private javax.swing.JMenuItem doSigmaXYData4;
+    private javax.swing.JMenuItem doSigmaXYData5;
+    private javax.swing.JMenuItem doSigmaXYData6;
+    private javax.swing.JMenuItem doSigmaXYData7;
+    private javax.swing.JMenuItem doSigmaXYData8;
+    private javax.swing.JMenuItem doSigmaXYData9;
+    private javax.swing.JCheckBox doZ;
+    private javax.swing.JMenu doZChList;
+    private javax.swing.JMenuItem doZData1;
+    private javax.swing.JMenuItem doZData10;
+    private javax.swing.JMenuItem doZData2;
+    private javax.swing.JMenuItem doZData3;
+    private javax.swing.JMenuItem doZData4;
+    private javax.swing.JMenuItem doZData5;
+    private javax.swing.JMenuItem doZData6;
+    private javax.swing.JMenuItem doZData7;
+    private javax.swing.JMenuItem doZData8;
+    private javax.swing.JMenuItem doZData9;
+    private javax.swing.JTextField driftCorrBinHighCount;
+    private javax.swing.JMenu driftCorrBinHighCountChList;
+    private javax.swing.JMenuItem driftCorrBinHighCountData1;
+    private javax.swing.JMenuItem driftCorrBinHighCountData10;
+    private javax.swing.JMenuItem driftCorrBinHighCountData2;
+    private javax.swing.JMenuItem driftCorrBinHighCountData3;
+    private javax.swing.JMenuItem driftCorrBinHighCountData4;
+    private javax.swing.JMenuItem driftCorrBinHighCountData5;
+    private javax.swing.JMenuItem driftCorrBinHighCountData6;
+    private javax.swing.JMenuItem driftCorrBinHighCountData7;
+    private javax.swing.JMenuItem driftCorrBinHighCountData8;
+    private javax.swing.JMenuItem driftCorrBinHighCountData9;
+    private javax.swing.JTextField driftCorrBinLowCount;
+    private javax.swing.JMenu driftCorrBinLowCountChList;
+    private javax.swing.JMenuItem driftCorrBinLowCountData1;
+    private javax.swing.JMenuItem driftCorrBinLowCountData10;
+    private javax.swing.JMenuItem driftCorrBinLowCountData2;
+    private javax.swing.JMenuItem driftCorrBinLowCountData3;
+    private javax.swing.JMenuItem driftCorrBinLowCountData4;
+    private javax.swing.JMenuItem driftCorrBinLowCountData5;
+    private javax.swing.JMenuItem driftCorrBinLowCountData6;
+    private javax.swing.JMenuItem driftCorrBinLowCountData7;
+    private javax.swing.JMenuItem driftCorrBinLowCountData8;
+    private javax.swing.JMenuItem driftCorrBinLowCountData9;
+    private javax.swing.JTextField driftCorrShiftXY;
+    private javax.swing.JMenu driftCorrShiftXYChList;
+    private javax.swing.JMenuItem driftCorrShiftXYData1;
+    private javax.swing.JMenuItem driftCorrShiftXYData10;
+    private javax.swing.JMenuItem driftCorrShiftXYData2;
+    private javax.swing.JMenuItem driftCorrShiftXYData3;
+    private javax.swing.JMenuItem driftCorrShiftXYData4;
+    private javax.swing.JMenuItem driftCorrShiftXYData5;
+    private javax.swing.JMenuItem driftCorrShiftXYData6;
+    private javax.swing.JMenuItem driftCorrShiftXYData7;
+    private javax.swing.JMenuItem driftCorrShiftXYData8;
+    private javax.swing.JMenuItem driftCorrShiftXYData9;
+    private javax.swing.JTextField driftCorrShiftZ;
+    private javax.swing.JMenu driftCorrShiftZChList;
+    private javax.swing.JMenuItem driftCorrShiftZData1;
+    private javax.swing.JMenuItem driftCorrShiftZData10;
+    private javax.swing.JMenuItem driftCorrShiftZData2;
+    private javax.swing.JMenuItem driftCorrShiftZData3;
+    private javax.swing.JMenuItem driftCorrShiftZData4;
+    private javax.swing.JMenuItem driftCorrShiftZData5;
+    private javax.swing.JMenuItem driftCorrShiftZData6;
+    private javax.swing.JMenuItem driftCorrShiftZData7;
+    private javax.swing.JMenuItem driftCorrShiftZData8;
+    private javax.swing.JMenuItem driftCorrShiftZData9;
+    private javax.swing.JButton driftCorrect;
+    private javax.swing.JTextField epsilon;
+    private javax.swing.JMenu epsilonChList;
+    private javax.swing.JMenuItem epsilonData1;
+    private javax.swing.JMenuItem epsilonData10;
+    private javax.swing.JMenuItem epsilonData2;
+    private javax.swing.JMenuItem epsilonData3;
+    private javax.swing.JMenuItem epsilonData4;
+    private javax.swing.JMenuItem epsilonData5;
+    private javax.swing.JMenuItem epsilonData6;
+    private javax.swing.JMenuItem epsilonData7;
+    private javax.swing.JMenuItem epsilonData8;
+    private javax.swing.JMenuItem epsilonData9;
+    private javax.swing.JLabel epsilonLabel;
+    private javax.swing.JMenu fiducialsChList;
+    private javax.swing.JMenuItem fiducialsChoice1;
+    private javax.swing.JMenuItem fiducialsChoice10;
+    private javax.swing.JMenuItem fiducialsChoice2;
+    private javax.swing.JMenuItem fiducialsChoice3;
+    private javax.swing.JMenuItem fiducialsChoice4;
+    private javax.swing.JMenuItem fiducialsChoice5;
+    private javax.swing.JMenuItem fiducialsChoice6;
+    private javax.swing.JMenuItem fiducialsChoice7;
+    private javax.swing.JMenuItem fiducialsChoice8;
+    private javax.swing.JMenuItem fiducialsChoice9;
+    private javax.swing.JTextField inputPixelSize;
+    private javax.swing.JLabel inputPixelSizeLabel;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JButton loadSettings;
+    private javax.swing.JButton localize_Fit;
+    private javax.swing.JTextField maxFrame;
+    private javax.swing.JMenu maxFrameChList;
+    private javax.swing.JMenuItem maxFrameData1;
+    private javax.swing.JMenuItem maxFrameData10;
+    private javax.swing.JMenuItem maxFrameData2;
+    private javax.swing.JMenuItem maxFrameData3;
+    private javax.swing.JMenuItem maxFrameData4;
+    private javax.swing.JMenuItem maxFrameData5;
+    private javax.swing.JMenuItem maxFrameData6;
+    private javax.swing.JMenuItem maxFrameData7;
+    private javax.swing.JMenuItem maxFrameData8;
+    private javax.swing.JMenuItem maxFrameData9;
+    private javax.swing.JLabel maxLabel;
+    private javax.swing.JLabel maxLabel1;
+    private javax.swing.JLabel maxLabel2;
+    private javax.swing.JLabel maxLabel3;
+    private javax.swing.JLabel maxLabel4;
+    private javax.swing.JTextField maxPhotonCount;
+    private javax.swing.JMenu maxPhotonCountChList;
+    private javax.swing.JMenuItem maxPhotonCountData1;
+    private javax.swing.JMenuItem maxPhotonCountData10;
+    private javax.swing.JMenuItem maxPhotonCountData2;
+    private javax.swing.JMenuItem maxPhotonCountData3;
+    private javax.swing.JMenuItem maxPhotonCountData4;
+    private javax.swing.JMenuItem maxPhotonCountData5;
+    private javax.swing.JMenuItem maxPhotonCountData6;
+    private javax.swing.JMenuItem maxPhotonCountData7;
+    private javax.swing.JMenuItem maxPhotonCountData8;
+    private javax.swing.JMenuItem maxPhotonCountData9;
+    private javax.swing.JTextField maxPrecisionXY;
+    private javax.swing.JMenu maxPrecisionXYChList;
+    private javax.swing.JMenuItem maxPrecisionXYData1;
+    private javax.swing.JMenuItem maxPrecisionXYData10;
+    private javax.swing.JMenuItem maxPrecisionXYData2;
+    private javax.swing.JMenuItem maxPrecisionXYData3;
+    private javax.swing.JMenuItem maxPrecisionXYData4;
+    private javax.swing.JMenuItem maxPrecisionXYData5;
+    private javax.swing.JMenuItem maxPrecisionXYData6;
+    private javax.swing.JMenuItem maxPrecisionXYData7;
+    private javax.swing.JMenuItem maxPrecisionXYData8;
+    private javax.swing.JMenuItem maxPrecisionXYData9;
+    private javax.swing.JTextField maxPrecisionZ;
+    private javax.swing.JMenu maxPrecisionZChList;
+    private javax.swing.JMenuItem maxPrecisionZData1;
+    private javax.swing.JMenuItem maxPrecisionZData10;
+    private javax.swing.JMenuItem maxPrecisionZData2;
+    private javax.swing.JMenuItem maxPrecisionZData3;
+    private javax.swing.JMenuItem maxPrecisionZData4;
+    private javax.swing.JMenuItem maxPrecisionZData5;
+    private javax.swing.JMenuItem maxPrecisionZData6;
+    private javax.swing.JMenuItem maxPrecisionZData7;
+    private javax.swing.JMenuItem maxPrecisionZData8;
+    private javax.swing.JMenuItem maxPrecisionZData9;
+    private javax.swing.JTextField maxRsquare;
+    private javax.swing.JMenu maxRsquareChList;
+    private javax.swing.JMenuItem maxRsquareData1;
+    private javax.swing.JMenuItem maxRsquareData10;
+    private javax.swing.JMenuItem maxRsquareData2;
+    private javax.swing.JMenuItem maxRsquareData3;
+    private javax.swing.JMenuItem maxRsquareData4;
+    private javax.swing.JMenuItem maxRsquareData5;
+    private javax.swing.JMenuItem maxRsquareData6;
+    private javax.swing.JMenuItem maxRsquareData7;
+    private javax.swing.JMenuItem maxRsquareData8;
+    private javax.swing.JMenuItem maxRsquareData9;
+    private javax.swing.JTextField maxSigmaXY;
+    private javax.swing.JMenu maxSigmaXYChList;
+    private javax.swing.JMenuItem maxSigmaXYData1;
+    private javax.swing.JMenuItem maxSigmaXYData10;
+    private javax.swing.JMenuItem maxSigmaXYData2;
+    private javax.swing.JMenuItem maxSigmaXYData3;
+    private javax.swing.JMenuItem maxSigmaXYData4;
+    private javax.swing.JMenuItem maxSigmaXYData5;
+    private javax.swing.JMenuItem maxSigmaXYData6;
+    private javax.swing.JMenuItem maxSigmaXYData7;
+    private javax.swing.JMenuItem maxSigmaXYData8;
+    private javax.swing.JMenuItem maxSigmaXYData9;
+    private javax.swing.JTextField maxZ;
+    private javax.swing.JMenu maxZChList;
+    private javax.swing.JMenuItem maxZData1;
+    private javax.swing.JMenuItem maxZData10;
+    private javax.swing.JMenuItem maxZData2;
+    private javax.swing.JMenuItem maxZData3;
+    private javax.swing.JMenuItem maxZData4;
+    private javax.swing.JMenuItem maxZData5;
+    private javax.swing.JMenuItem maxZData6;
+    private javax.swing.JMenuItem maxZData7;
+    private javax.swing.JMenuItem maxZData8;
+    private javax.swing.JMenuItem maxZData9;
+    private javax.swing.JTextField minFrame;
+    private javax.swing.JMenu minFrameChList;
+    private javax.swing.JMenuItem minFrameData1;
+    private javax.swing.JMenuItem minFrameData10;
+    private javax.swing.JMenuItem minFrameData2;
+    private javax.swing.JMenuItem minFrameData3;
+    private javax.swing.JMenuItem minFrameData4;
+    private javax.swing.JMenuItem minFrameData5;
+    private javax.swing.JMenuItem minFrameData6;
+    private javax.swing.JMenuItem minFrameData7;
+    private javax.swing.JMenuItem minFrameData8;
+    private javax.swing.JMenuItem minFrameData9;
+    private javax.swing.JLabel minLabel;
+    private javax.swing.JLabel minLabel1;
+    private javax.swing.JLabel minLabel2;
+    private javax.swing.JLabel minLabel3;
+    private javax.swing.JLabel minLabel4;
+    private javax.swing.JTextField minPhotonCount;
+    private javax.swing.JMenu minPhotonCountChList;
+    private javax.swing.JMenuItem minPhotonCountData1;
+    private javax.swing.JMenuItem minPhotonCountData10;
+    private javax.swing.JMenuItem minPhotonCountData2;
+    private javax.swing.JMenuItem minPhotonCountData3;
+    private javax.swing.JMenuItem minPhotonCountData4;
+    private javax.swing.JMenuItem minPhotonCountData5;
+    private javax.swing.JMenuItem minPhotonCountData6;
+    private javax.swing.JMenuItem minPhotonCountData7;
+    private javax.swing.JMenuItem minPhotonCountData8;
+    private javax.swing.JMenuItem minPhotonCountData9;
+    private javax.swing.JTextField minPrecisionXY;
+    private javax.swing.JMenu minPrecisionXYChList;
+    private javax.swing.JMenuItem minPrecisionXYData1;
+    private javax.swing.JMenuItem minPrecisionXYData10;
+    private javax.swing.JMenuItem minPrecisionXYData2;
+    private javax.swing.JMenuItem minPrecisionXYData3;
+    private javax.swing.JMenuItem minPrecisionXYData4;
+    private javax.swing.JMenuItem minPrecisionXYData5;
+    private javax.swing.JMenuItem minPrecisionXYData6;
+    private javax.swing.JMenuItem minPrecisionXYData7;
+    private javax.swing.JMenuItem minPrecisionXYData8;
+    private javax.swing.JMenuItem minPrecisionXYData9;
+    private javax.swing.JTextField minPrecisionZ;
+    private javax.swing.JMenu minPrecisionZChList;
+    private javax.swing.JMenuItem minPrecisionZData1;
+    private javax.swing.JMenuItem minPrecisionZData10;
+    private javax.swing.JMenuItem minPrecisionZData2;
+    private javax.swing.JMenuItem minPrecisionZData3;
+    private javax.swing.JMenuItem minPrecisionZData4;
+    private javax.swing.JMenuItem minPrecisionZData5;
+    private javax.swing.JMenuItem minPrecisionZData6;
+    private javax.swing.JMenuItem minPrecisionZData7;
+    private javax.swing.JMenuItem minPrecisionZData8;
+    private javax.swing.JMenuItem minPrecisionZData9;
+    private javax.swing.JTextField minPtsCluster;
+    private javax.swing.JMenu minPtsClusterChList;
+    private javax.swing.JMenuItem minPtsClusterData1;
+    private javax.swing.JMenuItem minPtsClusterData10;
+    private javax.swing.JMenuItem minPtsClusterData2;
+    private javax.swing.JMenuItem minPtsClusterData3;
+    private javax.swing.JMenuItem minPtsClusterData4;
+    private javax.swing.JMenuItem minPtsClusterData5;
+    private javax.swing.JMenuItem minPtsClusterData6;
+    private javax.swing.JMenuItem minPtsClusterData7;
+    private javax.swing.JMenuItem minPtsClusterData8;
+    private javax.swing.JMenuItem minPtsClusterData9;
+    private javax.swing.JLabel minPtsLabel;
+    private javax.swing.JTextField minRsquare;
+    private javax.swing.JMenu minRsquareChList;
+    private javax.swing.JMenuItem minRsquareData1;
+    private javax.swing.JMenuItem minRsquareData10;
+    private javax.swing.JMenuItem minRsquareData2;
+    private javax.swing.JMenuItem minRsquareData3;
+    private javax.swing.JMenuItem minRsquareData4;
+    private javax.swing.JMenuItem minRsquareData5;
+    private javax.swing.JMenuItem minRsquareData6;
+    private javax.swing.JMenuItem minRsquareData7;
+    private javax.swing.JMenuItem minRsquareData8;
+    private javax.swing.JMenuItem minRsquareData9;
+    private javax.swing.JTextField minSigmaXY;
+    private javax.swing.JMenu minSigmaXYChList;
+    private javax.swing.JMenuItem minSigmaXYData1;
+    private javax.swing.JMenuItem minSigmaXYData10;
+    private javax.swing.JMenuItem minSigmaXYData2;
+    private javax.swing.JMenuItem minSigmaXYData3;
+    private javax.swing.JMenuItem minSigmaXYData4;
+    private javax.swing.JMenuItem minSigmaXYData5;
+    private javax.swing.JMenuItem minSigmaXYData6;
+    private javax.swing.JMenuItem minSigmaXYData7;
+    private javax.swing.JMenuItem minSigmaXYData8;
+    private javax.swing.JMenuItem minSigmaXYData9;
+    private javax.swing.JTextField minZ;
+    private javax.swing.JMenu minZChList;
+    private javax.swing.JMenuItem minZData1;
+    private javax.swing.JMenuItem minZData10;
+    private javax.swing.JMenuItem minZData2;
+    private javax.swing.JMenuItem minZData3;
+    private javax.swing.JMenuItem minZData4;
+    private javax.swing.JMenuItem minZData5;
+    private javax.swing.JMenuItem minZData6;
+    private javax.swing.JMenuItem minZData7;
+    private javax.swing.JMenuItem minZData8;
+    private javax.swing.JMenuItem minZData9;
+    private javax.swing.JTextField minimalSignal;
+    private javax.swing.JMenu minimalSignalChList;
+    private javax.swing.JMenuItem minimalSignalData1;
+    private javax.swing.JMenuItem minimalSignalData10;
+    private javax.swing.JMenuItem minimalSignalData2;
+    private javax.swing.JMenuItem minimalSignalData3;
+    private javax.swing.JMenuItem minimalSignalData4;
+    private javax.swing.JMenuItem minimalSignalData5;
+    private javax.swing.JMenuItem minimalSignalData6;
+    private javax.swing.JMenuItem minimalSignalData7;
+    private javax.swing.JMenuItem minimalSignalData8;
+    private javax.swing.JMenuItem minimalSignalData9;
+    private javax.swing.JComboBox<String> modality;
+    private javax.swing.JTextField numberOfBinsDriftCorr;
+    private javax.swing.JMenu numberOfBinsDriftCorrChList;
+    private javax.swing.JMenuItem numberOfBinsDriftCorrData1;
+    private javax.swing.JMenuItem numberOfBinsDriftCorrData10;
+    private javax.swing.JMenuItem numberOfBinsDriftCorrData2;
+    private javax.swing.JMenuItem numberOfBinsDriftCorrData3;
+    private javax.swing.JMenuItem numberOfBinsDriftCorrData4;
+    private javax.swing.JMenuItem numberOfBinsDriftCorrData5;
+    private javax.swing.JMenuItem numberOfBinsDriftCorrData6;
+    private javax.swing.JMenuItem numberOfBinsDriftCorrData7;
+    private javax.swing.JMenuItem numberOfBinsDriftCorrData8;
+    private javax.swing.JMenuItem numberOfBinsDriftCorrData9;
+    private javax.swing.JLabel numberOfBinsLabel;
+    private javax.swing.JTextField outputPixelSize;
+    private javax.swing.JMenu outputPixelSizeChList;
+    private javax.swing.JMenuItem outputPixelSizeData1;
+    private javax.swing.JMenuItem outputPixelSizeData10;
+    private javax.swing.JMenuItem outputPixelSizeData2;
+    private javax.swing.JMenuItem outputPixelSizeData3;
+    private javax.swing.JMenuItem outputPixelSizeData4;
+    private javax.swing.JMenuItem outputPixelSizeData5;
+    private javax.swing.JMenuItem outputPixelSizeData6;
+    private javax.swing.JMenuItem outputPixelSizeData7;
+    private javax.swing.JMenuItem outputPixelSizeData8;
+    private javax.swing.JMenuItem outputPixelSizeData9;
+    private javax.swing.JLabel outputPixelSizeLabel;
+    private javax.swing.JTextField outputPixelSizeZ;
+    private javax.swing.JRadioButton parallelComputation;
+    private javax.swing.JLabel particlesPerBinLabel;
+    private javax.swing.JLabel particlesPerBinLabel1;
+    private javax.swing.JLabel particlesPerBinLabel2;
+    private javax.swing.JLabel particlesPerBinLabelchAlign;
+    private javax.swing.JMenu pixelSizeChList;
+    private javax.swing.JMenuItem pixelSizeData1;
+    private javax.swing.JMenuItem pixelSizeData10;
+    private javax.swing.JMenuItem pixelSizeData2;
+    private javax.swing.JMenuItem pixelSizeData3;
+    private javax.swing.JMenuItem pixelSizeData4;
+    private javax.swing.JMenuItem pixelSizeData5;
+    private javax.swing.JMenuItem pixelSizeData6;
+    private javax.swing.JMenuItem pixelSizeData7;
+    private javax.swing.JMenuItem pixelSizeData8;
+    private javax.swing.JMenuItem pixelSizeData9;
+    private javax.swing.JButton renderImage;
+    private javax.swing.JButton resetBasicInput;
+    private javax.swing.JButton resetParameterRange;
+    private javax.swing.JButton storeSettings;
+    private javax.swing.JTextField totalGain;
+    private javax.swing.JMenu totalGainChList;
+    private javax.swing.JMenuItem totalGainData1;
+    private javax.swing.JMenuItem totalGainData10;
+    private javax.swing.JMenuItem totalGainData2;
+    private javax.swing.JMenuItem totalGainData3;
+    private javax.swing.JMenuItem totalGainData4;
+    private javax.swing.JMenuItem totalGainData5;
+    private javax.swing.JMenuItem totalGainData6;
+    private javax.swing.JMenuItem totalGainData7;
+    private javax.swing.JMenuItem totalGainData8;
+    private javax.swing.JMenuItem totalGainData9;
+    private javax.swing.JLabel totalGainLabel;
+    private javax.swing.JTextField windowWidth;
+    private javax.swing.JMenu windowWidthChList;
+    private javax.swing.JMenuItem windowWidthData1;
+    private javax.swing.JMenuItem windowWidthData10;
+    private javax.swing.JMenuItem windowWidthData2;
+    private javax.swing.JMenuItem windowWidthData3;
+    private javax.swing.JMenuItem windowWidthData4;
+    private javax.swing.JMenuItem windowWidthData5;
+    private javax.swing.JMenuItem windowWidthData6;
+    private javax.swing.JMenuItem windowWidthData7;
+    private javax.swing.JMenuItem windowWidthData8;
+    private javax.swing.JMenuItem windowWidthData9;
+    // End of variables declaration         
 }
