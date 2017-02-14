@@ -3734,7 +3734,6 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 
 	private void driftCorrectActionPerformed(java.awt.event.ActionEvent evt) {                                             
 		updateList(channelId.getSelectedIndex()-1);
-
 		int selectedModel = 5;
 		if (parallelComputation.isSelected()) // parallel computation.
 			selectedModel = 0;
@@ -3749,11 +3748,12 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		int[] minParticles = getDriftCorrBinLowCount();
 		int[] maxParticles = getDriftCorrBinHighCount();
 		int[] bins         = getNumberOfBinsDriftCorr();
-		int[][] boundry     = getDriftCorrShift();            
+		int[][] boundry    = getDriftCorrShift();            
 
 		try
 		{
-			correctDrift.run(boundry, bins, maxParticles, minParticles, selectedModel); // drift correct all channels.
+			correctDrift.run(boundry, bins, maxParticles, minParticles, selectedModel); // drift correct all channels.			
+			
 		}		
 		catch (NullPointerException e)
 		{

@@ -377,7 +377,7 @@ public class SMLocalizerProcess {
 		
 		if (doDfriftCorr)
 		{	         
-			correctDrift.run(driftCorrshift, driftCorrBins, driftCorrHighCount, driftCorrLowCount, selectedModel); // drift correct all channels.
+		//	correctDrift.run(driftCorrshift, driftCorrBins, driftCorrHighCount, driftCorrLowCount, selectedModel,pixelSize); // drift correct all channels.
 		}
 		if (doChAlign)
 		{

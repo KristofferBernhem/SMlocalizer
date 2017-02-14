@@ -30,14 +30,9 @@ import static jcuda.driver.JCudaDriver.cuModuleLoadDataEx;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import ij.gui.Plot;
+import ij.plugin.filter.Analyzer;
 import jcuda.Pointer;
 import jcuda.Sizeof;
 import jcuda.driver.CUcontext;
@@ -56,12 +51,12 @@ public class correctDrift {
 		Particle P = new Particle();
 		P.x = 100;
 		P.y = 100;
-		P.z = 50;		
+		//P.z = 50;		
 		P.channel = 1;
 		Particle Psecond = new Particle();
 		Psecond.x = 1000;
 		Psecond.y = 1000;
-		Psecond.z = 500;
+		//Psecond.z = 500;
 		Psecond.channel = 1;
 		ArrayList<Particle> A = new ArrayList<Particle>();
 		double drift = 0.20;
@@ -69,7 +64,7 @@ public class correctDrift {
 			Particle P2 = new Particle();
 			P2.x = P.x - i*drift;
 			P2.y = P.y - i*drift;
-			P2.z = P.z - 2*i*drift;
+		//	P2.z = P.z - 2*i*drift;
 			P2.channel = 1;
 			P2.include = 1;
 			P2.frame = (int) i;
@@ -79,7 +74,7 @@ public class correctDrift {
 			Particle P4 = new Particle();
 			P4.x = Psecond.x - i*drift;
 			P4.y = Psecond.y - i*drift;
-			P4.z = Psecond.z - 2*i*drift;
+	//		P4.z = Psecond.z - 2*i*drift;
 			P4.frame = (int) i;
 			P4.channel = 1;
 			P4.include = 1;
@@ -111,18 +106,58 @@ public class correctDrift {
 	 * drift correct the fitted results table.
 	 */
 	public static void run(int[][] boundry, int[] nBins, int[] nParticles, int[] minParticles, int selectedModel){
-		int[] maxDistance = {2500,2500,2500}; // everything beyond 50 nm apart after shift will not affect outcome.
+		//int[] maxDistance = {2500,2500,2500}; // everything beyond 50 nm apart after shift will not affect outcome.
 		ArrayList<Particle> locatedParticles = TableIO.Load(); // Get current table data.		
 		ArrayList<Particle> correctedResults = new ArrayList<Particle>(); // Output arraylist, will contain all particles that fit user input requirements after drift correction.
+		ij.measure.ResultsTable tab = Analyzer.getResultsTable();
+		double width = tab.getValue("width", 0);
+		double height = tab.getValue("height", 0);
+		int pixelSize = 20; // pixelsize for correlation images, will be improved upon once for final precision of 10 nm.
+		int pixelSizeZ = 20; // pixelsize for correlation images, will be improved upon once for final precision of 10 nm.
+		int[] size = {(int)(width/pixelSize), (int)(height/pixelSize),1};
 		if (locatedParticles.size() == 0)
 		{
 			ij.IJ.log("No data to align.");
 			return;
 		}
-		double Channels = locatedParticles.get(locatedParticles.size()-1).channel;		
+	//	double Channels = locatedParticles.get(locatedParticles.size()-1).channel;		
 
-		if (selectedModel == 0)// parallel.
-		{
+		//if (selectedModel == 0)// parallel.
+	//	{
+		
+			boolean twoD = true;
+			int idx = 0;
+			double zMin = 0;
+			double zMax = 0;
+			while (idx < locatedParticles.size())
+			{
+				if (locatedParticles.get(idx).z != 0)
+				{
+					twoD = false;
+					if (locatedParticles.get(idx).z < zMin)
+						zMin = locatedParticles.get(idx).z ;
+					else if (locatedParticles.get(idx).z > zMax)
+						zMax = locatedParticles.get(idx).z ;
+				}
+				idx++;
+			}
+			size[2] = (int) (Math.ceil(zMax-zMin));
+			for (int i = 0; i < 10; i++)
+			{
+				boundry[0][i] /= pixelSize;
+				boundry[1][i] /= pixelSizeZ;
+			}
+			if (twoD)
+			{				
+				size[2] = 1; // 2D data.
+				correctedResults = ImageCrossCorr3D.run(locatedParticles, nBins, boundry, size ,pixelSize,pixelSizeZ,true);
+			}
+			else
+				correctedResults = ImageCrossCorr3D.run(locatedParticles, nBins, boundry, size ,pixelSize,pixelSizeZ,true);
+			
+			
+			TableIO.Store(correctedResults);
+			/*
 			int lastIndex = 0;
 			int startIndex = 0;
 			for (int Ch = 1; Ch <= Channels; Ch ++)
@@ -285,7 +320,7 @@ public class correctDrift {
 					tempPart.x = locatedParticles.get(idx).x - lambda[tempPart.frame-1][0];
 					tempPart.y = locatedParticles.get(idx).y - lambda[tempPart.frame-1][1];
 					tempPart.z = locatedParticles.get(idx).z - lambda[tempPart.frame-1][2];*/
-					if(tempPart.x >= 0){
+	/*				if(tempPart.x >= 0){
 						if(tempPart.y >= 0){
 
 							correctedResults.add(tempPart);
@@ -312,8 +347,8 @@ public class correctDrift {
 				if (Ch == Channels){
 					TableIO.Store(correctedResults);
 				}			
-			}// channel loop.
-		}else // end parallel. 
+			}// channel loop.*/
+	/*	}else // end parallel. 
 			if (selectedModel == 2) // GPU.
 			{
 				// Initialize the driver and create a context for the first device.
@@ -609,7 +644,7 @@ public class correctDrift {
 						tempPart.x = locatedParticles.get(idx).x - lambda[tempPart.frame-1][0];
 						tempPart.y = locatedParticles.get(idx).y - lambda[tempPart.frame-1][1];
 						tempPart.z = locatedParticles.get(idx).z - lambda[tempPart.frame-1][2];*/
-						if(tempPart.x >= 0){
+		/*				if(tempPart.x >= 0){
 							if(tempPart.y >= 0){
 
 								correctedResults.add(tempPart);
@@ -637,12 +672,63 @@ public class correctDrift {
 						TableIO.Store(correctedResults);
 					}	
 				} // channel loop.
-			} // end GPU.
+			} // end GPU.*/
 
 
 	}
 	public static void ChannelAlign(int[][] boundry, int[] nParticles, int[] minParticles, int selectedModel){
-		int[] maxDistance = {2500,2500,2500}; // everything beyond 50 nm apart after shift will not affect outcome.
+	
+		ArrayList<Particle> locatedParticles = TableIO.Load(); // Get current table data.		
+		ArrayList<Particle> correctedResults = new ArrayList<Particle>(); // Output arraylist, will contain all particles that fit user input requirements after drift correction.
+		ij.measure.ResultsTable tab = Analyzer.getResultsTable();
+		double width = tab.getValue("width", 0);
+		double height = tab.getValue("height", 0);
+		int pixelSize = 20; // pixelsize for correlation images, will be improved upon once for final precision of 10 nm.
+		int pixelSizeZ = 20; // pixelsize for correlation images, will be improved upon once for final precision of 10 nm.
+		int[] size = {(int)(width/pixelSize), (int)(height/pixelSize),1};
+		if (locatedParticles.size() == 0)
+		{
+			ij.IJ.log("No data to align.");
+			return;
+		}
+//		double Channels = locatedParticles.get(locatedParticles.size()-1).channel;		
+
+		//if (selectedModel == 0)// parallel.
+	//	{
+			boolean twoD = true;
+			int idx = 0;
+			double zMin = 0;
+			double zMax = 0;
+			while (idx < locatedParticles.size())
+			{
+				if (locatedParticles.get(idx).z != 0)
+				{
+					twoD = false;
+					if (locatedParticles.get(idx).z < zMin)
+						zMin = locatedParticles.get(idx).z ;
+					else if (locatedParticles.get(idx).z > zMax)
+						zMax = locatedParticles.get(idx).z ;
+				}
+				idx++;
+			}
+			size[2] = (int) (Math.ceil(zMax-zMin));
+			for (int i = 0; i < 10; i++)
+			{
+				boundry[0][i] /= pixelSize;
+				boundry[1][i] /= pixelSizeZ;
+			}
+			if (twoD)
+			{
+				size[2] = 1; // 2D data.
+				correctedResults = ImageCrossCorr3D.runChannel(locatedParticles, boundry, size ,pixelSize,pixelSizeZ,true);
+			}
+			else
+				correctedResults = ImageCrossCorr3D.runChannel(locatedParticles, boundry, size ,pixelSize,pixelSizeZ,true);
+			
+			
+			TableIO.Store(correctedResults);
+		
+		/*	int[] maxDistance = {2500,2500,2500}; // everything beyond 50 nm apart after shift will not affect outcome.
 		ArrayList<Particle> locatedParticles = TableIO.Load(); // Get current table data.
 		if (locatedParticles.size() == 0){ // If no particles.
 			ij.IJ.log("No data to align.");
@@ -810,7 +896,7 @@ public class correctDrift {
 						/*
 						 * Load data to device:
 						 */
-						if (z == 0) // 2D samples.
+		/*				if (z == 0) // 2D samples.
 						{
 							int[] referenceParticles = new int[2*Alpha.size()];
 							int[] targetParticles 	 = new int[2*Beta.size()];
@@ -980,7 +1066,7 @@ public class correctDrift {
 					
 					TableIO.Store(locatedParticles);
 					ij.IJ.log("Channels aligned.");					
-				} // end GPU.
+				} // end GPU.*/
 	}
 
 	public static double[] interp(double X1, double X2, int n){
