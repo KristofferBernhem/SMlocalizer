@@ -99,20 +99,20 @@ public class correctDrift {
 			minParticles[i] = 10;					
 
 		}
-		run(boundry,nBins,nParticles,minParticles,0);
+		run(boundry,nBins,0);
 	}
 
 	/*
 	 * drift correct the fitted results table.
 	 */
-	public static void run(int[][] boundry, int[] nBins, int[] nParticles, int[] minParticles, int selectedModel){
+	public static void run(int[][] boundry, int[] nBins, int selectedModel){
 		//int[] maxDistance = {2500,2500,2500}; // everything beyond 50 nm apart after shift will not affect outcome.
 		ArrayList<Particle> locatedParticles = TableIO.Load(); // Get current table data.		
 		ArrayList<Particle> correctedResults = new ArrayList<Particle>(); // Output arraylist, will contain all particles that fit user input requirements after drift correction.
 		ij.measure.ResultsTable tab = Analyzer.getResultsTable();
 		double width = tab.getValue("width", 0);
 		double height = tab.getValue("height", 0);
-		int pixelSize = 20; // pixelsize for correlation images, will be improved upon once for final precision of 10 nm.
+		int pixelSize = 10; // pixelsize for correlation images, will be improved upon once for final precision of 10 nm.
 		int pixelSizeZ = 20; // pixelsize for correlation images, will be improved upon once for final precision of 10 nm.
 		int[] size = {(int)(width/pixelSize), (int)(height/pixelSize),1};
 		if (locatedParticles.size() == 0)
@@ -148,7 +148,7 @@ public class correctDrift {
 				boundry[1][i] /= pixelSizeZ;
 			}
 			if (twoD)
-			{				
+			{					
 				size[2] = 1; // 2D data.
 				correctedResults = ImageCrossCorr3D.run(locatedParticles, nBins, boundry, size ,pixelSize,pixelSizeZ,true);
 			}
@@ -676,14 +676,14 @@ public class correctDrift {
 
 
 	}
-	public static void ChannelAlign(int[][] boundry, int[] nParticles, int[] minParticles, int selectedModel){
+	public static void ChannelAlign(int[][] boundry, int selectedModel){
 	
 		ArrayList<Particle> locatedParticles = TableIO.Load(); // Get current table data.		
 		ArrayList<Particle> correctedResults = new ArrayList<Particle>(); // Output arraylist, will contain all particles that fit user input requirements after drift correction.
 		ij.measure.ResultsTable tab = Analyzer.getResultsTable();
 		double width = tab.getValue("width", 0);
 		double height = tab.getValue("height", 0);
-		int pixelSize = 20; // pixelsize for correlation images, will be improved upon once for final precision of 10 nm.
+		int pixelSize = 10; // pixelsize for correlation images, will be improved upon once for final precision of 10 nm.
 		int pixelSizeZ = 20; // pixelsize for correlation images, will be improved upon once for final precision of 10 nm.
 		int[] size = {(int)(width/pixelSize), (int)(height/pixelSize),1};
 		if (locatedParticles.size() == 0)

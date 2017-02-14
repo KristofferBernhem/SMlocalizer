@@ -58,31 +58,33 @@ public class ImageCrossCorr3D {
 				zOffset = (int) Math.floor(inputParticles.get(i).z);
 		}
 		zOffset = -zOffset;
-	//	System.out.println(zOffset);
+
 		for (int ch = 1; ch <= nChannels; ch++)
 		{	
 			int tempIdx 	= idx; // hold value
 			int maxShift 	= boundry[0][ch-1];
 			int maxShiftZ 	= boundry[1][ch-1];
+
 			while (idx < inputParticles.size() && inputParticles.get(idx).channel == ch)
 			{				
 				idx++;
 			} // loop whilst... Find final entry for this channel.
 			idx--;
+
 			int maxFrame = inputParticles.get(idx).frame; // final frame included in this channel.
-		
-			int binsize = (int) (maxFrame/nBins[ch-1]);		// size of each bin (in number of frames).
-		
+
+			int binsize = (int) (maxFrame/nBins[ch-1]);		// size of each bin (in number of frames).		
+
 			byte[][][] referenceFrame 	= new byte[dimensions[0]][dimensions[1]][dimensions[2]]; // create the reference array.
 			byte[][][] targetFrame 	= new byte[dimensions[0]][dimensions[1]][dimensions[2]]; 		// create the target (shifted) array.	//		
 			idx = tempIdx;	// return idx to startpoint of this loop.
 			int currBin = 2;	// start with bin 2.
-		
+
 			double targetMean = 0;	// mean value of target array.
 			double referenceMean = 0;	// mean value of reference array.
 			while(inputParticles.get(idx).frame<=binsize) // populate target first due to while loop design.
 			{
-				
+
 				if (inputParticles.get(idx).include == 1)	// only include particles that are ok from the users parameter choice.
 				{
 					targetFrame[(int)(inputParticles.get(idx).x/pixelSize)][(int)(inputParticles.get(idx).y/pixelSize)][(int)((inputParticles.get(idx).z+zOffset)/pixelSizeZ)] += 1;	// increase value by one if there is a particle within the voxel.
@@ -90,7 +92,7 @@ public class ImageCrossCorr3D {
 				}
 				idx++;	// step forward.
 			}
-	
+
 			targetMean /= (dimensions[0]*dimensions[1]*dimensions[2]);	// calculate the mean.
 			double[][] optimalShift = new double[4][nBins[ch-1]];	// this vector will hold all shift values.
 			while (currBin <= nBins[ch-1])							// loop over all bins.
@@ -132,7 +134,7 @@ public class ImageCrossCorr3D {
 						idx++;
 					}
 				}
-		
+
 				targetMean /= (dimensions[0]*dimensions[1]*dimensions[2]); // calculate new target mean.
 				double refSquare = 0;										// this value needs to be calculated for every shift combination, pulled out and made accessible to save computational time.
 				for (int i = 0; i < dimensions[0]; i++)
@@ -145,6 +147,7 @@ public class ImageCrossCorr3D {
 						}
 					}
 				}
+				//System.out.println(dimensions[2]);
 				refSquare = Math.sqrt(refSquare);	// square root of difference.
 				int[] shift = new int[3];			// will hold shift values in x-y-z.
 				double[][] r = new double[4][8*maxShift*maxShift*maxShiftZ];	// result vector, xCorr-shiftX-shiftY-shiftZ.
@@ -154,11 +157,19 @@ public class ImageCrossCorr3D {
 				{
 					for (shift[1] = -maxShift; shift[1]< maxShift; shift[1]++)
 					{
-						for (shift[2] = - maxShiftZ; shift[2] < maxShiftZ; shift[2]++)
+						if (dimensions[2]> 1)
 						{
-							int[] shiftAdd = {shift[0],shift[1],shift[2]};									
+							for (shift[2] = - maxShiftZ; shift[2] < maxShiftZ; shift[2]++)
+							{
+								int[] shiftAdd = {shift[0],shift[1],shift[2]};					
+								allShifts.add(shiftAdd);
+							}	
+						}else
+						{
+							int[] shiftAdd = {shift[0],shift[1],0};					
 							allShifts.add(shiftAdd);
 						}
+
 					}
 				}				
 				List<Callable<double[]>> tasks = new ArrayList<Callable<double[]>>();	// Preallocate.
@@ -173,7 +184,7 @@ public class ImageCrossCorr3D {
 				} // setup parallel computing, distribute all allShifts objects. 				
 				int processors 			= Runtime.getRuntime().availableProcessors();	// Number of processor cores on this system.
 				ExecutorService exec 	= Executors.newFixedThreadPool(processors);		// Set up parallel computing using all cores.
-	//			double[] rPlot = new double[8*maxShift*maxShift*maxShiftZ];
+				//			double[] rPlot = new double[8*maxShift*maxShift*maxShiftZ];
 				try {
 
 					List<Future<double[]>> parallelCompute = exec.invokeAll(tasks);				// Execute computation.
@@ -183,7 +194,7 @@ public class ImageCrossCorr3D {
 							r[1][i] = parallelCompute.get(i).get()[1];							// Add computed results to r.
 							r[2][i] = parallelCompute.get(i).get()[2];							// Add computed results to r.
 							r[3][i] = parallelCompute.get(i).get()[3];							// Add computed results to r.
-		//					rPlot[i] = r[0][i];
+							//					rPlot[i] = r[0][i];
 						} catch (ExecutionException e) {
 							e.printStackTrace();
 						}
@@ -195,7 +206,7 @@ public class ImageCrossCorr3D {
 				finally {
 					exec.shutdown();
 				}		
-			//	correctDrift.plot(rPlot);
+				//	correctDrift.plot(rPlot);
 				optimalShift[0][currBin-1] = 0;		// ensure that the current bin is set to 0.
 				optimalShift[1][currBin-1] = 0;		// ensure that the current bin is set to 0.
 				optimalShift[2][currBin-1] = 0;		// ensure that the current bin is set to 0.
@@ -272,9 +283,16 @@ public class ImageCrossCorr3D {
 					{
 						for (shift[1] = (int) ((optimalShift[2][currBin-1])*increase - increase); shift[1]< (int) ((optimalShift[2][currBin-1])*increase + increase); shift[1]++)
 						{
-							for (shift[2] = (int) ((optimalShift[3][currBin-1])*increase - increase); shift[2]< (int) ((optimalShift[3][currBin-1])*increase + increase); shift[2]++)
+							if (dimensions[2]> 1)
 							{
-								int[] shiftAdd = {shift[0],shift[1],shift[2]};				
+								for (shift[2] = (int) ((optimalShift[3][currBin-1])*increase - increase); shift[2]< (int) ((optimalShift[3][currBin-1])*increase + increase); shift[2]++)
+								{
+									int[] shiftAdd = {shift[0],shift[1],shift[2]};				
+									allShiftsFine.add(shiftAdd);								
+								}	
+							}else
+							{
+								int[] shiftAdd = {shift[0],shift[1],0};					
 								allShiftsFine.add(shiftAdd);
 							}
 						}
@@ -337,7 +355,7 @@ public class ImageCrossCorr3D {
 							optimalShift[3][currBin-1] = rFine[3][i]/increase;
 						}
 					}
-							
+
 				}
 				currBin++;
 			}			// bin loop.
@@ -345,21 +363,35 @@ public class ImageCrossCorr3D {
 			/*
 			 * Interpolate and modify particles.
 			 */
+			double[] xAxis = new double[optimalShift[0].length];
 			for(int j = 1; j < optimalShift[0].length; j++)
 			{
+				xAxis[j] = j*binsize;
 				optimalShift[1][j] += optimalShift[1][j-1];
 				optimalShift[2][j] += optimalShift[2][j-1];
 				optimalShift[3][j] += optimalShift[3][j-1];
+				//				System.out.println(pixelSize*optimalShift[1][j-1] + " to " +pixelSize*optimalShift[1][j]);
+				//				System.out.println(pixelSize*optimalShift[2][j-1] + " to " +pixelSize*optimalShift[2][j]);
+				//				System.out.println(optimalShift[3][j-1] + " to " +pixelSizeZ*optimalShift[3][j]);
+				//				System.out.println(optimalShift[0][j]);
 			}
+			xAxis[0] = 0;
+			xAxis[xAxis.length-1] = inputParticles.get(idx-1).frame;
+			double[] xDrift = new double[xAxis.length];
+			double[] yDrift = new double[xAxis.length];
+			double[] zDrift = new double[xAxis.length];
+			for (int i =1; i < xDrift.length; i++)
+			{
+				xDrift[i] = pixelSize*optimalShift[1][i];
+				yDrift[i] = pixelSize*optimalShift[2][i];
+				zDrift[i] = pixelSizeZ*optimalShift[3][i];
+			}
+			correctDrift.plot(xDrift, yDrift, zDrift, xAxis);
 
-	/*		System.out.println(optimalShift[1][0] + " to " +pixelSize*optimalShift[1][1]);
-			System.out.println(optimalShift[2][0] + " to " +pixelSize*optimalShift[2][1]);
-			System.out.println(optimalShift[3][0] + " to " +pixelSizeZ*optimalShift[3][1]);
-			System.out.println(optimalShift[0][1]);
-		*/	
+
 			int bin = 0;
 			int i = tempIdx; 
-			while (i < inputParticles.size() && inputParticles.get(i).frame < (bin+1)*binsize) // apply shifts.
+			while (i < inputParticles.size() && inputParticles.get(i).channel == ch)// && inputParticles.get(i).frame < (bin+1)*binsize) // apply shifts.
 			{
 				Particle tempPart 	= new Particle();
 				tempPart.frame	 	= inputParticles.get(i).frame;
@@ -378,9 +410,9 @@ public class ImageCrossCorr3D {
 				if (bin == nBins[ch-1]) // load last fragment of data.
 					bin--;
 
-				tempPart.x = inputParticles.get(i).x + pixelSize*optimalShift[0][bin];
-				tempPart.y = inputParticles.get(i).y + pixelSize*optimalShift[1][bin];				
-				tempPart.z = inputParticles.get(i).z + pixelSizeZ*optimalShift[2][bin];
+				tempPart.x = inputParticles.get(i).x + pixelSize*optimalShift[1][bin];
+				tempPart.y = inputParticles.get(i).y + pixelSize*optimalShift[2][bin];				
+				tempPart.z = inputParticles.get(i).z + pixelSizeZ*optimalShift[3][bin];
 
 				if(tempPart.x >= 0){
 					if(tempPart.y >= 0){
@@ -388,15 +420,15 @@ public class ImageCrossCorr3D {
 						shiftedParticles.add(tempPart);
 					}
 				}	
-			//	System.out.println(tempPart.x + " " + tempPart.y + " " + tempPart.z);
-				i++;
+				//	System.out.println(tempPart.x + " " + tempPart.y + " " + tempPart.z);
+				i++;				
 			}
 		}  // loop over channels.
-
+		ij.IJ.log("drift correction complete");
 		return shiftedParticles;
 	}
-	
-	
+
+
 	public static ArrayList<Particle> runChannel(ArrayList<Particle> inputParticles, int[][] boundry, int[] dimensions,int pixelSize, int pixelSizeZ, boolean optimize) // main function call. Will per channel autocorrelate between time binned data.
 	{
 		ArrayList<Particle> shiftedParticles = new ArrayList<Particle>();
@@ -428,7 +460,7 @@ public class ImageCrossCorr3D {
 				idx++;	// step forward.
 			}
 			targetMean /= (dimensions[0]*dimensions[1]*dimensions[2]);	// calculate the mean.
-			
+
 			for (int ch = 2; ch <= nChannels; ch++) // loop over ch2:final channel
 			{
 				//int tempIdx 	= idx; // start of current channel.
@@ -479,9 +511,16 @@ public class ImageCrossCorr3D {
 				{
 					for (shift[1] = -maxShift; shift[1]< maxShift; shift[1]++)
 					{
-						for (shift[2] = - maxShiftZ; shift[2] < maxShiftZ; shift[2]++)
+						if (dimensions[2]> 1)
 						{
-							int[] shiftAdd = {shift[0],shift[1],shift[2]};									
+							for (shift[2] = - maxShiftZ; shift[2] < maxShiftZ; shift[2]++)
+							{
+								int[] shiftAdd = {shift[0],shift[1],shift[2]};									
+								allShifts.add(shiftAdd);
+							}
+						}else
+						{
+							int[] shiftAdd = {shift[0],shift[1],0};					
 							allShifts.add(shiftAdd);
 						}
 					}
@@ -498,8 +537,8 @@ public class ImageCrossCorr3D {
 				} // setup parallel computing, distribute all allShifts objects. 				
 				int processors 			= Runtime.getRuntime().availableProcessors();	// Number of processor cores on this system.
 				ExecutorService exec 	= Executors.newFixedThreadPool(processors);		// Set up parallel computing using all cores.
-	//			double[] rPlot = new double[8*maxShift*maxShift*maxShiftZ];
-						try {
+				//			double[] rPlot = new double[8*maxShift*maxShift*maxShiftZ];
+				try {
 
 					List<Future<double[]>> parallelCompute = exec.invokeAll(tasks);				// Execute computation.
 					for (int i = 0; i < parallelCompute.size(); i++){							// Loop over and transfer results.
@@ -508,7 +547,7 @@ public class ImageCrossCorr3D {
 							r[1][i] = parallelCompute.get(i).get()[1];							// Add computed results to r.
 							r[2][i] = parallelCompute.get(i).get()[2];							// Add computed results to r.
 							r[3][i] = parallelCompute.get(i).get()[3];							// Add computed results to r.
-		//					rPlot[i] = r[0][i];
+							//					rPlot[i] = r[0][i];
 						} catch (ExecutionException e) {
 							e.printStackTrace();
 						}
@@ -520,7 +559,7 @@ public class ImageCrossCorr3D {
 				finally {
 					exec.shutdown();
 				}	
-//						correctDrift.plot(rPlot);
+				//						correctDrift.plot(rPlot);
 				optimalShift[0][ch-1] = 0;		// ensure that the current bin is set to 0.
 				optimalShift[1][ch-1] = 0;		// ensure that the current bin is set to 0.
 				optimalShift[2][ch-1] = 0;		// ensure that the current bin is set to 0.
@@ -546,125 +585,132 @@ public class ImageCrossCorr3D {
 						optimalShift[3][ch-1] = r[3][i]; // store values.
 					}
 				}
-	/*			System.out.println(optimalShift[1][0] + " to " +optimalShift[1][1]);
+				/*			System.out.println(optimalShift[1][0] + " to " +optimalShift[1][1]);
 				System.out.println(optimalShift[2][0] + " to " +optimalShift[2][1]);
 				System.out.println(optimalShift[3][0] + " to " +optimalShift[3][1]);
 				System.out.println(optimalShift[0][1]);
-		*/		if (optimize) // reduce pixelsize and run again.
-				{
-					int increase = 2;
-					byte[][][] referenceFrameFine 	= new byte[dimensions[0]*increase][dimensions[1]*increase][dimensions[2]*increase]; // finer pixelsize reference array.
-					byte[][][] targetFrameFine 		= new byte[dimensions[0]*increase][dimensions[1]*increase][dimensions[2]*increase]; // finer pixelsize target array.
-					int idxFine 					= 0;	// start loop from teh beginning.
-					double referenceMeanFine 		= 0;		// new mean calculation.
-					double targetMeanFine 			= 0;		// new mean calculation.
-					while(inputParticles.get(idxFine).channel <= ch-1) //populate reference array.
-					{
-						if (inputParticles.get(idxFine).include == 1 && inputParticles.get(idxFine).channel == ch-1)
-						{
-							referenceFrameFine[(int)(inputParticles.get(idxFine).x/(pixelSize/increase))][(int)(inputParticles.get(idxFine).y/(pixelSize/increase))][(int)((inputParticles.get(idxFine).z+zOffset)/(pixelSizeZ/increase))] += 1;
-							referenceMeanFine++;
-						}
-						idxFine++;
-					}
-					while(idxFine < inputParticles.size() && inputParticles.get(idxFine).channel==ch) // populate target array.
-					{
-						if (inputParticles.get(idxFine).include == 1)
-						{
-							targetFrameFine[(int)(inputParticles.get(idxFine).x/(pixelSize/increase))][(int)(inputParticles.get(idxFine).y/(pixelSize/increase))][(int)((inputParticles.get(idxFine).z+zOffset)/(pixelSizeZ/increase))] += 1;
-							targetMeanFine++;
-						}
-						idxFine++;
-					}
-					referenceMeanFine 	/= (dimensions[0]*dimensions[2]*dimensions[2]*increase*increase*increase); // calculate mean.
-					targetMeanFine 		/= (dimensions[0]*dimensions[2]*dimensions[2]*increase*increase*increase); // calculate mean.
-					double refSquareFine = 0;	// square difference to mean for reference frame.
-					for (int i = 0; i < dimensions[0]*increase; i++)
-					{
-						for (int j = 0; j < dimensions[1]*increase; j++)
-						{
-							for (int k = 0; k < dimensions[2]*increase; k++)
-							{
-								refSquareFine += (referenceFrameFine[i][j][k] - referenceMeanFine)*( referenceFrameFine[i][j][k] - referenceMeanFine);
-							}
-						}
-					}
-					refSquareFine = Math.sqrt(refSquareFine);	// square root of square difference of mean to reference frame.	
-					ImageCrossCorr3D xCorrFine = new ImageCrossCorr3D(referenceFrameFine,targetFrameFine,refSquareFine,referenceMeanFine,targetMeanFine); // create instance for crosscorrelation calculations between the current bins.					
-					double[][] rFine = new double[4][8*increase*increase*increase];	// precast result array.
-					ArrayList<int[]> allShiftsFine 	= new ArrayList<int[]>();		// hold all shift combinations for parallel computing.
+				 */		if (optimize) // reduce pixelsize and run again.
+				 {
+					 int increase = 2;
+					 byte[][][] referenceFrameFine 	= new byte[dimensions[0]*increase][dimensions[1]*increase][dimensions[2]*increase]; // finer pixelsize reference array.
+					 byte[][][] targetFrameFine 		= new byte[dimensions[0]*increase][dimensions[1]*increase][dimensions[2]*increase]; // finer pixelsize target array.
+					 int idxFine 					= 0;	// start loop from teh beginning.
+					 double referenceMeanFine 		= 0;		// new mean calculation.
+					 double targetMeanFine 			= 0;		// new mean calculation.
+					 while(inputParticles.get(idxFine).channel <= ch-1) //populate reference array.
+					 {
+						 if (inputParticles.get(idxFine).include == 1 && inputParticles.get(idxFine).channel == ch-1)
+						 {
+							 referenceFrameFine[(int)(inputParticles.get(idxFine).x/(pixelSize/increase))][(int)(inputParticles.get(idxFine).y/(pixelSize/increase))][(int)((inputParticles.get(idxFine).z+zOffset)/(pixelSizeZ/increase))] += 1;
+							 referenceMeanFine++;
+						 }
+						 idxFine++;
+					 }
+					 while(idxFine < inputParticles.size() && inputParticles.get(idxFine).channel==ch) // populate target array.
+					 {
+						 if (inputParticles.get(idxFine).include == 1)
+						 {
+							 targetFrameFine[(int)(inputParticles.get(idxFine).x/(pixelSize/increase))][(int)(inputParticles.get(idxFine).y/(pixelSize/increase))][(int)((inputParticles.get(idxFine).z+zOffset)/(pixelSizeZ/increase))] += 1;
+							 targetMeanFine++;
+						 }
+						 idxFine++;
+					 }
+					 referenceMeanFine 	/= (dimensions[0]*dimensions[2]*dimensions[2]*increase*increase*increase); // calculate mean.
+					 targetMeanFine 		/= (dimensions[0]*dimensions[2]*dimensions[2]*increase*increase*increase); // calculate mean.
+					 double refSquareFine = 0;	// square difference to mean for reference frame.
+					 for (int i = 0; i < dimensions[0]*increase; i++)
+					 {
+						 for (int j = 0; j < dimensions[1]*increase; j++)
+						 {
+							 for (int k = 0; k < dimensions[2]*increase; k++)
+							 {
+								 refSquareFine += (referenceFrameFine[i][j][k] - referenceMeanFine)*( referenceFrameFine[i][j][k] - referenceMeanFine);
+							 }
+						 }
+					 }
+					 refSquareFine = Math.sqrt(refSquareFine);	// square root of square difference of mean to reference frame.	
+					 ImageCrossCorr3D xCorrFine = new ImageCrossCorr3D(referenceFrameFine,targetFrameFine,refSquareFine,referenceMeanFine,targetMeanFine); // create instance for crosscorrelation calculations between the current bins.					
+					 double[][] rFine = new double[4][8*increase*increase*increase];	// precast result array.
+					 ArrayList<int[]> allShiftsFine 	= new ArrayList<int[]>();		// hold all shift combinations for parallel computing.
 
-					for (shift[0] = (int) ((optimalShift[1][ch-1])*increase - increase); shift[0]< (int) ((optimalShift[1][ch-1])*increase + increase); shift[0]++)
-					{
-						for (shift[1] = (int) ((optimalShift[2][ch-1])*increase - increase); shift[1]< (int) ((optimalShift[2][ch-1])*increase + increase); shift[1]++)
-						{
-							for (shift[2] = (int) ((optimalShift[3][ch-1])*increase - increase); shift[2]< (int) ((optimalShift[3][ch-1])*increase + increase); shift[2]++)
-							{
-								int[] shiftAdd = {shift[0],shift[1],shift[2]};				
-								allShiftsFine.add(shiftAdd);
-							}
-						}
-					}			
-					List<Callable<double[]>> tasksFine = new ArrayList<Callable<double[]>>();	// Preallocate.
-					for (final int[] object : allShiftsFine) {									// Loop over and setup computation.
-						Callable<double[]> d = new Callable<double[]>() {						// Computation to be done.
-							@Override
-							public double[] call() throws Exception {
-								return xCorrFine.xCorr3d(object);								// Actual call for each parallel process.
-							}
-						};
-						tasksFine.add(d);														// Que this task.
-					} // setup parallel computing, distribute all allShiftsFine objects. 					
+					 for (shift[0] = (int) ((optimalShift[1][ch-1])*increase - increase); shift[0]< (int) ((optimalShift[1][ch-1])*increase + increase); shift[0]++)
+					 {
+						 for (shift[1] = (int) ((optimalShift[2][ch-1])*increase - increase); shift[1]< (int) ((optimalShift[2][ch-1])*increase + increase); shift[1]++)
+						 {
+							 if (dimensions[2]> 1)
+							 {
+								 for (shift[2] = (int) ((optimalShift[3][ch-1])*increase - increase); shift[2]< (int) ((optimalShift[3][ch-1])*increase + increase); shift[2]++)
+								 {
+									 int[] shiftAdd = {shift[0],shift[1],shift[2]};				
+									 allShiftsFine.add(shiftAdd);
+								 }
+							 }else
+							 {
+								 int[] shiftAdd = {shift[0],shift[1],0};					
+								 allShiftsFine.add(shiftAdd);
+							 }
+						 }
+					 }			
+					 List<Callable<double[]>> tasksFine = new ArrayList<Callable<double[]>>();	// Preallocate.
+					 for (final int[] object : allShiftsFine) {									// Loop over and setup computation.
+						 Callable<double[]> d = new Callable<double[]>() {						// Computation to be done.
+							 @Override
+							 public double[] call() throws Exception {
+								 return xCorrFine.xCorr3d(object);								// Actual call for each parallel process.
+							 }
+						 };
+						 tasksFine.add(d);														// Que this task.
+					 } // setup parallel computing, distribute all allShiftsFine objects. 					
 
-					ExecutorService execFine 	= Executors.newFixedThreadPool(processors);		// Set up parallel computing using all cores.
-					try {
+					 ExecutorService execFine 	= Executors.newFixedThreadPool(processors);		// Set up parallel computing using all cores.
+					 try {
 
-						List<Future<double[]>> parallelCompute = execFine.invokeAll(tasksFine);				// Execute computation.
-						for (int i = 0; i < parallelCompute.size(); i++){							// Loop over and transfer results.
-							try {										
-								rFine[0][i] = parallelCompute.get(i).get()[0];							// Add computed results to rFine.
-								rFine[1][i] = parallelCompute.get(i).get()[1];							// Add computed results to rFine.
-								rFine[2][i] = parallelCompute.get(i).get()[2];							// Add computed results to rFine.
-								rFine[3][i] = parallelCompute.get(i).get()[3];							// Add computed results to rFine.								
+						 List<Future<double[]>> parallelCompute = execFine.invokeAll(tasksFine);				// Execute computation.
+						 for (int i = 0; i < parallelCompute.size(); i++){							// Loop over and transfer results.
+							 try {										
+								 rFine[0][i] = parallelCompute.get(i).get()[0];							// Add computed results to rFine.
+								 rFine[1][i] = parallelCompute.get(i).get()[1];							// Add computed results to rFine.
+								 rFine[2][i] = parallelCompute.get(i).get()[2];							// Add computed results to rFine.
+								 rFine[3][i] = parallelCompute.get(i).get()[3];							// Add computed results to rFine.								
 
-							} catch (ExecutionException e) {
-								e.printStackTrace();
-							}
-						}
-					} catch (InterruptedException e) {
+							 } catch (ExecutionException e) {
+								 e.printStackTrace();
+							 }
+						 }
+					 } catch (InterruptedException e) {
 
-						e.printStackTrace();
-					}
-					finally {
-						execFine.shutdown();
-					}
-					optimalShift[0][ch-1] = 0;	// reset values for this bin.
-					optimalShift[1][ch-1] = 0;	// reset values for this bin.
-					optimalShift[2][ch-1] = 0;	// reset values for this bin.
-					optimalShift[3][ch-1] = 0;	// reset values for this bin.
+						 e.printStackTrace();
+					 }
+					 finally {
+						 execFine.shutdown();
+					 }
+					 optimalShift[0][ch-1] = 0;	// reset values for this bin.
+					 optimalShift[1][ch-1] = 0;	// reset values for this bin.
+					 optimalShift[2][ch-1] = 0;	// reset values for this bin.
+					 optimalShift[3][ch-1] = 0;	// reset values for this bin.
 
-					for (int i = 0; i < rFine[0].length; i++) // loop over all shift combinations.
-					{
-						if (optimalShift[0][ch-1] < rFine[0][i]) // if the current shift combination yielded a higher correlation.
-						{
-							optimalShift[0][ch-1] = rFine[0][i];
-							optimalShift[1][ch-1] = rFine[1][i]/increase;
-							optimalShift[2][ch-1] = rFine[2][i]/increase;
-							optimalShift[3][ch-1] = rFine[3][i]/increase;
-						}else if(optimalShift[0][ch-1] == rFine[0][i] && // if the current shift combination yielded the same correlation but with smaller shift.
-								optimalShift[1][ch-1] + optimalShift[2][ch-1] + optimalShift[3][ch-1]> rFine[1][i]/increase + rFine[2][i]/increase + rFine[3][i]/increase &&
-								optimalShift[1][ch-1] >= rFine[1][i]/increase &&
-								optimalShift[2][ch-1] >= rFine[2][i]/increase &&
-								optimalShift[3][ch-1] >= rFine[3][i]/increase)
-						{
-							optimalShift[0][ch-1] = rFine[0][i];
-							optimalShift[1][ch-1] = rFine[1][i]/increase;
-							optimalShift[2][ch-1] = rFine[2][i]/increase;
-							optimalShift[3][ch-1] = rFine[3][i]/increase;
-						}
-					}
+					 for (int i = 0; i < rFine[0].length; i++) // loop over all shift combinations.
+					 {
+						 if (optimalShift[0][ch-1] < rFine[0][i]) // if the current shift combination yielded a higher correlation.
+						 {
+							 optimalShift[0][ch-1] = rFine[0][i];
+							 optimalShift[1][ch-1] = rFine[1][i]/increase;
+							 optimalShift[2][ch-1] = rFine[2][i]/increase;
+							 optimalShift[3][ch-1] = rFine[3][i]/increase;
+						 }else if(optimalShift[0][ch-1] == rFine[0][i] && // if the current shift combination yielded the same correlation but with smaller shift.
+								 optimalShift[1][ch-1] + optimalShift[2][ch-1] + optimalShift[3][ch-1]> rFine[1][i]/increase + rFine[2][i]/increase + rFine[3][i]/increase &&
+								 optimalShift[1][ch-1] >= rFine[1][i]/increase &&
+								 optimalShift[2][ch-1] >= rFine[2][i]/increase &&
+								 optimalShift[3][ch-1] >= rFine[3][i]/increase)
+						 {
+							 optimalShift[0][ch-1] = rFine[0][i];
+							 optimalShift[1][ch-1] = rFine[1][i]/increase;
+							 optimalShift[2][ch-1] = rFine[2][i]/increase;
+							 optimalShift[3][ch-1] = rFine[3][i]/increase;
+						 }
+					 }
 
-				}
+				 }
 
 			} // loop over channel 2:end
 			for(int j = 1; j < optimalShift[0].length; j++)
@@ -672,12 +718,13 @@ public class ImageCrossCorr3D {
 				optimalShift[1][j] += optimalShift[1][j-1];
 				optimalShift[2][j] += optimalShift[2][j-1];
 				optimalShift[3][j] += optimalShift[3][j-1];
+				ij.IJ.log("Channel " + (j+1) + " shifted by " + pixelSize*optimalShift[1][j]+  " x " + pixelSize*optimalShift[2][j] + " x " + pixelSizeZ*optimalShift[3][j] + " nm.");
 			}
-	/*		System.out.println(optimalShift[1][0] + " to " +pixelSize*optimalShift[1][1]);
+			/*		System.out.println(optimalShift[1][0] + " to " +pixelSize*optimalShift[1][1]);
 			System.out.println(optimalShift[2][0] + " to " +pixelSize*optimalShift[2][1]);
 			System.out.println(optimalShift[3][0] + " to " +pixelSizeZ*optimalShift[3][1]);
 			System.out.println(optimalShift[0][1]);
-		*/			
+			 */			
 			int i = 0; 
 			while (i < inputParticles.size()) // apply shifts.
 			{
@@ -692,7 +739,7 @@ public class ImageCrossCorr3D {
 				tempPart.sigma_x 	= inputParticles.get(i).sigma_x;
 				tempPart.sigma_y 	= inputParticles.get(i).sigma_y;
 				tempPart.channel 	= inputParticles.get(i).channel;
-				
+
 				tempPart.x = inputParticles.get(i).x + pixelSize*optimalShift[1][inputParticles.get(i).channel-1];
 				tempPart.y = inputParticles.get(i).y + pixelSize*optimalShift[2][inputParticles.get(i).channel-1];				
 				tempPart.z = inputParticles.get(i).z + pixelSizeZ*optimalShift[3][inputParticles.get(i).channel-1];
@@ -705,6 +752,7 @@ public class ImageCrossCorr3D {
 				}								
 				i++;
 			}			
+			ij.IJ.log("Channels aligned.");		
 			return shiftedParticles;
 		} // check for multichannel image.
 		else
@@ -723,13 +771,13 @@ public class ImageCrossCorr3D {
 			p.include = 1;
 			p.x = r.nextDouble()*1000;
 			p.y = r.nextDouble()*1000;
-	//		p.z = r.nextDouble()*400-300;
+			//		p.z = r.nextDouble()*400-300;
 			if (p.x < 100)
 				p.x = 100;
 			if (p.y < 100)
 				p.y = 100;
-	//		if (p.z < 100)
-	//			p.z = 100;
+			//		if (p.z < 100)
+			//			p.z = 100;
 			p.channel = 1;
 			p.frame= frame;
 			result.add(p);
@@ -742,7 +790,7 @@ public class ImageCrossCorr3D {
 			p2.include = 1;
 			p2.x = p.x + 60;
 			p2.y = p.y - 50;
-	//		p2.z = p.z;
+			//		p2.z = p.z;
 			p2.channel = 1;
 			p2.frame = frame;
 			result.add(p2);
@@ -752,7 +800,7 @@ public class ImageCrossCorr3D {
 		int[][] maxShift = new int[2][2]; //xy-z per channel
 
 		int[] nBins = {2};
-		int pixelSize = 20;
+		int pixelSize = 10;
 		int pixelSizeZ = 20;
 		maxShift[0][0] = 100/pixelSize;
 		maxShift[1][0] = 100/pixelSizeZ;

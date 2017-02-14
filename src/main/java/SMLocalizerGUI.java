@@ -77,13 +77,13 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 					/*
 					 *   Drift and channel correct settings
 					 */
-					driftCorrBinLowCountChList.getItem(id).setText("500");
-					driftCorrBinHighCountChList.getItem(id).setText("1000");
+			//		driftCorrBinLowCountChList.getItem(id).setText("500");
+			//		driftCorrBinHighCountChList.getItem(id).setText("1000");
 					driftCorrShiftXYChList.getItem(id).setText("100");
 					driftCorrShiftZChList.getItem(id).setText("100");
 					numberOfBinsDriftCorrChList.getItem(id).setText("25");
-					chAlignBinLowCountChList.getItem(id).setText("500");
-					chAlignBinHighCountChList.getItem(id).setText("1000");
+//					chAlignBinLowCountChList.getItem(id).setText("500");
+//					chAlignBinHighCountChList.getItem(id).setText("1000");
 					chAlignShiftXYChList.getItem(id).setText("150");
 					chAlignShiftZChList.getItem(id).setText("150");
 					doCorrelativeChList.getItem(id).setText("0");
@@ -226,13 +226,13 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 				/*
 				 *   Drift and channel correct settings
 				 */
-				driftCorrBinLowCountChList.getItem(id).setText("500");
-				driftCorrBinHighCountChList.getItem(id).setText("1000");
+		//		driftCorrBinLowCountChList.getItem(id).setText("500");
+		//		driftCorrBinHighCountChList.getItem(id).setText("1000");
 				driftCorrShiftXYChList.getItem(id).setText("100");
 				driftCorrShiftZChList.getItem(id).setText("100");
 				numberOfBinsDriftCorrChList.getItem(id).setText("25");
-				chAlignBinLowCountChList.getItem(id).setText("500");
-				chAlignBinHighCountChList.getItem(id).setText("1000");
+	//			chAlignBinLowCountChList.getItem(id).setText("500");
+	//			chAlignBinHighCountChList.getItem(id).setText("1000");
 				chAlignShiftXYChList.getItem(id).setText("150");
 				chAlignShiftZChList.getItem(id).setText("150");
 				doCorrelativeChList.getItem(id).setText("0");
@@ -345,8 +345,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		}
 
 	}	
-	 
-	 // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
+	  // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
     private void initComponents() {
 
         pixelSizeChList = new javax.swing.JMenu();
@@ -448,28 +447,6 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         outputPixelSizeData8 = new javax.swing.JMenuItem();
         outputPixelSizeData9 = new javax.swing.JMenuItem();
         outputPixelSizeData10 = new javax.swing.JMenuItem();
-        driftCorrBinLowCountChList = new javax.swing.JMenu();
-        driftCorrBinLowCountData1 = new javax.swing.JMenuItem();
-        driftCorrBinLowCountData2 = new javax.swing.JMenuItem();
-        driftCorrBinLowCountData3 = new javax.swing.JMenuItem();
-        driftCorrBinLowCountData4 = new javax.swing.JMenuItem();
-        driftCorrBinLowCountData5 = new javax.swing.JMenuItem();
-        driftCorrBinLowCountData6 = new javax.swing.JMenuItem();
-        driftCorrBinLowCountData7 = new javax.swing.JMenuItem();
-        driftCorrBinLowCountData8 = new javax.swing.JMenuItem();
-        driftCorrBinLowCountData9 = new javax.swing.JMenuItem();
-        driftCorrBinLowCountData10 = new javax.swing.JMenuItem();
-        driftCorrBinHighCountChList = new javax.swing.JMenu();
-        driftCorrBinHighCountData1 = new javax.swing.JMenuItem();
-        driftCorrBinHighCountData2 = new javax.swing.JMenuItem();
-        driftCorrBinHighCountData3 = new javax.swing.JMenuItem();
-        driftCorrBinHighCountData4 = new javax.swing.JMenuItem();
-        driftCorrBinHighCountData5 = new javax.swing.JMenuItem();
-        driftCorrBinHighCountData6 = new javax.swing.JMenuItem();
-        driftCorrBinHighCountData7 = new javax.swing.JMenuItem();
-        driftCorrBinHighCountData8 = new javax.swing.JMenuItem();
-        driftCorrBinHighCountData9 = new javax.swing.JMenuItem();
-        driftCorrBinHighCountData10 = new javax.swing.JMenuItem();
         numberOfBinsDriftCorrChList = new javax.swing.JMenu();
         numberOfBinsDriftCorrData1 = new javax.swing.JMenuItem();
         numberOfBinsDriftCorrData2 = new javax.swing.JMenuItem();
@@ -481,28 +458,6 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         numberOfBinsDriftCorrData8 = new javax.swing.JMenuItem();
         numberOfBinsDriftCorrData9 = new javax.swing.JMenuItem();
         numberOfBinsDriftCorrData10 = new javax.swing.JMenuItem();
-        chAlignBinLowCountChList = new javax.swing.JMenu();
-        chAlignBinLowCountData1 = new javax.swing.JMenuItem();
-        chAlignBinLowCountData2 = new javax.swing.JMenuItem();
-        chAlignBinLowCountData3 = new javax.swing.JMenuItem();
-        chAlignBinLowCountData4 = new javax.swing.JMenuItem();
-        chAlignBinLowCountData5 = new javax.swing.JMenuItem();
-        chAlignBinLowCountData6 = new javax.swing.JMenuItem();
-        chAlignBinLowCountData7 = new javax.swing.JMenuItem();
-        chAlignBinLowCountData8 = new javax.swing.JMenuItem();
-        chAlignBinLowCountData9 = new javax.swing.JMenuItem();
-        chAlignBinLowCountData10 = new javax.swing.JMenuItem();
-        chAlignBinHighCountChList = new javax.swing.JMenu();
-        chAlignBinHighCountData1 = new javax.swing.JMenuItem();
-        chAlignBinHighCountData2 = new javax.swing.JMenuItem();
-        chAlignBinHighCountData3 = new javax.swing.JMenuItem();
-        chAlignBinHighCountData4 = new javax.swing.JMenuItem();
-        chAlignBinHighCountData5 = new javax.swing.JMenuItem();
-        chAlignBinHighCountData6 = new javax.swing.JMenuItem();
-        chAlignBinHighCountData7 = new javax.swing.JMenuItem();
-        chAlignBinHighCountData8 = new javax.swing.JMenuItem();
-        chAlignBinHighCountData9 = new javax.swing.JMenuItem();
-        chAlignBinHighCountData10 = new javax.swing.JMenuItem();
         doPhotonCountChList = new javax.swing.JMenu();
         doPhotonCountData1 = new javax.swing.JMenuItem();
         doPhotonCountData2 = new javax.swing.JMenuItem();
@@ -885,15 +840,10 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         minPtsCluster = new javax.swing.JTextField();
         clusterAnalysis = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
-        particlesPerBinLabel = new javax.swing.JLabel();
-        driftCorrBinLowCount = new javax.swing.JTextField();
-        driftCorrBinHighCount = new javax.swing.JTextField();
         numberOfBinsLabel = new javax.swing.JLabel();
         doDriftCorrect = new javax.swing.JCheckBox();
         driftCorrect = new javax.swing.JButton();
         numberOfBinsDriftCorr = new javax.swing.JTextField();
-        minLabel = new javax.swing.JLabel();
-        maxLabel = new javax.swing.JLabel();
         particlesPerBinLabel1 = new javax.swing.JLabel();
         driftCorrShiftXY = new javax.swing.JTextField();
         driftCorrShiftZ = new javax.swing.JTextField();
@@ -918,11 +868,6 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         jPanel4 = new javax.swing.JPanel();
         doChannelAlign = new javax.swing.JCheckBox();
         alignChannels = new javax.swing.JButton();
-        particlesPerBinLabelchAlign = new javax.swing.JLabel();
-        chAlignBinLowCount = new javax.swing.JTextField();
-        minLabel1 = new javax.swing.JLabel();
-        maxLabel1 = new javax.swing.JLabel();
-        chAlignBinHighCount = new javax.swing.JTextField();
         chAlignShiftZ = new javax.swing.JTextField();
         maxLabel4 = new javax.swing.JLabel();
         chAlignShiftXY = new javax.swing.JTextField();
@@ -1247,70 +1192,6 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         outputPixelSizeData10.setText("jMenuItem1");
         outputPixelSizeChList.add(outputPixelSizeData10);
 
-        driftCorrBinLowCountChList.setText("jMenu1");
-
-        driftCorrBinLowCountData1.setText("jMenuItem1");
-        driftCorrBinLowCountChList.add(driftCorrBinLowCountData1);
-
-        driftCorrBinLowCountData2.setText("jMenuItem1");
-        driftCorrBinLowCountChList.add(driftCorrBinLowCountData2);
-
-        driftCorrBinLowCountData3.setText("jMenuItem1");
-        driftCorrBinLowCountChList.add(driftCorrBinLowCountData3);
-
-        driftCorrBinLowCountData4.setText("jMenuItem1");
-        driftCorrBinLowCountChList.add(driftCorrBinLowCountData4);
-
-        driftCorrBinLowCountData5.setText("jMenuItem1");
-        driftCorrBinLowCountChList.add(driftCorrBinLowCountData5);
-
-        driftCorrBinLowCountData6.setText("jMenuItem1");
-        driftCorrBinLowCountChList.add(driftCorrBinLowCountData6);
-
-        driftCorrBinLowCountData7.setText("jMenuItem1");
-        driftCorrBinLowCountChList.add(driftCorrBinLowCountData7);
-
-        driftCorrBinLowCountData8.setText("jMenuItem1");
-        driftCorrBinLowCountChList.add(driftCorrBinLowCountData8);
-
-        driftCorrBinLowCountData9.setText("jMenuItem1");
-        driftCorrBinLowCountChList.add(driftCorrBinLowCountData9);
-
-        driftCorrBinLowCountData10.setText("jMenuItem1");
-        driftCorrBinLowCountChList.add(driftCorrBinLowCountData10);
-
-        driftCorrBinHighCountChList.setText("jMenu1");
-
-        driftCorrBinHighCountData1.setText("jMenuItem1");
-        driftCorrBinHighCountChList.add(driftCorrBinHighCountData1);
-
-        driftCorrBinHighCountData2.setText("jMenuItem1");
-        driftCorrBinHighCountChList.add(driftCorrBinHighCountData2);
-
-        driftCorrBinHighCountData3.setText("jMenuItem1");
-        driftCorrBinHighCountChList.add(driftCorrBinHighCountData3);
-
-        driftCorrBinHighCountData4.setText("jMenuItem1");
-        driftCorrBinHighCountChList.add(driftCorrBinHighCountData4);
-
-        driftCorrBinHighCountData5.setText("jMenuItem1");
-        driftCorrBinHighCountChList.add(driftCorrBinHighCountData5);
-
-        driftCorrBinHighCountData6.setText("jMenuItem1");
-        driftCorrBinHighCountChList.add(driftCorrBinHighCountData6);
-
-        driftCorrBinHighCountData7.setText("jMenuItem1");
-        driftCorrBinHighCountChList.add(driftCorrBinHighCountData7);
-
-        driftCorrBinHighCountData8.setText("jMenuItem1");
-        driftCorrBinHighCountChList.add(driftCorrBinHighCountData8);
-
-        driftCorrBinHighCountData9.setText("jMenuItem1");
-        driftCorrBinHighCountChList.add(driftCorrBinHighCountData9);
-
-        driftCorrBinHighCountData10.setText("jMenuItem1");
-        driftCorrBinHighCountChList.add(driftCorrBinHighCountData10);
-
         numberOfBinsDriftCorrChList.setText("jMenu1");
 
         numberOfBinsDriftCorrData1.setText("jMenuItem1");
@@ -1342,70 +1223,6 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 
         numberOfBinsDriftCorrData10.setText("jMenuItem1");
         numberOfBinsDriftCorrChList.add(numberOfBinsDriftCorrData10);
-
-        chAlignBinLowCountChList.setText("jMenu1");
-
-        chAlignBinLowCountData1.setText("jMenuItem1");
-        chAlignBinLowCountChList.add(chAlignBinLowCountData1);
-
-        chAlignBinLowCountData2.setText("jMenuItem1");
-        chAlignBinLowCountChList.add(chAlignBinLowCountData2);
-
-        chAlignBinLowCountData3.setText("jMenuItem1");
-        chAlignBinLowCountChList.add(chAlignBinLowCountData3);
-
-        chAlignBinLowCountData4.setText("jMenuItem1");
-        chAlignBinLowCountChList.add(chAlignBinLowCountData4);
-
-        chAlignBinLowCountData5.setText("jMenuItem1");
-        chAlignBinLowCountChList.add(chAlignBinLowCountData5);
-
-        chAlignBinLowCountData6.setText("jMenuItem1");
-        chAlignBinLowCountChList.add(chAlignBinLowCountData6);
-
-        chAlignBinLowCountData7.setText("jMenuItem1");
-        chAlignBinLowCountChList.add(chAlignBinLowCountData7);
-
-        chAlignBinLowCountData8.setText("jMenuItem1");
-        chAlignBinLowCountChList.add(chAlignBinLowCountData8);
-
-        chAlignBinLowCountData9.setText("jMenuItem1");
-        chAlignBinLowCountChList.add(chAlignBinLowCountData9);
-
-        chAlignBinLowCountData10.setText("jMenuItem1");
-        chAlignBinLowCountChList.add(chAlignBinLowCountData10);
-
-        chAlignBinHighCountChList.setText("jMenu1");
-
-        chAlignBinHighCountData1.setText("jMenuItem1");
-        chAlignBinHighCountChList.add(chAlignBinHighCountData1);
-
-        chAlignBinHighCountData2.setText("jMenuItem1");
-        chAlignBinHighCountChList.add(chAlignBinHighCountData2);
-
-        chAlignBinHighCountData3.setText("jMenuItem1");
-        chAlignBinHighCountChList.add(chAlignBinHighCountData3);
-
-        chAlignBinHighCountData4.setText("jMenuItem1");
-        chAlignBinHighCountChList.add(chAlignBinHighCountData4);
-
-        chAlignBinHighCountData5.setText("jMenuItem1");
-        chAlignBinHighCountChList.add(chAlignBinHighCountData5);
-
-        chAlignBinHighCountData6.setText("jMenuItem1");
-        chAlignBinHighCountChList.add(chAlignBinHighCountData6);
-
-        chAlignBinHighCountData7.setText("jMenuItem1");
-        chAlignBinHighCountChList.add(chAlignBinHighCountData7);
-
-        chAlignBinHighCountData8.setText("jMenuItem1");
-        chAlignBinHighCountChList.add(chAlignBinHighCountData8);
-
-        chAlignBinHighCountData9.setText("jMenuItem1");
-        chAlignBinHighCountChList.add(chAlignBinHighCountData9);
-
-        chAlignBinHighCountData10.setText("jMenuItem1");
-        chAlignBinHighCountChList.add(chAlignBinHighCountData10);
 
         doPhotonCountChList.setText("jMenu1");
 
@@ -2387,7 +2204,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         doFilterWidthData10.setToolTipText("");
         doFilterWidthChList.add(doFilterWidthData10);
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+  //      setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
 
         Header.setFont(new java.awt.Font("Times New Roman", 3, 24)); // NOI18N
@@ -2757,10 +2574,10 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
                         .addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(doFilterWidth)
                             .addComponent(doMinimalSignal))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(windowWidth, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)
-                            .addComponent(minimalSignal, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE)
+                        .addGroup(ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(minimalSignal, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)
+                            .addComponent(windowWidth))
                         .addGap(34, 34, 34))
                     .addGroup(ParameterRangeLayout.createSequentialGroup()
                         .addGap(21, 21, 21)
@@ -2808,9 +2625,6 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
                 .addComponent(ParameterLabel)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
-
-        ParameterRangeLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {minimalSignal, windowWidth});
-
         ParameterRangeLayout.setVerticalGroup(
             ParameterRangeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ParameterRangeLayout.createSequentialGroup()
@@ -2885,7 +2699,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         epsilonLabel.setToolTipText("Search radius between particles for cluster analysis.");
 
         minPtsLabel.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
-        minPtsLabel.setText("Minimum connections");
+        minPtsLabel.setText("Min connections");
         minPtsLabel.setToolTipText("Minimum number of connected particles considered a cluster.");
 
         epsilon.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
@@ -2897,6 +2711,11 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         minPtsCluster.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         minPtsCluster.setText("5");
         minPtsCluster.setToolTipText("Minimum number of connected particles considered a cluster.");
+        minPtsCluster.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                minPtsClusterActionPerformed(evt);
+            }
+        });
 
         clusterAnalysis.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
         clusterAnalysis.setText("Cluster analysis");
@@ -2915,30 +2734,27 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(AnalysisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(AnalysisLayout.createSequentialGroup()
-                        .addGap(0, 10, Short.MAX_VALUE)
                         .addGroup(AnalysisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(minPtsLabel)
-                            .addComponent(epsilonLabel))
-                        .addGap(18, 18, 18)
+                            .addComponent(epsilonLabel)
+                            .addComponent(minPtsLabel))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(AnalysisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(minPtsCluster, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, AnalysisLayout.createSequentialGroup()
-                                .addComponent(epsilon, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(21, 21, 21))))
+                            .addComponent(epsilon, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(AnalysisLayout.createSequentialGroup()
                         .addComponent(doClusterAnalysis)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(clusterAnalysis)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addComponent(clusterAnalysis)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         AnalysisLayout.setVerticalGroup(
             AnalysisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(AnalysisLayout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addGroup(AnalysisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(doClusterAnalysis)
-                    .addComponent(clusterAnalysis))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addContainerGap()
+                .addGroup(AnalysisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(clusterAnalysis)
+                    .addComponent(doClusterAnalysis))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
                 .addGroup(AnalysisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(epsilon, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(epsilonLabel))
@@ -2946,29 +2762,10 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
                 .addGroup(AnalysisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(minPtsLabel)
                     .addComponent(minPtsCluster, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(26, Short.MAX_VALUE))
+                .addContainerGap(21, Short.MAX_VALUE))
         );
 
         jPanel1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, null, null, new java.awt.Color(153, 153, 153), new java.awt.Color(204, 204, 204)));
-
-        particlesPerBinLabel.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
-        particlesPerBinLabel.setText("Particles per bin");
-        particlesPerBinLabel.setToolTipText("Particles per bin for drift correction.");
-
-        driftCorrBinLowCount.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-        driftCorrBinLowCount.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        driftCorrBinLowCount.setText("100");
-        driftCorrBinLowCount.setToolTipText("Particles per bin for drift correction.");
-
-        driftCorrBinHighCount.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-        driftCorrBinHighCount.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        driftCorrBinHighCount.setText("1000");
-        driftCorrBinHighCount.setToolTipText("Particles per bin for drift correction.");
-        driftCorrBinHighCount.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                driftCorrBinHighCountActionPerformed(evt);
-            }
-        });
 
         numberOfBinsLabel.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
         numberOfBinsLabel.setText("Number of bins");
@@ -2995,12 +2792,6 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         numberOfBinsDriftCorr.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         numberOfBinsDriftCorr.setText("50");
         numberOfBinsDriftCorr.setToolTipText("Number of bins to divide the particles in for drift correction.");
-
-        minLabel.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-        minLabel.setText("min");
-
-        maxLabel.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-        maxLabel.setText("max");
 
         particlesPerBinLabel1.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
         particlesPerBinLabel1.setText("Max drift [nm]");
@@ -3041,62 +2832,47 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(doDriftCorrect)
-                        .addGap(22, 22, 22)
+                        .addGap(18, 18, 18)
                         .addComponent(driftCorrect, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(particlesPerBinLabel)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(numberOfBinsLabel)
-                                .addGap(53, 53, 53)
-                                .addComponent(numberOfBinsDriftCorr, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addGap(112, 112, 112)
-                                    .addComponent(minLabel)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(driftCorrBinLowCount, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addComponent(particlesPerBinLabel1)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(minLabel2)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(driftCorrShiftXY, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(particlesPerBinLabel1)
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                                    .addComponent(maxLabel2)
+                                    .addComponent(minLabel2)))
+                            .addComponent(numberOfBinsLabel))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(maxLabel)
-                            .addComponent(maxLabel2))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(driftCorrShiftZ, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(driftCorrBinHighCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(numberOfBinsDriftCorr, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(driftCorrShiftXY, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(driftCorrShiftZ, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap())
         );
 
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {driftCorrBinHighCount, driftCorrBinLowCount, driftCorrShiftXY, driftCorrShiftZ, numberOfBinsDriftCorr});
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {driftCorrShiftXY, driftCorrShiftZ, numberOfBinsDriftCorr});
 
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(19, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(doDriftCorrect)
+                    .addComponent(driftCorrect))
+                .addGap(2, 2, 2)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(driftCorrect)
-                    .addComponent(doDriftCorrect))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(particlesPerBinLabel)
-                    .addComponent(driftCorrBinLowCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(driftCorrBinHighCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(minLabel)
-                    .addComponent(maxLabel))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(particlesPerBinLabel1)
+                            .addComponent(minLabel2)))
+                    .addComponent(driftCorrShiftXY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(driftCorrShiftZ, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(maxLabel2)
-                    .addComponent(driftCorrShiftXY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(minLabel2)
-                    .addComponent(particlesPerBinLabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(maxLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(numberOfBinsDriftCorr, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(numberOfBinsLabel))
@@ -3145,27 +2921,28 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(correctBackground, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(2, 2, 2)
-                .addComponent(localize_Fit, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(2, 2, 2)
-                .addComponent(storeSettings, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(loadSettings, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(26, 26, 26))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGap(28, 28, 28)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(localize_Fit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(correctBackground, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(storeSettings, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(loadSettings, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(30, 30, 30))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(correctBackground)
-                    .addComponent(localize_Fit)
                     .addComponent(storeSettings)
-                    .addComponent(loadSettings))
-                .addContainerGap(16, Short.MAX_VALUE))
+                    .addComponent(correctBackground))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(localize_Fit)
+                    .addComponent(loadSettings)))
         );
 
         jPanel3.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, null, null, null, new java.awt.Color(153, 153, 153)));
@@ -3223,45 +3000,43 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(doGaussianSmoothing)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(21, 21, 21)
-                        .addComponent(outputPixelSizeLabel)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(XYrenderLabel)
-                    .addComponent(outputPixelSize, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(outputPixelSizeZ, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(ZrenderLabel))
-                .addContainerGap())
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(6, 6, 6)
-                .addComponent(doRenderImage)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(renderImage, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(doRenderImage)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(renderImage, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(doGaussianSmoothing)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
+                        .addComponent(outputPixelSizeLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(ZrenderLabel)
+                            .addComponent(XYrenderLabel))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(outputPixelSizeZ, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(outputPixelSize, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(22, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(doRenderImage)
-                    .addComponent(renderImage))
-                .addGap(18, 18, 18)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(renderImage)
+                    .addComponent(doRenderImage))
+                .addGap(9, 9, 9)
+                .addComponent(doGaussianSmoothing)
+                .addGap(5, 5, 5)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(doGaussianSmoothing)
+                    .addComponent(outputPixelSizeLabel)
                     .addComponent(XYrenderLabel)
-                    .addComponent(ZrenderLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(outputPixelSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(outputPixelSizeZ, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(outputPixelSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(outputPixelSizeLabel))
-                .addGap(18, 18, 18))
+                    .addComponent(ZrenderLabel))
+                .addContainerGap())
         );
 
         buttonGroup2.add(parallelComputation);
@@ -3290,31 +3065,6 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         alignChannels.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 alignChannelsActionPerformed(evt);
-            }
-        });
-
-        particlesPerBinLabelchAlign.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
-        particlesPerBinLabelchAlign.setText("Particles per bin");
-        particlesPerBinLabelchAlign.setToolTipText("Particles per bin from each chanel for channel alignment.");
-
-        chAlignBinLowCount.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-        chAlignBinLowCount.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        chAlignBinLowCount.setText("100");
-        chAlignBinLowCount.setToolTipText("Particles per bin from each chanel for channel alignment.");
-
-        minLabel1.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-        minLabel1.setText("min");
-
-        maxLabel1.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-        maxLabel1.setText("max");
-
-        chAlignBinHighCount.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-        chAlignBinHighCount.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        chAlignBinHighCount.setText("1000");
-        chAlignBinHighCount.setToolTipText("Particles per bin from each chanel for channel alignment.");
-        chAlignBinHighCount.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                chAlignBinHighCountActionPerformed(evt);
             }
         });
 
@@ -3351,60 +3101,38 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addComponent(particlesPerBinLabel2)
-                                .addGap(25, 25, 25))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                                .addComponent(particlesPerBinLabelchAlign)
-                                .addGap(18, 18, 18)))
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(minLabel1)
-                            .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addGap(1, 1, 1)
-                                .addComponent(minLabel4)))
-                        .addGap(10, 10, 10)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(chAlignBinLowCount, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(chAlignShiftXY, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(maxLabel1)
-                            .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addGap(3, 3, 3)
-                                .addComponent(maxLabel4)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(chAlignShiftZ, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(chAlignBinHighCount, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(doChannelAlign)
                         .addGap(18, 18, 18)
-                        .addComponent(alignChannels)))
+                        .addComponent(alignChannels))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(particlesPerBinLabel2)
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(maxLabel4)
+                            .addComponent(minLabel4))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(chAlignShiftZ, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(chAlignShiftXY, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(alignChannels)
                     .addComponent(doChannelAlign))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(chAlignBinHighCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(minLabel1)
-                    .addComponent(maxLabel1)
-                    .addComponent(chAlignBinLowCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(particlesPerBinLabelchAlign))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(chAlignShiftXY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(chAlignShiftZ, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(particlesPerBinLabel2)
                     .addComponent(minLabel4)
+                    .addComponent(chAlignShiftXY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(maxLabel4)
-                    .addComponent(particlesPerBinLabel2))
-                .addContainerGap(25, Short.MAX_VALUE))
+                    .addComponent(chAlignShiftZ, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(29, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -3412,7 +3140,8 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(Header)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -3424,55 +3153,50 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
                                     .addComponent(GPUcomputation)
                                     .addComponent(parallelComputation))))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(ParameterRange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(6, 6, 6)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(Analysis, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
+                        .addComponent(ParameterRange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(6, 6, 6)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(455, 455, 455)
-                        .addComponent(Header)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(Analysis, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(Header)
+                .addComponent(Header)
+                .addGap(18, 18, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(BasicInp, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addGap(34, 34, 34)
+                        .addComponent(parallelComputation)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(ParameterRange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(BasicInp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(16, 16, 16)
-                                .addComponent(parallelComputation)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(GPUcomputation))))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(GPUcomputation)
+                        .addGap(28, 28, 28))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(13, 13, 13)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(Analysis, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(Analysis, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(3, 3, 3))
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(ParameterRange, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(21, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>                        
-
 
 
 	private void totalGainActionPerformed(java.awt.event.ActionEvent evt) {                                          
@@ -3488,6 +3212,9 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 	private void doGaussianSmoothingActionPerformed(java.awt.event.ActionEvent evt) {                                                    
 
 	} 
+	private void minPtsClusterActionPerformed(java.awt.event.ActionEvent evt) {                                              
+		
+	}
 	private void calibrateActionPerformed(java.awt.event.ActionEvent evt) {
 
 		if (modality.getSelectedIndex() == 0)
@@ -3658,19 +3385,19 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 
 			if (doDriftCorrect.isSelected())
 			{
-				int[] minParticles = getDriftCorrBinLowCount();
-				int[] maxParticles = getDriftCorrBinHighCount();
+		//		int[] minParticles = getDriftCorrBinLowCount();
+		//		int[] maxParticles = getDriftCorrBinHighCount();
 				int[] bins         = getNumberOfBinsDriftCorr();
 				int[][] boundry    = getDriftCorrShift();            
-				correctDrift.run(boundry, bins, maxParticles, minParticles, selectedModel); // drift correct all channels.
+				correctDrift.run(boundry, bins, selectedModel); // drift correct all channels.
 			}
 			if (doChannelAlign.isSelected())
 			{
 
 				int[][] boundry = getChAlignShift();
-				int[] minParticles = getChAlignBinLowCount();
-				int[] maxParticles = getChAlignBinHighCount();
-				correctDrift.ChannelAlign(boundry, maxParticles, minParticles,selectedModel); // drift correct all channels.
+			//	int[] minParticles = getChAlignBinLowCount();
+			//	int[] maxParticles = getChAlignBinHighCount();
+				correctDrift.ChannelAlign(boundry, selectedModel); // drift correct all channels.
 			}
 
 			boolean[] doCluster = getDoClusterAnalysis();
@@ -3745,14 +3472,14 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		double[][] ub = ubParameters();
 
 		cleanParticleList.run(lb,ub,include);
-		int[] minParticles = getDriftCorrBinLowCount();
-		int[] maxParticles = getDriftCorrBinHighCount();
+	//	int[] minParticles = getDriftCorrBinLowCount();
+	//	int[] maxParticles = getDriftCorrBinHighCount();
 		int[] bins         = getNumberOfBinsDriftCorr();
 		int[][] boundry    = getDriftCorrShift();            
 
 		try
 		{
-			correctDrift.run(boundry, bins, maxParticles, minParticles, selectedModel); // drift correct all channels.			
+			correctDrift.run(boundry, bins, selectedModel); // drift correct all channels.			
 			
 		}		
 		catch (NullPointerException e)
@@ -3776,10 +3503,10 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			double[][] ub = ubParameters();
 			cleanParticleList.run(lb,ub,include);
 			int[][] boundry = getChAlignShift();
-			int[] minParticles = getChAlignBinLowCount();
-			int[] maxParticles = getChAlignBinHighCount();
+	//		int[] minParticles = getChAlignBinLowCount();
+	//		int[] maxParticles = getChAlignBinHighCount();
 
-			correctDrift.ChannelAlign(boundry, maxParticles, minParticles, selectedModel); // drift correct all channels.
+			correctDrift.ChannelAlign(boundry, selectedModel); // drift correct all channels.
 		}		
 		catch (NullPointerException e)
 		{
@@ -4158,13 +3885,13 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		/*
 		 *       Drift and channel correction settings.
 		 */        
-		driftCorrBinLowCountChList.getItem(id).setText(driftCorrBinLowCount.getText());
-		driftCorrBinHighCountChList.getItem(id).setText(driftCorrBinHighCount.getText());
+	//	driftCorrBinLowCountChList.getItem(id).setText(driftCorrBinLowCount.getText());
+	//	driftCorrBinHighCountChList.getItem(id).setText(driftCorrBinHighCount.getText());
 		driftCorrShiftXYChList.getItem(id).setText(driftCorrShiftXY.getText());
 		driftCorrShiftZChList.getItem(id).setText(driftCorrShiftZ.getText());        
 		numberOfBinsDriftCorrChList.getItem(id).setText(numberOfBinsDriftCorr.getText());
-		chAlignBinLowCountChList.getItem(id).setText(chAlignBinLowCount.getText());
-		chAlignBinHighCountChList.getItem(id).setText(chAlignBinHighCount.getText());
+	//	chAlignBinLowCountChList.getItem(id).setText(chAlignBinLowCount.getText());
+	//	chAlignBinHighCountChList.getItem(id).setText(chAlignBinHighCount.getText());
 		chAlignShiftXYChList.getItem(id).setText(chAlignShiftXY.getText());
 		chAlignShiftZChList.getItem(id).setText(chAlignShiftZ.getText());
 
@@ -4275,13 +4002,13 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		/*
 		 *       Drift and channel correction settings.
 		 */
-		driftCorrBinLowCount.setText(driftCorrBinLowCountChList.getItem(id).getText());
-		driftCorrBinHighCount.setText(driftCorrBinHighCountChList.getItem(id).getText());
+	//	driftCorrBinLowCount.setText(driftCorrBinLowCountChList.getItem(id).getText());
+	//	driftCorrBinHighCount.setText(driftCorrBinHighCountChList.getItem(id).getText());
 		driftCorrShiftXY.setText(driftCorrShiftXYChList.getItem(id).getText());
 		driftCorrShiftZ.setText(driftCorrShiftZChList.getItem(id).getText());
 		numberOfBinsDriftCorr.setText(numberOfBinsDriftCorrChList.getItem(id).getText());
-		chAlignBinLowCount.setText(chAlignBinLowCountChList.getItem(id).getText());
-		chAlignBinHighCount.setText(chAlignBinHighCountChList.getItem(id).getText());
+	//	chAlignBinLowCount.setText(chAlignBinLowCountChList.getItem(id).getText());
+	//	chAlignBinHighCount.setText(chAlignBinHighCountChList.getItem(id).getText());
 		chAlignShiftXY.setText(chAlignShiftXYChList.getItem(id).getText());
 		chAlignShiftZ.setText(chAlignShiftZChList.getItem(id).getText());
 
@@ -4414,7 +4141,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		/*
 		 *       Drift and channel correction settings.
 		 */
-		try {
+/*		try {
 			int I = Integer.parseInt(driftCorrBinLowCount.getText());        		
 			if (I <= 0)
 				driftCorrBinLowCount.setText(driftCorrBinLowCountChList.getItem(id).getText()); 		// Update.                    
@@ -4429,7 +4156,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 				driftCorrBinHighCount.setText(driftCorrBinHighCountChList.getItem(id).getText()); 		// Update.                    
 		} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
 			driftCorrBinHighCount.setText(driftCorrBinHighCountChList.getItem(id).getText()); 		// Update.
-		}
+		}*/
 		try {
 			int I = Integer.parseInt(driftCorrShiftXY.getText());        		
 			if (I <= 0)
@@ -4452,7 +4179,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
 			numberOfBinsDriftCorr.setText(numberOfBinsDriftCorrChList.getItem(id).getText()); 		// Update.
 		}
-		try {
+		/*try {
 			int I = Integer.parseInt(chAlignBinLowCount.getText());        		
 			if (I <= 0)
 				chAlignBinLowCount.setText(chAlignBinLowCountChList.getItem(id).getText()); 		// Update.                    
@@ -4468,6 +4195,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
 			chAlignBinHighCount.setText(chAlignBinHighCountChList.getItem(id).getText()); 		// Update.
 		}   
+		*/
 		try {
 			int I = Integer.parseInt(chAlignShiftXY.getText());        		
 			if (I <= 0)
@@ -4669,7 +4397,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			/*
 			 *       Drift and channel correction settings.
 			 */
-			try {
+	/*		try {
 				Integer.parseInt(driftCorrBinLowCountChList.getItem(id).getText());        					
 			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
 				driftCorrBinLowCountChList.getItem(id).setText("500"); 		// Update.
@@ -4678,7 +4406,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 				Integer.parseInt(driftCorrBinHighCountChList.getItem(id).getText());        					
 			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
 				driftCorrBinHighCountChList.getItem(id).setText("1000"); 		// Update.
-			}
+			}*/
 			try {
 				Integer.parseInt(driftCorrShiftXYChList.getItem(id).getText());        					
 			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
@@ -4694,7 +4422,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
 				numberOfBinsDriftCorrChList.getItem(id).setText("25"); 		// Update.
 			}						
-			try {
+	/*		try {
 				Integer.parseInt(chAlignBinLowCountChList.getItem(id).getText());        					
 			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
 				chAlignBinLowCountChList.getItem(id).setText("500"); 		// Update.
@@ -4703,7 +4431,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 				Integer.parseInt(chAlignBinHighCountChList.getItem(id).getText());        					
 			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
 				chAlignBinHighCountChList.getItem(id).setText("1000"); 		// Update.
-			}
+			}*/
 			try {
 				Integer.parseInt(chAlignShiftXYChList.getItem(id).getText());        					
 			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
@@ -4928,7 +4656,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 	/*
 	 *   get minimum particle count for drift correction.
 	 */
-	private int[] getDriftCorrBinLowCount()
+/*	private int[] getDriftCorrBinLowCount()
 	{        
 		int[] data = new int[10];
 		for (int id = 0; id < data.length; id++)
@@ -4937,11 +4665,11 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		}
 		return data;
 	}
-
+*/
 	/*
 	 *   get maximum particle count for drift correction.
 	 */
-	private int[] getDriftCorrBinHighCount()
+/*	private int[] getDriftCorrBinHighCount()
 	{        
 		int[] data = new int[10];
 		for (int id = 0; id < data.length; id++)
@@ -4950,7 +4678,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		}
 		return data;
 	}
-
+*/
 	/*
 	 *   get maximum shift for drift correction.
 	 */
@@ -4982,7 +4710,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 	/*
 	 *   get minimum particle count for drift correction.
 	 */
-	private int[] getChAlignBinLowCount()
+/*	private int[] getChAlignBinLowCount()
 	{         
 		int[] data = new int[10];
 		for (int id = 0; id < data.length; id++)
@@ -4991,11 +4719,11 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		}
 		return data;
 	}
-
+*/
 	/*
 	 *   get maximum particle count for drift correction.
 	 */
-	private int[] getChAlignBinHighCount()
+	/*private int[] getChAlignBinHighCount()
 	{        
 		int[] data = new int[10];
 		for (int id = 0; id < data.length; id++)
@@ -5004,7 +4732,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		}
 		return data;
 	}
-
+*/
 	/*
 	 *   get maximum shift for channel alignment.
 	 */
@@ -5293,7 +5021,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			 */
 
 			// drift correction bins.
-			driftCorrBinLowCountChList.getItem(Ch).setText( 
+	/*		driftCorrBinLowCountChList.getItem(Ch).setText( 
 					ij.Prefs.get("SMLocalizer.settings."+storeName+
 							".driftCorrBinLow."+Ch, 
 							""));  
@@ -5301,7 +5029,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 					ij.Prefs.get("SMLocalizer.settings."+storeName+
 							".driftCorrBinHigh."+Ch,
 							""));
-
+*/
 			// drift correction shift
 			driftCorrShiftXYChList.getItem(Ch).setText( 
 					ij.Prefs.get("SMLocalizer.settings."+storeName+
@@ -5318,7 +5046,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 							""));	
 
 
-			// channel align bin low
+/*			// channel align bin low
 			chAlignBinLowCountChList.getItem(Ch).setText( 
 					ij.Prefs.get("SMLocalizer.settings."+storeName+
 							".chAlignBinLow."+Ch,
@@ -5329,7 +5057,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 					ij.Prefs.get("SMLocalizer.settings."+storeName+
 							".chAlignBinHigh."+Ch,
 							""));	
-
+*/
 
 			// channel align shift
 			chAlignShiftXYChList.getItem(Ch).setText( 
@@ -5544,13 +5272,13 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			 */
 
 			// drift correction bins.
-			ij.Prefs.set("SMLocalizer.settings."+storeName+
+/*			ij.Prefs.set("SMLocalizer.settings."+storeName+
 					".driftCorrBinLow."+Ch, 
 					driftCorrBinLowCountChList.getItem(Ch).getText());
 			ij.Prefs.set("SMLocalizer.settings."+storeName+
 					".driftCorrBinHigh."+Ch, 
 					driftCorrBinHighCountChList.getItem(Ch).getText());
-
+*/
 			// drift correction shift
 			ij.Prefs.set("SMLocalizer.settings."+storeName+
 					".driftCorrShiftXY."+Ch, 
@@ -5565,14 +5293,14 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 					numberOfBinsDriftCorrChList.getItem(Ch).getText());
 
 			// channel align bin low
-			ij.Prefs.set("SMLocalizer.settings."+storeName+
+/*			ij.Prefs.set("SMLocalizer.settings."+storeName+
 					".chAlignBinLow."+Ch, 
 					chAlignBinLowCountChList.getItem(Ch).getText());
 			// channel align bin high
 			ij.Prefs.set("SMLocalizer.settings."+storeName+
 					".chAlignBinHigh."+Ch, 
 					chAlignBinHighCountChList.getItem(Ch).getText());
-
+*/
 			// channel align shift
 			ij.Prefs.set("SMLocalizer.settings."+storeName+
 					".chAlignShiftXY."+Ch, 
@@ -5630,7 +5358,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		});
 	}
 
-    // Variables declaration - do not modify                     
+	  // Variables declaration - do not modify                     
     private javax.swing.JPanel Analysis;
     private javax.swing.JPanel BasicInp;
     private javax.swing.JRadioButton GPUcomputation;
@@ -5644,30 +5372,6 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
     private javax.swing.JLabel basicInput;
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JButton calibrate;
-    private javax.swing.JTextField chAlignBinHighCount;
-    private javax.swing.JMenu chAlignBinHighCountChList;
-    private javax.swing.JMenuItem chAlignBinHighCountData1;
-    private javax.swing.JMenuItem chAlignBinHighCountData10;
-    private javax.swing.JMenuItem chAlignBinHighCountData2;
-    private javax.swing.JMenuItem chAlignBinHighCountData3;
-    private javax.swing.JMenuItem chAlignBinHighCountData4;
-    private javax.swing.JMenuItem chAlignBinHighCountData5;
-    private javax.swing.JMenuItem chAlignBinHighCountData6;
-    private javax.swing.JMenuItem chAlignBinHighCountData7;
-    private javax.swing.JMenuItem chAlignBinHighCountData8;
-    private javax.swing.JMenuItem chAlignBinHighCountData9;
-    private javax.swing.JTextField chAlignBinLowCount;
-    private javax.swing.JMenu chAlignBinLowCountChList;
-    private javax.swing.JMenuItem chAlignBinLowCountData1;
-    private javax.swing.JMenuItem chAlignBinLowCountData10;
-    private javax.swing.JMenuItem chAlignBinLowCountData2;
-    private javax.swing.JMenuItem chAlignBinLowCountData3;
-    private javax.swing.JMenuItem chAlignBinLowCountData4;
-    private javax.swing.JMenuItem chAlignBinLowCountData5;
-    private javax.swing.JMenuItem chAlignBinLowCountData6;
-    private javax.swing.JMenuItem chAlignBinLowCountData7;
-    private javax.swing.JMenuItem chAlignBinLowCountData8;
-    private javax.swing.JMenuItem chAlignBinLowCountData9;
     private javax.swing.JTextField chAlignShiftXY;
     private javax.swing.JMenu chAlignShiftXYChList;
     private javax.swing.JMenuItem chAlignShiftXYData1;
@@ -5853,30 +5557,6 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
     private javax.swing.JMenuItem doZData7;
     private javax.swing.JMenuItem doZData8;
     private javax.swing.JMenuItem doZData9;
-    private javax.swing.JTextField driftCorrBinHighCount;
-    private javax.swing.JMenu driftCorrBinHighCountChList;
-    private javax.swing.JMenuItem driftCorrBinHighCountData1;
-    private javax.swing.JMenuItem driftCorrBinHighCountData10;
-    private javax.swing.JMenuItem driftCorrBinHighCountData2;
-    private javax.swing.JMenuItem driftCorrBinHighCountData3;
-    private javax.swing.JMenuItem driftCorrBinHighCountData4;
-    private javax.swing.JMenuItem driftCorrBinHighCountData5;
-    private javax.swing.JMenuItem driftCorrBinHighCountData6;
-    private javax.swing.JMenuItem driftCorrBinHighCountData7;
-    private javax.swing.JMenuItem driftCorrBinHighCountData8;
-    private javax.swing.JMenuItem driftCorrBinHighCountData9;
-    private javax.swing.JTextField driftCorrBinLowCount;
-    private javax.swing.JMenu driftCorrBinLowCountChList;
-    private javax.swing.JMenuItem driftCorrBinLowCountData1;
-    private javax.swing.JMenuItem driftCorrBinLowCountData10;
-    private javax.swing.JMenuItem driftCorrBinLowCountData2;
-    private javax.swing.JMenuItem driftCorrBinLowCountData3;
-    private javax.swing.JMenuItem driftCorrBinLowCountData4;
-    private javax.swing.JMenuItem driftCorrBinLowCountData5;
-    private javax.swing.JMenuItem driftCorrBinLowCountData6;
-    private javax.swing.JMenuItem driftCorrBinLowCountData7;
-    private javax.swing.JMenuItem driftCorrBinLowCountData8;
-    private javax.swing.JMenuItem driftCorrBinLowCountData9;
     private javax.swing.JTextField driftCorrShiftXY;
     private javax.swing.JMenu driftCorrShiftXYChList;
     private javax.swing.JMenuItem driftCorrShiftXYData1;
@@ -5946,8 +5626,6 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
     private javax.swing.JMenuItem maxFrameData7;
     private javax.swing.JMenuItem maxFrameData8;
     private javax.swing.JMenuItem maxFrameData9;
-    private javax.swing.JLabel maxLabel;
-    private javax.swing.JLabel maxLabel1;
     private javax.swing.JLabel maxLabel2;
     private javax.swing.JLabel maxLabel3;
     private javax.swing.JLabel maxLabel4;
@@ -6035,8 +5713,6 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
     private javax.swing.JMenuItem minFrameData7;
     private javax.swing.JMenuItem minFrameData8;
     private javax.swing.JMenuItem minFrameData9;
-    private javax.swing.JLabel minLabel;
-    private javax.swing.JLabel minLabel1;
     private javax.swing.JLabel minLabel2;
     private javax.swing.JLabel minLabel3;
     private javax.swing.JLabel minLabel4;
@@ -6166,10 +5842,8 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
     private javax.swing.JLabel outputPixelSizeLabel;
     private javax.swing.JTextField outputPixelSizeZ;
     private javax.swing.JRadioButton parallelComputation;
-    private javax.swing.JLabel particlesPerBinLabel;
     private javax.swing.JLabel particlesPerBinLabel1;
     private javax.swing.JLabel particlesPerBinLabel2;
-    private javax.swing.JLabel particlesPerBinLabelchAlign;
     private javax.swing.JMenu pixelSizeChList;
     private javax.swing.JMenuItem pixelSizeData1;
     private javax.swing.JMenuItem pixelSizeData10;
@@ -6210,5 +5884,5 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
     private javax.swing.JMenuItem windowWidthData7;
     private javax.swing.JMenuItem windowWidthData8;
     private javax.swing.JMenuItem windowWidthData9;
-    // End of variables declaration         
+    // End of variables declaration                   
 }
