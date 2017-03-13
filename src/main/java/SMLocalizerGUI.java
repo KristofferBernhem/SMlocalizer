@@ -3453,11 +3453,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		{
 			IJ.log("No table found.");
 		}
-	}                                               
-
-	private void driftCorrBinHighCountActionPerformed(java.awt.event.ActionEvent evt) {                                                      
-
-	}                                                     
+	}                                                                                               
 
 	private void driftCorrectActionPerformed(java.awt.event.ActionEvent evt) {                                             
 		updateList(channelId.getSelectedIndex()-1);
@@ -3515,10 +3511,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 	}                                            
 	private void minimalSignalActionPerformed(java.awt.event.ActionEvent evt) {                                              
 
-	}
-	private void chAlignBinHighCountActionPerformed(java.awt.event.ActionEvent evt) {                                                    
-
-	}                                                   
+	}                                              
 
 	private void minPrecisionZActionPerformed(java.awt.event.ActionEvent evt) {                                              
 
@@ -4141,22 +4134,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		/*
 		 *       Drift and channel correction settings.
 		 */
-/*		try {
-			int I = Integer.parseInt(driftCorrBinLowCount.getText());        		
-			if (I <= 0)
-				driftCorrBinLowCount.setText(driftCorrBinLowCountChList.getItem(id).getText()); 		// Update.                    
-		} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
-			driftCorrBinLowCount.setText(driftCorrBinLowCountChList.getItem(id).getText()); 		// Update.
-		}
-		try {
-			int I = Integer.parseInt(driftCorrBinHighCount.getText());        		
-			if (I <= Integer.parseInt(driftCorrBinLowCount.getText()))
-				driftCorrBinHighCount.setText(driftCorrBinLowCount.getText());   
-			if (I <= 0)
-				driftCorrBinHighCount.setText(driftCorrBinHighCountChList.getItem(id).getText()); 		// Update.                    
-		} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
-			driftCorrBinHighCount.setText(driftCorrBinHighCountChList.getItem(id).getText()); 		// Update.
-		}*/
+
 		try {
 			int I = Integer.parseInt(driftCorrShiftXY.getText());        		
 			if (I <= 0)
@@ -4179,23 +4157,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
 			numberOfBinsDriftCorr.setText(numberOfBinsDriftCorrChList.getItem(id).getText()); 		// Update.
 		}
-		/*try {
-			int I = Integer.parseInt(chAlignBinLowCount.getText());        		
-			if (I <= 0)
-				chAlignBinLowCount.setText(chAlignBinLowCountChList.getItem(id).getText()); 		// Update.                    
-		} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
-			chAlignBinLowCount.setText(chAlignBinLowCountChList.getItem(id).getText()); 		// Update.
-		}
-		try {
-			int I = Integer.parseInt(chAlignBinHighCount.getText());        		
-			if (I <= Integer.parseInt(chAlignBinLowCount.getText()))
-				chAlignBinHighCount.setText(chAlignBinLowCount.getText());   
-			if (I <= 0)
-				chAlignBinHighCount.setText(chAlignBinHighCountChList.getItem(id).getText()); 		// Update.                    
-		} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
-			chAlignBinHighCount.setText(chAlignBinHighCountChList.getItem(id).getText()); 		// Update.
-		}   
-		*/
+		
 		try {
 			int I = Integer.parseInt(chAlignShiftXY.getText());        		
 			if (I <= 0)
@@ -4397,18 +4359,9 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			/*
 			 *       Drift and channel correction settings.
 			 */
-	/*		try {
-				Integer.parseInt(driftCorrBinLowCountChList.getItem(id).getText());        					
-			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
-				driftCorrBinLowCountChList.getItem(id).setText("500"); 		// Update.
-			}
+
 			try {
-				Integer.parseInt(driftCorrBinHighCountChList.getItem(id).getText());        					
-			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
-				driftCorrBinHighCountChList.getItem(id).setText("1000"); 		// Update.
-			}*/
-			try {
-				Integer.parseInt(driftCorrShiftXYChList.getItem(id).getText());        					
+				Integer.parseInt(driftCorrShiftXYChList.getItem(id).getText());        									
 			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
 				driftCorrShiftXYChList.getItem(id).setText("100"); 		// Update.
 			}
@@ -4422,23 +4375,13 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
 				numberOfBinsDriftCorrChList.getItem(id).setText("25"); 		// Update.
 			}						
-	/*		try {
-				Integer.parseInt(chAlignBinLowCountChList.getItem(id).getText());        					
-			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
-				chAlignBinLowCountChList.getItem(id).setText("500"); 		// Update.
-			}
-			try {
-				Integer.parseInt(chAlignBinHighCountChList.getItem(id).getText());        					
-			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
-				chAlignBinHighCountChList.getItem(id).setText("1000"); 		// Update.
-			}*/
 			try {
 				Integer.parseInt(chAlignShiftXYChList.getItem(id).getText());        					
 			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
 				chAlignShiftXYChList.getItem(id).setText("150"); 		// Update.
 			}
 			try {
-				Integer.parseInt(chAlignShiftZChList.getItem(id).getText());        					
+				Integer.parseInt(chAlignShiftZChList.getItem(id).getText());
 			} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
 				chAlignShiftZChList.getItem(id).setText("150"); 		// Update.
 			}

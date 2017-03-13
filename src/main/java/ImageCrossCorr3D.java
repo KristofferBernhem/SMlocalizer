@@ -806,14 +806,13 @@ public class ImageCrossCorr3D {
 		maxShift[1][0] = 100/pixelSizeZ;
 		maxShift[0][1] = 100/pixelSize;
 		maxShift[1][1] = 100/pixelSizeZ;
-		int[] size = {1600/pixelSize, 1600/pixelSize, 1000/pixelSizeZ};
+		int[] size = {12800/pixelSize, 12800/pixelSize, 1000/pixelSizeZ};
 		size[2] = 1; // if sending in 2D data, send in with zdim = 1.
 		long time = System.nanoTime();
 		result = run(result, nBins, maxShift,size ,pixelSize,pixelSizeZ,true);
 		//result = runChannel(result,  maxShift,size ,pixelSize,pixelSizeZ,true);
 		time = System.nanoTime() - time;
-		System.out.println(time*1E-9);
-		// TODO: negative z: find smallest z, shift all z values by this and then return at end.
+		System.out.println(time*1E-9);	
 	}
 
 
