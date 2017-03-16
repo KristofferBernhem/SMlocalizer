@@ -381,7 +381,7 @@ public class SMLocalizerProcess {
 		}
 		if (doChAlign)
 		{
-			correctDrift.ChannelAlign(chAlignshift, chAlignHighCount, chAlignLowCount,selectedModel); // drift correct all channels.
+	//		correctDrift.ChannelAlign(chAlignshift, chAlignHighCount, chAlignLowCount,selectedModel); // drift correct all channels.
 		}
 		boolean doCluster = false;
 		for (int ch = 0; ch < 10; ch++){ // if any channels require cluster analysis, perform it.
