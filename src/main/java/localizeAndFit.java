@@ -120,6 +120,10 @@ public class localizeAndFit {
 
 					//					ArrayList<int[]> Center 	= LocalMaxima.FindMaxima(Arr, gWindow[Ch-1], MinLevel[Ch-1], sqDistance[Ch-1], minPosPixels[Ch-1]); 	// Get possibly relevant center coordinates.
 					ArrayList<int[]> Center 	= LocalMaxima.FindMaxima(IP, gWindow, MinLevel[Ch-1], minPosPixels); 	// Get possibly relevant center coordinates.
+					
+					/*
+					 * loop over all frames and send calclulate minlevel based on 100 frame means.
+					 */
 					for (int i = 0; i < Center.size(); i++)
 					{
 
