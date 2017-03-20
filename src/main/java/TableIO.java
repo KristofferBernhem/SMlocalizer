@@ -49,51 +49,62 @@ public class TableIO {
 
 	public static void Store(ArrayList<Particle> Results){		
 		ij.measure.ResultsTable tab = Analyzer.getResultsTable();
-		double width = tab.getValue("width", 0);
-		double height = tab.getValue("height", 0);
-		double[] clusters = new double[tab.size()];
-		boolean cluster = false;
+		double width = 0;
+		double height = 0;
 		try{
-			tab.getValue("Cluster", 0);
-			cluster = true;
-			for( int i = 0; i < clusters.length; i++)
+			width = tab.getValue("width", 0);
+			height = tab.getValue("height", 0);
+			double[] clusters = new double[tab.size()];
+			boolean cluster = false;
+			try{
+				tab.getValue("Cluster", 0);
+				cluster = true;
+				for( int i = 0; i < clusters.length; i++)
+				{
+					clusters[i]  = tab.getValue("Cluster", i);
+				}
+			}catch (IllegalArgumentException e)
 			{
-				clusters[i]  = tab.getValue("Cluster", i);
+				
 			}
+			finally
+			{
+				
+			}
+			
+			tab.reset();		
+
+			for (int i = 0; i < Results.size(); i++){
+					tab.incrementCounter();
+					if(cluster)
+						tab.addValue("Cluster", clusters[i]);
+					tab.addValue("x0", Results.get(i).x);
+					tab.addValue("y0", Results.get(i).y);
+					tab.addValue("z0", Results.get(i).z);
+					tab.addValue("frame", Results.get(i).frame);
+					tab.addValue("channel", Results.get(i).channel);
+					tab.addValue("sigma_x", Results.get(i).sigma_x);
+					tab.addValue("sigma_y", Results.get(i).sigma_y);
+					tab.addValue("precision_x", Results.get(i).precision_x);
+					tab.addValue("precision_y", Results.get(i).precision_y);
+					tab.addValue("precision_z", Results.get(i).precision_z);
+					tab.addValue("r_square", Results.get(i).r_square);
+					tab.addValue("photons", Results.get(i).photons);
+					tab.addValue("include", Results.get(i).include);
+					if (i == 0)
+					{
+						tab.addValue("width", width);
+						tab.addValue("height", height);
+					}
+				}
 		}catch (IllegalArgumentException e)
 		{
 			
-		}
-		finally
+		}finally
 		{
 			
 		}
 		
-		tab.reset();		
-
-		for (int i = 0; i < Results.size(); i++){
-				tab.incrementCounter();
-				if(cluster)
-					tab.addValue("Cluster", clusters[i]);
-				tab.addValue("x0", Results.get(i).x);
-				tab.addValue("y0", Results.get(i).y);
-				tab.addValue("z0", Results.get(i).z);
-				tab.addValue("frame", Results.get(i).frame);
-				tab.addValue("channel", Results.get(i).channel);
-				tab.addValue("sigma_x", Results.get(i).sigma_x);
-				tab.addValue("sigma_y", Results.get(i).sigma_y);
-				tab.addValue("precision_x", Results.get(i).precision_x);
-				tab.addValue("precision_y", Results.get(i).precision_y);
-				tab.addValue("precision_z", Results.get(i).precision_z);
-				tab.addValue("r_square", Results.get(i).r_square);
-				tab.addValue("photons", Results.get(i).photons);
-				tab.addValue("include", Results.get(i).include);
-				if (i == 0)
-				{
-					tab.addValue("width", width);
-					tab.addValue("height", height);
-				}
-			}
 	tab.show("Results");
 	}
 }

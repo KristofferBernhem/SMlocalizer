@@ -12,7 +12,7 @@ extern "C" __global__  void run( int* data, int dataLen0, int frameWidth, int fr
 		int i = 0;
 		int num3 = 0;
 		bool flag = true;
-		int j = num * (frameWidth * frameHeight) + windowWidth / 2 * frameWidth + windowWidth / 2;
+		int j = num * (frameWidth * frameHeight);
 		i = num * sizeCenter;
 		if (minLevel == 0)
 		{
@@ -31,17 +31,17 @@ extern "C" __global__  void run( int* data, int dataLen0, int frameWidth, int fr
 			if (num6 > 0)
 			{
 				num4 /= (double)num6;
-				for (j = num * (frameWidth * frameHeight) + windowWidth / 2 * frameWidth + windowWidth / 2; j < (num + 1) * (frameWidth * frameHeight); j++)
+				for (j = num * (frameWidth * frameHeight); j < (num + 1) * (frameWidth * frameHeight); j++)
 				{
 					num5 += ((double)data[(j)] - num4) * ((double)data[(j)] - num4);
 				}
 				num5 /= (double)num6;
 				num5 = sqrt(num5);
-				minLevel = (int)(num4 + 0.7 * num5);
+				minLevel = (int)(num4 + 2.0 * num5);
 			}
 			else
 			{
-				minLevel = 1000;
+				minLevel = 64000;
 			}
 		}
 		j = num * (frameWidth * frameHeight) + windowWidth / 2 * frameWidth + windowWidth / 2;

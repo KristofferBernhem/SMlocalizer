@@ -28,7 +28,7 @@ public class BasicFittingCorrections {
 
 	public static ArrayList<Particle> compensate(ArrayList<Particle> result)
 	{		 
-		if (ij.Prefs.get("SMLocalizer.calibration.2D.channels",0) >= result.get(result.size()-1).channel) // verify that calibration data exists for all channels.
+		if (result.size() > 1 && ij.Prefs.get("SMLocalizer.calibration.2D.channels",0) >= result.get(result.size()-1).channel) // verify that calibration data exists for all channels.
 		{
 			try{
 

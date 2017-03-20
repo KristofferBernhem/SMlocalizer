@@ -94,7 +94,7 @@ public class LocalMaxima {
 		std /= count;
 		std = Math.sqrt(std);
 		if (MinLevel == 0)
-			MinLevel = (int) (mean + 0.7*std); // set minlevel to 
+			MinLevel = (int) (mean + 2*std); // set minlevel to 
 		int i = (Window / 2) * columns + Window / 2; // start windowWidth / 2 pixels in and windowWidth / 2 down.
 		int j = 0;
 		int k = 0;

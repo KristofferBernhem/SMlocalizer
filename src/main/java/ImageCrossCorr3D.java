@@ -38,11 +38,11 @@ public class ImageCrossCorr3D {
 
 	public ImageCrossCorr3D(byte[][][] constructReference, byte[][][] constructTarget, double constructRefSquare, double constructRefMean, double constructTarMean)
 	{
-		ImageCrossCorr3D.reference = constructReference;		
-		ImageCrossCorr3D.target = constructTarget;
-		ImageCrossCorr3D.refSquare = constructRefSquare;
-		ImageCrossCorr3D.refMean = constructRefMean;
-		ImageCrossCorr3D.tarMean = constructTarMean;
+		ImageCrossCorr3D.reference 	= constructReference;		
+		ImageCrossCorr3D.target 	= constructTarget;
+		ImageCrossCorr3D.refSquare	= constructRefSquare;
+		ImageCrossCorr3D.refMean 	= constructRefMean;
+		ImageCrossCorr3D.tarMean 	= constructTarMean;
 	}
 
 	public static ArrayList<Particle> run(ArrayList<Particle> inputParticles, int[] nBins, int[][] boundry, int[] dimensions,int pixelSize, int pixelSizeZ, boolean optimize) // main function call. Will per channel autocorrelate between time binned data.

@@ -106,12 +106,12 @@ class BackgroundCorrection {
 				} // Data loading.
 
 				// calculate steplength for median filtering:
-				int stepLength = nFrames/30;
+				int stepLength = nFrames/300;
 				if (stepLength > 10)
 					stepLength = 10;
 				if(nFrames < 500)
 					stepLength = 1;
-
+				
 				List<Callable<float[]>> tasks = new ArrayList<Callable<float[]>>();	// Preallocate.
 				if (stepLength == 1){
 					for (int i = 0; i < rows*columns; i++)
@@ -265,7 +265,7 @@ class BackgroundCorrection {
 							frameCounter++;
 						} // frame loop for mean calculations.
 						
-						int stepLength = nFrames/30;
+						int stepLength = nFrames/300;
 						if (stepLength > 10)
 							stepLength = 10;
 						if(nFrames < 500)

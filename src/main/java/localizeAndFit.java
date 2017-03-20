@@ -396,7 +396,6 @@ public class localizeAndFit {
 							processed=true;
 							CUdeviceptr deviceData 	= CUDA.copyToDevice(data);
 							CUdeviceptr deviceCenter = CUDA.allocateOnDevice((int)(nMax*nCenter));
-
 							Pointer kernelParameters 		= Pointer.to(   
 									Pointer.to(deviceData),
 									Pointer.to(new int[]{data.length}),

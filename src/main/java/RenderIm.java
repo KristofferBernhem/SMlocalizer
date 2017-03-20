@@ -24,15 +24,15 @@ import ij.plugin.filter.Analyzer;
 
 public class RenderIm {
 	public static void run(boolean[] renderCh, int[] DesiredPixelSize, boolean gSmoothing){		
-	//	try{
+		try{
 			ArrayList<Particle> correctedResults	= TableIO.Load(); // load dataset from results table.
 			ij.measure.ResultsTable tab = Analyzer.getResultsTable();
 			int Width = (int) tab.getValue("width", 0);
 			int Height = (int) tab.getValue("height", 0);
 			generateImage.create("RenderedResults",renderCh,correctedResults, Width, Height, DesiredPixelSize, gSmoothing);		
-		//}
-		//catch (Exception e){
-		//	ij.IJ.log("No results table found.");	
-	//	}		
+		}
+		catch (Exception e){
+			ij.IJ.log("No results table found.");	
+		}		
 	}	
 }
