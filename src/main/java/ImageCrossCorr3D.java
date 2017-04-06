@@ -151,6 +151,7 @@ public class ImageCrossCorr3D {
 				refSquare = Math.sqrt(refSquare);	// square root of difference.
 				int[] shift = new int[3];			// will hold shift values in x-y-z.
 				double[][] r = new double[4][8*maxShift*maxShift*maxShiftZ];	// result vector, xCorr-shiftX-shiftY-shiftZ.
+				// TODO add call to GPU function here.
 				ImageCrossCorr3D xCorr = new ImageCrossCorr3D(referenceFrame,targetFrame,refSquare,referenceMean,targetMean); // create instance for crosscorrelation calculations between the current bins.
 				ArrayList<int[]> allShifts 	= new ArrayList<int[]>();	// vector to hold all shift combinations for parallel computational setup.
 				for (shift[0] = -maxShift; shift[0]< maxShift; shift[0]++)

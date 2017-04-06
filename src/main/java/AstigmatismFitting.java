@@ -603,7 +603,7 @@ public class AstigmatismFitting {
 
 	public static ArrayList<Particle> shiftXY(ArrayList<Particle> inputList)
 	{
-		double[][][] xyOffset = new double[2][(int) ij.Prefs.get("SMLocalizer.calibration.Astigmatism.height",0)][(int) ij.Prefs.get("SMLocalizer.calibration.Astigmatism.channels",0)]; // precast.
+		double[][][] xyOffset = new double[2][(int) ij.Prefs.get("SMLocalizer.calibration.Astigmatism.height",0)+1][(int) ij.Prefs.get("SMLocalizer.calibration.Astigmatism.channels",0)]; // precast.
 		for(int ch = 1; ch <= xyOffset[0][0].length; ch++) // load in correction table.
 		{
 			for (int i = 0; i < xyOffset[0].length; i++)	// loop over all z positions.
@@ -621,7 +621,7 @@ public class AstigmatismFitting {
 			z += center[inputList.get(idx).channel-1];			// shift z by center to get back approximate frame number from stack. Use this to know what value to use from the offset table.
 			double shiftX = 0;
 			double shiftY = 0;
-			if (z >= 0 && z < xyOffset[0].length)				// if within ok range.
+			if (z >= 0 && (int)z < xyOffset[0].length)				// if within ok range.
 			{
 				shiftX = xyOffset[0][(int)Math.floor(z)][inputList.get(idx).channel-1];
 				shiftX += (xyOffset[0][(int)(Math.floor(z)+1)][inputList.get(idx).channel-1] -xyOffset[0][(int)z][inputList.get(idx).channel-1]) * (Math.floor(z+1)-(int)(Math.floor(z)));

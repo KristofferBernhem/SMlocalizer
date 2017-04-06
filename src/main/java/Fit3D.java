@@ -27,6 +27,7 @@ public class Fit3D {
 		ImageProcessor IP = image.getProcessor();
 		ArrayList<Particle> Results 		= new ArrayList<Particle>();		// Fitted results array list.
 		ArrayList<fitParameters> fitThese 	= new ArrayList<fitParameters>(); 	// arraylist to hold all fitting parameters.
+		
 		for (int Ch = 1; Ch <= nChannels; Ch++)							// Loop over all channels.
 		{
 			for (int Frame = 1; Frame <= nFrames;Frame++)					// Loop over all frames.

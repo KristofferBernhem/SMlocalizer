@@ -1,43 +1,23 @@
 
 // KernelDevelopment.driftCorr
-extern "C" __global__  void run( int* firstDataSet, int firstDataSetLen0,  int* secondDataSet, int secondDataSetLen0,  int* maxShift, int maxShiftLen0,  int* stepSize, int stepSizeLen0,  int* numSteps, int numStepsLen0,  int* result, int resultLen0);
+extern "C" __global__  void runAdd( int* referenceDataSet, int referenceDataSetLen0,  int* targetDataSet, int targetDataSetLen0,  int* shift, int shiftLen0,  float* means, int meansLen0,  int* dimensions, int dimensionsLen0,  double* result, int resultLen0);
 
 // KernelDevelopment.driftCorr
-extern "C" __global__  void run( int* firstDataSet, int firstDataSetLen0,  int* secondDataSet, int secondDataSetLen0,  int* maxShift, int maxShiftLen0,  int* stepSize, int stepSizeLen0,  int* numSteps, int numStepsLen0,  int* result, int resultLen0)
+extern "C" __global__  void runAdd( int* referenceDataSet, int referenceDataSetLen0,  int* targetDataSet, int targetDataSetLen0,  int* shift, int shiftLen0,  float* means, int meansLen0,  int* dimensions, int dimensionsLen0,  double* result, int resultLen0)
 {
-	int y = blockIdx.y;
-	int x = blockIdx.x;
-	int num = x + y * gridDim.x;
-	if (num < numSteps[(0)] * numSteps[(0)] * numSteps[(1)])
+	int num = blockIdx.x + gridDim.x * blockIdx.y;
+	if (num < dimensions[(0)] * dimensions[(1)] * dimensions[(2)] && referenceDataSet[(num)] > 0)
 	{
-		result[(num)] = 0;
-		if (numSteps[(1)] == 1)
+		short num2 = (short)(num / (dimensions[(0)] * dimensions[(1)]));
+		short num3 = (short)(num - (int)num2 * dimensions[(0)] * dimensions[(1)]);
+		short num4 = (short)((int)num3 / dimensions[(0)]);
+		num3 -= (short)((int)num4 * dimensions[(0)]);
+		for (int i = 0; i < shiftLen0 / 3; i++)
 		{
-			float num2 = (float)(maxShift[(0)] - num / numSteps[(0)] * stepSize[(0)]);
-			float num3 = (float)(maxShift[(0)] - num % numSteps[(0)] * stepSize[(0)]);
-			for (int i = 0; i < firstDataSetLen0; i += 2)
+			if ((int)num3 - shift[(i * 3)] >= 0 && (int)num3 - shift[(i * 3)] < dimensions[(0)] && (int)num4 - shift[(i * 3 + 1)] >= 0 && (int)num4 - shift[(i * 3 + 1)] < dimensions[(1)] && (int)num2 - shift[(i * 3 + 2)] >= 0 && (int)num2 - shift[(i * 3 + 2)] < dimensions[(2)])
 			{
-				for (int j = 0; j < secondDataSetLen0; j += 2)
-				{
-					if (abs((float)(firstDataSet[(i)] - secondDataSet[(j)]) - num2) < 5.0f && abs((float)(firstDataSet[(i + 1)] - secondDataSet[(j + 1)]) - num3) < 5.0f)
-					{
-						result[(num)]++;
-					}
-				}
-			}
-			return;
-		}
-		float num4 = (float)(maxShift[(0)] - num / (numSteps[(0)] * numSteps[(1)]) * stepSize[(0)]);
-		float num5 = (float)(maxShift[(0)] - num / numSteps[(1)] * stepSize[(0)]);
-		float num6 = (float)(maxShift[(1)] - num % numSteps[(1)] * stepSize[(1)]);
-		for (int k = 0; k < firstDataSetLen0; k += 3)
-		{
-			for (int l = 0; l < secondDataSetLen0; l += 3)
-			{
-				if (abs((float)(firstDataSet[(k)] - secondDataSet[(l)]) - num4) < 5.0f && abs((float)(firstDataSet[(k + 1)] - secondDataSet[(l + 1)]) - num5) < 5.0f && abs((float)(firstDataSet[(k + 2)] - secondDataSet[(l + 2)]) - num6) < 5.0f)
-				{
-					result[(num)]++;
-				}
+				int num5 = (int)num3 - shift[(i * 3)] + ((int)num4 - shift[(i * 3 + 1)]) * dimensions[(0)] + ((int)num2 - shift[(i * 3 + 2)]) * dimensions[(1)] * dimensions[(0)];
+				result[(i)] += (double)(((float)referenceDataSet[(num)] - means[(0)]) * ((float)targetDataSet[(num5)] - means[(1)]));
 			}
 		}
 	}

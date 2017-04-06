@@ -26,11 +26,10 @@ import java.util.ArrayList;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.measure.Calibration;
-import ij.process.FloatProcessor;
-import ij.process.ImageProcessor;
+
 import ij.process.ImageStatistics;
 import ij.process.ShortProcessor;
-import ij.plugin.filter.*;
+
 
 public class generateImage {
 

@@ -59,15 +59,18 @@ public class DoubleHelixFitting {
 					double currentDistance =(inputResults.get(i).x - inputResults.get(j).x)*(inputResults.get(i).x - inputResults.get(j).x) + 
 							(inputResults.get(i).y - inputResults.get(j).y)*(inputResults.get(i).y - inputResults.get(j).y); 
 					if (currentDistance < NNdistance)
+					{
 						closest = j;
+						NNdistance = currentDistance;
+					}
 				}
 				j++;
 			}
 			if (closest != 0)
 				j = closest;
-			if (closest != 0 &&
-					inputResults.get(i).photons < 1.2*inputResults.get(j).photons &&
-					inputResults.get(i).photons > 0.8*inputResults.get(j).photons )
+			if (closest != 0 )//&&
+//					inputResults.get(i).photons < 1.2*inputResults.get(j).photons &&
+//					inputResults.get(i).photons > 0.8*inputResults.get(j).photons )
 			{	
 				
 				{
@@ -680,8 +683,7 @@ public class DoubleHelixFitting {
 	{
 		double[][][] xyOffset 	= new double[2][calibration.length][calibration[0].length]; // x-y (z,ch). 
 		double[] center 		= getZoffset();			// get info of where z=0 is in the calibration file.
-		nFrames /= 2; // center frame.
-		//	System.out.println("center frame: " +nFrames + " vs "  + center[0] + " : "+calibration.length);
+		nFrames /= 2; // center frame.	
 		for (int ch = 0; ch < calibration[0].length; ch++)	// over all channels.
 		{
 			int chStart 	= -1;
@@ -793,7 +795,7 @@ public class DoubleHelixFitting {
 								}
 							}
 						}
-						if (counter > 0)
+						if (counter > 0 && startIdx <inputParticle.size() && xyOffset.length > inputParticle.get(startIdx).frame - inputParticle.get(chStart).frame)
 						{
 							meanX /= counter;	// calculate mean.
 							meanY /= counter;	// calculate mean
@@ -804,7 +806,9 @@ public class DoubleHelixFitting {
 					//			System.out.println(idxCounter + " : "+ xyOffset[0][idxCounter][ch] + " x " + xyOffset[1][idxCounter][ch] + " : " + startIdx);
 					startIdx++;	// step to the next frame.
 					if (startIdx >= inputParticle.size())	// if we're done.
+					{
 						optimize = false;
+					}
 					else if ((inputParticle.get(startIdx).frame - inputParticle.get(chStart).frame) >= calibration.length-1)
 						optimize = false;
 					else if (inputParticle.get(startIdx).channel != ch + 1)	// if we've changed channel.
@@ -813,10 +817,7 @@ public class DoubleHelixFitting {
 
 			} // if there are any centers in the central slice.
 		}
-		/*		for (int idx =0; idx < calibration.length; idx++)
-		{
-			System.out.println(idx + " : " + xyOffset[0][idx][0] + " x " + xyOffset[1][idx][0]);
-		}
+		
 		/*
 		 * interpolate
 		 */
@@ -853,7 +854,7 @@ public class DoubleHelixFitting {
 
 							while (tempIdx >= idx)
 							{
-								if (xyOffset[XY][tempIdx][ch] == 0)
+								if (tempIdx + 1< calibration.length && xyOffset[XY][tempIdx][ch] == 0)
 								{
 									xyOffset[XY][tempIdx][ch] = xyOffset[XY][tempIdx+1][ch] - total;	
 									//System.out.println(xyOffset[XY][tempIdx][ch] + " from " + xyOffset[XY][tempIdx+1][ch] + " - " + total);

@@ -91,14 +91,15 @@ public class localizeAndFit {
 				minPosPixels = 50;
 		}
 
-
 		ArrayList<Particle> Results 		= new ArrayList<Particle>();		// Fitted results array list.
 		if (selectedModel == 0) // parallel
 		{
 			ImageProcessor IP = image.getProcessor();
 			ArrayList<fitParameters> fitThese 	= new ArrayList<fitParameters>(); 	// arraylist to hold all fitting parameters.
+
 			for (int Ch = 1; Ch <= nChannels; Ch++)							// Loop over all channels.
 			{
+				int[] limits = findLimits.run(image, Ch);
 				for (int Frame = 1; Frame <= nFrames;Frame++)					// Loop over all frames.
 				{											
 					if (image.getNFrames() == 1)
@@ -119,7 +120,7 @@ public class localizeAndFit {
 					int[][] Arr = IP.getIntArray();
 
 					//					ArrayList<int[]> Center 	= LocalMaxima.FindMaxima(Arr, gWindow[Ch-1], MinLevel[Ch-1], sqDistance[Ch-1], minPosPixels[Ch-1]); 	// Get possibly relevant center coordinates.
-					ArrayList<int[]> Center 	= LocalMaxima.FindMaxima(IP, gWindow, MinLevel[Ch-1], minPosPixels); 	// Get possibly relevant center coordinates.
+					ArrayList<int[]> Center 	= LocalMaxima.FindMaxima(IP, gWindow, limits[Frame-1], minPosPixels); 	// Get possibly relevant center coordinates.
 					
 					/*
 					 * loop over all frames and send calclulate minlevel based on 100 frame means.
@@ -148,7 +149,6 @@ public class localizeAndFit {
 					} // loop over all located centers from this frame.									
 				} // loop over all frames.									
 			} // loop over all channels.
-
 			List<Callable<Particle>> tasks = new ArrayList<Callable<Particle>>();	// Preallocate.
 
 			for (final fitParameters object : fitThese) {							// Loop over and setup computation.
@@ -283,6 +283,7 @@ public class localizeAndFit {
 				double convCriteria = 1E-8; // how large improvement from one step to next we require.
 				int maxIterations = 1000;  // stop if an individual fit reaches this number of iterations.
 				ImageProcessor IP = image.getProcessor();
+				
 				// Initialize the driver and create a context for the first device.
 				cuInit(0);
 				CUdevice device = new CUdevice();
@@ -325,6 +326,7 @@ public class localizeAndFit {
 
 				for (int Ch = 1; Ch <= nChannels; Ch++)					// Loop over all channels.
 				{						
+					int[] limits = findLimits.run(image, Ch); // get limits.
 					int nCenter =(( columns*rows/(gWindow*gWindow)) / 2); // ~ 80 possible particles for a 64x64 frame. Lets the program scale with frame size.
 					long gb = 1024*1024*1024;
 					long maxMemoryGPU = 3*gb; // TODO: get size of gpu memory.
@@ -395,6 +397,7 @@ public class localizeAndFit {
 							idx = 0; // reset for next round.		
 							processed=true;
 							CUdeviceptr deviceData 	= CUDA.copyToDevice(data);
+							CUdeviceptr deviceLimits 	= CUDA.copyToDevice(limits);
 							CUdeviceptr deviceCenter = CUDA.allocateOnDevice((int)(nMax*nCenter));
 							Pointer kernelParameters 		= Pointer.to(   
 									Pointer.to(deviceData),
@@ -402,7 +405,8 @@ public class localizeAndFit {
 									Pointer.to(new int[]{columns}),		 				       
 									Pointer.to(new int[]{rows}),
 									Pointer.to(new int[]{gWindow}),
-									Pointer.to(new int[]{MinLevel[Ch-1]}),
+									Pointer.to(deviceLimits),
+									Pointer.to(new int[]{limits.length}),
 									Pointer.to(new int[]{minPosPixels}),
 									Pointer.to(new int[]{nCenter}),
 									Pointer.to(deviceCenter),
@@ -448,10 +452,8 @@ public class localizeAndFit {
 								int maxLoad = 100000;
 								if ((newN - loaded) < maxLoad)
 									maxLoad = newN - loaded;
-
-
-
 								int[] locatedCenter = new int[maxLoad]; // cleaned vector with indexes of centras.
+								int[] locatedFrame = new int[maxLoad]; // cleaned vector with indexes of centras.
 								int counter = 0;
 								int j = loaded;
 								boolean fill = true;
@@ -460,13 +462,14 @@ public class localizeAndFit {
 									if (hostCenter[j]> 0 )
 									{
 										locatedCenter[counter] = hostCenter[j];													
+										locatedFrame[counter] = hostCenter[j]/(columns*rows);							
 										counter++;
 									}
+
 									j ++;
 									if (counter == maxLoad || j == hostCenter.length)
 										fill = false;										
 								}
-
 								double[] P = new double[counter*7];
 								double[] stepSize = new double[counter*7];							
 								int[] gaussVector = new int[counter*gWindow*gWindow];
@@ -543,16 +546,16 @@ public class localizeAndFit {
 								// Free up memory allocation on device, housekeeping.
 								cuMemFree(deviceGaussVector);   
 								cuMemFree(deviceP);    
-								cuMemFree(deviceStepSize);							
+								cuMemFree(deviceStepSize);	
 								for (int n = 0; n < counter; n++) //loop over all particles
 								{	    	
 									Particle Localized = new Particle();
 									Localized.include 		= 1;
 									Localized.channel 		= Ch;
-									Localized.frame   		= startFrame + locatedCenter[n]/(columns*rows);
+									Localized.frame   		= startFrame + locatedFrame[n];//+ locatedCenter[n]/(columns*rows);
 									Localized.r_square 		= hostOutput[n*7+6];
-									Localized.x				= inputPixelSize*(hostOutput[n*7+1] + (locatedCenter[n]%columns) - Math.round((gWindow)/2));
-									Localized.y				= inputPixelSize*(hostOutput[n*7+2] + ((locatedCenter[n]/columns)%rows) - Math.round((gWindow)/2));
+									Localized.x				= inputPixelSize*(0.5 + hostOutput[n*7+1] + (locatedCenter[n]%columns) - Math.round((gWindow)/2));
+									Localized.y				= inputPixelSize*(0.5 + hostOutput[n*7+2] + ((locatedCenter[n]/columns)%rows) - Math.round((gWindow)/2));
 									Localized.z				= inputPixelSize*0;	// no 3D information.
 									Localized.sigma_x		= inputPixelSize*hostOutput[n*7+3];
 									Localized.sigma_y		= inputPixelSize*hostOutput[n*7+4];
@@ -562,10 +565,12 @@ public class localizeAndFit {
 									Results.add(Localized);
 								}	
 								loaded += maxLoad;
+
 							}
 
 						}else if ( Frame == nFrames) // final part if chunks were loaded.
 						{
+						
 							int[] remainingData = new int[idx];
 							for (int i = 0; i < idx; i++)
 								remainingData[i] = data[i];
@@ -634,6 +639,7 @@ public class localizeAndFit {
 
 
 								int[] locatedCenter = new int[maxLoad]; // cleaned vector with indexes of centras.
+								int[] locatedFrame = new int[maxLoad]; // cleaned vector with indexes of centras.
 								int counter = 0;
 
 								int j = loaded;
@@ -643,6 +649,7 @@ public class localizeAndFit {
 									if (hostCenter[j]> 0 )
 									{
 										locatedCenter[counter] = hostCenter[j];													
+										locatedFrame[counter] = hostCenter[j]/(columns*rows);							
 										counter++;
 									}
 									j ++;
@@ -732,10 +739,10 @@ public class localizeAndFit {
 									Particle Localized = new Particle();
 									Localized.include 		= 1;
 									Localized.channel 		= Ch;
-									Localized.frame   		= startFrame + locatedCenter[n]/(columns*rows);
+									Localized.frame   		= startFrame + locatedFrame[n];//locatedCenter[n]/(columns*rows);
 									Localized.r_square 		= hostOutput[n*7+6];
-									Localized.x				= inputPixelSize*(hostOutput[n*7+1] + (locatedCenter[n]%columns) - Math.round((gWindow)/2));
-									Localized.y				= inputPixelSize*(hostOutput[n*7+2] + ((locatedCenter[n]/columns)%rows) - Math.round((gWindow)/2));
+									Localized.x				= inputPixelSize*(0.5 + hostOutput[n*7+1] + (locatedCenter[n]%columns) - Math.round((gWindow)/2));
+									Localized.y				= inputPixelSize*(0.5 + hostOutput[n*7+2] + ((locatedCenter[n]/columns)%rows) - Math.round((gWindow)/2));
 									Localized.z				= inputPixelSize*0;	// no 3D information.
 									Localized.sigma_x		= inputPixelSize*hostOutput[n*7+3];
 									Localized.sigma_y		= inputPixelSize*hostOutput[n*7+4];
@@ -845,33 +852,4 @@ public class localizeAndFit {
 			} // end GPU computing.
 		return Results;					
 	}
-
-	/*
-	 * Generate fitParameter objects by finding local maximas seperated by sqDistance of atleast MinLevel center pixel intensity. 
-	 * Returns fitParameters for subsequent gaussian fitting.
-	 */
-	public static ArrayList<fitParameters> LocalizeEvents(ImageProcessor IP, int MinLevel, int Window, int Frame, int Channel, int pixelSize, int minPosPixels, int totalGain){
-		int[][] DataArray 			= IP.getIntArray();												// Array representing the frame.
-		ArrayList<int[]> Center 	= LocalMaxima.FindMaxima(DataArray, Window, MinLevel, minPosPixels); 	// Get possibly relevant center coordinates.
-		ArrayList<fitParameters> fitThese = new ArrayList<fitParameters>();
-		for (int i = 0; i < Center.size(); i++){
-			int[] dataFit = new int[Window*Window];							// Container for data to be fitted.
-			int[] Coord = Center.get(i);									// X and Y coordinates for center pixels to be fitted.
-
-			for (int j = 0; j < Window*Window; j++)
-			{
-				int x =  Coord[0] - Math.round((Window)/2) +  (j % Window);
-				int y =  Coord[1] - Math.round((Window)/2) +  (j / Window);
-				dataFit[j] = (int) IP.getf(x,y);
-			}
-			fitThese.add(new fitParameters(Coord, 
-					dataFit,
-					Channel,
-					Frame,
-					pixelSize,
-					Window,
-					totalGain));
-		}
-		return fitThese;																					// Results contain all particles located.
-	} // end LocalizeEvents
 }

@@ -137,11 +137,11 @@ public class GaussSolver {
 		///////////////////////////////////////////////////////////////////
 
 		double[] bounds = {
-				0.6			, 1.4,				// amplitude.
+				0.6			, 1.6,				// amplitude.
 				P[1] - 2	, P[1] + 2,			// x.
 				P[2] - 2	, P[2] + 2,			// y.
-				0.7			, width / 2,		// sigma x.
-				0.7			, width / 2,		// sigma y.
+				0.8			, width / 1.5,		// sigma x.
+				0.8			, width / 1.5,		// sigma y.
 				-0.5*Math.PI,0.5*Math.PI,	// theta.
 				-0.5		, 0.5				// offset.
 		};
@@ -173,13 +173,13 @@ public class GaussSolver {
 		///////////////////////////////////////////////////////////////////
 
 		double[] bounds = {
-				0.6			, 1.4,				// amplitude.
-				P[1] - 2	, P[1] + 2,			// x.
-				P[2] - 2	, P[2] + 2,			// y.
+				0.6			, 1.6,			// amplitude.
+				P[1] - 2	, P[1] + 2,		// x.
+				P[2] - 2	, P[2] + 2,		// y.
 				0.8			, maxSigma,		// sigma x.
 				0.8			, maxSigma,		// sigma y.
 				-0.5*Math.PI,0.5*Math.PI,	// theta.
-				-0.5		, 0.5				// offset.
+				-0.5		, 0.5			// offset.
 		};
 
 		double[] stepSize = {
@@ -302,7 +302,11 @@ public class GaussSolver {
 				{
 					P[pId] -= stepSize[pId]; // reset the current parameter.
 					if (stepSize[pId] < 0)  // if stepSize is negative, try positive direction at reduced stepSize.
-						stepSize[pId] *= -0.6667;
+						if (iterationCount < 20)
+						{
+							stepSize[pId] *= -0.3;
+						}else
+							stepSize[pId] *= -0.7;
 					else 					// if stepSize is positive, try changing direction.
 						stepSize[pId] /= -1;
 				}
@@ -310,16 +314,19 @@ public class GaussSolver {
 			else // if stepSize is out of bounds.
 			{
 				if (stepSize[pId] < 0)  	// if stepSize is negative, try positive direction at reduced stepSize.
-					stepSize[pId] *= -0.6667;
+					if (iterationCount < 20)
+					{
+						stepSize[pId] *= -0.3;
+					}else
+						stepSize[pId] *= -0.7;
 				else						// if stepSize is positive, try changing direction.
 					stepSize[pId] /= -1;
 			}
 			pId++; // update parameter id.
 
-
 			if (pId > 6){ // if all parameters has been evaluated this round.
 
-				if (iterationCount > 50){ // if two rounds has been run.
+				if (iterationCount > 500){ // if two rounds has been run.
 					if ((oldRsquare  - Rsquare) < convCritera) // check if we improved the fit this full round by atleast the convergence criteria.
 					{	
 						optimize = false;	// exit.
@@ -332,7 +339,7 @@ public class GaussSolver {
 				optimize = false; // exit
 		} // optimize loop.
 
-
+			
 		ThetaA = Math.cos(P[5]) * Math.cos(P[5]) / (2 * P[3]*P[3]) + 
 				Math.sin(P[5]) * Math.sin(P[5]) / (2 * P[4]*P[4]);
 		ThetaB = -Math.sin(2 * P[5]) / (4 * P[3]*P[3]) + 
@@ -360,16 +367,18 @@ public class GaussSolver {
 		Localized.channel 		= channel;
 		Localized.frame   		= frame;
 		Localized.r_square 		= 1-Rsquare;
-		Localized.x				= pixelSize*(P[1] + center[0] - Math.round((width)/2));
-		Localized.y				= pixelSize*(P[2] + center[1] - Math.round((width)/2));
+		Localized.x				= pixelSize*(P[1] + center[0] - Math.round((width)/2)+0.5);
+		Localized.y				= pixelSize*(P[2] + center[1] - Math.round((width)/2)+0.5);
 		Localized.z				= pixelSize*0;	// no 3D information.
 		Localized.sigma_x		= pixelSize*P[3];
 		Localized.sigma_y		= pixelSize*P[4];
-//		Localized.sigma_z		= pixelSize*0; // no 3D information.
 		Localized.photons		= (int) (tempRsquare/totalGain);
 		Localized.precision_x 	= Localized.sigma_x/Math.sqrt(Localized.photons);
 		Localized.precision_y 	= Localized.sigma_y/Math.sqrt(Localized.photons);
-//		Localized.precision_z 	= Localized.sigma_z/Math.sqrt(Localized.photons);	
+
+		
+		
+		
 
 		return Localized;
 	}	

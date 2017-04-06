@@ -121,10 +121,9 @@ public class correctDrift {
 		int pixelSize = 10; // pixelsize for correlation images, will be improved upon once for final precision of 10 nm.
 		int pixelSizeZ = 20; // pixelsize for correlation images, will be improved upon once for final precision of 10 nm.
 		int[] size = {(int)(width/pixelSize), (int)(height/pixelSize),1};
-	//	double Channels = locatedParticles.get(locatedParticles.size()-1).channel;		
 
-		//if (selectedModel == 0)// parallel.
-	//	{
+		if (selectedModel == 0)// parallel.
+		{
 		
 			boolean twoD = true;
 			int idx = 0;
@@ -158,6 +157,10 @@ public class correctDrift {
 			
 			
 			TableIO.Store(correctedResults);
+		}else // GPU.
+		{
+			//TODO add code.
+		}//end gpu
 		
 
 	}
@@ -176,10 +179,9 @@ public class correctDrift {
 			ij.IJ.log("No data to align.");
 			return;
 		}
-//		double Channels = locatedParticles.get(locatedParticles.size()-1).channel;		
 
-		//if (selectedModel == 0)// parallel.
-	//	{
+		if (selectedModel == 0)// parallel.
+		{
 			boolean twoD = true;
 			int idx = 0;
 			double zMin = 0;
@@ -212,95 +214,11 @@ public class correctDrift {
 			
 			
 			TableIO.Store(correctedResults);
-		
-		/*	int[] maxDistance = {2500,2500,2500}; // everything beyond 50 nm apart after shift will not affect outcome.
-		ArrayList<Particle> locatedParticles = TableIO.Load(); // Get current table data.
-		if (locatedParticles.size() == 0){ // If no particles.
-			ij.IJ.log("No data to align.");
-			return;
-		}
-
-		double Channels = locatedParticles.get(locatedParticles.size()-1).channel;
-		for (int i = 0; i < locatedParticles.size(); i ++){
-			if (locatedParticles.get(i).channel>Channels){
-				Channels = locatedParticles.get(i).channel;
-			}
-		}
-		if (Channels == 1){ // If only 1 channel.
-			ij.IJ.log("Single channel data, no second channel to align against.");
-			return;
-		}
-		if (selectedModel == 1) // sequential
+		}else // GPU
 		{
-
-		}else // end sequential.
-			if (selectedModel == 0) // parallel
-			{
-				for (int Ch = 2; Ch <= Channels; Ch++)
-				{
-					ArrayList<Particle> Data1 	= new ArrayList<Particle>(); 		// Target particles.			
-					int addedFrames1 			= 0;								// Number of particles added to the bin.
-					int index = 0;
-					while (addedFrames1 < nParticles[Ch-2] && index < locatedParticles.size())
-					{
-						if (locatedParticles.get(index).channel == Ch-1 &&
-								locatedParticles.get(index).include == 1){
-							Data1.add(locatedParticles.get(index));					
-							addedFrames1++;
-						}
-						index++;
-					} // load Data 1.
-					ArrayList<Particle> Data2 	= new ArrayList<Particle>(); 		// Change these particles so that the correlation function is maximized.
-					int addedFrames2 			= 0;								// Number of particles added to the bin.
-					index = 0;
-					while (addedFrames2 < nParticles[Ch-1] && index < locatedParticles.size()){
-						if (locatedParticles.get(index).channel == Ch &&
-								locatedParticles.get(index).include == 1){
-							Data2.add(locatedParticles.get(index));					
-							addedFrames2++;
-						}
-						index++;
-					} // Load Data 2.
-
-					ArrayList<Particle> Beta = hasNeighbors(Data1, Data2, (double) maxDistance[0]);
-					ArrayList<Particle> Alpha = hasNeighbors(Beta, Data1, (double) maxDistance[0]);
-					if(Alpha.size() < minParticles[Ch-2])
-					{
-						ij.IJ.log("not enough particles, no alignment possible");
-						return;
-					}
-					if(Beta.size() < minParticles[Ch-1])
-					{
-						ij.IJ.log("not enough particles, no alignment possible");
-						return;
-					}
-					double[] lambdaCh = {0,0,0,0}; // initiate.
-					int[] boundryCh = {boundry[0][Ch-1], boundry[1][Ch-1]}; 
-					lambdaCh = autoCorrelation.maximize(Alpha, Beta, boundryCh);				
-					ij.IJ.log("Channel " + Ch + " shifted by " + lambdaCh[1]+  " x " + lambdaCh[2] + " x " + lambdaCh[3] + " nm.");
-
-					for(int i = 0; i < locatedParticles.size(); i++)
-					{
-						if (locatedParticles.get(i).channel == Ch)
-						{
-							locatedParticles.get(i).x = locatedParticles.get(i).x + lambdaCh[1];
-							locatedParticles.get(i).y = locatedParticles.get(i).y + lambdaCh[2];
-							locatedParticles.get(i).z = locatedParticles.get(i).z + lambdaCh[3];
-						}
-					}		
-
-					for (int i = locatedParticles.size()-1; i >=0; i--)
-					{
-						if(locatedParticles.get(i).x < 0 ||
-								locatedParticles.get(i).y < 0 ||
-								locatedParticles.get(i).z < 0)
-						{
-							locatedParticles.remove(i);
-						}		
-					} // verify that the particles have not been shifted out of bounds.			
-				} // channel loop.				
-				TableIO.Store(locatedParticles);
-				ij.IJ.log("Channels aligned.");
+			
+		} // end gpu.
+	/*
 			}else // end parallel-
 				if (selectedModel == 2) // GPU
 				{

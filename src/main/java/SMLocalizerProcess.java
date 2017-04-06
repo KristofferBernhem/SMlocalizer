@@ -358,7 +358,7 @@ public class SMLocalizerProcess {
 		} // end Ch loop for variable loading.
 		
 	
-		int selectedModel = 0;
+	//	int selectedModel = 0;
 		if (CPU) // CPU processing
 		{
 			BackgroundCorrection.medianFiltering(window,WindowManager.getCurrentImage(),0); // correct background.
@@ -369,7 +369,7 @@ public class SMLocalizerProcess {
 		} // end CPU processing
 		else // GPU processing 
 		{
-			selectedModel = 2; // tell functions to utilize GPU.
+	//		selectedModel = 2; // tell functions to utilize GPU.
 //			processMedianFit.run(window, WindowManager.getCurrentImage(), signalStrength, gWindow, pixelSize, minPixelOverBkgrnd, totalGain); // GPU specific call.
 		} // end GPU processing
 		cleanParticleList.run(lb,ub,include);

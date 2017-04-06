@@ -104,7 +104,14 @@ extern "C" __global__  void gaussFitter( int* gaussVector, int gaussVectorLen0, 
 						P[(num2 + num11)] -= stepSize[(num2 + num11)];
 						if (stepSize[(num2 + num11)] < 0.0)
 						{
-							stepSize[(num2 + num11)] *= -0.6667;
+							if (num8 < 20)
+							{
+								stepSize[(num2 + num11)] *= -0.3;
+							}
+							else
+							{
+								stepSize[(num2 + num11)] *= -0.7;
+							}
 						}
 						else
 						{
@@ -116,7 +123,14 @@ extern "C" __global__  void gaussFitter( int* gaussVector, int gaussVectorLen0, 
 				{
 					if (stepSize[(num2 + num11)] < 0.0)
 					{
-						stepSize[(num2 + num11)] *= -0.6667;
+						if (num8 < 20)
+						{
+							stepSize[(num2 + num11)] *= -0.3;
+						}
+						else
+						{
+							stepSize[(num2 + num11)] *= -0.7;
+						}
 					}
 					else
 					{
@@ -149,7 +163,14 @@ extern "C" __global__  void gaussFitter( int* gaussVector, int gaussVectorLen0, 
 							P[(num2 + num11)] -= stepSize[(num2 + num11)];
 							if (stepSize[(num2 + num11)] < 0.0)
 							{
-								stepSize[(num2 + num11)] *= -0.6667;
+								if (num8 < 20)
+								{
+									stepSize[(num2 + num11)] *= -0.3;
+								}
+								else
+								{
+									stepSize[(num2 + num11)] *= -0.7;
+								}
 							}
 							else
 							{
@@ -161,7 +182,14 @@ extern "C" __global__  void gaussFitter( int* gaussVector, int gaussVectorLen0, 
 					{
 						if (stepSize[(num2 + num11)] < 0.0)
 						{
-							stepSize[(num2 + num11)] *= -0.6667;
+							if (num8 < 20)
+							{
+								stepSize[(num2 + num11)] *= -0.3;
+							}
+							else
+							{
+								stepSize[(num2 + num11)] *= -0.7;
+							}
 						}
 						else
 						{
@@ -200,7 +228,14 @@ extern "C" __global__  void gaussFitter( int* gaussVector, int gaussVectorLen0, 
 								num14 = sin(P[(num2 + 5)]) * sin(P[(num2 + 5)]) / (2.0 * P[(num2 + 3)] * P[(num2 + 3)]) + cos(P[(num2 + 5)]) * cos(P[(num2 + 5)]) / (2.0 * P[(num2 + 4)] * P[(num2 + 4)]);
 								if (stepSize[(num2 + num11)] < 0.0)
 								{
-									stepSize[(num2 + num11)] *= -0.6667;
+									if (num8 < 20)
+									{
+										stepSize[(num2 + num11)] *= -0.3;
+									}
+									else
+									{
+										stepSize[(num2 + num11)] *= -0.7;
+									}
 								}
 								else
 								{
@@ -212,7 +247,14 @@ extern "C" __global__  void gaussFitter( int* gaussVector, int gaussVectorLen0, 
 						{
 							if (stepSize[(num2 + num11)] < 0.0)
 							{
-								stepSize[(num2 + num11)] *= -0.6667;
+								if (num8 < 20)
+								{
+									stepSize[(num2 + num11)] *= -0.3;
+								}
+								else
+								{
+									stepSize[(num2 + num11)] *= -0.7;
+								}
 							}
 							else
 							{
@@ -226,7 +268,7 @@ extern "C" __global__  void gaussFitter( int* gaussVector, int gaussVectorLen0, 
 			num8++;
 			if (num11 > 6)
 			{
-				if (num8 > 50 && num10 - num9 < convCriteria)
+				if (num8 > 250 && num10 - num9 < convCriteria)
 				{
 					flag = false;
 				}

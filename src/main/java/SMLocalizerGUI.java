@@ -23,7 +23,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import ij.IJ;
+import ij.ImagePlus;
 import ij.WindowManager;
+import ij.process.ImageProcessor;
 
 
 /**
@@ -3217,6 +3219,38 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 	}
 	private void calibrateActionPerformed(java.awt.event.ActionEvent evt) {
 
+		ImagePlus image = WindowManager.getCurrentImage();
+		FilterKernel gs = new FilterKernel();
+		ImageProcessor IP = image.getProcessor();
+		int nChannels 						= image.getNChannels(); 	// Number of channels.
+		int nFrames 						= image.getNFrames();
+		if (nFrames == 1)
+			nFrames 						= image.getNSlices();
+
+		for (int Ch = 1; Ch <= nChannels; Ch++)							// Loop over all channels.
+		{
+			for (int Frame = 1; Frame <= nFrames;Frame++)					// Loop over all frames.
+			{											
+				if (image.getNFrames() == 1)
+				{
+					image.setPosition(							
+							Ch,			// channel.
+							Frame,			// slice.
+							1);		// frame.
+				}
+				else
+				{														
+					image.setPosition(
+							Ch,			// channel.
+							1,			// slice.
+							Frame);		// frame.
+				}
+				IP = image.getProcessor();	
+//				IP.blurGaussian(1);				
+				IP.setIntArray( gs.filter(IP.getIntArray()));
+			}
+		}
+		image.show();
 		if (modality.getSelectedIndex() == 0)
 		{
 			try

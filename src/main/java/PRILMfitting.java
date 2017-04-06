@@ -44,10 +44,10 @@ public class PRILMfitting {
 		distance *= distance; 										// square max distance between centers.
 		double[][] offset 			= getOffset(); // get xyz offset from channel 1.
 		double[] zOffset 			= getZoffset();     // get where z=0 is for each channel in the calibration file.
-
 		for (int i = 0; i < inputResults.size(); i++)
 		{
 			inputResults.get(i).include = 2;
+
 			int j = i+1;
 			int closest = 0;
 			double NNdistance = distance;
@@ -59,15 +59,18 @@ public class PRILMfitting {
 					double currentDistance =(inputResults.get(i).x - inputResults.get(j).x)*(inputResults.get(i).x - inputResults.get(j).x) + 
 							(inputResults.get(i).y - inputResults.get(j).y)*(inputResults.get(i).y - inputResults.get(j).y); 
 					if (currentDistance < NNdistance)
+					{
 						closest = j;
+						NNdistance = currentDistance;
+					}
 				}
 				j++;
 			}
 			if (closest != 0)
 				j = closest;
-			if (closest != 0 &&
-					inputResults.get(i).photons < 1.2*inputResults.get(j).photons &&
-					inputResults.get(i).photons > 0.8*inputResults.get(j).photons )
+			if (closest != 0 )//&&
+//					inputResults.get(i).photons < 1.2*inputResults.get(j).photons &&
+//					inputResults.get(i).photons > 0.8*inputResults.get(j).photons )
 			{	
 				
 				{
@@ -85,10 +88,10 @@ public class PRILMfitting {
 					temp.y			= (inputResults.get(i).y + inputResults.get(j).y) / 2;
 					temp.sigma_x 	= (inputResults.get(i).sigma_x + inputResults.get(j).sigma_x) / 2; 				// fitted sigma in x direction.
 					temp.sigma_y 	= (inputResults.get(i).sigma_y + inputResults.get(j).sigma_y) / 2; 				// fitted sigma in y direction.
-					temp.precision_x= Math.max(inputResults.get(i).precision_x,inputResults.get(j).precision_x); 	// precision of fit for x coordinate.
-					temp.precision_y= Math.max(inputResults.get(i).precision_y,inputResults.get(j).precision_y); 	// precision of fit for y coordinate.
+					temp.precision_x= Math.min(inputResults.get(i).precision_x,inputResults.get(j).precision_x); 	// precision of fit for x coordinate.
+					temp.precision_y= Math.min(inputResults.get(i).precision_y,inputResults.get(j).precision_y); 	// precision of fit for y coordinate.
 					temp.precision_z= 600 / Math.sqrt(temp.photons); 												// precision of fit for z coordinate.
-					temp.r_square 	= Math.max(inputResults.get(i).r_square,inputResults.get(j).r_square);; 		// Goodness of fit.
+					temp.r_square 	= Math.min(inputResults.get(i).r_square,inputResults.get(j).r_square);; 		// Goodness of fit.
 					temp.include	= 1; 																			// If this particle should be included in analysis and plotted.
 					if(temp.z != 1E6 && temp.channel>1)// if within ok z range. For all but first channel, move all particles by x,y,z offset for that channel to align all to first channel.
 					{
@@ -107,6 +110,7 @@ public class PRILMfitting {
 		}
 		results = shiftXY(results);
 		return results;
+		
 	}
 
 	/*
@@ -174,7 +178,7 @@ public class PRILMfitting {
 		while (loopC < 2)				// loop through twice, each time with larger window width for fitting.
 		{
 			gWindow = gWindow + loopC*2; // increase window size each loop.
-			for (double level = 0.7; level > 0.1; level -= 0.1)	// decrease intensity required for fitting.
+			for (double level = 0.7; level > 0.4; level -= 0.1)	// decrease intensity required for fitting.
 			{
 				for (double maxSigma = 2.5; maxSigma < 4; maxSigma += 0.5) // increase maximal sigma for fitting, lower value results in faster fitting.
 				{
@@ -720,7 +724,7 @@ public class PRILMfitting {
 								}
 							}
 						}
-						if (counter > 0)
+						if (counter > 0 && xyOffset.length > inputParticle.get(startIdx).frame - inputParticle.get(chStart).frame)
 						{
 							meanX /= counter;	// calculate mean.
 							meanY /= counter;	// calculate mean
@@ -740,10 +744,7 @@ public class PRILMfitting {
 
 			} // if there are any centers in the central slice.
 		}
-/*		for (int idx =0; idx < calibration.length; idx++)
-		{
-			System.out.println(idx + " : " + xyOffset[0][idx][0] + " x " + xyOffset[1][idx][0]);
-		}
+
 		/*
 		 * interpolate
 		 */
@@ -780,7 +781,7 @@ public class PRILMfitting {
 
 							while (tempIdx >= idx)
 							{
-								if (xyOffset[XY][tempIdx][ch] == 0)
+								if (tempIdx + 1< calibration.length && xyOffset[XY][tempIdx][ch] == 0)
 								{
 									xyOffset[XY][tempIdx][ch] = xyOffset[XY][tempIdx+1][ch] - total;	
 									//System.out.println(xyOffset[XY][tempIdx][ch] + " from " + xyOffset[XY][tempIdx+1][ch] + " - " + total);
@@ -819,7 +820,7 @@ public class PRILMfitting {
 									}
 									tempIdx--;
 								}
-							}else if (added == 1) // if we do not have a value at the end.
+							}else if (added == 1 && idx - 2 > 0) // if we do not have a value at the end.
 							{
 								total = xyOffset[XY][idx-1][ch] - xyOffset[XY][idx-2][ch];
 								tempIdx = idx + 1;
@@ -834,11 +835,6 @@ public class PRILMfitting {
 				}
 			}
 		}
-/*		for (int idx =0; idx < calibration.length; idx++)
-		{
-			System.out.println(idx + " : " + xyOffset[0][idx][0] + " x " + xyOffset[1][idx][0]);
-		}
-	*/	
 		
 		/*
 		 * 5 point mean filtering.

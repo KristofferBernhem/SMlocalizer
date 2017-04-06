@@ -4,7 +4,6 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>KTH_CellPhysics</groupId>
 	<artifactId>SMlocalizer</artifactId>
-	<version>1.9.1</version>
 	<name>SMLocalizer</name>
 	<description>Single molecule microscopy localizer</description>
 	<organization>
@@ -99,4 +98,5 @@
 	        	
 	<inceptionYear>2016</inceptionYear>
 	<url>http://smlocalizer.sourceforge.net/</url>
+	<version>2.0.0.b</version>
 </project>

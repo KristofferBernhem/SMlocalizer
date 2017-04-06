@@ -1,9 +1,9 @@
 
 // KernelDevelopment.findMaxima
-extern "C" __global__  void run( int* data, int dataLen0, int frameWidth, int frameHeight, int windowWidth, int minLevel, int minPosPixel, int sizeCenter,  int* Center, int CenterLen0);
+extern "C" __global__  void run( int* data, int dataLen0, int frameWidth, int frameHeight, int windowWidth,  int* minLevel, int minLevelLen0, int minPosPixel, int sizeCenter,  int* Center, int CenterLen0);
 
 // KernelDevelopment.findMaxima
-extern "C" __global__  void run( int* data, int dataLen0, int frameWidth, int frameHeight, int windowWidth, int minLevel, int minPosPixel, int sizeCenter,  int* Center, int CenterLen0)
+extern "C" __global__  void run( int* data, int dataLen0, int frameWidth, int frameHeight, int windowWidth,  int* minLevel, int minLevelLen0, int minPosPixel, int sizeCenter,  int* Center, int CenterLen0)
 {
 	int num = blockIdx.x + gridDim.x * blockIdx.y;
 	if (num < dataLen0 / (frameWidth * frameHeight))
@@ -14,7 +14,7 @@ extern "C" __global__  void run( int* data, int dataLen0, int frameWidth, int fr
 		bool flag = true;
 		int j = num * (frameWidth * frameHeight);
 		i = num * sizeCenter;
-		if (minLevel == 0)
+		if (minLevel[(num)] == 0)
 		{
 			double num4 = 0.0;
 			double num5 = 0.0;
@@ -37,11 +37,11 @@ extern "C" __global__  void run( int* data, int dataLen0, int frameWidth, int fr
 				}
 				num5 /= (double)num6;
 				num5 = sqrt(num5);
-				minLevel = (int)(num4 + 2.0 * num5);
+				minLevel[(num)] = (int)(num4 + 2.0 * num5);
 			}
 			else
 			{
-				minLevel = 64000;
+				minLevel[(num)] = 64000;
 			}
 		}
 		j = num * (frameWidth * frameHeight) + windowWidth / 2 * frameWidth + windowWidth / 2;
@@ -54,7 +54,7 @@ extern "C" __global__  void run( int* data, int dataLen0, int frameWidth, int fr
 		int num7 = 0;
 		while (j < (num + 1) * (frameWidth * frameHeight) - windowWidth / 2 * frameWidth)
 		{
-			if (data[(j)] > minLevel)
+			if (data[(j)] > minLevel[(num)])
 			{
 				i = 0;
 				num3 = j - windowWidth / 2 * (frameWidth + 1);
