@@ -433,7 +433,6 @@ public class ImageCrossCorr3D {
 	public static ArrayList<Particle> runChannel(ArrayList<Particle> inputParticles, int[][] boundry, int[] dimensions,int pixelSize, int pixelSizeZ, boolean optimize) // main function call. Will per channel autocorrelate between time binned data.
 	{
 		ArrayList<Particle> shiftedParticles = new ArrayList<Particle>();
-
 		int nChannels 	= inputParticles.get(inputParticles.size()-1).channel; // data is sorted on a per channel basis.
 		int zOffset 	= 0;
 		for (int i = 0; i < inputParticles.size();i++)
@@ -446,7 +445,7 @@ public class ImageCrossCorr3D {
 		{
 			int idx 		= 0; // index for inputParticles.
 			byte[][][] referenceFrame 	= new byte[dimensions[0]][dimensions[1]][dimensions[2]]; // create the reference array.
-			byte[][][] targetFrame 	= new byte[dimensions[0]][dimensions[1]][dimensions[2]]; 		// create the target (shifted) array.
+			byte[][][] targetFrame 		= new byte[dimensions[0]][dimensions[1]][dimensions[2]]; 		// create the target (shifted) array.
 
 			double[][] optimalShift = new double[4][nChannels];	// this vector will hold all shift values.
 			double targetMean = 0;	// mean value of target array.
@@ -461,7 +460,6 @@ public class ImageCrossCorr3D {
 				idx++;	// step forward.
 			}
 			targetMean /= (dimensions[0]*dimensions[1]*dimensions[2]);	// calculate the mean.
-
 			for (int ch = 2; ch <= nChannels; ch++) // loop over ch2:final channel
 			{
 				//int tempIdx 	= idx; // start of current channel.
@@ -499,7 +497,7 @@ public class ImageCrossCorr3D {
 					{
 						for (int k = 0; k < dimensions[2]; k++)
 						{
-							refSquare += (referenceFrame[i][j][k] - referenceMean)*( referenceFrame[i][j][k] - referenceMean); // calculate square pixel to mean difference.
+							refSquare += (referenceFrame[i][j][k] - referenceMean)*( referenceFrame[i][j][k] - referenceMean); // calculate square pixel to mean difference.							
 						}
 					}
 				}
@@ -592,17 +590,18 @@ public class ImageCrossCorr3D {
 				System.out.println(optimalShift[0][1]);
 				 */		if (optimize) // reduce pixelsize and run again.
 				 {
-					 int increase = 2;
-					 byte[][][] referenceFrameFine 	= new byte[dimensions[0]*increase][dimensions[1]*increase][dimensions[2]*increase]; // finer pixelsize reference array.
-					 byte[][][] targetFrameFine 		= new byte[dimensions[0]*increase][dimensions[1]*increase][dimensions[2]*increase]; // finer pixelsize target array.
+					 double increase = 2;
+					 byte[][][] referenceFrameFine 	= new byte[(int) (dimensions[0]*increase)][(int) (dimensions[1]*increase)][(int) (dimensions[2]*increase)]; // finer pixelsize reference array.
+					 byte[][][] targetFrameFine 		= new byte[(int) (dimensions[0]*increase)][(int) (dimensions[1]*increase)][(int) (dimensions[2]*increase)]; // finer pixelsize target array.
 					 int idxFine 					= 0;	// start loop from teh beginning.
 					 double referenceMeanFine 		= 0;		// new mean calculation.
-					 double targetMeanFine 			= 0;		// new mean calculation.
+					 double targetMeanFine 			= 0;		// new mean calculation.					 
 					 while(inputParticles.get(idxFine).channel <= ch-1) //populate reference array.
 					 {
 						 if (inputParticles.get(idxFine).include == 1 && inputParticles.get(idxFine).channel == ch-1)
 						 {
-							 referenceFrameFine[(int)(inputParticles.get(idxFine).x/(pixelSize/increase))][(int)(inputParticles.get(idxFine).y/(pixelSize/increase))][(int)((inputParticles.get(idxFine).z+zOffset)/(pixelSizeZ/increase))] += 1;
+						//	 System.out.println(inputParticles.get(idxFine).x/(pixelSize/increase) + " x " + inputParticles.get(idxFine).y/(pixelSize/increase) + " x " + inputParticles.get(idxFine).z/(pixelSize/increase) + " with " + pixelSize + " and " + pixelSizeZ) ;
+							 referenceFrameFine[(int)Math.floor((inputParticles.get(idxFine).x/(pixelSize/increase)))][(int)Math.floor((inputParticles.get(idxFine).y/(pixelSize/increase)))][(int)Math.floor(((inputParticles.get(idxFine).z+zOffset)/(pixelSizeZ/increase)))] += 1;
 							 referenceMeanFine++;
 						 }
 						 idxFine++;
@@ -611,7 +610,7 @@ public class ImageCrossCorr3D {
 					 {
 						 if (inputParticles.get(idxFine).include == 1)
 						 {
-							 targetFrameFine[(int)(inputParticles.get(idxFine).x/(pixelSize/increase))][(int)(inputParticles.get(idxFine).y/(pixelSize/increase))][(int)((inputParticles.get(idxFine).z+zOffset)/(pixelSizeZ/increase))] += 1;
+							 targetFrameFine[(int)Math.floor((inputParticles.get(idxFine).x/(pixelSize/increase)))][(int)Math.floor((inputParticles.get(idxFine).y/(pixelSize/increase)))][(int)Math.floor(((inputParticles.get(idxFine).z+zOffset)/(pixelSizeZ/increase)))] += 1;
 							 targetMeanFine++;
 						 }
 						 idxFine++;
@@ -619,6 +618,7 @@ public class ImageCrossCorr3D {
 					 referenceMeanFine 	/= (dimensions[0]*dimensions[2]*dimensions[2]*increase*increase*increase); // calculate mean.
 					 targetMeanFine 		/= (dimensions[0]*dimensions[2]*dimensions[2]*increase*increase*increase); // calculate mean.
 					 double refSquareFine = 0;	// square difference to mean for reference frame.
+
 					 for (int i = 0; i < dimensions[0]*increase; i++)
 					 {
 						 for (int j = 0; j < dimensions[1]*increase; j++)
@@ -631,7 +631,7 @@ public class ImageCrossCorr3D {
 					 }
 					 refSquareFine = Math.sqrt(refSquareFine);	// square root of square difference of mean to reference frame.	
 					 ImageCrossCorr3D xCorrFine = new ImageCrossCorr3D(referenceFrameFine,targetFrameFine,refSquareFine,referenceMeanFine,targetMeanFine); // create instance for crosscorrelation calculations between the current bins.					
-					 double[][] rFine = new double[4][8*increase*increase*increase];	// precast result array.
+					 double[][] rFine = new double[4][(int) (8*increase*increase*increase)];	// precast result array.
 					 ArrayList<int[]> allShiftsFine 	= new ArrayList<int[]>();		// hold all shift combinations for parallel computing.
 
 					 for (shift[0] = (int) ((optimalShift[1][ch-1])*increase - increase); shift[0]< (int) ((optimalShift[1][ch-1])*increase + increase); shift[0]++)
@@ -766,7 +766,7 @@ public class ImageCrossCorr3D {
 		int frame = 1;
 
 		Random r = new Random();
-		for (int i = 0; i < 5000; i++)
+		for (int i = 0; i < 50000; i++)
 		{
 			Particle p = new Particle();
 			p.include = 1;
@@ -784,7 +784,7 @@ public class ImageCrossCorr3D {
 			result.add(p);
 			frame++;
 		}
-		for (int i = 0; i < 5000; i++)
+		for (int i = 0; i < 50000; i++)
 		{
 			Particle p = result.get(i);
 			Particle p2 = new Particle();
@@ -792,7 +792,7 @@ public class ImageCrossCorr3D {
 			p2.x = p.x + 60;
 			p2.y = p.y - 50;
 			//		p2.z = p.z;
-			p2.channel = 1;
+			p2.channel = 2;
 			p2.frame = frame;
 			result.add(p2);
 			frame++;
@@ -801,17 +801,18 @@ public class ImageCrossCorr3D {
 		int[][] maxShift = new int[2][2]; //xy-z per channel
 
 		int[] nBins = {2};
-		int pixelSize = 10;
-		int pixelSizeZ = 20;
+		int pixelSize = 20;
+		int pixelSizeZ = 40;
 		maxShift[0][0] = 100/pixelSize;
 		maxShift[1][0] = 100/pixelSizeZ;
 		maxShift[0][1] = 100/pixelSize;
 		maxShift[1][1] = 100/pixelSizeZ;
-		int[] size = {12800/pixelSize, 12800/pixelSize, 1000/pixelSizeZ};
-		size[2] = 1; // if sending in 2D data, send in with zdim = 1.
+		int xTimes = 20;
+		int[] size = {xTimes*1280/pixelSize, xTimes*1280/pixelSize, 1000/pixelSizeZ};
+	//	size[2] = 1; // if sending in 2D data, send in with zdim = 1.
 		long time = System.nanoTime();
-		result = run(result, nBins, maxShift,size ,pixelSize,pixelSizeZ,true);
-		//result = runChannel(result,  maxShift,size ,pixelSize,pixelSizeZ,true);
+		//result = run(result, nBins, maxShift,size ,pixelSize,pixelSizeZ,true);
+		result = runChannel(result,  maxShift,size ,pixelSize,pixelSizeZ,true);
 		time = System.nanoTime() - time;
 		System.out.println(time*1E-9);	
 	}
@@ -862,12 +863,20 @@ public class ImageCrossCorr3D {
 			{		
 				for (int zi = startZ; zi < endZ; zi++)
 				{
-					union += (reference[xi][yi][zi] - refMean)*(target[xi-shift[0]][yi-shift[1]][zi-shift[2]]-tarMean);				
-					shiftSquare += (target[xi-shift[0]][yi-shift[1]][zi-shift[2]]-tarMean)*(target[xi-shift[0]][yi-shift[1]][zi-shift[2]]-tarMean);
+					if (reference[xi][yi][zi] > 0)
+					{
+//						if (target[xi-shift[0]][yi-shift[1]][zi-shift[2]] > 0)
+//						{
+							union += (reference[xi][yi][zi] - refMean)*(target[xi-shift[0]][yi-shift[1]][zi-shift[2]]-tarMean);				
+							shiftSquare += (target[xi-shift[0]][yi-shift[1]][zi-shift[2]]-tarMean)*(target[xi-shift[0]][yi-shift[1]][zi-shift[2]]-tarMean);
+	//					}
+					}
 				}
 			}			
 		}	
+		
 		double[] r = {((union / (refSquare*Math.sqrt(shiftSquare)))),shift[0],shift[1],shift[2]};
+
 		return r;
 	}
 

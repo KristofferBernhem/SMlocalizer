@@ -141,7 +141,7 @@ public class correctDrift {
 				}
 				idx++;
 			}
-			size[2] = (int) (Math.ceil(zMax-zMin));
+			size[2] =1 + (int) (Math.ceil(zMax-zMin)/pixelSizeZ);
 			for (int i = 0; i < 10; i++)
 			{
 				boundry[0][i] /= pixelSize;
@@ -171,9 +171,9 @@ public class correctDrift {
 		ij.measure.ResultsTable tab = Analyzer.getResultsTable();
 		double width = tab.getValue("width", 0);
 		double height = tab.getValue("height", 0);
-		int pixelSize = 10; // pixelsize for correlation images, will be improved upon once for final precision of 10 nm.
-		int pixelSizeZ = 20; // pixelsize for correlation images, will be improved upon once for final precision of 10 nm.
-		int[] size = {(int)(width/pixelSize), (int)(height/pixelSize),1};
+		int pixelSize = 20; // pixelsize for correlation images, will be improved upon once for final precision of 10 nm.
+		int pixelSizeZ = 40; // pixelsize for correlation images, will be improved upon once for final precision of 10 nm.
+		int[] size = {1+(int)(width/pixelSize), 1+(int)(height/pixelSize),1};
 		if (locatedParticles.size() == 0)
 		{
 			ij.IJ.log("No data to align.");
@@ -198,7 +198,7 @@ public class correctDrift {
 				}
 				idx++;
 			}
-			size[2] = (int) (Math.ceil(zMax-zMin));
+			size[2] =1 + (int) (Math.ceil(zMax-zMin)/pixelSizeZ);
 			for (int i = 0; i < 10; i++)
 			{
 				boundry[0][i] /= pixelSize;

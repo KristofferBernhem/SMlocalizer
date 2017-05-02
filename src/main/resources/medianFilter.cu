@@ -52,8 +52,8 @@ extern "C" __global__  void medianKernel(int windowWidth,  float* filterWindow, 
 		}
 		num3 = windowWidth + 1;
 		i = num * depth;
-		answer[(num5)] = (int)(meanVector[(num4)] * (inputVector[(i)] - filterWindow[(num2 + num3 / 2)]));
-		num7 = filterWindow[(num2 + num3 / 2)];
+		answer[(num5)] = (int)(meanVector[(num4)] * (inputVector[(i)] - filterWindow[(num2 + num3 / 2 - 1)]));
+		num7 = filterWindow[(num2 + num3 / 2 - 1)];
 		if (answer[(num5)] < 0)
 		{
 			answer[(num5)] = 0;
@@ -85,16 +85,16 @@ extern "C" __global__  void medianKernel(int windowWidth,  float* filterWindow, 
 					flag = true;
 				}
 			}
-			answer[(num5)] = (int)(meanVector[(num4)] * (inputVector[(i)] - (filterWindow[(num2 + num3 / 2)] + (float)(num3 % 2) * filterWindow[(num2 + num3 % 2 + num3 / 2)]) / (float)(1 + num3 % 2)));
+			answer[(num5)] = (int)(meanVector[(num4)] * (inputVector[(i)] - (filterWindow[(num2 + num3 / 2 - 1)] + (float)(num3 % 2) * filterWindow[(num2 + num3 % 2 + num3 / 2 - 1)]) / (float)(1 + num3 % 2)));
 			if (answer[(num5)] < 0)
 			{
 				answer[(num5)] = 0;
 			}
-			num9 = (filterWindow[(num2 + num3 / 2)] + (float)(num3 % 2) * filterWindow[(num2 + num3 % 2 + num3 / 2)]) / (float)(1 + num3 % 2) - num7;
+			num9 = (filterWindow[(num2 + num3 / 2 - 1)] + (float)(num3 % 2) * filterWindow[(num2 + num3 % 2 + num3 / 2 - 1)]) / (float)(1 + num3 % 2) - num7;
 			num9 /= (float)nStep;
 			for (int m = 1; m < nStep; m++)
 			{
-				answer[(num5 - nStep * num6 + m * num6)] = (int)(meanVector[(num4 - nStep + m)] * (inputVector[(i - nStep + m)] - num7 - num9 * (float)m));
+				answer[(num5 - nStep * num6 + m * num6)] = (int)(meanVector[(num4 - nStep + m)] * (inputVector[(i - nStep + m)] - num7 + num9 * (float)m));
 				if (answer[(num5 - nStep * num6 + m * num6)] < 0)
 				{
 					answer[(num5 - nStep * num6 + m * num6)] = 0;
@@ -178,7 +178,7 @@ extern "C" __global__  void medianKernel(int windowWidth,  float* filterWindow, 
 			num9 /= (float)nStep;
 			for (int n = 1; n < nStep; n++)
 			{
-				answer[(num5 - nStep * num6 + n * num6)] = (int)(meanVector[(num4 - nStep + n)] * (inputVector[(i - nStep + n)] - num7 - num9 * (float)n));
+				answer[(num5 - nStep * num6 + n * num6)] = (int)(meanVector[(num4 - nStep + n)] * (inputVector[(i - nStep + n)] - num7 + num9 * (float)n));
 				if (answer[(num5 - nStep * num6 + n * num6)] < 0)
 				{
 					answer[(num5 - nStep * num6 + n * num6)] = 0;
@@ -196,7 +196,7 @@ extern "C" __global__  void medianKernel(int windowWidth,  float* filterWindow, 
 			flag = false;
 			while (!flag)
 			{
-				if (inputVector[(i - (windowWidth + 1) * nStep)] == filterWindow[(k)])
+				if (inputVector[(i - (windowWidth - 1) * nStep)] == filterWindow[(k)])
 				{
 					while (k < num2 + num3)
 					{
@@ -217,17 +217,17 @@ extern "C" __global__  void medianKernel(int windowWidth,  float* filterWindow, 
 			{
 				answer[(num5)] = 0;
 			}
-			num9 = (filterWindow[(num2 + num3 / 2)] + (float)(num3 % 2) * filterWindow[(num2 + num3 % 2 + num3 / 2)]) / (float)(1 + num3 % 2) - num7;
+			num9 = (filterWindow[(num2 + num3 / 2)] + (float)(num3 % 2) * filterWindow[(num2 + 1 + num3 / 2)]) / (float)(1 + num3 % 2) - num7;
 			num9 /= (float)nStep;
 			for (int num10 = 1; num10 < nStep; num10++)
 			{
-				answer[(num5 - nStep * num6 + num10 * num6)] = (int)(meanVector[(num4 - nStep + num10)] * (inputVector[(i - nStep + num10)] - num7 - num9 * (float)num10));
+				answer[(num5 - nStep * num6 + num10 * num6)] = (int)(meanVector[(num4 - nStep + num10)] * (inputVector[(i - nStep + num10)] - num7 + num9 * (float)num10));
 				if (answer[(num5 - nStep * num6 + num10 * num6)] < 0)
 				{
 					answer[(num5 - nStep * num6 + num10 * num6)] = 0;
 				}
 			}
-			num7 = (filterWindow[(num2 + num3 / 2)] + (float)(num3 % 2) * filterWindow[(num2 + num3 % 2 + num3 / 2)]) / (float)(1 + num3 % 2);
+			num7 = (filterWindow[(num2 + num3 / 2)] + (float)(num3 % 2) * filterWindow[(num2 + 1 + num3 / 2)]) / (float)(1 + num3 % 2);
 			num3--;
 			i += nStep;
 			num5 += num6 * nStep;

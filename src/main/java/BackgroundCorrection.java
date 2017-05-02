@@ -50,6 +50,9 @@ import static jcuda.driver.JCudaDriver.cuModuleLoadDataEx;
  * 
  */
 
+/*
+ * TODO: CUDA yields inccorect output from background correction if looped, not if run all in one batch. 
+ */
 class BackgroundCorrection {
 
 	/* Main function for background filtering using the time median based method described in:
@@ -191,7 +194,7 @@ class BackgroundCorrection {
 						value = (int)timeVector[i][Frame-1];											
 						IP.set(i , value);	
 					}
-					IP.setIntArray( gs.filter(IP.getIntArray())); // filter frame using gs kernel.
+					IP.setIntArray(gs.filter(IP.getIntArray())); // filter frame using gs kernel.
 				}
 				image.updateAndDraw();					
 			} // Channel loop.
@@ -199,53 +202,55 @@ class BackgroundCorrection {
 		}else // end parallel.
 			if(selectedModel == 2) // GPU.
 			{					
-				JCudaDriver.setExceptionsEnabled(true);
-				// Initialize the driver and create a context for the first device.
-				cuInit(0);
-				CUdevice device = new CUdevice();
-				cuDeviceGet(device, 0);
-				CUcontext context = new CUcontext();
-				cuCtxCreate(context, 0, device);
-				// Load the PTX that contains the kernel.
-				CUmodule module = new CUmodule();
-
-				String ptxFileName = "medianFilter.ptx";
-				byte ptxFile[] = CUDA.loadData(ptxFileName);
-
-
-				cuModuleLoadDataEx(module, Pointer.to(ptxFile), 
-			            0, new int[0], Pointer.to(new int[0]));
-
-				// Obtain a handle to the kernel function.
-				CUfunction function = new CUfunction();
-				cuModuleGetFunction(function, module, "medianKernel");
-				CUmodule moduleBSpline = new CUmodule();				
 				
-				String ptxFileNameBspline = "filterImage.ptx";				
-				byte ptxFileBspline[] = CUDA.loadData(ptxFileNameBspline);
-				cuModuleLoadDataEx(moduleBSpline, Pointer.to(ptxFileBspline), 
-	            0, new int[0], Pointer.to(new int[0]));				
-				
-				CUfunction functionBpline = new CUfunction();
-				cuModuleGetFunction(functionBpline, moduleBSpline, "filterKernel");
 				long GB = 1024*1024*1024;
-				int frameSize = (3*columns*rows)*Sizeof.FLOAT;
+				int frameSize = (4*columns*rows)*Sizeof.FLOAT;
 
 				for(int Ch = 1; Ch <= nChannels; Ch++)
 				{
 					int staticMemory = (2*W[Ch-1]+1)*rows*columns*Sizeof.FLOAT;
 					long framesPerBatch = (3*GB-staticMemory)/frameSize; // 3 GB memory allocation gives this numbers of frames. 					
-					if (framesPerBatch > 10000) // longer vectors means longer processing times and will result in timeout error.
-						framesPerBatch = 10000;
+				
+//					if (framesPerBatch > 10000) // longer vectors means longer processing times and will result in timeout error.
+//						framesPerBatch = 10000;
 					int loadedFrames = 0;
 					int startFrame = 1;					
 					int endFrame = (int)framesPerBatch;					
 					if (endFrame > nFrames)
 						endFrame = nFrames;
 
-					CUdeviceptr device_window 		= CUDA.allocateOnDevice((float)((2 * W[Ch-1] + 1) * rows * columns)); // swap vector.
+					
 					while (loadedFrames < nFrames-1)
 					{		
+						JCudaDriver.setExceptionsEnabled(true);
+						// Initialize the driver and create a context for the first device.
+						cuInit(0);
+
+						CUdevice device = new CUdevice();
+						cuDeviceGet(device, 0);
+						CUcontext context = new CUcontext();
+						cuCtxCreate(context, 0, device);
+						// Load the PTX that contains the kernel.
+						CUmodule module = new CUmodule();
+
+						String ptxFileName = "medianFilter.ptx";
+						byte ptxFile[] = CUDA.loadData(ptxFileName);
+
+						cuModuleLoadDataEx(module, Pointer.to(ptxFile), 
+					            0, new int[0], Pointer.to(new int[0]));
+
+						// Obtain a handle to the kernel function.
+						CUfunction function = new CUfunction();
+						cuModuleGetFunction(function, module, "medianKernel");
+						CUmodule moduleBSpline = new CUmodule();				
+						
+						String ptxFileNameBspline = "filterImage.ptx";				
+						byte ptxFileBspline[] = CUDA.loadData(ptxFileNameBspline);
+						cuModuleLoadDataEx(moduleBSpline, Pointer.to(ptxFileBspline), 
+			            0, new int[0], Pointer.to(new int[0]));				
+						
+						CUfunction functionBpline = new CUfunction();
+						cuModuleGetFunction(functionBpline, moduleBSpline, "filterKernel");
 						float[] timeVector = new float[(endFrame-startFrame+1) * rows * columns];
 						float[] MeanFrame = new float[endFrame-startFrame+1]; 				// Will include frame mean value.
 						ImageProcessor IP = image.getProcessor();
@@ -287,7 +292,7 @@ class BackgroundCorrection {
 						CUdeviceptr device_Data 		= CUDA.copyToDevice(timeVector);
 						CUdeviceptr device_meanVector 	= CUDA.copyToDevice(MeanFrame);
 						CUdeviceptr deviceOutput 		= CUDA.allocateOnDevice((int)timeVector.length);
-
+						CUdeviceptr device_window 		= CUDA.allocateOnDevice((float)((2 * W[Ch-1] + 1) * rows * columns)); // swap vector.
 						int filterWindowLength 		= (2 * W[Ch-1] + 1) * rows * columns;
 						int dataLength 				= timeVector.length;
 						int meanVectorLength 		= MeanFrame.length;
@@ -317,13 +322,14 @@ class BackgroundCorrection {
 								kernelParameters, null 		// Kernel- and extra parameters
 								);
 						cuCtxSynchronize();
+						cuMemFree(device_window);
 						cuMemFree(device_Data);  
 						cuMemFree(device_meanVector);
 						// Pull data from device.
 						int hostOutput[] = new int[timeVector.length];
-						
-				//		cuMemcpyDtoH(Pointer.to(hostOutput), deviceOutput,
-				//				timeVector.length * Sizeof.INT);
+					
+			//			cuMemcpyDtoH(Pointer.to(hostOutput), deviceOutput,
+			//					timeVector.length * Sizeof.INT);
 						
 						// B-spline filter image:
 
@@ -331,21 +337,21 @@ class BackgroundCorrection {
                                 0.003661718759765626, 0.008787890664062511, 0.06884453115234379, 0.00878789066406251, 0.003661718759765626, 
                                 0.02868598630371093, 0.06884453115234379, 0.5393295900878906, 0.06884453115234378, 0.02868598630371093,
                                 0.0036617187597656254, 0.00878789066406251, 0.06884453115234378, 0.008787890664062508, 0.0036617187597656254, 
-                                0.0015257568383789054, 0.003661718759765626, 0.02868598630371093, 0.0036617187597656254, 0.0015257568383789054};
-
+                                0.0015257568383789054, 0.003661718759765626, 0.02868598630371093, 0.0036617187597656254, 0.0015257568383789054}; // 5x5 cubic bifilter.
+						
 						int bSplineDataLength = hostOutput.length;
 					
 						CUdeviceptr deviceOutputBSpline 		= CUDA.allocateOnDevice(bSplineDataLength);
 						CUdeviceptr deviceFilterKernel 			= CUDA.copyToDevice(filterKernel); // filter to applied to each pixel.				
 						Pointer kernelParametersBspline 		= Pointer.to(   
-								Pointer.to(deviceOutput),		// input data is output from medianFilter function call.
+								Pointer.to(deviceOutput),					// input data is output from medianFilter function call.
 								Pointer.to(new int[]{bSplineDataLength}),	// length of vector
-								Pointer.to(new int[]{(columns)}), 	// width
-								Pointer.to(new int[]{(rows)}),		// height
-								Pointer.to(deviceFilterKernel),
+								Pointer.to(new int[]{(columns)}), 			// width
+								Pointer.to(new int[]{(rows)}),				// height
+								Pointer.to(deviceFilterKernel),				// Transfer filter kernel.
 								Pointer.to(new int[]{(int)filterKernel.length}),								
 								Pointer.to(new int[]{(int)(Math.sqrt(filterKernel.length))}), // width of filter kernel.
-								Pointer.to(deviceOutputBSpline),
+								Pointer.to(deviceOutputBSpline),			// result vector.
 								Pointer.to(new int[]{bSplineDataLength})
 								);
 
@@ -379,7 +385,7 @@ class BackgroundCorrection {
 										Frame);		// frame.
 							}
 							IP = image.getProcessor();		
-							for (int i = 0; i < rows*columns; i ++)
+							for (int i = 0; i < rows*columns; i ++) // ensure that no negative values are used, transfer result to image.
 							{			
 								if (hostOutput[idx] > 0)
 									IP.set(i, (int)hostOutput[idx]);
@@ -397,14 +403,16 @@ class BackgroundCorrection {
 							endFrame = nFrames;
 						
 						// Free up memory allocation on device, housekeeping.
+
 						cuMemFree(deviceOutput);  
-						cuMemFree(deviceOutputBSpline);    
-						cuMemFree(deviceFilterKernel);    
+			//			cuMemFree(deviceOutputBSpline);    
+			//			cuMemFree(deviceFilterKernel);    
 
 
 					} // while loadedChannels < nFrames
-					// Free up memory allocation on device, housekeeping.
-					cuMemFree(device_window);
+					
+					
+
 				} // Channel loop.				
 				image.updateAndDraw();			
 			} // end GPU.
@@ -566,7 +574,7 @@ class BackgroundCorrection {
 			{					
 				quickSort(V, low, high); // Quicksort first W entries.	
 				if (i % 2 == 0){
-					medianVector[i-W-1] = (float) ((V[i/2]+V[i/2+1])/2.0);
+					medianVector[i-W-1] = (float) ((V[i/2]+V[i/2-1])/2.0);
 				}else{
 					medianVector[i-W-1] = V[i/2];
 
@@ -585,7 +593,7 @@ class BackgroundCorrection {
 		}
 		for (int i = Vector.length-W-1; i < Vector.length; i++){ // Last section, without access to data on right.			
 			if (i % 2 == 0){				
-				medianVector[i] = V[W-(i-Vector.length + W + 1)/2];
+				medianVector[i] = V[W-(i-Vector.length + W)/2];
 			}else{
 				medianVector[i] = (float) ((V[W-(i-Vector.length + W)/2]+V[W-(i-Vector.length + W)/2-1])/2.0);
 			}
@@ -711,95 +719,4 @@ class BackgroundCorrection {
 		if (high > i)
 			quickSort(arr, i, high);
 	}
-	/*
-	public static double[] removeEntry(double[] inVector, double entry) { // Return vector with element "entry" missing.
-		int found = 0;
-		double[] vectorOut = new double[inVector.length -1];
-		for (int i = 0; i < inVector.length - 1;i++){
-			if (inVector[i] == entry){
-				found = 1;				
-			}
-			vectorOut[i] = inVector[i+found];
-		}
-		return vectorOut;
-	} 
-
-	public static int indexOfIntArray(double[] array, double key) {
-		int returnvalue = -1;
-		for (int i = 0; i < array.length; ++i) {
-			if (key == array[i]) {
-				returnvalue = i;
-				break;
-			}
-		}
-		return returnvalue;
-	}
-
-	public static double[] sortInsert(double[] Vector, double InsVal){ // Assumes sorted input vector.
-		double[] bigVector = new double[Vector.length + 1]; // Add InsVal into this vector		
-		int indexToInsert = 0;
-		if (InsVal > Vector[Vector.length-1]){ // If the value to be inserted is larger then the last value in the vector.
-
-			System.arraycopy(Vector, 0, bigVector, 0, Vector.length);
-			bigVector[bigVector.length-1] = InsVal;
-			return bigVector;
-		}else if (InsVal < Vector[0]){  // If the value to be inserted is smaller then the first value in the vector.
-			bigVector[0] = InsVal;
-			System.arraycopy(Vector, 0, bigVector, 1, Vector.length);
-
-			return bigVector;
-		}else{
-			for (int i = 1; i < Vector.length; i++){
-				if (InsVal < Vector[i]){
-					indexToInsert = i;
-
-					System.arraycopy(Vector, 0, bigVector, 0, indexToInsert);
-					bigVector[indexToInsert] = InsVal;
-					System.arraycopy(Vector, indexToInsert, bigVector, indexToInsert+1, Vector.length-indexToInsert);
-					return bigVector;
-				}
-
-			}
-		}
-		return bigVector;
-	}
-
-	public static void quickSort(double[] arr, int low, int high) {
-		if (arr == null || arr.length == 0)
-			return;
-
-		if (low >= high)
-			return;
-
-		// pick the pivot
-		int middle = low + (high - low) / 2;
-		double pivot = arr[middle];
-
-		// make left < pivot and right > pivot
-		int i = low, j = high;
-		while (i <= j) {
-			while (arr[i] < pivot) {
-				i++;
-			}
-
-			while (arr[j] > pivot) {
-				j--;
-			}
-
-			if (i <= j) {
-				double temp = arr[i];
-				arr[i] = arr[j];
-				arr[j] = temp;
-				i++;
-				j--;
-			}
-		}
-
-		// recursively sort two sub parts
-		if (low < j)
-			quickSort(arr, low, j);
-
-		if (high > i)
-			quickSort(arr, i, high);
-	}*/
 }

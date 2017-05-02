@@ -178,9 +178,9 @@ public class PRILMfitting {
 		while (loopC < 2)				// loop through twice, each time with larger window width for fitting.
 		{
 			gWindow = gWindow + loopC*2; // increase window size each loop.
-			for (double level = 0.7; level > 0.4; level -= 0.1)	// decrease intensity required for fitting.
+			for (double level = 0.7; level > 0.3; level -= 0.1)	// decrease intensity required for fitting.
 			{
-				for (double maxSigma = 2.5; maxSigma < 4; maxSigma += 0.5) // increase maximal sigma for fitting, lower value results in faster fitting.
+				for (double maxSigma = 2.5; maxSigma < 3.5; maxSigma += 0.5) // increase maximal sigma for fitting, lower value results in faster fitting.
 				{
 					for (int maxDist = 600; maxDist <= 1000; maxDist += 200) // increase maximum allowed distance between lobes.
 					{
