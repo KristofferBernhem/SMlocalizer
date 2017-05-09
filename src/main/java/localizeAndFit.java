@@ -326,7 +326,7 @@ public class localizeAndFit {
 
 				for (int Ch = 1; Ch <= nChannels; Ch++)					// Loop over all channels.
 				{						
-					int[] limits = findLimits.run(image, Ch); // get limits.
+				//	int[] limits = findLimits.run(image, Ch); // get limits.
 					int nCenter =(( columns*rows/(gWindow*gWindow)) / 2); // ~ 80 possible particles for a 64x64 frame. Lets the program scale with frame size.
 					long gb = 1024*1024*1024;
 					long maxMemoryGPU = 3*gb; // TODO: get size of gpu memory.
@@ -397,7 +397,10 @@ public class localizeAndFit {
 							idx = 0; // reset for next round.		
 							processed=true;
 							CUdeviceptr deviceData 	= CUDA.copyToDevice(data);
-							CUdeviceptr deviceLimits 	= CUDA.copyToDevice(limits);
+							int[] limitsN = findLimits.run(data, columns, rows, Ch); // get limits.
+							
+							CUdeviceptr deviceLimits 	= CUDA.copyToDevice(limitsN);
+
 							CUdeviceptr deviceCenter = CUDA.allocateOnDevice((int)(nMax*nCenter));
 							Pointer kernelParameters 		= Pointer.to(   
 									Pointer.to(deviceData),
@@ -406,7 +409,7 @@ public class localizeAndFit {
 									Pointer.to(new int[]{rows}),
 									Pointer.to(new int[]{gWindow}),
 									Pointer.to(deviceLimits),
-									Pointer.to(new int[]{limits.length}),
+									Pointer.to(new int[]{limitsN.length}),
 									Pointer.to(new int[]{minPosPixels}),
 									Pointer.to(new int[]{nCenter}),
 									Pointer.to(deviceCenter),
@@ -582,20 +585,25 @@ public class localizeAndFit {
 							}
 							processed = true;
 							CUdeviceptr deviceData 	= CUDA.copyToDevice(remainingData);
-							CUdeviceptr deviceCenter = CUDA.allocateOnDevice((int)(nMax*nCenter));
+							
+							int[] limitsN = findLimits.run(data, columns, rows, Ch); // get limits.
+							CUdeviceptr deviceLimits 	= CUDA.copyToDevice(limitsN);
 
+							CUdeviceptr deviceCenter = CUDA.allocateOnDevice((int)(nMax*nCenter));
 							Pointer kernelParameters 		= Pointer.to(   
 									Pointer.to(deviceData),
 									Pointer.to(new int[]{remainingData.length}),
 									Pointer.to(new int[]{columns}),		 				       
 									Pointer.to(new int[]{rows}),
 									Pointer.to(new int[]{gWindow}),
-									Pointer.to(new int[]{MinLevel[Ch-1]}),
+									Pointer.to(deviceLimits),
+									Pointer.to(new int[]{limitsN.length}),
 									Pointer.to(new int[]{minPosPixels}),
 									Pointer.to(new int[]{nCenter}),
 									Pointer.to(deviceCenter),
 									Pointer.to(new int[]{nMax*nCenter}));
-
+							
+						
 							int blockSizeX 	= 1;
 							int blockSizeY 	= 1;				   
 							int gridSizeX 	= (int) Math.ceil((Math.sqrt(nMax)));

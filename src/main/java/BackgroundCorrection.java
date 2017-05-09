@@ -50,9 +50,6 @@ import static jcuda.driver.JCudaDriver.cuModuleLoadDataEx;
  * 
  */
 
-/*
- * TODO: CUDA yields inccorect output from background correction if looped, not if run all in one batch. 
- */
 class BackgroundCorrection {
 
 	/* Main function for background filtering using the time median based method described in:
@@ -210,9 +207,7 @@ class BackgroundCorrection {
 				{
 					int staticMemory = (2*W[Ch-1]+1)*rows*columns*Sizeof.FLOAT;
 					long framesPerBatch = (3*GB-staticMemory)/frameSize; // 3 GB memory allocation gives this numbers of frames. 					
-				
-//					if (framesPerBatch > 10000) // longer vectors means longer processing times and will result in timeout error.
-//						framesPerBatch = 10000;
+
 					int loadedFrames = 0;
 					int startFrame = 1;					
 					int endFrame = (int)framesPerBatch;					
@@ -325,21 +320,16 @@ class BackgroundCorrection {
 						cuMemFree(device_window);
 						cuMemFree(device_Data);  
 						cuMemFree(device_meanVector);
-						// Pull data from device.
-						int hostOutput[] = new int[timeVector.length];
-					
-			//			cuMemcpyDtoH(Pointer.to(hostOutput), deviceOutput,
-			//					timeVector.length * Sizeof.INT);
-						
+
 						// B-spline filter image:
 
 						double[] filterKernel = { 0.0015257568383789054, 0.003661718759765626, 0.02868598630371093, 0.0036617187597656254, 0.0015257568383789054, 
                                 0.003661718759765626, 0.008787890664062511, 0.06884453115234379, 0.00878789066406251, 0.003661718759765626, 
                                 0.02868598630371093, 0.06884453115234379, 0.5393295900878906, 0.06884453115234378, 0.02868598630371093,
                                 0.0036617187597656254, 0.00878789066406251, 0.06884453115234378, 0.008787890664062508, 0.0036617187597656254, 
-                                0.0015257568383789054, 0.003661718759765626, 0.02868598630371093, 0.0036617187597656254, 0.0015257568383789054}; // 5x5 cubic bifilter.
+                                0.0015257568383789054, 0.003661718759765626, 0.02868598630371093, 0.0036617187597656254, 0.0015257568383789054}; // 5x5 bicubic Bspline filter.
 						
-						int bSplineDataLength = hostOutput.length;
+						int bSplineDataLength = timeVector.length;
 					
 						CUdeviceptr deviceOutputBSpline 		= CUDA.allocateOnDevice(bSplineDataLength);
 						CUdeviceptr deviceFilterKernel 			= CUDA.copyToDevice(filterKernel); // filter to applied to each pixel.				
@@ -355,7 +345,7 @@ class BackgroundCorrection {
 								Pointer.to(new int[]{bSplineDataLength})
 								);
 
-						gridSizeX = (int)Math.ceil(Math.sqrt(hostOutput.length/(columns*rows))); 	// update.
+						gridSizeX = (int)Math.ceil(Math.sqrt(timeVector.length/(columns*rows))); 	// update.
 						gridSizeY = gridSizeX;														// update.
 						cuLaunchKernel(functionBpline,
 								gridSizeX,  gridSizeY, 1, 	// Grid dimension
@@ -364,11 +354,19 @@ class BackgroundCorrection {
 								kernelParametersBspline, null 		// Kernel- and extra parameters
 								);
 						cuCtxSynchronize();
+						int hostOutput[] = new int[timeVector.length];
 						cuMemcpyDtoH(Pointer.to(hostOutput), deviceOutputBSpline,
 								bSplineDataLength * Sizeof.INT);
 						
 						int idx = 0;
-						for (int Frame = startFrame; Frame <= endFrame; Frame++)
+						if (endFrame == nFrames) // if we're on the last bin, include last segment.
+							endFrame += W[Ch-1];
+						if (startFrame != 1) // if we're not on the first set of bins, ignore the first segment.
+						{
+							startFrame += W[Ch-1];
+							idx += W[Ch-1]*rows*columns;
+						}
+						for (int Frame = startFrame; Frame <= endFrame-W[Ch-1]; Frame++)
 						{			
 							if (image.getNFrames() == 1)
 							{
@@ -385,18 +383,20 @@ class BackgroundCorrection {
 										Frame);		// frame.
 							}
 							IP = image.getProcessor();		
-							for (int i = 0; i < rows*columns; i ++) // ensure that no negative values are used, transfer result to image.
-							{			
+							int i = 0; 							
+							while (i < rows*columns)
+							{
 								if (hostOutput[idx] > 0)
 									IP.set(i, (int)hostOutput[idx]);
 								else
 									IP.set(i, 0);
 								idx++;
+								i++;
 							}
 
 							image.setProcessor(IP);
 						} // frame loop for data return.
-
+				
 						startFrame = endFrame-W[Ch-1]; // include W more frames to ensure that border errors from median calculations dont occur ore often then needed.
 						endFrame += framesPerBatch;					
 						if (endFrame > nFrames)
@@ -405,14 +405,10 @@ class BackgroundCorrection {
 						// Free up memory allocation on device, housekeeping.
 
 						cuMemFree(deviceOutput);  
-			//			cuMemFree(deviceOutputBSpline);    
-			//			cuMemFree(deviceFilterKernel);    
-
+						cuMemFree(deviceOutputBSpline);    
+						cuMemFree(deviceFilterKernel);   
 
 					} // while loadedChannels < nFrames
-					
-					
-
 				} // Channel loop.				
 				image.updateAndDraw();			
 			} // end GPU.

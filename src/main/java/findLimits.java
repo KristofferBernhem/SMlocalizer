@@ -98,4 +98,59 @@ public class findLimits {
 
 		return limits;
 	}
+	public static int[] run(int[] image, int columns, int rows, int ch)
+	{
+		int nFrames = (int)(image.length/(columns*rows));
+		int[] limits = new int[nFrames];
+
+		double[] runningMean = new double[nFrames];
+		double[] runningStd = new double[nFrames];
+		int meanWidth = 500;
+		if (meanWidth > nFrames)
+			meanWidth = nFrames;
+		int count = 0;
+
+		for (int frame  = 1; frame <= nFrames; frame++)
+		{
+
+			count = 0;
+			int frameOffset = (frame-1)*columns*rows;
+			for (int id = 0; id < columns*rows; id++){				
+				runningMean [frame-1] += image[id+frameOffset];
+				if (image[id + frameOffset] > 0)
+					count++;
+				
+			}
+
+			runningMean[frame-1]/=count;
+			// get std for the frame.
+			for (int id = 0; id < columns*rows;id++)
+				runningStd[frame-1] += (image[id+frameOffset] - runningMean[frame-1])*(image[id+frameOffset] - runningMean[frame-1]);
+
+			runningStd[frame-1] /= count;
+			runningStd[frame-1] = Math.sqrt(runningStd[frame-1]);
+		}
+		for (int i = 0; i < limits.length; i++)
+		{
+			double meanOfMeans 	= 0;
+			double meanOfStd 	= 0;
+			int idx 			= i - meanWidth-1;
+			count = 0;
+			if (idx < 0)
+				idx = 0;
+			while (idx < runningMean.length && idx < i + meanWidth)
+			{
+				meanOfMeans += runningMean[idx];
+				meanOfStd += runningStd[idx];
+				count++;
+				idx++;
+			}
+			meanOfMeans /= count;
+			meanOfStd /= count;
+			limits[i] = (int) (meanOfMeans*2 + meanOfStd*4);
+
+		}		
+
+		return limits;
+	}
 }
