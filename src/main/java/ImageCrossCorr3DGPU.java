@@ -121,7 +121,7 @@ public class ImageCrossCorr3DGPU {
 					}
 				}
 			}
-			
+
 			while (idx < inputParticles.size() && inputParticles.get(idx).channel == ch)
 			{				
 				idx++;
@@ -134,13 +134,13 @@ public class ImageCrossCorr3DGPU {
 			double[][] optimalShift = new double[4][nBins[ch-1]];	// this vector will hold all shift values.
 			idx = tempIdx;	// return idx to startpoint of this loop.
 
-			
+
 			while (currBin <= nBins[ch-1])							// loop over all bins.
 			{		
 				idx = tempIdx;
 				int[] firstBin = {idx,1};
 				int[] secondBin = {idx,1};
-				
+
 				while (idx < inputParticles.size() &&
 						inputParticles.get(idx).channel == ch &&
 						inputParticles.get(idx).frame <= (currBin-1) * binsize)
@@ -169,21 +169,21 @@ public class ImageCrossCorr3DGPU {
 				 * Make 256x256x20 image or less, going for voxel size of 2*maxDrift x 2*maxDrift * 2*maxDriftZ. 
 				 * Find pixel with largest correlation with the next bin and extract a 10x10x20 nm voxel 256x256x20 pixel large ROI and apply the drift correction from this ROI to all particles.
 				 */
-			//	System.out.println("bins: " + currBin + " range: " + firstBin[0] + " x " + firstBin[1]+ " through: " + secondBin[0] + " x " + secondBin[1]);
+				//	System.out.println("bins: " + currBin + " range: " + firstBin[0] + " x " + firstBin[1]+ " through: " + secondBin[0] + " x " + secondBin[1]);
 				int[][] c = getOverlapCenter(inputParticles, firstBin, secondBin, dimensions, pixelSize,  pixelSizeZ, maxShift, maxShiftZ,zOffset);
 				int[] croppedDimensions = {(int)Math.ceil((c[0][1]-c[0][0])/pixelSize),(int)Math.ceil((c[1][1]-c[1][0])/pixelSize),(int)Math.ceil((c[2][1]-c[2][0])/pixelSizeZ)};
 				idx = tempIdx;	// return idx to startpoint of this loop.
-	/*			System.out.println("from" + c[0][0] + " to " + c[0][1]);
+				/*			System.out.println("from" + c[0][0] + " to " + c[0][1]);
 				System.out.println("from" + c[1][0] + " to " + c[1][1]);
 				System.out.println("from" + c[2][0] + " to " + c[2][1]);
 				System.out.println("********");
-*/
-			//	System.out.println("bin: " + currBin  + " _ "+ croppedDimensions[0] + " to " + croppedDimensions[1]); 
+				 */
+				//	System.out.println("bin: " + currBin  + " _ "+ croppedDimensions[0] + " to " + croppedDimensions[1]); 
 				int[] referenceFrame 	= new int[croppedDimensions[0]*croppedDimensions[1]*croppedDimensions[2]]; // create the reference array.
 				int[] targetFrame 		= new int[croppedDimensions[0]*croppedDimensions[1]*croppedDimensions[2]]; 		// create the target (shifted) array.	//					
 				double targetMean = 0;	// mean value of target array.
 				double referenceMean = 0;	// mean value of reference array.
-				
+
 				while(inputParticles.get(idx).frame<=(currBin - 1) * binsize) // populate target first due to while loop design.
 				{
 					if (inputParticles.get(idx).include == 1)	// only include particles that are ok from the users parameter choice.
@@ -201,13 +201,13 @@ public class ImageCrossCorr3DGPU {
 					}
 					idx++;	// step forward.
 				}
-	
+
 				referenceMean /= (croppedDimensions[0]*croppedDimensions[1]*croppedDimensions[2]);	// calculate the mean.
 				if (currBin < nBins[ch-1])	// if this is not the final bin.
 				{
 					while(inputParticles.get(idx).frame<= currBin * binsize) // populate target first due to while loop design.
 					{
-	
+
 						if (inputParticles.get(idx).include == 1)	// only include particles that are ok from the users parameter choice.
 						{
 							if (inputParticles.get(idx).x >= c[0][0] && inputParticles.get(idx).x < c[0][1] &&
@@ -228,7 +228,7 @@ public class ImageCrossCorr3DGPU {
 				{
 					while(idx < inputParticles.size() && inputParticles.get(idx).channel==ch) // final batch, cover rounding errors.
 					{
-	
+
 						if (inputParticles.get(idx).include == 1)	// only include particles that are ok from the users parameter choice.
 						{
 							if (inputParticles.get(idx).x >= c[0][0] && inputParticles.get(idx).x < c[0][1] &&
@@ -247,7 +247,7 @@ public class ImageCrossCorr3DGPU {
 				} // last bin.
 
 				targetMean /= (croppedDimensions[0]*croppedDimensions[1]*croppedDimensions[2]);	// calculate the mean.
-				
+
 				double refSquare = 0;										// this value needs to be calculated for every shift combination, pulled out and made accessible to save computational time.
 				double tarSquare = 0;										// this value needs to be calculated for every shift combination, pulled out and made accessible to save computational time.
 				for (int i = 0; i < referenceFrame.length; i++)
@@ -257,97 +257,105 @@ public class ImageCrossCorr3DGPU {
 				}				
 				refSquare = Math.sqrt(refSquare);	// square root of difference.
 				tarSquare = Math.sqrt(tarSquare);	// square root of difference.
-				
-			
-
-				// Initialize the driver and create a context for the first device.
-				double[] hostOutput = new double[shiftVector.length/3];
-				float[] means 						= {(float) referenceMean, (float) targetMean};
-				CUdeviceptr device_shiftVector 		= CUDA.copyToDevice(shiftVector);
-				CUdeviceptr device_referenceFrame 	= CUDA.copyToDevice(referenceFrame);
-				CUdeviceptr device_targetFrame 		= CUDA.copyToDevice(targetFrame);
-				CUdeviceptr device_meanVector 		= CUDA.copyToDevice(means);
-				CUdeviceptr device_dimensions 		= CUDA.copyToDevice(croppedDimensions);	
-				CUdeviceptr deviceOutput 			= CUDA.allocateOnDevice((double)hostOutput.length);				
-
-				int frameLength 			= referenceFrame.length;
-				int shiftVectorLength 		= shiftVector.length;
-				int meanVectorLength 		= 2;
-				int dimensionsLength 		= 3;
-				int outputLength			= hostOutput.length;
-
-				Pointer kernelParameters 	= Pointer.to(   
-						Pointer.to(device_referenceFrame),
-						Pointer.to(new int[]{frameLength}),
-						Pointer.to(device_targetFrame),
-						Pointer.to(new int[]{frameLength}),
-						Pointer.to(device_shiftVector),
-						Pointer.to(new int[]{shiftVectorLength}),
-						Pointer.to(device_meanVector),
-						Pointer.to(new int[]{meanVectorLength}),
-						Pointer.to(device_dimensions),
-						Pointer.to(new int[]{dimensionsLength}),
-						Pointer.to(deviceOutput),
-						Pointer.to(new int[]{outputLength})
-						);
 
 
-				int gridSizeX = (int)Math.ceil(Math.sqrt(croppedDimensions[0]*croppedDimensions[1]*croppedDimensions[2]));///frameBatch); 	// update.
-				int gridSizeY = gridSizeX;														// update.
-				int blockSizeX = 1;
-				int blockSizeY = 1;
-
-				cuLaunchKernel(function,
-						gridSizeX,  gridSizeY, 1, 	// Grid dimension
-						blockSizeX, blockSizeY, 1,  // Block dimension
-						0, null,               		// Shared memory size and stream
-						kernelParameters, null 		// Kernel- and extra parameters
-						);
-				cuCtxSynchronize();
-				cuMemcpyDtoH(Pointer.to(hostOutput), deviceOutput,
-						hostOutput.length * Sizeof.DOUBLE);
-
-				cuMemFree(device_referenceFrame);
-				cuMemFree(device_targetFrame);
-				cuMemFree(device_shiftVector);
-				cuMemFree(device_meanVector);
-				cuMemFree(device_dimensions);
-				cuMemFree(deviceOutput);
-				
-				double sum = 0;
-				for (int i = 0; i < shiftVector.length-3; i += 3)
+				if (refSquare > 0 && tarSquare > 0)
 				{
-					if (shiftVector[i+1] == 0 &&
-							shiftVector[i+2] == 0 &&
-							shiftVector[i+3] == 0 )
-						sum =  shiftVector[i];
-				}
-				//System.out.println(currBin + ": " + sum);
-				int idxZero= 0;
-				for (int i = 0; i < hostOutput.length; i++)
-				{
-					
-					if (hostOutput[i]/(tarSquare*refSquare) > sum)
+					// Initialize the driver and create a context for the first device.
+					double[] hostOutput = new double[shiftVector.length/3];
+					float[] means 						= {(float) referenceMean, (float) targetMean};
+					CUdeviceptr device_shiftVector 		= CUDA.copyToDevice(shiftVector);
+					CUdeviceptr device_referenceFrame 	= CUDA.copyToDevice(referenceFrame);
+					CUdeviceptr device_targetFrame 		= CUDA.copyToDevice(targetFrame);
+					CUdeviceptr device_meanVector 		= CUDA.copyToDevice(means);
+					CUdeviceptr device_dimensions 		= CUDA.copyToDevice(croppedDimensions);	
+					CUdeviceptr deviceOutput 			= CUDA.allocateOnDevice((double)hostOutput.length);				
+
+					int frameLength 			= referenceFrame.length;
+					int shiftVectorLength 		= shiftVector.length;
+					int meanVectorLength 		= 2;
+					int dimensionsLength 		= 3;
+					int outputLength			= hostOutput.length;
+
+					Pointer kernelParameters 	= Pointer.to(   
+							Pointer.to(device_referenceFrame),
+							Pointer.to(new int[]{frameLength}),
+							Pointer.to(device_targetFrame),
+							Pointer.to(new int[]{frameLength}),
+							Pointer.to(device_shiftVector),
+							Pointer.to(new int[]{shiftVectorLength}),
+							Pointer.to(device_meanVector),
+							Pointer.to(new int[]{meanVectorLength}),
+							Pointer.to(device_dimensions),
+							Pointer.to(new int[]{dimensionsLength}),
+							Pointer.to(deviceOutput),
+							Pointer.to(new int[]{outputLength})
+							);
+
+
+					int gridSizeX = (int)Math.ceil(Math.sqrt(croppedDimensions[0]*croppedDimensions[1]*croppedDimensions[2]));///frameBatch); 	// update.
+					int gridSizeY = gridSizeX;														// update.
+					int blockSizeX = 1;
+					int blockSizeY = 1;
+
+					cuLaunchKernel(function,
+							gridSizeX,  gridSizeY, 1, 	// Grid dimension
+							blockSizeX, blockSizeY, 1,  // Block dimension
+							0, null,               		// Shared memory size and stream
+							kernelParameters, null 		// Kernel- and extra parameters
+							);
+					cuCtxSynchronize();
+					cuMemcpyDtoH(Pointer.to(hostOutput), deviceOutput,
+							hostOutput.length * Sizeof.DOUBLE);
+
+					cuMemFree(device_referenceFrame);
+					cuMemFree(device_targetFrame);
+					cuMemFree(device_shiftVector);
+					cuMemFree(device_meanVector);
+					cuMemFree(device_dimensions);
+					cuMemFree(deviceOutput);
+
+					double sum = 0;
+					for (int i = 0; i < shiftVector.length-3; i += 3)
 					{
-					//	System.out.println(hostOutput[i]+ " x:" + shiftVector[i*3]+ " y:" + shiftVector[i*3+1]+ " z:" + shiftVector[i*3+2] + " from: " + i);
-						sum = hostOutput[i]/(tarSquare*refSquare);
-						idxZero = i;
+						if (shiftVector[i+1] == 0 &&
+								shiftVector[i+2] == 0 &&
+								shiftVector[i+3] == 0 )
+							sum =  shiftVector[i];
 					}
-				}
-				optimalShift[0][currBin-1] = sum;
-		//		System.out.println(currBin + ": " +sum);
-				
-				if (optimalShift[0][currBin-1]  > 0.1)
-				{
+					//System.out.println(currBin + ": " + sum);
+					int idxZero= 0;
+					for (int i = 0; i < hostOutput.length; i++)
+					{
 
-					optimalShift[1][currBin-1] = shiftVector[idxZero*3+0];
-					optimalShift[2][currBin-1] = shiftVector[idxZero*3+1];
-					optimalShift[3][currBin-1] = shiftVector[idxZero*3+2];							
+						if (hostOutput[i]/(tarSquare*refSquare) > sum)
+						{
+							//	System.out.println(hostOutput[i]+ " x:" + shiftVector[i*3]+ " y:" + shiftVector[i*3+1]+ " z:" + shiftVector[i*3+2] + " from: " + i);
+							sum = hostOutput[i]/(tarSquare*refSquare);
+							idxZero = i;
+						}
+					}
+					optimalShift[0][currBin-1] = sum;
+					//		System.out.println(currBin + ": " +sum);
+
+					if (optimalShift[0][currBin-1]  > 0.1)
+					{
+
+						optimalShift[1][currBin-1] = shiftVector[idxZero*3+0];
+						optimalShift[2][currBin-1] = shiftVector[idxZero*3+1];
+						optimalShift[3][currBin-1] = shiftVector[idxZero*3+2];							
+					}
+				} // check if any data was entered.
+				else
+				{
+					optimalShift[1][currBin-1] = 0;
+					optimalShift[2][currBin-1] = 0;
+					optimalShift[3][currBin-1] = 0;
 				}
 				tempIdx = secondBin[0];	// startpoint of next loop.
 				currBin++;
 			} // bin loop.
-			
+
 
 			/*
 			 * Interpolate and modify particles.
@@ -451,7 +459,7 @@ public class ImageCrossCorr3DGPU {
 					reduce = 1;
 					addZ = 0;
 				}
-	
+
 				int[] shiftVector = new int[reduce*3*(1+2*maxShift)*(1+2*maxShift)*(addZ+maxShiftZ)];
 				int counter = 0;
 				for (int xShift = - maxShift; xShift <= maxShift; xShift++) // calculate the shifts.
@@ -479,7 +487,7 @@ public class ImageCrossCorr3DGPU {
 				idx = tempIdx;
 
 				int[] secondBin = {idx,1};
-				
+
 
 				while (idx < inputParticles.size() && inputParticles.get(idx).channel < ch)
 					idx++;
@@ -528,7 +536,7 @@ public class ImageCrossCorr3DGPU {
 				{
 					while(inputParticles.get(idx).channel == ch) // populate target first due to while loop design.
 					{
-	
+
 						if (inputParticles.get(idx).include == 1)	// only include particles that are ok from the users parameter choice.
 						{
 							if (inputParticles.get(idx).x >= c[0][0] && inputParticles.get(idx).x < c[0][1] &&
@@ -549,7 +557,7 @@ public class ImageCrossCorr3DGPU {
 				{
 					while(idx < inputParticles.size()) // final batch, cover rounding errors.
 					{
-	
+
 						if (inputParticles.get(idx).include == 1)	// only include particles that are ok from the users parameter choice.
 						{
 							if (inputParticles.get(idx).x >= c[0][0] && inputParticles.get(idx).x < c[0][1] &&
@@ -672,8 +680,8 @@ public class ImageCrossCorr3DGPU {
 					optimalShift[3][ch-1] = shiftVector[idxZero*3+2];							
 				}
 				tempIdx = secondBin[0];	// startpoint of next loop.
-			
-			
+
+
 
 			} // loop over channel 2:end
 			for(int j = 1; j < optimalShift[0].length; j++)
@@ -681,7 +689,7 @@ public class ImageCrossCorr3DGPU {
 				ij.IJ.log("Channel " + (j+1) + " shifted by " + pixelSize*optimalShift[1][j]+  " x " + pixelSize*optimalShift[2][j] + " x " + pixelSizeZ*optimalShift[3][j] + " nm.");
 			}
 
-			 			
+
 			int i = 0; 
 			while (i < inputParticles.size()) // apply shifts.
 			{
@@ -911,15 +919,15 @@ public class ImageCrossCorr3DGPU {
 		result = run(result, nBins, maxShift,size ,pixelSize,pixelSizeZ);
 
 		//result = runChannel(result,  maxShift,size ,pixelSize,pixelSizeZ);
-	double error = 0;
-		
+		double error = 0;
+
 		for (int i = 50000; i < 100000; i++){
 			error += (result.get(0).x-result.get(i).x);
 			if (result.get(i).x != 500)
 				System.out.println(i + " ; " + result.get(i).x);
 		}
-			
-			
+
+
 		System.out.println(error);
 		time = System.nanoTime() - time;
 		System.out.println(time*1E-9);	

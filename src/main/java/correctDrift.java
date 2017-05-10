@@ -41,6 +41,7 @@ import jcuda.driver.CUdeviceptr;
 import jcuda.driver.CUfunction;
 import jcuda.driver.CUmodule;
 import jcuda.driver.JCudaDriver;
+import ome.xml.model.enums.EnumerationException;
 
 
 public class correctDrift {
@@ -148,23 +149,20 @@ public class correctDrift {
 		}
 		if (twoD)								
 			size[2] = 1; // 2D data.
-
-		if (selectedModel == 0)// parallel.
+		try
 		{
-			correctedResults = ImageCrossCorr3D.run(locatedParticles, nBins, boundry, size ,pixelSize,pixelSizeZ);
-		}else
+			if (selectedModel == 0)// parallel.
+			{
+				correctedResults = ImageCrossCorr3D.run(locatedParticles, nBins, boundry, size ,pixelSize,pixelSizeZ);
+			}else
+			{
+				correctedResults = ImageCrossCorr3DGPU.run(locatedParticles, nBins, boundry, size ,pixelSize,pixelSizeZ);
+			}
+			TableIO.Store(correctedResults);
+		}catch (IndexOutOfBoundsException e)
 		{
-			correctedResults = ImageCrossCorr3DGPU.run(locatedParticles, nBins, boundry, size ,pixelSize,pixelSizeZ);
+			ij.IJ.log("drift corrections failed");
 		}
-		
-
-		
-		TableIO.Store(correctedResults);
-
-
-
-
-
 
 	}
 	public static void ChannelAlign(int[][] boundry, int selectedModel){
@@ -209,16 +207,21 @@ public class correctDrift {
 		if (twoD)
 
 			size[2] = 1; // 2D data.
-		if (selectedModel == 0)// parallel.
+		try
 		{
-			correctedResults = ImageCrossCorr3D.runChannel(locatedParticles, boundry, size ,pixelSize,pixelSizeZ);
-		}else
+			if (selectedModel == 0)// parallel.
+			{
+				correctedResults = ImageCrossCorr3D.runChannel(locatedParticles, boundry, size ,pixelSize,pixelSizeZ);
+			}else
+			{
+				correctedResults = ImageCrossCorr3DGPU.runChannel(locatedParticles, boundry, size ,pixelSize,pixelSizeZ);
+			}
+
+			TableIO.Store(correctedResults);
+		}catch (IndexOutOfBoundsException e)
 		{
-			correctedResults = ImageCrossCorr3DGPU.runChannel(locatedParticles, boundry, size ,pixelSize,pixelSizeZ);
+			ij.IJ.log("channel alignment failed");
 		}
-
-		TableIO.Store(correctedResults);
-
 	}
 
 	public static double[] interp(double X1, double X2, int n){
