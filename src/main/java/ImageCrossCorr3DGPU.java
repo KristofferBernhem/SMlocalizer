@@ -193,7 +193,9 @@ public class ImageCrossCorr3DGPU {
 								inputParticles.get(idx).y >= c[1][0] && inputParticles.get(idx).y < c[1][1] &&
 								inputParticles.get(idx).z >= c[2][0] && inputParticles.get(idx).z < c[2][1])
 						{
-							int linearIndex = (int)((int)((inputParticles.get(idx).x-c[0][0])/pixelSize) + (int)((inputParticles.get(idx).y-c[1][0])/pixelSize) * croppedDimensions[0] + (int)((inputParticles.get(idx).z+zOffset-c[2][0])/pixelSizeZ) * croppedDimensions[0]*croppedDimensions[1]);
+							int linearIndex = (int)((int)Math.floor((inputParticles.get(idx).x-c[0][0])/pixelSize) + 
+									(int)Math.floor((inputParticles.get(idx).y-c[1][0])/pixelSize) * croppedDimensions[0] + 
+									(int)Math.floor((inputParticles.get(idx).z+zOffset-c[2][0])/pixelSizeZ) * croppedDimensions[0]*croppedDimensions[1]);
 							referenceFrame[linearIndex] += 1;	// increase value by one if there is a particle within the voxel.
 							referenceMean++;	// keep track of total number of added particles (for mean calculation).
 						}
@@ -213,7 +215,9 @@ public class ImageCrossCorr3DGPU {
 									inputParticles.get(idx).y >= c[1][0] && inputParticles.get(idx).y < c[1][1] &&
 									inputParticles.get(idx).z >= c[2][0] && inputParticles.get(idx).z < c[2][1])
 							{
-								int linearIndex = (int)((int)((inputParticles.get(idx).x-c[0][0])/pixelSize) + (int)((inputParticles.get(idx).y-c[1][0])/pixelSize) * croppedDimensions[0] + (int)((inputParticles.get(idx).z+zOffset-c[2][0])/pixelSizeZ) * croppedDimensions[0]*croppedDimensions[1]);
+								int linearIndex = (int)((int)Math.floor((inputParticles.get(idx).x-c[0][0])/pixelSize) + 
+										(int)Math.floor((inputParticles.get(idx).y-c[1][0])/pixelSize) * croppedDimensions[0] + 
+										(int)Math.floor((inputParticles.get(idx).z+zOffset-c[2][0])/pixelSizeZ) * croppedDimensions[0]*croppedDimensions[1]);
 								targetFrame[linearIndex] += 1;	// increase value by one if there is a particle within the voxel.
 								targetMean++;	// keep track of total number of added particles (for mean calculation).						
 							}
@@ -232,10 +236,9 @@ public class ImageCrossCorr3DGPU {
 									inputParticles.get(idx).y >= c[1][0] && inputParticles.get(idx).y < c[1][1] &&
 									inputParticles.get(idx).z >= c[2][0] && inputParticles.get(idx).z < c[2][1])
 							{
-								int linearIndex = 
-										(int)((inputParticles.get(idx).x-c[0][0])/pixelSize) + 
-										(int)((inputParticles.get(idx).y-c[1][0])/pixelSize) * croppedDimensions[0] + 
-										(int)((inputParticles.get(idx).z+zOffset-c[2][0])/pixelSizeZ) * croppedDimensions[0]*croppedDimensions[1];
+								int linearIndex = (int)((int)Math.floor((inputParticles.get(idx).x-c[0][0])/pixelSize) + 
+										(int)Math.floor((inputParticles.get(idx).y-c[1][0])/pixelSize) * croppedDimensions[0] + 
+										(int)Math.floor((inputParticles.get(idx).z+zOffset-c[2][0])/pixelSizeZ) * croppedDimensions[0]*croppedDimensions[1]);
 								targetFrame[linearIndex] += 1;	// increase value by one if there is a particle within the voxel.
 								targetMean++;	// keep track of total number of added particles (for mean calculation).
 							}
@@ -511,7 +514,9 @@ public class ImageCrossCorr3DGPU {
 								inputParticles.get(idx).y >= c[1][0] && inputParticles.get(idx).y < c[1][1] &&
 								inputParticles.get(idx).z >= c[2][0] && inputParticles.get(idx).z < c[2][1])
 						{
-							int linearIndex = (int)((int)((inputParticles.get(idx).x-c[0][0])/pixelSize) + (int)((inputParticles.get(idx).y-c[1][0])/pixelSize) * croppedDimensions[0] + (int)((inputParticles.get(idx).z+zOffset-c[2][0])/pixelSizeZ) * croppedDimensions[0]*croppedDimensions[1]);
+							int linearIndex = (int)((int)Math.floor((inputParticles.get(idx).x-c[0][0])/pixelSize) + 
+									(int)Math.floor((inputParticles.get(idx).y-c[1][0])/pixelSize) * croppedDimensions[0] + 
+									(int)Math.floor((inputParticles.get(idx).z+zOffset-c[2][0])/pixelSizeZ) * croppedDimensions[0]*croppedDimensions[1]);
 							referenceFrame[linearIndex] += 1;	// increase value by one if there is a particle within the voxel.
 							referenceMean++;	// keep track of total number of added particles (for mean calculation).
 						}
@@ -531,7 +536,9 @@ public class ImageCrossCorr3DGPU {
 									inputParticles.get(idx).y >= c[1][0] && inputParticles.get(idx).y < c[1][1] &&
 									inputParticles.get(idx).z >= c[2][0] && inputParticles.get(idx).z < c[2][1])
 							{
-								int linearIndex = (int)((int)((inputParticles.get(idx).x-c[0][0])/pixelSize) + (int)((inputParticles.get(idx).y-c[1][0])/pixelSize) * croppedDimensions[0] + (int)((inputParticles.get(idx).z+zOffset-c[2][0])/pixelSizeZ) * croppedDimensions[0]*croppedDimensions[1]);
+								int linearIndex = (int)((int)Math.floor((inputParticles.get(idx).x-c[0][0])/pixelSize) + 
+										(int)Math.floor((inputParticles.get(idx).y-c[1][0])/pixelSize) * croppedDimensions[0] + 
+										(int)Math.floor((inputParticles.get(idx).z+zOffset-c[2][0])/pixelSizeZ) * croppedDimensions[0]*croppedDimensions[1]);
 								targetFrame[linearIndex] += 1;	// increase value by one if there is a particle within the voxel.
 								targetMean++;	// keep track of total number of added particles (for mean calculation).
 							}
@@ -550,7 +557,9 @@ public class ImageCrossCorr3DGPU {
 									inputParticles.get(idx).y >= c[1][0] && inputParticles.get(idx).y < c[1][1] &&
 									inputParticles.get(idx).z >= c[2][0] && inputParticles.get(idx).z < c[2][1])
 							{
-								int linearIndex = (int)((int)((inputParticles.get(idx).x-c[0][0])/pixelSize) + (int)((inputParticles.get(idx).y-c[1][0])/pixelSize) * croppedDimensions[0] + (int)((inputParticles.get(idx).z+zOffset-c[2][0])/pixelSizeZ) * croppedDimensions[0]*croppedDimensions[1]);
+								int linearIndex = (int)((int)Math.floor((inputParticles.get(idx).x-c[0][0])/pixelSize) + 
+										(int)Math.floor((inputParticles.get(idx).y-c[1][0])/pixelSize) * croppedDimensions[0] + 
+										(int)Math.floor((inputParticles.get(idx).z+zOffset-c[2][0])/pixelSizeZ) * croppedDimensions[0]*croppedDimensions[1]);
 								targetFrame[linearIndex] += 1;	// increase value by one if there is a particle within the voxel.
 								targetMean++;	// keep track of total number of added particles (for mean calculation).
 							}

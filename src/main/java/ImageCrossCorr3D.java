@@ -126,9 +126,9 @@ public class ImageCrossCorr3D {
 								inputParticles.get(idx).y >= c[1][0] && inputParticles.get(idx).y < c[1][1] &&
 								inputParticles.get(idx).z >= c[2][0] && inputParticles.get(idx).z < c[2][1])
 						{
-							int x = (int)Math.ceil((inputParticles.get(idx).x-c[0][0])/pixelSize);
-							int y = (int)Math.ceil((inputParticles.get(idx).y-c[1][0])/pixelSize);
-							int z = (int)Math.ceil((inputParticles.get(idx).z-c[2][0])/pixelSizeZ);
+							int x = (int)Math.floor((inputParticles.get(idx).x-c[0][0])/pixelSize);
+							int y = (int)Math.floor((inputParticles.get(idx).y-c[1][0])/pixelSize);
+							int z = (int)Math.floor((inputParticles.get(idx).z-c[2][0])/pixelSizeZ);
 							referenceFrame[x][y][z]++;
 							referenceMean++;	// keep track of total number of added particles (for mean calculation).
 						}
@@ -147,9 +147,9 @@ public class ImageCrossCorr3D {
 									inputParticles.get(idx).y >= c[1][0] && inputParticles.get(idx).y < c[1][1] &&
 									inputParticles.get(idx).z >= c[2][0] && inputParticles.get(idx).z < c[2][1])
 							{
-								int x = (int)Math.ceil((inputParticles.get(idx).x-c[0][0])/pixelSize);
-								int y = (int)Math.ceil((inputParticles.get(idx).y-c[1][0])/pixelSize);
-								int z = (int)Math.ceil((inputParticles.get(idx).z-c[2][0])/pixelSizeZ);
+								int x = (int)Math.floor((inputParticles.get(idx).x-c[0][0])/pixelSize);
+								int y = (int)Math.floor((inputParticles.get(idx).y-c[1][0])/pixelSize);
+								int z = (int)Math.floor((inputParticles.get(idx).z-c[2][0])/pixelSizeZ);
 								targetFrame[x][y][z]++;
 								targetMean++;	// keep track of total number of added particles (for mean calculation).
 							}
@@ -168,9 +168,9 @@ public class ImageCrossCorr3D {
 									inputParticles.get(idx).y >= c[1][0] && inputParticles.get(idx).y < c[1][1] &&
 									inputParticles.get(idx).z >= c[2][0] && inputParticles.get(idx).z < c[2][1])
 							{
-								int x = (int)((inputParticles.get(idx).x-c[0][0])/pixelSize);
-								int y = (int)((inputParticles.get(idx).y-c[1][0])/pixelSize) ;
-								int z = (int)((inputParticles.get(idx).z-c[2][0])/pixelSizeZ);
+								int x = (int)Math.floor((inputParticles.get(idx).x-c[0][0])/pixelSize);
+								int y = (int)Math.floor((inputParticles.get(idx).y-c[1][0])/pixelSize) ;
+								int z = (int)Math.floor((inputParticles.get(idx).z-c[2][0])/pixelSizeZ);
 								targetFrame[x][y][z]++;
 								targetMean++;	// keep track of total number of added particles (for mean calculation).
 							}
@@ -439,9 +439,9 @@ public class ImageCrossCorr3D {
 								inputParticles.get(idx).y >= c[1][0] && inputParticles.get(idx).y <= c[1][1] &&
 								inputParticles.get(idx).z >= c[2][0] && inputParticles.get(idx).z <= c[2][1])
 						{
-							int x = (int)((inputParticles.get(idx).x-c[0][0])/pixelSize) -1;
-							int y = (int)((inputParticles.get(idx).y-c[1][0])/pixelSize) -1 ;
-							int z = (int)((inputParticles.get(idx).z-c[2][0])/pixelSizeZ) -1;
+							int x = (int)Math.floor((inputParticles.get(idx).x-c[0][0])/pixelSize);
+							int y = (int)Math.floor((inputParticles.get(idx).y-c[1][0])/pixelSize);
+							int z = (int)Math.floor((inputParticles.get(idx).z-c[2][0])/pixelSizeZ);
 							referenceFrame[x][y][z]++;
 							referenceMean++;	// keep track of total number of added particles (for mean calculation).
 						}
@@ -461,9 +461,9 @@ public class ImageCrossCorr3D {
 									inputParticles.get(idx).y >= c[1][0] && inputParticles.get(idx).y <= c[1][1] &&
 									inputParticles.get(idx).z >= c[2][0] && inputParticles.get(idx).z <= c[2][1])
 							{
-								int x = (int)((inputParticles.get(idx).x-c[0][0])/pixelSize) -1;
-								int y = (int)((inputParticles.get(idx).y-c[1][0])/pixelSize) -1 ;
-								int z = (int)((inputParticles.get(idx).z-c[2][0])/pixelSizeZ) -1;
+								int x = (int)Math.floor((inputParticles.get(idx).x-c[0][0])/pixelSize);
+								int y = (int)Math.floor((inputParticles.get(idx).y-c[1][0])/pixelSize) ;
+								int z = (int)Math.floor((inputParticles.get(idx).z-c[2][0])/pixelSizeZ);
 								targetFrame[x][y][z]++;
 								targetMean++;	// keep track of total number of added particles (for mean calculation).
 							}
