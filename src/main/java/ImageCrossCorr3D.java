@@ -49,6 +49,7 @@ public class ImageCrossCorr3D {
 	{
 		ArrayList<Particle> shiftedParticles = new ArrayList<Particle>();
 
+		
 		int nChannels 	= inputParticles.get(inputParticles.size()-1).channel; // data is sorted on a per channel basis.
 		int idx 		= 0; // index for inputParticles.
 		double zOffset 	= 0;

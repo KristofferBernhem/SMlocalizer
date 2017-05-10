@@ -59,7 +59,6 @@ public class ImageCrossCorr3DGPU {
 		ArrayList<Particle> shiftedParticles = new ArrayList<Particle>();
 		JCudaDriver.setExceptionsEnabled(true);
 		cuInit(0);
-
 		CUdevice device = new CUdevice();
 		cuDeviceGet(device, 0);
 		CUcontext context = new CUcontext();
