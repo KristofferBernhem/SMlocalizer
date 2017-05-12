@@ -326,7 +326,7 @@ public class GaussSolver {
 
 			if (pId > 6){ // if all parameters has been evaluated this round.
 
-				if (iterationCount > 500){ // if two rounds has been run.
+				if (iterationCount > 250){ // if two rounds has been run.
 					if ((oldRsquare  - Rsquare) < convCritera) // check if we improved the fit this full round by atleast the convergence criteria.
 					{	
 						optimize = false;	// exit.

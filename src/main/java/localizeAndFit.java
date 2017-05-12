@@ -397,10 +397,8 @@ public class localizeAndFit {
 							idx = 0; // reset for next round.		
 							processed=true;
 							CUdeviceptr deviceData 	= CUDA.copyToDevice(data);
-							int[] limitsN = findLimits.run(data, columns, rows, Ch); // get limits.
-							
+							int[] limitsN = findLimits.run(data, columns, rows, Ch); // get limits.							
 							CUdeviceptr deviceLimits 	= CUDA.copyToDevice(limitsN);
-
 							CUdeviceptr deviceCenter = CUDA.allocateOnDevice((int)(nMax*nCenter));
 							Pointer kernelParameters 		= Pointer.to(   
 									Pointer.to(deviceData),
@@ -435,8 +433,8 @@ public class localizeAndFit {
 
 							// Free up memory allocation on device, housekeeping.
 							cuMemFree(deviceCenter);
-
 							cuMemFree(deviceData);
+							cuMemFree(deviceLimits);
 							/******************************************************************************
 							 * Transfer data for gauss fitting.
 							 ******************************************************************************/
@@ -584,11 +582,9 @@ public class localizeAndFit {
 								idx++;
 							}
 							processed = true;
-							CUdeviceptr deviceData 	= CUDA.copyToDevice(remainingData);
-							
+							CUdeviceptr deviceData 	= CUDA.copyToDevice(remainingData);							
 							int[] limitsN = findLimits.run(data, columns, rows, Ch); // get limits.
 							CUdeviceptr deviceLimits 	= CUDA.copyToDevice(limitsN);
-
 							CUdeviceptr deviceCenter = CUDA.allocateOnDevice((int)(nMax*nCenter));
 							Pointer kernelParameters 		= Pointer.to(   
 									Pointer.to(deviceData),
@@ -625,6 +621,8 @@ public class localizeAndFit {
 
 							// Free up memory allocation on device, housekeeping. 
 							cuMemFree(deviceCenter);
+							cuMemFree(deviceData);
+							cuMemFree(deviceLimits);
 							/******************************************************************************
 							 * Transfer data for gauss fitting.
 							 ******************************************************************************/

@@ -37,7 +37,7 @@ public class findLimits {
 
 		double[] runningMean = new double[nFrames];
 		double[] runningStd = new double[nFrames];
-		int meanWidth = 500;
+		int meanWidth = 1000;
 		if (meanWidth > nFrames)
 			meanWidth = nFrames;
 		int count = 0;
@@ -105,7 +105,7 @@ public class findLimits {
 
 		double[] runningMean = new double[nFrames];
 		double[] runningStd = new double[nFrames];
-		int meanWidth = 500;
+		int meanWidth = 1000;
 		if (meanWidth > nFrames)
 			meanWidth = nFrames;
 		int count = 0;

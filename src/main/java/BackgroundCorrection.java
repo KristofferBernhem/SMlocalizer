@@ -202,7 +202,35 @@ class BackgroundCorrection {
 				
 				long GB = 1024*1024*1024;
 				int frameSize = (4*columns*rows)*Sizeof.FLOAT;
+				JCudaDriver.setExceptionsEnabled(true);
+				// Initialize the driver and create a context for the first device.
+				cuInit(0);
 
+				CUdevice device = new CUdevice();
+				cuDeviceGet(device, 0);
+				CUcontext context = new CUcontext();
+				cuCtxCreate(context, 0, device);
+				// Load the PTX that contains the kernel.
+				CUmodule module = new CUmodule();
+
+				String ptxFileName = "medianFilter.ptx";
+				byte ptxFile[] = CUDA.loadData(ptxFileName);
+
+				cuModuleLoadDataEx(module, Pointer.to(ptxFile), 
+			            0, new int[0], Pointer.to(new int[0]));
+
+				// Obtain a handle to the kernel function.
+				CUfunction function = new CUfunction();
+				cuModuleGetFunction(function, module, "medianKernel");
+				CUmodule moduleBSpline = new CUmodule();				
+				
+				String ptxFileNameBspline = "filterImage.ptx";				
+				byte ptxFileBspline[] = CUDA.loadData(ptxFileNameBspline);
+				cuModuleLoadDataEx(moduleBSpline, Pointer.to(ptxFileBspline), 
+	            0, new int[0], Pointer.to(new int[0]));				
+				
+				CUfunction functionBpline = new CUfunction();
+				cuModuleGetFunction(functionBpline, moduleBSpline, "filterKernel");
 				for(int Ch = 1; Ch <= nChannels; Ch++)
 				{
 					int staticMemory = (2*W[Ch-1]+1)*rows*columns*Sizeof.FLOAT;
@@ -217,35 +245,7 @@ class BackgroundCorrection {
 					
 					while (loadedFrames < nFrames-1)
 					{		
-						JCudaDriver.setExceptionsEnabled(true);
-						// Initialize the driver and create a context for the first device.
-						cuInit(0);
-
-						CUdevice device = new CUdevice();
-						cuDeviceGet(device, 0);
-						CUcontext context = new CUcontext();
-						cuCtxCreate(context, 0, device);
-						// Load the PTX that contains the kernel.
-						CUmodule module = new CUmodule();
-
-						String ptxFileName = "medianFilter.ptx";
-						byte ptxFile[] = CUDA.loadData(ptxFileName);
-
-						cuModuleLoadDataEx(module, Pointer.to(ptxFile), 
-					            0, new int[0], Pointer.to(new int[0]));
-
-						// Obtain a handle to the kernel function.
-						CUfunction function = new CUfunction();
-						cuModuleGetFunction(function, module, "medianKernel");
-						CUmodule moduleBSpline = new CUmodule();				
 						
-						String ptxFileNameBspline = "filterImage.ptx";				
-						byte ptxFileBspline[] = CUDA.loadData(ptxFileNameBspline);
-						cuModuleLoadDataEx(moduleBSpline, Pointer.to(ptxFileBspline), 
-			            0, new int[0], Pointer.to(new int[0]));				
-						
-						CUfunction functionBpline = new CUfunction();
-						cuModuleGetFunction(functionBpline, moduleBSpline, "filterKernel");
 						float[] timeVector = new float[(endFrame-startFrame+1) * rows * columns];
 						float[] MeanFrame = new float[endFrame-startFrame+1]; 				// Will include frame mean value.
 						ImageProcessor IP = image.getProcessor();
@@ -357,7 +357,10 @@ class BackgroundCorrection {
 						int hostOutput[] = new int[timeVector.length];
 						cuMemcpyDtoH(Pointer.to(hostOutput), deviceOutputBSpline,
 								bSplineDataLength * Sizeof.INT);
-						
+						// clean up.
+						cuMemFree(deviceOutput); 
+						cuMemFree(deviceOutputBSpline);    
+						cuMemFree(deviceFilterKernel);   
 						int idx = 0;
 						if (endFrame == nFrames) // if we're on the last bin, include last segment.
 							endFrame += W[Ch-1];
@@ -400,14 +403,7 @@ class BackgroundCorrection {
 						startFrame = endFrame-W[Ch-1]; // include W more frames to ensure that border errors from median calculations dont occur ore often then needed.
 						endFrame += framesPerBatch;					
 						if (endFrame > nFrames)
-							endFrame = nFrames;
-						
-						// Free up memory allocation on device, housekeeping.
-
-						cuMemFree(deviceOutput);  
-						cuMemFree(deviceOutputBSpline);    
-						cuMemFree(deviceFilterKernel);   
-
+							endFrame = nFrames;					
 					} // while loadedChannels < nFrames
 				} // Channel loop.				
 				image.updateAndDraw();			

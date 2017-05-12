@@ -92,6 +92,59 @@ public class processMedianFit {
 		long GB = 1024*1024*1024;
 		int frameSize = (4*columns*rows)*Sizeof.FLOAT;
 		long maxMemoryGPU = 3*GB; // TODO: get size of gpu memory.
+
+		JCudaDriver.setExceptionsEnabled(true);
+		// Initialize the driver and create a context for the first device.
+		cuInit(0);
+
+		CUdevice device = new CUdevice();
+		cuDeviceGet(device, 0);
+		CUcontext context = new CUcontext();
+		cuCtxCreate(context, 0, device);
+				
+		// Load the PTX that contains the kernel.
+		CUmodule moduleMedian = new CUmodule();
+		String ptxFileNameMedian = "medianFilter.ptx";
+		byte ptxFileMedian[] = CUDA.loadData(ptxFileNameMedian);
+		cuModuleLoadDataEx(moduleMedian, Pointer.to(ptxFileMedian), 
+	            0, new int[0], Pointer.to(new int[0]));
+		// Obtain a handle to the kernel function.
+		CUfunction functionMedian = new CUfunction();
+		cuModuleGetFunction(functionMedian, moduleMedian, "medianKernel");
+		
+		
+		
+		CUmodule moduleBSpline = new CUmodule();							
+		String ptxFileNameBspline = "filterImage.ptx";				
+		byte ptxFileBspline[] = CUDA.loadData(ptxFileNameBspline);
+		cuModuleLoadDataEx(moduleBSpline, Pointer.to(ptxFileBspline), 
+        0, new int[0], Pointer.to(new int[0]));				
+		CUfunction functionBpline = new CUfunction();
+		cuModuleGetFunction(functionBpline, moduleBSpline, "filterKernel");
+		
+		// prepare for locating centra for gaussfitting.
+		// Load the PTX that contains the kernel.
+		CUmodule moduleLM = new CUmodule();
+		String ptxFileNameFindMaxima = "findMaxima.ptx";
+		byte ptxFileFindMaxima[] = CUDA.loadData(ptxFileNameFindMaxima);
+		//	cuModuleLoad(moduleLM, "findMaxima.ptx");					
+		// Obtain a handle to the kernel function
+		cuModuleLoadDataEx(moduleLM, Pointer.to(ptxFileFindMaxima), 
+				0, new int[0], Pointer.to(new int[0]));
+		CUfunction findMaximaFcn = new CUfunction();
+		cuModuleGetFunction(findMaximaFcn, moduleLM, "run");	// findMaxima.ptx (run function).
+		
+		
+		// gauss fit algorithm.
+		// Load the PTX that contains the kernel.
+		CUmodule moduleGFit = new CUmodule();
+		String ptxFileNameGaussFit = "gFit.ptx";
+		byte ptxFileGaussFit[] = CUDA.loadData(ptxFileNameGaussFit);
+		cuModuleLoadDataEx(moduleGFit, Pointer.to(ptxFileGaussFit), 
+				0, new int[0], Pointer.to(new int[0]));
+		// Obtain a handle to the kernel function.
+		CUfunction fittingFcn = new CUfunction();
+		cuModuleGetFunction(fittingFcn, moduleGFit, "gaussFitter");  //gFit.pth (gaussFitter function).
 		for(int Ch = 1; Ch <= nChannels; Ch++)
 		{
 			
@@ -119,58 +172,6 @@ public class processMedianFit {
 					-0.5		, 0.5				// offset.
 			};
 
-			JCudaDriver.setExceptionsEnabled(true);
-			// Initialize the driver and create a context for the first device.
-			cuInit(0);
-
-			CUdevice device = new CUdevice();
-			cuDeviceGet(device, 0);
-			CUcontext context = new CUcontext();
-			cuCtxCreate(context, 0, device);
-					
-			// Load the PTX that contains the kernel.
-			CUmodule moduleMedian = new CUmodule();
-			String ptxFileNameMedian = "medianFilter.ptx";
-			byte ptxFileMedian[] = CUDA.loadData(ptxFileNameMedian);
-			cuModuleLoadDataEx(moduleMedian, Pointer.to(ptxFileMedian), 
-		            0, new int[0], Pointer.to(new int[0]));
-			// Obtain a handle to the kernel function.
-			CUfunction functionMedian = new CUfunction();
-			cuModuleGetFunction(functionMedian, moduleMedian, "medianKernel");
-			
-			
-			
-			CUmodule moduleBSpline = new CUmodule();							
-			String ptxFileNameBspline = "filterImage.ptx";				
-			byte ptxFileBspline[] = CUDA.loadData(ptxFileNameBspline);
-			cuModuleLoadDataEx(moduleBSpline, Pointer.to(ptxFileBspline), 
-            0, new int[0], Pointer.to(new int[0]));				
-			CUfunction functionBpline = new CUfunction();
-			cuModuleGetFunction(functionBpline, moduleBSpline, "filterKernel");
-			
-			// prepare for locating centra for gaussfitting.
-			// Load the PTX that contains the kernel.
-			CUmodule moduleLM = new CUmodule();
-			String ptxFileNameFindMaxima = "findMaxima.ptx";
-			byte ptxFileFindMaxima[] = CUDA.loadData(ptxFileNameFindMaxima);
-			//	cuModuleLoad(moduleLM, "findMaxima.ptx");					
-			// Obtain a handle to the kernel function
-			cuModuleLoadDataEx(moduleLM, Pointer.to(ptxFileFindMaxima), 
-					0, new int[0], Pointer.to(new int[0]));
-			CUfunction findMaximaFcn = new CUfunction();
-			cuModuleGetFunction(findMaximaFcn, moduleLM, "run");	// findMaxima.ptx (run function).
-			
-			
-			// gauss fit algorithm.
-			// Load the PTX that contains the kernel.
-			CUmodule moduleGFit = new CUmodule();
-			String ptxFileNameGaussFit = "gFit.ptx";
-			byte ptxFileGaussFit[] = CUDA.loadData(ptxFileNameGaussFit);
-			cuModuleLoadDataEx(moduleGFit, Pointer.to(ptxFileGaussFit), 
-					0, new int[0], Pointer.to(new int[0]));
-			// Obtain a handle to the kernel function.
-			CUfunction fittingFcn = new CUfunction();
-			cuModuleGetFunction(fittingFcn, moduleGFit, "gaussFitter");  //gFit.pth (gaussFitter function).
 			
 			CUdeviceptr deviceBounds 		= CUDA.copyToDevice(bounds);
 			while (loadedFrames < nFrames)
@@ -332,6 +333,7 @@ public class processMedianFit {
 				// Free up memory allocation on device, housekeeping.
 				cuMemFree(deviceCenter);
 				cuMemFree(deviceOutputBSpline);
+				cuMemFree(deviceLimits);
 				/*
 				 * Depending on where in the frame loop we are, ignore edges if in the middle or include edge if required, median filtering yields differences.
 				 */
@@ -504,19 +506,15 @@ public class processMedianFit {
 					}	
 					loaded += maxLoad;
 				}
-				
-				
-			
+		
 				startFrame = endFrame-W[Ch-1]; // include W more frames to ensure that border errors from median calculations dont occur ore often then needed.
 				endFrame += framesPerBatch;					
 				if (endFrame > nFrames)
 					endFrame = nFrames;
-				
-				// Free up memory allocation on device, housekeeping.
-
-
 
 			} // while loadedChannels < nFrames
+			// Free up memory allocation on device, housekeeping.
+			cuMemFree(deviceBounds);
 		} // Channel loop.				
 //		image.updateAndDraw();	
 
