@@ -92,8 +92,10 @@ public class findLimits {
 			}
 			meanOfMeans /= count;
 			meanOfStd /= count;
-			limits[i] = (int) (meanOfMeans*2 + meanOfStd*4);
-
+			if (meanOfMeans > meanOfStd) // few events
+				limits[i] = (int) (meanOfMeans*3 + meanOfStd*3);
+			else 						// dense sample (events)
+				limits[i] = (int) (meanOfMeans*2 + meanOfStd*2);
 		}		
 
 		return limits;
@@ -147,7 +149,10 @@ public class findLimits {
 			}
 			meanOfMeans /= count;
 			meanOfStd /= count;
-			limits[i] = (int) (meanOfMeans*2 + meanOfStd*4);
+			if (meanOfMeans > meanOfStd) // few events
+				limits[i] = (int) (meanOfMeans*3 + meanOfStd*3);
+			else 						// dense sample (events)
+				limits[i] = (int) (meanOfMeans*2 + meanOfStd*2);
 
 		}		
 

@@ -244,6 +244,9 @@ public class localizeAndFit {
 			{
 				if (cleanResults.get(i).include == 0)
 					cleanResults.remove(i);
+				if(cleanResults.get(i).sigma_x < 81 ||
+						cleanResults.get(i).sigma_y < 81 )
+					cleanResults.remove(i);
 			}
 
 
@@ -822,6 +825,9 @@ public class localizeAndFit {
 				for (i = cleanResults.size()-1; i >= 0; i--)
 				{
 					if (cleanResults.get(i).include == 0)
+						cleanResults.remove(i);
+					if(cleanResults.get(i).sigma_x < 81 ||
+							cleanResults.get(i).sigma_y < 81 )
 						cleanResults.remove(i);
 				}
 
