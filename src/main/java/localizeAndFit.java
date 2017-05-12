@@ -149,6 +149,7 @@ public class localizeAndFit {
 					} // loop over all located centers from this frame.									
 				} // loop over all frames.									
 			} // loop over all channels.
+
 			List<Callable<Particle>> tasks = new ArrayList<Callable<Particle>>();	// Preallocate.
 
 			for (final fitParameters object : fitThese) {							// Loop over and setup computation.
@@ -189,6 +190,7 @@ public class localizeAndFit {
 			/*
 			 * Remove non-realistic fits.
 			 */			
+
 			for (int i = 0; i < Results.size(); i++)
 			{
 				if (Results.get(i).x > 0 &&
@@ -244,11 +246,10 @@ public class localizeAndFit {
 			{
 				if (cleanResults.get(i).include == 0)
 					cleanResults.remove(i);
-				if(cleanResults.get(i).sigma_x < 81 ||
+		/*		if(cleanResults.get(i).sigma_x < 81 ||
 						cleanResults.get(i).sigma_y < 81 )
-					cleanResults.remove(i);
+					cleanResults.remove(i);*/
 			}
-
 
 			if (modality.equals("2D"))
 			{
@@ -396,6 +397,7 @@ public class localizeAndFit {
 						}
 						if (dataIdx == nMax)
 						{
+							System.out.println(Frame + " and " + startFrame + " first") ;
 							dataIdx = 0; // reset for next round.
 							idx = 0; // reset for next round.		
 							processed=true;
@@ -572,9 +574,9 @@ public class localizeAndFit {
 
 							}
 
-						}else if ( Frame == nFrames) // final part if chunks were loaded.
+						}else if (Frame == nFrames) // final part if chunks were loaded.
 						{
-						
+							System.out.println(Frame + " and " + startFrame + " final") ;
 							int[] remainingData = new int[idx];
 							for (int i = 0; i < idx; i++)
 								remainingData[i] = data[i];
@@ -586,7 +588,7 @@ public class localizeAndFit {
 							}
 							processed = true;
 							CUdeviceptr deviceData 	= CUDA.copyToDevice(remainingData);							
-							int[] limitsN = findLimits.run(data, columns, rows, Ch); // get limits.
+							int[] limitsN = findLimits.run(remainingData, columns, rows, Ch); // get limits.
 							CUdeviceptr deviceLimits 	= CUDA.copyToDevice(limitsN);
 							CUdeviceptr deviceCenter = CUDA.allocateOnDevice((int)(nMax*nCenter));
 							Pointer kernelParameters 		= Pointer.to(   
@@ -657,8 +659,8 @@ public class localizeAndFit {
 								{
 									if (hostCenter[j]> 0 )
 									{
-										locatedCenter[counter] = hostCenter[j];													
-										locatedFrame[counter] = hostCenter[j]/(columns*rows);							
+										locatedCenter[counter] 	= hostCenter[j];													
+										locatedFrame[counter] 	= hostCenter[j]/(columns*rows);							
 										counter++;
 									}
 									j ++;
@@ -672,7 +674,7 @@ public class localizeAndFit {
 
 								for (int i = 0; i < counter; i++)
 								{
-									P[i*7] = data[locatedCenter[i]];
+									P[i*7] = remainingData [locatedCenter[i]];
 									P[i*7+1] = 2;
 									P[i*7+2] = 2;
 									P[i*7+3] = 1.5;
@@ -826,11 +828,10 @@ public class localizeAndFit {
 				{
 					if (cleanResults.get(i).include == 0)
 						cleanResults.remove(i);
-					if(cleanResults.get(i).sigma_x < 81 ||
+			/*		if(cleanResults.get(i).sigma_x < 81 ||
 							cleanResults.get(i).sigma_y < 81 )
-						cleanResults.remove(i);
+						cleanResults.remove(i);*/
 				}
-
 				if (modality.equals("2D"))
 				{
 					cleanResults = BasicFittingCorrections.compensate(cleanResults); // change 2D data to 3D data based on calibration data.

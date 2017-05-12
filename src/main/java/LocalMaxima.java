@@ -38,14 +38,17 @@ public class LocalMaxima {
 			data[i] = IP.get(i);
 
 		}	
-		
+
 		if (MinLevel == 0){
 			for(int i = 0; i < columns*rows;i++) // loop over X then Y.
 			{
-				data[i] = IP.get(i);
-				mean += data[i];
+
 				if (data[i]> 0)
-					count++;
+					{
+						mean += IP.get(i);
+						count++;
+					}			
+					
 			}	
 			double std = 0;
 			mean /= count;
@@ -53,9 +56,9 @@ public class LocalMaxima {
 				std += (data[i] - mean)*(data[i] - mean);
 			std /= count;
 			std = Math.sqrt(std);
-			MinLevel = (int) (2*mean + 2*std); // set minlevel to 
+			MinLevel = (int) (2*mean + 3*std); // set minlevel to 
 		}
-			
+		int minNeighbourValue = (int) (0.3 * MinLevel);	
 		int i = (Window / 2) * columns + Window / 2; // start windowWidth / 2 pixels in and windowWidth / 2 down.
 		int j = 0;
 		int k = 0;
@@ -85,10 +88,17 @@ public class LocalMaxima {
 				}
 				if (j < minPosPixels)
 					include = false;
-				if(include)
+				if(data[i-1] >= minNeighbourValue &&
+						data[i+1] >= minNeighbourValue &&
+						data[i-columns] >=minNeighbourValue &&
+						data[i+columns] >= minNeighbourValue &&
+						include)
+			//	if(include)
 				{
-					int[] coord = {i%columns,i/columns};					
-					Results.add(coord);	
+
+						int[] coord = {i%columns,i/columns};					
+						Results.add(coord);	
+					
 				}
 			}
 			i++;

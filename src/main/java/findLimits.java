@@ -62,9 +62,12 @@ public class findLimits {
 			ImageProcessor IP = image.getProcessor();
 			// get mean for the frame.
 			for (int id = 0; id < columns*rows; id++){
-				runningMean [frame-1] += IP.get(id);
+				
 				if (IP.get(id) > 0)
+				{
 					count++;
+					runningMean [frame-1] += IP.get(id);	
+				}
 			}
 
 			runningMean[frame-1]/=count;
@@ -93,11 +96,11 @@ public class findLimits {
 			meanOfMeans /= count;
 			meanOfStd /= count;
 			if (meanOfMeans > meanOfStd) // few events
-				limits[i] = (int) (meanOfMeans*3 + meanOfStd*3);
+				limits[i] = (int) (meanOfMeans*2 + meanOfStd*3);
 			else 						// dense sample (events)
 				limits[i] = (int) (meanOfMeans*2 + meanOfStd*2);
+			System.out.println(i + ": " +limits[i]+ " from"+ meanOfMeans + " and " + meanOfStd);
 		}		
-
 		return limits;
 	}
 	public static int[] run(int[] image, int columns, int rows, int ch)
@@ -118,9 +121,12 @@ public class findLimits {
 			count = 0;
 			int frameOffset = (frame-1)*columns*rows;
 			for (int id = 0; id < columns*rows; id++){				
-				runningMean [frame-1] += image[id+frameOffset];
 				if (image[id + frameOffset] > 0)
+				{
+					runningMean [frame-1] += image[id+frameOffset];
 					count++;
+				}
+
 				
 			}
 
@@ -150,10 +156,10 @@ public class findLimits {
 			meanOfMeans /= count;
 			meanOfStd /= count;
 			if (meanOfMeans > meanOfStd) // few events
-				limits[i] = (int) (meanOfMeans*3 + meanOfStd*3);
+				limits[i] = (int) (meanOfMeans*2 + meanOfStd*3);			
 			else 						// dense sample (events)
-				limits[i] = (int) (meanOfMeans*2 + meanOfStd*2);
-
+				limits[i] = (int) (meanOfMeans*1 + meanOfStd*5);
+			System.out.println(i + ": " +limits[i]+ " from"+ meanOfMeans + " and " + meanOfStd);
 		}		
 
 		return limits;
