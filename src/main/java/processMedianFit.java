@@ -175,8 +175,7 @@ public class processMedianFit {
 			
 			CUdeviceptr deviceBounds 		= CUDA.copyToDevice(bounds);
 			while (loadedFrames < nFrames)
-			{		
-					
+			{							
 				float[] timeVector = new float[(endFrame-startFrame+1) * rows * columns];
 				float[] MeanFrame = new float[endFrame-startFrame+1]; 				// Will include frame mean value.
 				ImageProcessor IP = image.getProcessor();
@@ -351,6 +350,7 @@ public class processMedianFit {
 					}
 				}
 				int loaded = 0;
+				int startIdx = 0;
 				while (loaded < newN)
 				{
 					int maxLoad = 100000;
@@ -359,7 +359,7 @@ public class processMedianFit {
 					int[] locatedCenter = new int[maxLoad]; // cleaned vector with indexes of centras.
 					int[] locatedFrame = new int[maxLoad]; // cleaned vector with indexes of centras.
 					int counter = 0;
-					int j = loaded;
+					int j = startIdx;
 					
 					boolean fill = true;
 					while (fill)
@@ -407,7 +407,7 @@ public class processMedianFit {
 						if (counter == maxLoad || j == hostCenter.length)
 							fill = false;										
 					}
-
+					startIdx = j;
 					double[] P = new double[counter*7];
 					double[] stepSize = new double[counter*7];							
 					int[] gaussVector = new int[counter*gWindow*gWindow];

@@ -98,8 +98,8 @@ public class findLimits {
 			if (meanOfMeans > meanOfStd) // few events
 				limits[i] = (int) (meanOfMeans*2 + meanOfStd*3);
 			else 						// dense sample (events)
-				limits[i] = (int) (meanOfMeans*2 + meanOfStd*2);
-			System.out.println(i + ": " +limits[i]+ " from"+ meanOfMeans + " and " + meanOfStd);
+				limits[i] = (int) (meanOfMeans + meanOfStd*4.5);
+			//System.out.println(i + ": " +limits[i]+ " from"+ meanOfMeans + " and " + meanOfStd);
 		}		
 		return limits;
 	}
@@ -158,8 +158,8 @@ public class findLimits {
 			if (meanOfMeans > meanOfStd) // few events
 				limits[i] = (int) (meanOfMeans*2 + meanOfStd*3);			
 			else 						// dense sample (events)
-				limits[i] = (int) (meanOfMeans*1 + meanOfStd*5);
-			System.out.println(i + ": " +limits[i]+ " from"+ meanOfMeans + " and " + meanOfStd);
+				limits[i] = (int) (meanOfMeans*1 + meanOfStd*4.5);
+	//		System.out.println(i + ": " +limits[i]+ " from"+ meanOfMeans + " and " + meanOfStd);
 		}		
 
 		return limits;

@@ -397,7 +397,6 @@ public class localizeAndFit {
 						}
 						if (dataIdx == nMax)
 						{
-							System.out.println(Frame + " and " + startFrame + " first") ;
 							dataIdx = 0; // reset for next round.
 							idx = 0; // reset for next round.		
 							processed=true;
@@ -453,6 +452,7 @@ public class localizeAndFit {
 							}
 
 							int loaded = 0;
+							int startIdx = 0;
 							while (loaded < newN)
 							{
 								int maxLoad = 100000;
@@ -461,7 +461,7 @@ public class localizeAndFit {
 								int[] locatedCenter = new int[maxLoad]; // cleaned vector with indexes of centras.
 								int[] locatedFrame = new int[maxLoad]; // cleaned vector with indexes of centras.
 								int counter = 0;
-								int j = loaded;
+								int j = startIdx;
 								boolean fill = true;
 								while (fill)
 								{
@@ -475,8 +475,9 @@ public class localizeAndFit {
 									j ++;
 									if (counter == maxLoad || j == hostCenter.length)
 										fill = false;										
-								}
-								double[] P = new double[counter*7];
+								}								
+								startIdx = j;
+								double[] P = new double[counter*7]; 
 								double[] stepSize = new double[counter*7];							
 								int[] gaussVector = new int[counter*gWindow*gWindow];
 
@@ -571,12 +572,11 @@ public class localizeAndFit {
 									Results.add(Localized);
 								}	
 								loaded += maxLoad;
-
+								
 							}
 
 						}else if (Frame == nFrames) // final part if chunks were loaded.
-						{
-							System.out.println(Frame + " and " + startFrame + " final") ;
+						{							
 							int[] remainingData = new int[idx];
 							for (int i = 0; i < idx; i++)
 								remainingData[i] = data[i];
@@ -639,7 +639,7 @@ public class localizeAndFit {
 									newN++;
 								}
 							}
-
+							int startIdx = 0;
 							int loaded = 0;
 							while (loaded < newN)
 							{
@@ -647,13 +647,11 @@ public class localizeAndFit {
 								if ((newN - loaded) < maxLoad)
 									maxLoad = newN - loaded;
 
-
-
 								int[] locatedCenter = new int[maxLoad]; // cleaned vector with indexes of centras.
 								int[] locatedFrame = new int[maxLoad]; // cleaned vector with indexes of centras.
 								int counter = 0;
 
-								int j = loaded;
+								int j = startIdx;
 								boolean fill = true;
 								while (fill)
 								{
@@ -667,7 +665,7 @@ public class localizeAndFit {
 									if (counter == maxLoad || j == hostCenter.length)
 										fill = false;										
 								}						
-
+								startIdx = j;
 								double[] P = new double[counter*7];
 								double[] stepSize = new double[counter*7];							
 								int[] gaussVector = new int[counter*gWindow*gWindow];
