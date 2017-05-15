@@ -344,7 +344,7 @@ public class ImageCrossCorr3D {
 
 			int bin = 0;
 			int i = 0; 
-			while (inputParticles.size() > i && inputParticles.get(i).channel > ch)
+			while (inputParticles.size() > i && inputParticles.get(i).channel < ch)
 				i++;
 			while (i < inputParticles.size() && inputParticles.get(i).channel == ch)// && inputParticles.get(i).frame < (bin+1)*binsize) // apply shifts.
 			{
@@ -683,6 +683,7 @@ public class ImageCrossCorr3D {
 			result.add(p2);
 			frame++;
 		}
+		frame = 0;
 		for (int i = 0; i < 50000; i++)
 		{
 			Particle p = result.get(i);
@@ -691,7 +692,7 @@ public class ImageCrossCorr3D {
 			p2.x = p.x+ 10;
 			p2.y = p.y- 10;
 			p2.z = p.z+ 80;
-			p2.channel = 1;
+			p2.channel = 2;
 			p2.frame = frame;
 			result.add(p2);
 			frame++;
@@ -704,14 +705,14 @@ public class ImageCrossCorr3D {
 			p2.x = p.x+ 100;
 			p2.y = p.y- 10;
 			p2.z = p.z- 40;
-			p2.channel = 1;
+			p2.channel = 2;
 			p2.frame = frame;
 			result.add(p2);
 			frame++;
 		}
 		int[][] maxShift = new int[2][4]; //xy-z per channel
 
-		int[] nBins = {4};
+		int[] nBins = {4,4};
 		int pixelSize = 10;
 		int pixelSizeZ = 10;
 		maxShift[0][0] = 200/pixelSize;
@@ -726,18 +727,11 @@ public class ImageCrossCorr3D {
 		int[] size = {xTimes*1280/pixelSize, xTimes*1280/pixelSize, 1000/pixelSizeZ};
 		//	size[2] = 1; // if sending in 2D data, send in with zdim = 1.
 		long time = System.nanoTime();
+		System.out.println("channel: " + result.get(result.size()-1).channel);
 		result = run(result, nBins, maxShift,size ,pixelSize,pixelSizeZ);
-		double error = 0;
-
-		for (int i = 50000; i < 100000; i++){
-			error += (result.get(0).x-result.get(i).x);
-			if (result.get(i).x != 500)
-				System.out.println(i + " ; " + result.get(i).x);
-		}
-
-
-		System.out.println(error);
-		//result = runChannel(result,  maxShift,size ,pixelSize,pixelSizeZ);
+		System.out.println("channel: " + result.get(result.size()-1).channel);
+		
+			//result = runChannel(result,  maxShift,size ,pixelSize,pixelSizeZ);
 		time = System.nanoTime() - time;
 		System.out.println(time*1E-9);	
 	}

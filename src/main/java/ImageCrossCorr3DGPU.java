@@ -384,7 +384,7 @@ public class ImageCrossCorr3DGPU {
 
 			int bin = 0;
 			int i = 0; 
-			while (inputParticles.size() > i && inputParticles.get(i).channel > ch)
+			while (inputParticles.size() > i && inputParticles.get(i).channel < ch)
 				i++; 
 			while (i < inputParticles.size() && inputParticles.get(i).channel == ch)// && inputParticles.get(i).frame < (bin+1)*binsize) // apply shifts.
 			{
