@@ -161,7 +161,7 @@ public class correctDrift {
 			TableIO.Store(correctedResults);
 		}catch (IndexOutOfBoundsException e)
 		{
-			ij.IJ.log("drift corrections failed");
+			//ij.IJ.log("drift corrections failed");
 		}
 
 	}

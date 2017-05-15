@@ -493,9 +493,9 @@ public class ImageCrossCorr3D {
 									inputParticles.get(idx).y >= c[1][0] && inputParticles.get(idx).y <= c[1][1] &&
 									inputParticles.get(idx).z >= c[2][0] && inputParticles.get(idx).z <= c[2][1])
 							{
-								int x = (int)((inputParticles.get(idx).x-c[0][0])/pixelSize) -1;
-								int y = (int)((inputParticles.get(idx).y-c[1][0])/pixelSize) -1 ;
-								int z = (int)((inputParticles.get(idx).z-c[2][0])/pixelSizeZ) -1;
+								int x = (int)((inputParticles.get(idx).x-c[0][0])/pixelSize);
+								int y = (int)((inputParticles.get(idx).y-c[1][0])/pixelSize);
+								int z = (int)((inputParticles.get(idx).z-c[2][0])/pixelSizeZ);
 								targetFrame[x][y][z]++;
 								targetMean++;	// keep track of total number of added particles (for mean calculation).
 							}
@@ -809,8 +809,8 @@ public class ImageCrossCorr3D {
 		int[] newDimensions = {dimensions[0]/(2*maxShift), dimensions[1]/(2*maxShift), dimensions[2]/(2*maxShiftZ)};
 		if (newDimensions[2] == 0)
 			newDimensions[2] = 1;
-		int[][][] referenceFrame = new int[(int)Math.ceil(newDimensions[0])][(int)Math.ceil(newDimensions[1])][(int)Math.ceil(newDimensions[2])];
-		int[][][] targetFrame = new int[(int)Math.ceil(newDimensions[0])][(int)Math.ceil(newDimensions[1])][(int)Math.ceil(newDimensions[2])];
+		int[][][] referenceFrame = new int[1+(int)Math.ceil(newDimensions[0])][1+(int)Math.ceil(newDimensions[1])][1+(int)Math.ceil(newDimensions[2])];
+		int[][][] targetFrame = new int[1+(int)Math.ceil(newDimensions[0])][1+(int)Math.ceil(newDimensions[1])][1+(int)Math.ceil(newDimensions[2])];
 		int idx = firstBin[0];
 		double referenceMean = 0;
 		double targetMean = 0;

@@ -735,8 +735,8 @@ public class ImageCrossCorr3DGPU {
 		int[] newDimensions = {dimensions[0]/(2*maxShift), dimensions[1]/(2*maxShift), dimensions[2]/(2*maxShiftZ)};
 		if (newDimensions[2] == 0)
 			newDimensions[2] = 1;
-		int[][][] referenceFrame = new int[(int)Math.ceil(newDimensions[0])][(int)Math.ceil(newDimensions[1])][(int)Math.ceil(newDimensions[2])];
-		int[][][] targetFrame = new int[(int)Math.ceil(newDimensions[0])][(int)Math.ceil(newDimensions[1])][(int)Math.ceil(newDimensions[2])];
+		int[][][] referenceFrame = new int[1+(int)Math.ceil(newDimensions[0])][1+(int)Math.ceil(newDimensions[1])][1+(int)Math.ceil(newDimensions[2])];
+		int[][][] targetFrame = new int[1+(int)Math.ceil(newDimensions[0])][1+(int)Math.ceil(newDimensions[1])][1+(int)Math.ceil(newDimensions[2])];
 		int idx = firstBin[0];
 		double referenceMean = 0;
 		double targetMean = 0;
