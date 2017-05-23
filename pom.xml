@@ -15,32 +15,32 @@
 			<id>Koffe</id>
 			<name>Kristoffer Bernhem</name>
 			<url>github.com/KristofferBernhem/</url>
-			<roles>				
+			<roles>
 				<role>lead</role>
 				<role>developer</role>
-				<role>debugger</role>				
+				<role>debugger</role>
 				<role>support</role>
 				<role>maintainer</role>
 			</roles>
 		</developer>
-		<developer>			
+		<developer>
 			<name>Hjalmar Brismar</name>
 			<url>https://www.cellphysics.kth.se</url>
-			<roles>				
+			<roles>
 				<role>instigator</role>
 				<role>developer</role>
-				<role>debugger</role>				
+				<role>debugger</role>
 			</roles>
 		</developer>
 	</developers>
-	<parent>	
+	<parent>
 		<groupId>net.imagej</groupId>
 		<artifactId>pom-imagej</artifactId>
-		<version>15.8.0</version>	
+		<version>15.8.0</version>
 		<relativePath />
-	</parent>	
-	
-	<repositories>																	
+	</parent>
+
+	<repositories>
 		<repository>
 			<id>imagej.releases</id>
 			<url>http://maven.imagej.net/content/repositories/releases/</url>
@@ -57,31 +57,31 @@
 			<id>imagej.public</id>
 			<url>http://maven.imagej.net/content/groups/public</url>
 		</repository>
-	
+
 	</repositories>
-	
-	
-	
+
+
+
 	<dependencies>
-			<dependency>
+		<dependency>
 			<groupId>ome</groupId>
 			<artifactId>formats-api</artifactId>
-			</dependency>
+		</dependency>
 
-	<dependency>
+		<dependency>
 			<groupId>net.imagej</groupId>
 			<artifactId>imagej</artifactId>
-			</dependency>
+		</dependency>
 		<dependency>
 			<groupId>net.imagej</groupId>
 			<artifactId>imagej-plugins-commands</artifactId>
-			</dependency>
+		</dependency>
 
 
 		<dependency>
 			<groupId>net.imglib2</groupId>
 			<artifactId>imglib2-ij</artifactId>
-			</dependency>
+		</dependency>
 
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -93,9 +93,51 @@
 			<artifactId>commons-csv</artifactId>
 			<version>1.2</version>
 		</dependency>
-		
+
+		<dependency>
+			<groupId>org.jcuda</groupId>
+			<artifactId>jcuda</artifactId>
+			<version>0.8.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jcuda</groupId>
+			<artifactId>jcublas</artifactId>
+			<version>0.8.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jcuda</groupId>
+			<artifactId>jcufft</artifactId>
+			<version>0.8.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jcuda</groupId>
+			<artifactId>jcusparse</artifactId>
+			<version>0.8.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jcuda</groupId>
+			<artifactId>jcusolver</artifactId>
+			<version>0.8.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jcuda</groupId>
+			<artifactId>jcurand</artifactId>
+			<version>0.8.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jcuda</groupId>
+			<artifactId>jnvgraph</artifactId>
+			<version>0.8.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jcuda</groupId>
+			<artifactId>jcudnn</artifactId>
+			<version>0.8.0</version>
+		</dependency>
+
+
 	</dependencies>
-	        	
+
 	<inceptionYear>2016</inceptionYear>
 	<url>http://smlocalizer.sourceforge.net/</url>
 	<version>2.0.2</version>
