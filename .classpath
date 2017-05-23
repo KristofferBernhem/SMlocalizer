@@ -27,19 +27,40 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/jcublas-0.8.0.jar"/>
-	<classpathentry kind="lib" path="lib/jcublas-natives-0.8.0-windows-x86_64.jar"/>
-	<classpathentry kind="lib" path="lib/jcuda-0.8.0.jar"/>
-	<classpathentry kind="lib" path="lib/jcuda-natives-0.8.0-windows-x86_64.jar"/>
-	<classpathentry kind="lib" path="lib/jcufft-0.8.0.jar"/>
-	<classpathentry kind="lib" path="lib/jcufft-natives-0.8.0-windows-x86_64.jar"/>
-	<classpathentry kind="lib" path="lib/jcurand-0.8.0.jar"/>
-	<classpathentry kind="lib" path="lib/jcurand-natives-0.8.0-windows-x86_64.jar"/>
-	<classpathentry kind="lib" path="lib/jcusolver-0.8.0.jar"/>
-	<classpathentry kind="lib" path="lib/jcusolver-natives-0.8.0-windows-x86_64.jar"/>
-	<classpathentry kind="lib" path="lib/jcusparse-0.8.0.jar"/>
-	<classpathentry kind="lib" path="lib/jcusparse-natives-0.8.0-windows-x86_64.jar"/>
-	<classpathentry kind="lib" path="lib/jnvgraph-0.8.0.jar"/>
-	<classpathentry kind="lib" path="lib/jnvgraph-natives-0.8.0-windows-x86_64.jar"/>
+	<classpathentry kind="lib" path="lib/jcublas-0.8.0.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="SMlocalizer/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/jcuda-0.8.0.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="SMlocalizer/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/jcufft-0.8.0.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="SMlocalizer/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/jcurand-0.8.0.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="SMlocalizer/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/jcusolver-0.8.0.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="SMlocalizer/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/jcusparse-0.8.0.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="SMlocalizer/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/jnvgraph-0.8.0.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="SMlocalizer/lib"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
