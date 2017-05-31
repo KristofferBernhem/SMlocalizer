@@ -57,6 +57,7 @@
 			<id>imagej.public</id>
 			<url>http://maven.imagej.net/content/groups/public</url>
 		</repository>
+		
 
 	</repositories>
 
@@ -140,5 +141,5 @@
 
 	<inceptionYear>2016</inceptionYear>
 	<url>http://smlocalizer.sourceforge.net/</url>
-	<version>2.0.2</version>
+	<version>2.0.3</version>
 </project>

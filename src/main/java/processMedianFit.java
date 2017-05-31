@@ -9,6 +9,7 @@ import static jcuda.driver.JCudaDriver.cuModuleGetFunction;
 import static jcuda.driver.JCudaDriver.cuModuleLoadDataEx;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import ij.ImagePlus;
 import ij.plugin.filter.Analyzer;
@@ -21,6 +22,14 @@ import jcuda.driver.CUdeviceptr;
 import jcuda.driver.CUfunction;
 import jcuda.driver.CUmodule;
 import jcuda.driver.JCudaDriver;
+import jcuda.runtime.JCuda;
+
+
+import static jcuda.driver.CUdevice_attribute.*;
+import static jcuda.driver.JCudaDriver.*;
+import jcuda.driver.*;
+import jcuda.CudaException;
+
 
 /* Copyright 2016 Kristoffer Bernhem.
  * This file is part of SMLocalizer.
@@ -51,6 +60,7 @@ import jcuda.driver.JCudaDriver;
  */
 public class processMedianFit {
 
+	@SuppressWarnings("deprecation")
 	public static void run(final int[] W, ImagePlus image, int[] MinLevel, int pixelSize, int[] totalGain,double maxSigma, int gWindow, String modality)
 	{
 		int columns 						= image.getWidth();
@@ -91,17 +101,68 @@ public class processMedianFit {
 		
 		long GB = 1024*1024*1024;
 		int frameSize = (4*columns*rows)*Sizeof.FLOAT;
-		long maxMemoryGPU = 3*GB; // TODO: get size of gpu memory.
-
+		
+								
 		JCudaDriver.setExceptionsEnabled(true);
 		// Initialize the driver and create a context for the first device.
 		cuInit(0);
 
+		
+		
+
+        // Obtain the number of devices
+ /*       int deviceCountArray[] = { 0 };
+        cuDeviceGetCount(deviceCountArray);
+        int deviceCount = deviceCountArray[0];
+        ij.IJ.log("Found " + deviceCount + " devices");
+
+        for (int i = 0; i < deviceCount; i++)
+        {
+            CUdevice device = new CUdevice();
+            cuDeviceGet(device, i);
+
+            // Obtain the device name
+            byte deviceName[] = new byte[1024];
+            cuDeviceGetName(
+                deviceName, deviceName.length, device);
+            String name = CUDA.createString(deviceName);
+
+            // Obtain the compute capability
+            int majorArray[] = { 0 };
+            int minorArray[] = { 0 };
+            cuDeviceComputeCapability(
+                majorArray, minorArray, device);
+            int major = majorArray[0];
+            int minor = minorArray[0];
+
+            ij.IJ.log("Device " + i + ": " + name + 
+                " with Compute Capability " + major + "." + minor);
+            
+            // Obtain the device attributes
+            int array[] = { 0 };
+            List<Integer> attributes = CUDA.getAttributes();
+            for (Integer attribute : attributes)
+            {
+                String description = CUDA.getAttributeDescription(attribute);
+                cuDeviceGetAttribute(array, attribute, device);
+                int value = array[0];
+
+                System.out.printf("    %-52s : %d\n", description, value);
+            }
+        }
+		
+		*/
 		CUdevice device = new CUdevice();
 		cuDeviceGet(device, 0);
 		CUcontext context = new CUcontext();
 		cuCtxCreate(context, 0, device);
 				
+		long total[] = { 0 };
+		long free[] = { 0 };
+		JCuda.cudaMemGetInfo(free, total);
+//		System.out.println("Total "+total[0]/GB+" free "+free[0]/GB);
+	//	ij.IJ.log("Total "+total[0]/GB+" free "+free[0]/GB);
+		long maxMemoryGPU = (long) (0.75*free[0]); 
 		// Load the PTX that contains the kernel.
 		CUmodule moduleMedian = new CUmodule();
 		String ptxFileNameMedian = "medianFilter.ptx";
@@ -240,6 +301,7 @@ public class processMedianFit {
 				int blockSizeY 	= 1;				   
 				int gridSizeX 	= columns;
 				int gridSizeY 	= rows;
+			//	ij.IJ.log("grids: " + gridSizeX + " x " + gridSizeY);
 				cuLaunchKernel(functionMedian,
 						gridSizeX,  gridSizeY, 1, 	// Grid dimension
 						blockSizeX, blockSizeY, 1,  // Block dimension

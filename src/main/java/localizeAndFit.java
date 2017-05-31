@@ -47,6 +47,7 @@ import jcuda.driver.CUdevice;
 import jcuda.driver.CUdeviceptr;
 import jcuda.driver.CUfunction;
 import jcuda.driver.CUmodule;
+import jcuda.runtime.JCuda;
 
 
 /*
@@ -333,7 +334,11 @@ public class localizeAndFit {
 				//	int[] limits = findLimits.run(image, Ch); // get limits.
 					int nCenter =(( columns*rows/(gWindow*gWindow)) / 2); // ~ 80 possible particles for a 64x64 frame. Lets the program scale with frame size.
 					long gb = 1024*1024*1024;
-					long maxMemoryGPU = 3*gb; // TODO: get size of gpu memory.
+					long total[] = { 0 };
+					long free[] = { 0 };
+					JCuda.cudaMemGetInfo(free, total);
+//					System.out.println("Total "+total[0]/GB+" free "+free[0]/GB);
+					long maxMemoryGPU = (long) (0.75*free[0]); 
 					int nMax = (int) (maxMemoryGPU/(2*columns*rows*Sizeof.INT + 4*nCenter*Sizeof.INT)); 	// the localMaxima GPU calculations require: (x*y*frame*(Sizeof.INT ) + frame*nCenters*Sizeof.FLOAT)/gb memory. with known x and y dimensions, determine maximum size of frame for each batch.
 				//	if (nMax > 10000)
 				//		nMax = 10000;

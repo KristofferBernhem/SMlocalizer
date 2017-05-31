@@ -271,7 +271,7 @@ public class CUDA {
      * @param attribute The CUdevice_attribute constant
      * @return A short description of the given constant
      */
-    private static String getAttributeDescription(int attribute)
+    public static String getAttributeDescription(int attribute)
     {
         switch (attribute)
         {
@@ -370,7 +370,7 @@ public class CUDA {
      * 
      * @return A list of all CUdevice_attribute constants
      */
-    private static List<Integer> getAttributes()
+    public static List<Integer> getAttributes()
     {
         List<Integer> list = new ArrayList<Integer>();
         list.add(CU_DEVICE_ATTRIBUTE_MAX_THREADS_PER_BLOCK);
@@ -426,7 +426,7 @@ public class CUDA {
      *            The byte array
      * @return The String
      */
-    private static String createString(byte bytes[])
+    public static String createString(byte bytes[])
     {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < bytes.length; i++)

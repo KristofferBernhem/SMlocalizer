@@ -44,6 +44,8 @@ import jcuda.driver.CUdeviceptr;
 import jcuda.driver.CUfunction;
 import jcuda.driver.CUmodule;
 import jcuda.driver.JCudaDriver;
+import jcuda.runtime.JCuda;
+
 import static jcuda.driver.JCudaDriver.cuModuleLoadDataEx;
 
 /* This class contains all relevant algorithms for background corrections. Handles 2D and 3D stacks with single slice per frame.
@@ -234,7 +236,12 @@ class BackgroundCorrection {
 				for(int Ch = 1; Ch <= nChannels; Ch++)
 				{
 					int staticMemory = (2*W[Ch-1]+1)*rows*columns*Sizeof.FLOAT;
-					long framesPerBatch = (3*GB-staticMemory)/frameSize; // 3 GB memory allocation gives this numbers of frames. 					
+					long total[] = { 0 };
+					long free[] = { 0 };
+					JCuda.cudaMemGetInfo(free, total);
+//					System.out.println("Total "+total[0]/GB+" free "+free[0]/GB);
+					long maxMemoryGPU = (long) (0.75*free[0]); 
+					long framesPerBatch = (maxMemoryGPU-staticMemory)/frameSize; // maxMemoryGPU GB memory allocation gives this numbers of frames. 					
 
 					int loadedFrames = 0;
 					int startFrame = 1;					
