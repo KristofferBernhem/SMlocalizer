@@ -285,6 +285,8 @@ public class localizeAndFit {
 		}else // end parallel. 
 			if (selectedModel == 2) // GPU
 			{			
+				//int maxGrid = (int)(Math.log(CUDA.getGrid())/Math.log(2))+1;		
+				int maxGrid = 31;
 				double convCriteria = 1E-8; // how large improvement from one step to next we require.
 				int maxIterations = 1000;  // stop if an individual fit reaches this number of iterations.
 				ImageProcessor IP = image.getProcessor();
@@ -409,7 +411,17 @@ public class localizeAndFit {
 							int[] limitsN = findLimits.run(data, columns, rows, Ch); // get limits.							
 							CUdeviceptr deviceLimits 	= CUDA.copyToDevice(limitsN);
 							CUdeviceptr deviceCenter = CUDA.allocateOnDevice((int)(nMax*nCenter));
+
+							int nData = data.length/(columns*rows);
+							int blockSize = 256;
+							int gridSize = (nData + blockSize - 1)/blockSize;
+							gridSize = (int) (Math.log(gridSize)/Math.log(2) + 1);
+							if (gridSize > maxGrid)
+								gridSize = (int)( Math.pow(2, maxGrid));
+							else
+								gridSize = (int)( Math.pow(2, gridSize));
 							Pointer kernelParameters 		= Pointer.to(   
+									Pointer.to(new int[]{nData}),
 									Pointer.to(deviceData),
 									Pointer.to(new int[]{data.length}),
 									Pointer.to(new int[]{columns}),		 				       
@@ -422,17 +434,26 @@ public class localizeAndFit {
 									Pointer.to(deviceCenter),
 									Pointer.to(new int[]{nMax*nCenter}));
 
+
+							cuLaunchKernel(findMaximaFcn,
+									gridSize,  1, 1, 	// Grid dimension
+									blockSize, 1, 1,  // Block dimension
+									0, null,               		// Shared memory size and stream
+									kernelParameters, null 		// Kernel- and extra parameters
+									);
+							
+							/*
 							int blockSizeX 	= 1;
 							int blockSizeY 	= 1;				   
 							int gridSizeX 	= (int) Math.ceil((Math.sqrt(nMax)));
 							int gridSizeY 	= gridSizeX;
-
+														
 							cuLaunchKernel(findMaximaFcn,
 									gridSizeX,  gridSizeY, 1, 	// Grid dimension
 									blockSizeX, blockSizeY, 1,  // Block dimension
 									0, null,               		// Shared memory size and stream
 									kernelParameters, null 		// Kernel- and extra parameters
-									);
+									);*/
 							cuCtxSynchronize();
 
 							int hostCenter[] = new int[nMax*nCenter];
@@ -527,9 +548,16 @@ public class localizeAndFit {
 								 * Gauss fitting.
 								 ******************************************************************************/
 
-								gridSizeX = (int) Math.ceil((Math.sqrt(counter)));
-								gridSizeY 	= gridSizeX;
+							//	gridSizeX = (int) Math.ceil((Math.sqrt(counter)));
+							//	gridSizeY 	= gridSizeX;
+								gridSize = (counter + blockSize - 1) / blockSize;
+								gridSize = (int) (Math.log(gridSize)/Math.log(2) + 1);
+								if (gridSize > maxGrid)
+									gridSize = (int)( Math.pow(2, maxGrid));
+								else
+									gridSize = (int)( Math.pow(2, gridSize));
 								Pointer kernelParametersGaussFit 		= Pointer.to(   
+										Pointer.to(new int[]{counter}),
 										Pointer.to(deviceGaussVector),
 										Pointer.to(new int[]{counter * gWindow * gWindow}),
 										Pointer.to(deviceP),																											
@@ -541,13 +569,20 @@ public class localizeAndFit {
 										Pointer.to(new double[]{counter*7}),
 										Pointer.to(new double[]{convCriteria}),
 										Pointer.to(new int[]{maxIterations}));	
-
 								cuLaunchKernel(fittingFcn,
+										gridSize,  1, 1, 	// Grid dimension
+										blockSize, 1, 1,  // Block dimension
+										0, null,               		// Shared memory size and stream
+										kernelParametersGaussFit, null 		// Kernel- and extra parameters
+										);
+					/*			cuLaunchKernel(fittingFcn,
 										gridSizeX,  gridSizeY, 1, 	// Grid dimension
 										blockSizeX, blockSizeY, 1,  // Block dimension
 										0, null,               		// Shared memory size and stream
 										kernelParametersGaussFit, null 		// Kernel- and extra parameters
-										);
+										);*/
+									
+										
 								cuCtxSynchronize(); 
 
 								double hostOutput[] = new double[counter*7];
@@ -596,7 +631,18 @@ public class localizeAndFit {
 							int[] limitsN = findLimits.run(remainingData, columns, rows, Ch); // get limits.
 							CUdeviceptr deviceLimits 	= CUDA.copyToDevice(limitsN);
 							CUdeviceptr deviceCenter = CUDA.allocateOnDevice((int)(nMax*nCenter));
+							
+							int nData = remainingData.length/(columns*rows);
+							int blockSize = 256;
+							int gridSize = (nData + blockSize - 1)/blockSize;
+							gridSize = (int) (Math.log(gridSize)/Math.log(2) + 1);
+							if (gridSize > maxGrid)
+								gridSize = (int)( Math.pow(2, maxGrid));
+							else
+								gridSize = (int)( Math.pow(2, gridSize));
+
 							Pointer kernelParameters 		= Pointer.to(   
+									Pointer.to(new int[]{nData}),		
 									Pointer.to(deviceData),
 									Pointer.to(new int[]{remainingData.length}),
 									Pointer.to(new int[]{columns}),		 				       
@@ -609,19 +655,26 @@ public class localizeAndFit {
 									Pointer.to(deviceCenter),
 									Pointer.to(new int[]{nMax*nCenter}));
 							
-						
+						/*
 							int blockSizeX 	= 1;
 							int blockSizeY 	= 1;				   
 							int gridSizeX 	= (int) Math.ceil((Math.sqrt(nMax)));
 							int gridSizeY 	= gridSizeX;
-
+*/
 							cuLaunchKernel(findMaximaFcn,
+									gridSize,  1, 1, 	// Grid dimension
+									blockSize, 1, 1,  // Block dimension
+									0, null,               		// Shared memory size and stream
+									kernelParameters, null 		// Kernel- and extra parameters
+									);
+							
+/*							cuLaunchKernel(findMaximaFcn,
 									gridSizeX,  gridSizeY, 1, 	// Grid dimension
 									blockSizeX, blockSizeY, 1,  // Block dimension
 									0, null,               		// Shared memory size and stream
 									kernelParameters, null 		// Kernel- and extra parameters
 									);
-							cuCtxSynchronize();
+	*/						cuCtxSynchronize();
 
 							int hostCenter[] = new int[nMax*nCenter];
 
@@ -715,10 +768,16 @@ public class localizeAndFit {
 								/******************************************************************************
 								 * Gauss fitting.
 								 ******************************************************************************/
-
-								gridSizeX = (int) Math.ceil((Math.sqrt(counter)));
+								gridSize = (counter + blockSize - 1) / blockSize;
+								gridSize = (int) (Math.log(gridSize)/Math.log(2) + 1);
+								if (gridSize > maxGrid)
+									gridSize = (int)( Math.pow(2, maxGrid));
+								else
+									gridSize = (int)( Math.pow(2, gridSize));
+					/*			gridSizeX = (int) Math.ceil((Math.sqrt(counter)));
 								gridSizeY 	= gridSizeX;
-								Pointer kernelParametersGaussFit 		= Pointer.to(   
+						*/		Pointer kernelParametersGaussFit 		= Pointer.to(
+										Pointer.to(new int[]{counter}),
 										Pointer.to(deviceGaussVector),
 										Pointer.to(new int[]{counter * gWindow * gWindow}),
 										Pointer.to(deviceP),																											
@@ -730,14 +789,22 @@ public class localizeAndFit {
 										Pointer.to(new double[]{counter*7}),
 										Pointer.to(new double[]{convCriteria}),
 										Pointer.to(new int[]{maxIterations}));	
-
+								
+								cuLaunchKernel(fittingFcn,
+										gridSize,  1, 1, 	// Grid dimension
+										blockSize, 1, 1,  // Block dimension
+										0, null,               		// Shared memory size and stream
+										kernelParametersGaussFit, null 		// Kernel- and extra parameters
+										);
+								
+/*
 								cuLaunchKernel(fittingFcn,
 										gridSizeX,  gridSizeY, 1, 	// Grid dimension
 										blockSizeX, blockSizeY, 1,  // Block dimension
 										0, null,               		// Shared memory size and stream
 										kernelParametersGaussFit, null 		// Kernel- and extra parameters
 										);
-								cuCtxSynchronize(); 
+	*/							cuCtxSynchronize(); 
 
 								double hostOutput[] = new double[counter*7];
 

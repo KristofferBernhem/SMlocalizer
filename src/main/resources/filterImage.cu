@@ -1,41 +1,42 @@
 
 // KernelDevelopment.filterImage
-extern "C" __global__  void filterKernel( int* data, int dataLen0, int frameWidth, int frameHeight,  double* kernel, int kernelLen0, int kernelSize,  int* output, int outputLen0);
+extern "C" __global__  void filterKernel(int n,  int* data, int dataLen0, int frameWidth, int frameHeight,  double* kernel, int kernelLen0, int kernelSize,  int* output, int outputLen0);
 
 // KernelDevelopment.filterImage
-extern "C" __global__  void filterKernel( int* data, int dataLen0, int frameWidth, int frameHeight,  double* kernel, int kernelLen0, int kernelSize,  int* output, int outputLen0)
+extern "C" __global__  void filterKernel(int n,  int* data, int dataLen0, int frameWidth, int frameHeight,  double* kernel, int kernelLen0, int kernelSize,  int* output, int outputLen0)
 {
-	int num = blockIdx.x + gridDim.x * blockIdx.y;
-	if (num < dataLen0 / (frameWidth * frameHeight))
+	int num = blockIdx.x * blockDim.x + threadIdx.x;
+	int num2 = blockDim.x * gridDim.x;
+	for (int i = num; i < n; i += num2)
 	{
-		int num2 = num * frameWidth * frameHeight;
-		for (int i = 0; i < frameWidth; i++)
+		int num3 = i * frameWidth * frameHeight;
+		for (int j = 0; j < frameWidth; j++)
 		{
-			for (int j = 0; j < frameHeight; j++)
+			for (int k = 0; k < frameHeight; k++)
 			{
-				int num3 = i + j * frameHeight + num2;
-				for (int k = -kernelSize / 2; k <= kernelSize / 2; k++)
+				int num4 = j + k * frameHeight + num3;
+				for (int l = -kernelSize / 2; l <= kernelSize / 2; l++)
 				{
-					if (i + k < frameWidth && i + k >= 0)
+					if (j + l < frameWidth && j + l >= 0)
 					{
-						for (int l = -kernelSize / 2; l <= kernelSize / 2; l++)
+						for (int m = -kernelSize / 2; m <= kernelSize / 2; m++)
 						{
-							if (j + l < frameHeight && j + l >= 0)
+							if (k + m < frameHeight && k + m >= 0)
 							{
-								int num4 = i + k + (j + l) * frameHeight + num2;
-								int num5 = k + kernelSize / 2 + (l + kernelSize / 2) * kernelSize;
-								output[(num3)] += (int)((double)data[(num4)] * kernel[(num5)]);
+								int num5 = j + l + (k + m) * frameHeight + num3;
+								int num6 = l + kernelSize / 2 + (m + kernelSize / 2) * kernelSize;
+								output[(num4)] += (int)((double)data[(num5)] * kernel[(num6)]);
 							}
 						}
 					}
 				}
 			}
 		}
-		for (int m = num * frameHeight * frameWidth; m < (num + 1) * frameHeight * frameWidth; m++)
+		for (int num7 = i * frameHeight * frameWidth; num7 < (i + 1) * frameHeight * frameWidth; num7++)
 		{
-			if (output[(m)] < 0)
+			if (output[(num7)] < 0)
 			{
-				output[(m)] = 0;
+				output[(num7)] = 0;
 			}
 		}
 	}

@@ -56,6 +56,8 @@ public class ImageCrossCorr3DGPU {
 
 	public static ArrayList<Particle> run(ArrayList<Particle> inputParticles, int[] nBins, int[][] boundry, int[] dimensions,int pixelSize, int pixelSizeZ) // main function call. Will per channel autocorrelate between time binned data.
 	{
+		//int maxGrid = (int)(Math.log(CUDA.getGrid())/Math.log(2))+1;		
+		int maxGrid = 31;
 		ArrayList<Particle> shiftedParticles = new ArrayList<Particle>();
 		JCudaDriver.setExceptionsEnabled(true);
 		cuInit(0);
@@ -276,8 +278,18 @@ public class ImageCrossCorr3DGPU {
 					int meanVectorLength 		= 2;
 					int dimensionsLength 		= 3;
 					int outputLength			= hostOutput.length;
-
+					
+					
+					int nData = croppedDimensions[0]*croppedDimensions[1]*croppedDimensions[2];
+					int blockSize = 256;
+					int gridSize = (nData + blockSize - 1)/blockSize;
+					gridSize = (int) (Math.log(gridSize)/Math.log(2) + 1);
+					if (gridSize > maxGrid)
+						gridSize = (int)( Math.pow(2, maxGrid));
+					else
+						gridSize = (int)( Math.pow(2, gridSize));
 					Pointer kernelParameters 	= Pointer.to(   
+							Pointer.to(new int[]{nData}),
 							Pointer.to(device_referenceFrame),
 							Pointer.to(new int[]{frameLength}),
 							Pointer.to(device_targetFrame),
@@ -292,8 +304,13 @@ public class ImageCrossCorr3DGPU {
 							Pointer.to(new int[]{outputLength})
 							);
 
-
-					int gridSizeX = (int)Math.ceil(Math.sqrt(croppedDimensions[0]*croppedDimensions[1]*croppedDimensions[2]));///frameBatch); 	// update.
+					cuLaunchKernel(function,
+							gridSize,  1, 1, 	// Grid dimension
+							blockSize, 1, 1,  // Block dimension
+							0, null,               		// Shared memory size and stream
+							kernelParameters, null 		// Kernel- and extra parameters
+							);
+				/*	int gridSizeX = (int)Math.ceil(Math.sqrt(croppedDimensions[0]*croppedDimensions[1]*croppedDimensions[2]));///frameBatch); 	// update.
 					int gridSizeY = gridSizeX;														// update.
 					int blockSizeX = 1;
 					int blockSizeY = 1;
@@ -303,7 +320,7 @@ public class ImageCrossCorr3DGPU {
 							blockSizeX, blockSizeY, 1,  // Block dimension
 							0, null,               		// Shared memory size and stream
 							kernelParameters, null 		// Kernel- and extra parameters
-							);
+							);*/
 					cuCtxSynchronize();
 					cuMemcpyDtoH(Pointer.to(hostOutput), deviceOutput,
 							hostOutput.length * Sizeof.DOUBLE);
@@ -426,6 +443,8 @@ public class ImageCrossCorr3DGPU {
 
 	public static ArrayList<Particle> runChannel(ArrayList<Particle> inputParticles, int[][] boundry, int[] dimensions,int pixelSize, int pixelSizeZ) // main function call. Will per channel autocorrelate between time binned data.
 	{
+	//	int maxGrid = (int)(Math.log(CUDA.getGrid())/Math.log(2))+1;		
+		int maxGrid = 31;
 		ArrayList<Particle> shiftedParticles = new ArrayList<Particle>();
 		int nChannels 	= inputParticles.get(inputParticles.size()-1).channel; // data is sorted on a per channel basis.
 
@@ -623,8 +642,16 @@ public class ImageCrossCorr3DGPU {
 				int meanVectorLength 		= 2;
 				int dimensionsLength 		= 3;
 				int outputLength			= hostOutput.length;
-
+				int nData = croppedDimensions[0]*croppedDimensions[1]*croppedDimensions[2];
+				int blockSize = 256;
+				int gridSize = (nData + blockSize - 1)/blockSize;
+				gridSize = (int) (Math.log(gridSize)/Math.log(2) + 1);
+				if (gridSize > maxGrid)
+					gridSize = (int)( Math.pow(2, maxGrid));
+				else
+					gridSize = (int)( Math.pow(2, gridSize));
 				Pointer kernelParameters 	= Pointer.to(   
+						Pointer.to(new int[]{nData}),
 						Pointer.to(device_referenceFrame),
 						Pointer.to(new int[]{frameLength}),
 						Pointer.to(device_targetFrame),
@@ -638,8 +665,13 @@ public class ImageCrossCorr3DGPU {
 						Pointer.to(deviceOutput),
 						Pointer.to(new int[]{outputLength})
 						);
-
-
+				cuLaunchKernel(function,
+						gridSize,  1, 1, 	// Grid dimension
+						blockSize, 1, 1,  // Block dimension
+						0, null,               		// Shared memory size and stream
+						kernelParameters, null 		// Kernel- and extra parameters
+						);
+/*
 				int gridSizeX = (int)Math.ceil(Math.sqrt(croppedDimensions[0]*croppedDimensions[1]*croppedDimensions[2]));///frameBatch); 	// update.
 				int gridSizeY = gridSizeX;														// update.
 				int blockSizeX = 1;
@@ -651,7 +683,7 @@ public class ImageCrossCorr3DGPU {
 						0, null,               		// Shared memory size and stream
 						kernelParameters, null 		// Kernel- and extra parameters
 						);
-				cuCtxSynchronize();
+	*/			cuCtxSynchronize();
 				cuMemcpyDtoH(Pointer.to(hostOutput), deviceOutput,
 						hostOutput.length * Sizeof.DOUBLE);
 

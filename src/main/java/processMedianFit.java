@@ -60,9 +60,13 @@ import jcuda.CudaException;
  */
 public class processMedianFit {
 
-	@SuppressWarnings("deprecation")
+	//@SuppressWarnings("deprecation")
 	public static void run(final int[] W, ImagePlus image, int[] MinLevel, int pixelSize, int[] totalGain,double maxSigma, int gWindow, String modality)
 	{
+	//	int maxGrid = CUDA.getGrid(device);
+	//	maxGrid = (int)(Math.log(maxGrid)/Math.log(2))+1;
+
+		int maxGrid = 31;
 		int columns 						= image.getWidth();
 		int rows 							= image.getHeight();		
 		int nChannels 						= image.getNChannels(); 	// Number of channels.
@@ -109,50 +113,8 @@ public class processMedianFit {
 
 		
 		
-
-        // Obtain the number of devices
- /*       int deviceCountArray[] = { 0 };
-        cuDeviceGetCount(deviceCountArray);
-        int deviceCount = deviceCountArray[0];
-        ij.IJ.log("Found " + deviceCount + " devices");
-
-        for (int i = 0; i < deviceCount; i++)
-        {
-            CUdevice device = new CUdevice();
-            cuDeviceGet(device, i);
-
-            // Obtain the device name
-            byte deviceName[] = new byte[1024];
-            cuDeviceGetName(
-                deviceName, deviceName.length, device);
-            String name = CUDA.createString(deviceName);
-
-            // Obtain the compute capability
-            int majorArray[] = { 0 };
-            int minorArray[] = { 0 };
-            cuDeviceComputeCapability(
-                majorArray, minorArray, device);
-            int major = majorArray[0];
-            int minor = minorArray[0];
-
-            ij.IJ.log("Device " + i + ": " + name + 
-                " with Compute Capability " + major + "." + minor);
-            
-            // Obtain the device attributes
-            int array[] = { 0 };
-            List<Integer> attributes = CUDA.getAttributes();
-            for (Integer attribute : attributes)
-            {
-                String description = CUDA.getAttributeDescription(attribute);
-                cuDeviceGetAttribute(array, attribute, device);
-                int value = array[0];
-
-                System.out.printf("    %-52s : %d\n", description, value);
-            }
-        }
-		
-		*/
-		CUdevice device = new CUdevice();
+      
+        CUdevice device = new CUdevice();
 		cuDeviceGet(device, 0);
 		CUcontext context = new CUcontext();
 		cuCtxCreate(context, 0, device);
@@ -160,6 +122,7 @@ public class processMedianFit {
 		long total[] = { 0 };
 		long free[] = { 0 };
 		JCuda.cudaMemGetInfo(free, total);
+
 //		System.out.println("Total "+total[0]/GB+" free "+free[0]/GB);
 	//	ij.IJ.log("Total "+total[0]/GB+" free "+free[0]/GB);
 		long maxMemoryGPU = (long) (0.75*free[0]); 
@@ -275,6 +238,14 @@ public class processMedianFit {
 					stepLength = 10;
 				if(nFrames < 500)
 					stepLength = 1;
+				int nData = rows * columns;
+				int blockSize = 256;
+				int gridSize = (nData + blockSize - 1)/blockSize;
+				gridSize = (int) (Math.log(gridSize)/Math.log(2) + 1);
+				if (gridSize > maxGrid)
+					gridSize = (int)( Math.pow(2, maxGrid));
+				else
+					gridSize = (int)( Math.pow(2, gridSize));
 				CUdeviceptr device_Data 		= CUDA.copyToDevice(timeVector);
 				CUdeviceptr device_meanVector 	= CUDA.copyToDevice(MeanFrame);
 				CUdeviceptr deviceOutput 		= CUDA.allocateOnDevice((int)timeVector.length);
@@ -282,7 +253,8 @@ public class processMedianFit {
 				int filterWindowLength 		= (2 * W[Ch-1] + 1) * rows * columns;
 				int dataLength 				= timeVector.length;
 				int meanVectorLength 		= MeanFrame.length;
-				Pointer kernelParametersMedian 	= Pointer.to(   
+				Pointer kernelParametersMedian 	= Pointer.to( 
+						Pointer.to(new int[]{nData}),
 						Pointer.to(new int[]{W[Ch]}),
 						Pointer.to(device_window),
 						Pointer.to(new int[]{filterWindowLength}),
@@ -295,8 +267,13 @@ public class processMedianFit {
 						Pointer.to(deviceOutput),
 						Pointer.to(new int[]{dataLength})
 						);
-			
-
+				cuLaunchKernel(functionMedian,
+						gridSize,  1, 1, 	// Grid dimension
+						blockSize, 1, 1,  // Block dimension
+						0, null,               		// Shared memory size and stream
+						kernelParametersMedian, null 		// Kernel- and extra parameters
+						);
+/*
 				int blockSizeX 	= 1;
 				int blockSizeY 	= 1;				   
 				int gridSizeX 	= columns;
@@ -308,7 +285,7 @@ public class processMedianFit {
 						0, null,               		// Shared memory size and stream
 						kernelParametersMedian, null 		// Kernel- and extra parameters
 						);
-				cuCtxSynchronize();
+	*/			cuCtxSynchronize();
 				cuMemFree(device_window);
 				cuMemFree(device_Data);  
 				cuMemFree(device_meanVector);
@@ -322,10 +299,11 @@ public class processMedianFit {
                         0.0015257568383789054, 0.003661718759765626, 0.02868598630371093, 0.0036617187597656254, 0.0015257568383789054}; // 5x5 bicubic Bspline filter.
 				
 				int bSplineDataLength = timeVector.length;
-			
+				nData = timeVector.length/(columns*rows);
 				CUdeviceptr deviceOutputBSpline 		= CUDA.allocateOnDevice(bSplineDataLength);
 				CUdeviceptr deviceFilterKernel 			= CUDA.copyToDevice(filterKernel); // filter to applied to each pixel.				
 				Pointer kernelParametersBspline 		= Pointer.to(   
+						Pointer.to(new int[]{nData}),
 						Pointer.to(deviceOutput),					// input data is output from medianFilter function call.
 						Pointer.to(new int[]{bSplineDataLength}),	// length of vector
 						Pointer.to(new int[]{(columns)}), 			// width
@@ -337,7 +315,22 @@ public class processMedianFit {
 						Pointer.to(new int[]{bSplineDataLength})
 						);
 
-				gridSizeX = (int)Math.ceil(Math.sqrt(timeVector.length/(columns*rows))); 	// update.
+				blockSize = 256;
+				gridSize = (nData + blockSize - 1)/blockSize;
+				gridSize = (int) (Math.log(gridSize)/Math.log(2) + 1);
+				if (gridSize > maxGrid)
+					gridSize = (int)( Math.pow(2, maxGrid));
+				else
+					gridSize = (int)( Math.pow(2, gridSize));
+				cuLaunchKernel(functionBpline,
+						gridSize,  1, 1, 	// Grid dimension
+						blockSize, 1, 1,  // Block dimension
+						0, null,               		// Shared memory size and stream
+						kernelParametersBspline, null 		// Kernel- and extra parameters
+						);
+				
+				
+			/*	gridSizeX = (int)Math.ceil(Math.sqrt(timeVector.length/(columns*rows))); 	// update.
 				gridSizeY = gridSizeX;														// update.
 				cuLaunchKernel(functionBpline,
 						gridSizeX,  gridSizeY, 1, 	// Grid dimension
@@ -345,7 +338,7 @@ public class processMedianFit {
 						0, null,               		// Shared memory size and stream
 						kernelParametersBspline, null 		// Kernel- and extra parameters
 						);
-				cuCtxSynchronize();
+				*/cuCtxSynchronize();
 				
 				int hostOutput[] = new int[timeVector.length];
 
@@ -358,9 +351,18 @@ public class processMedianFit {
 				cuMemFree(deviceFilterKernel);   
 				int[] limits = findLimits.run(hostOutput, columns, rows, Ch); // get limits.				
 
+				nData = bSplineDataLength/(columns*rows);
+				blockSize = 256;
+				gridSize = (nData + blockSize - 1)/blockSize;
+				gridSize = (int) (Math.log(gridSize)/Math.log(2) + 1);
+				if (gridSize > maxGrid)
+					gridSize = (int)( Math.pow(2, maxGrid));
+				else
+					gridSize = (int)( Math.pow(2, gridSize));
 				CUdeviceptr deviceLimits 	= CUDA.copyToDevice(limits);
 				CUdeviceptr deviceCenter 	= CUDA.allocateOnDevice((int)(nMax*nCenter));
 				Pointer kernelParameters 		= Pointer.to(   
+						Pointer.to(new int[]{nData}),
 						Pointer.to(deviceOutputBSpline),
 						Pointer.to(new int[]{bSplineDataLength}),
 						Pointer.to(new int[]{columns}),		 				       
@@ -373,7 +375,14 @@ public class processMedianFit {
 						Pointer.to(deviceCenter),
 						Pointer.to(new int[]{nMax*nCenter}));
 
-				blockSizeX 	= 1;
+				cuLaunchKernel(findMaximaFcn,
+						gridSize,  1, 1, 	// Grid dimension
+						blockSize, 1, 1,  // Block dimension
+						0, null,               		// Shared memory size and stream
+						kernelParameters, null 		// Kernel- and extra parameters
+						);
+				
+		/*		blockSizeX 	= 1;
 				blockSizeY 	= 1;				   
 				gridSizeX 	= (int) Math.ceil((Math.sqrt(nMax)));
 				gridSizeY 	= gridSizeX;
@@ -384,7 +393,7 @@ public class processMedianFit {
 						0, null,               		// Shared memory size and stream
 						kernelParameters, null 		// Kernel- and extra parameters
 						);
-				cuCtxSynchronize();
+				*/cuCtxSynchronize();
 
 				int hostCenter[] = new int[nMax*nCenter];
 				// Pull data from device.
@@ -514,12 +523,21 @@ public class processMedianFit {
 					/******************************************************************************
 					 * Gauss fitting.
 					 ******************************************************************************/
-					blockSizeX 	= 1;
+			/*		blockSizeX 	= 1;
 					blockSizeY 	= 1;
 					gridSizeX 	= 1000+(int) Math.ceil((Math.sqrt(counter)));
 					gridSizeY 	= gridSizeX;
-
+*/
+					nData = counter;
+					blockSize = 256;
+					gridSize = (nData + blockSize - 1)/blockSize;
+					gridSize = (int) (Math.log(gridSize)/Math.log(2) + 1);
+					if (gridSize > maxGrid)
+						gridSize = (int)( Math.pow(2, maxGrid));
+					else
+						gridSize = (int)( Math.pow(2, gridSize));
 					Pointer kernelParametersGaussFit 		= Pointer.to(   
+							Pointer.to(new int[]{nData}),
 							Pointer.to(deviceGaussVector),
 							Pointer.to(new int[]{counter * gWindow * gWindow}),
 							Pointer.to(deviceP),																											
@@ -531,14 +549,19 @@ public class processMedianFit {
 							Pointer.to(new double[]{counter*7}),
 							Pointer.to(new double[]{convCriteria}),
 							Pointer.to(new int[]{maxIterations}));	
-
 					cuLaunchKernel(fittingFcn,
+							gridSize,  1, 1, 	// Grid dimension
+							blockSize, 1, 1,  // Block dimension
+							0, null,               		// Shared memory size and stream
+							kernelParametersGaussFit, null 		// Kernel- and extra parameters
+							);
+	/*				cuLaunchKernel(fittingFcn,
 							gridSizeX,  gridSizeY, 1, 	// Grid dimension
 							blockSizeX, blockSizeY, 1,  // Block dimension
 							0, null,               		// Shared memory size and stream
 							kernelParametersGaussFit, null 		// Kernel- and extra parameters
 							);
-					cuCtxSynchronize(); 
+		*/			cuCtxSynchronize(); 
 
 					double gaussFittingresults[] = new double[counter*7];
 

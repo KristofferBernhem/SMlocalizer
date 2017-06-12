@@ -1,98 +1,99 @@
 
 // KernelDevelopment.findMaxima
-extern "C" __global__  void run( int* data, int dataLen0, int frameWidth, int frameHeight, int windowWidth,  int* minLevel, int minLevelLen0, int minPosPixel, int sizeCenter,  int* Center, int CenterLen0);
+extern "C" __global__  void run(int n,  int* data, int dataLen0, int frameWidth, int frameHeight, int windowWidth,  int* minLevel, int minLevelLen0, int minPosPixel, int sizeCenter,  int* Center, int CenterLen0);
 
 // KernelDevelopment.findMaxima
-extern "C" __global__  void run( int* data, int dataLen0, int frameWidth, int frameHeight, int windowWidth,  int* minLevel, int minLevelLen0, int minPosPixel, int sizeCenter,  int* Center, int CenterLen0)
+extern "C" __global__  void run(int n,  int* data, int dataLen0, int frameWidth, int frameHeight, int windowWidth,  int* minLevel, int minLevelLen0, int minPosPixel, int sizeCenter,  int* Center, int CenterLen0)
 {
-	int num = blockIdx.x + gridDim.x * blockIdx.y;
-	if (num < dataLen0 / (frameWidth * frameHeight))
+	int num = blockIdx.x * blockDim.x + threadIdx.x;
+	int num2 = blockDim.x * gridDim.x;
+	for (int i = num; i < n; i += num2)
 	{
-		int num2 = 0;
-		int i = 0;
 		int num3 = 0;
+		int j = 0;
+		int num4 = 0;
 		bool flag = true;
-		int j = num * (frameWidth * frameHeight);
-		i = num * sizeCenter;
-		if (minLevel[(num)] == 0)
+		int k = i * (frameWidth * frameHeight);
+		j = i * sizeCenter;
+		if (minLevel[(i)] == 0)
 		{
-			double num4 = 0.0;
 			double num5 = 0.0;
-			int num6 = 0;
-			while (j < (num + 1) * (frameWidth * frameHeight))
+			double num6 = 0.0;
+			int num7 = 0;
+			while (k < (i + 1) * (frameWidth * frameHeight))
 			{
-				if (data[(j)] > 0)
+				if (data[(k)] > 0)
 				{
-					num4 += (double)data[(j)];
-					num6++;
+					num5 += (double)data[(k)];
+					num7++;
 				}
-				j++;
+				k++;
 			}
-			if (num6 > 0)
+			if (num7 > 0)
 			{
-				num4 /= (double)num6;
-				for (j = num * (frameWidth * frameHeight); j < (num + 1) * (frameWidth * frameHeight); j++)
+				num5 /= (double)num7;
+				for (k = i * (frameWidth * frameHeight); k < (i + 1) * (frameWidth * frameHeight); k++)
 				{
-					num5 += ((double)data[(j)] - num4) * ((double)data[(j)] - num4);
+					num6 += ((double)data[(k)] - num5) * ((double)data[(k)] - num5);
 				}
-				num5 /= (double)num6;
-				num5 = sqrt(num5);
-				minLevel[(num)] = (int)(num4 * 2.0 + 3.0 * num5);
+				num6 /= (double)num7;
+				num6 = sqrt(num6);
+				minLevel[(i)] = (int)(num5 * 2.0 + 3.0 * num6);
 			}
 			else
 			{
-				minLevel[(num)] = 64000;
+				minLevel[(i)] = 64000;
 			}
 		}
-		int num7 = (int)(0.3 * (double)minLevel[(num)]);
-		j = num * (frameWidth * frameHeight) + windowWidth / 2 * frameWidth + windowWidth / 2;
-		while (i < (num + 1) * sizeCenter)
+		int num8 = (int)(0.3 * (double)minLevel[(i)]);
+		k = i * (frameWidth * frameHeight) + windowWidth / 2 * frameWidth + windowWidth / 2;
+		while (j < (i + 1) * sizeCenter)
 		{
-			Center[(i)] = 0;
-			i++;
+			Center[(j)] = 0;
+			j++;
 		}
-		i = 0;
-		int num8 = 0;
-		while (j < (num + 1) * (frameWidth * frameHeight) - windowWidth / 2 * frameWidth)
+		j = 0;
+		int num9 = 0;
+		while (k < (i + 1) * (frameWidth * frameHeight) - windowWidth / 2 * frameWidth)
 		{
-			if (data[(j)] > minLevel[(num)])
+			if (data[(k)] > minLevel[(i)])
 			{
-				i = 0;
-				num3 = j - windowWidth / 2 * (frameWidth + 1);
+				j = 0;
+				num4 = k - windowWidth / 2 * (frameWidth + 1);
 				flag = true;
-				num8 = 0;
-				while (num3 <= j + windowWidth / 2 * (frameWidth + 1) && flag)
+				num9 = 0;
+				while (num4 <= k + windowWidth / 2 * (frameWidth + 1) && flag)
 				{
-					if (data[(num3)] > data[(j)])
+					if (data[(num4)] > data[(k)])
 					{
 						flag = false;
 					}
-					if (data[(num3)] > 0)
+					if (data[(num4)] > 0)
 					{
-						i++;
+						j++;
 					}
-					num3++;
-					num8++;
-					if (num8 == windowWidth)
+					num4++;
+					num9++;
+					if (num9 == windowWidth)
 					{
-						num3 += frameWidth - windowWidth;
-						num8 = 0;
+						num4 += frameWidth - windowWidth;
+						num9 = 0;
 					}
 				}
-				if (i < minPosPixel)
+				if (j < minPosPixel)
 				{
 					flag = false;
 				}
-				if (flag && data[(j + 1)] > num7 && data[(j - 1)] > num7 && data[(j + frameWidth)] > num7 && data[(j - frameWidth)] > num7)
+				if (flag && data[(k + 1)] > num8 && data[(k - 1)] > num8 && data[(k + frameWidth)] > num8 && data[(k - frameWidth)] > num8)
 				{
-					Center[(num * sizeCenter + num2)] = j;
-					num2++;
+					Center[(i * sizeCenter + num3)] = k;
+					num3++;
 				}
 			}
-			j++;
-			if (j % frameWidth == frameWidth - windowWidth / 2)
+			k++;
+			if (k % frameWidth == frameWidth - windowWidth / 2)
 			{
-				j += windowWidth - 1;
+				k += windowWidth - 1;
 			}
 		}
 	}

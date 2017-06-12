@@ -18,9 +18,6 @@
  *
  * @author kristoffer.bernhem@gmail.com
  */
-import static jcuda.driver.JCudaDriver.cuMemAlloc;
-import static jcuda.driver.JCudaDriver.cuMemcpyHtoD;
-
 import static jcuda.driver.CUdevice_attribute.*;
 import static jcuda.driver.JCudaDriver.*;
 
@@ -33,8 +30,6 @@ import jcuda.driver.*;
 import jcuda.CudaException;
 import jcuda.Pointer;
 import jcuda.Sizeof;
-import jcuda.driver.CUdeviceptr;
-import jcuda.driver.JCudaDriver;
 
 /*
  * Contain help classes for jcuda implementation.
@@ -119,7 +114,27 @@ public class CUDA {
           
         }
 	}
-	
+	static int getGrid(CUdevice device)
+	{
+		int gridSize = 0;
+		
+		// Obtain the device name
+		byte deviceName[] = new byte[1024];
+		cuDeviceGetName(
+				deviceName, deviceName.length, device);
+		// Obtain the device attributes
+		int array[] = { 0 };
+		List<Integer> attributes = CUDA.getAttributes();
+		for (Integer attribute : attributes)
+		{
+			String description = CUDA.getAttributeDescription(attribute);
+			cuDeviceGetAttribute(array, attribute, device);
+			int value = array[0];
+			if (description == "Maximum x-dimension of a grid")
+				gridSize = value;
+		}
+		return gridSize;
+	}
 	static CUdeviceptr copyToDevice(float hostData[])
 	{
 	    CUdeviceptr deviceData = new CUdeviceptr();
