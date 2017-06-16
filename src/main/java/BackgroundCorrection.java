@@ -291,12 +291,11 @@ class BackgroundCorrection {
 						if (stepLength > 10)
 							stepLength = 10;
 						if(nFrames < 500)
-							stepLength = 1;
-					
+							stepLength = 1;					
 						int nData = rows * columns;
 						int blockSize = 256;
 						int gridSize = (nData + blockSize - 1)/blockSize;
-						gridSize = (int) (Math.log(gridSize)/Math.log(2) + 1);
+						gridSize = (int) (Math.log(gridSize)/Math.log(2) + 2);
 						if (gridSize > maxGrid)
 							gridSize = (int)( Math.pow(2, maxGrid));
 						else
@@ -308,9 +307,8 @@ class BackgroundCorrection {
 						int filterWindowLength 		= (2 * W[Ch-1] + 1) * rows * columns;
 						int dataLength 				= timeVector.length;
 						int meanVectorLength 		= MeanFrame.length;
-						
-						
-						
+
+					//	ij.IJ.log(Integer.toString(W[Ch]));
 						Pointer kernelParametersMedianFilter 	= Pointer.to(   
 								Pointer.to(new int[]{nData}),
 								Pointer.to(new int[]{W[Ch]}),
@@ -536,6 +534,7 @@ class BackgroundCorrection {
 			medianVector[inpIdx] = V[high/2];
 			float step = medianVector[inpIdx] - medianVector[inpIdx-skipNr];
 			step /= skipNr;
+
 			for (int i = 1; i < skipNr; i++)
 			{
 				medianVector[inpIdx-skipNr + i] = medianVector[inpIdx-skipNr] + i*step;

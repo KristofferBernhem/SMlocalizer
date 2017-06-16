@@ -4550,7 +4550,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			if (doFilterWidthChList.getItem(id).getText().equals("1"))
 				data[id] = (Integer.parseInt(windowWidthChList.getItem(id).getText())-1)/2;
 			else
-				data[id] = 101;
+				data[id] = 50;
 					
 		}
 		return data;
