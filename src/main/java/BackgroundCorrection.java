@@ -357,8 +357,8 @@ class BackgroundCorrection {
 								Pointer.to(new int[]{nData}),
 								Pointer.to(deviceOutput),					// input data is output from medianFilter function call.
 								Pointer.to(new int[]{bSplineDataLength}),	// length of vector
-								Pointer.to(new int[]{(columns)}), 			// width
-								Pointer.to(new int[]{(rows)}),				// height
+								Pointer.to(new int[]{(rows)}), 			// width
+								Pointer.to(new int[]{(columns)}),				// height
 								Pointer.to(deviceFilterKernel),				// Transfer filter kernel.
 								Pointer.to(new int[]{(int)filterKernel.length}),								
 								Pointer.to(new int[]{(int)(Math.sqrt(filterKernel.length))}), // width of filter kernel.
