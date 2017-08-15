@@ -44,7 +44,6 @@ public class AstigmatismFitting {
 		double[][] offset 			= getOffset(); 		// get xyz offset from channel 1.
 
 		double[][] maxDim	 		= getMaxDim();	// get max sigma for each channel.
-		//System.out.println(inputResults.size() + " : " + maxDim[0]);
 		for (int i = 0; i < inputResults.size(); i++)
 		{
 			// check maxDim before proceeding.
@@ -62,7 +61,7 @@ public class AstigmatismFitting {
 				temp.sigma_y 	= Math.min(inputResults.get(i).sigma_x,inputResults.get(i).sigma_y); 			// fitted sigma in y direction.					
 				temp.precision_x= Math.min(inputResults.get(i).precision_x,inputResults.get(i).precision_y); 	// precision of fit for x coordinate.
 				temp.precision_y= Math.min(inputResults.get(i).precision_x,inputResults.get(i).precision_y); 	// precision of fit for y coordinate.
-				temp.precision_z= temp.precision_z= 600 / Math.sqrt(temp.photons); 								// precision of fit for z coordinate.
+				temp.precision_z= 600 / Math.sqrt(temp.photons); 								// precision of fit for z coordinate.
 				temp.r_square 	= inputResults.get(i).r_square; 	// Goodness of fit.
 				temp.include	= 1; 		// If this particle should be included in analysis and plotted.
 				if(temp.z != 1E6 && temp.channel>1)	// if within ok z range. For all but first channel, move all particles by x,y,z offset for that channel to align all to first channel.

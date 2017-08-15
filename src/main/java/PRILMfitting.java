@@ -78,6 +78,16 @@ public class PRILMfitting {
 					short dx 		= (short)(inputResults.get(i).x - inputResults.get(j).x); // diff in x dimension.
 					short dy 		= (short)(inputResults.get(i).y - inputResults.get(j).y); // diff in y dimension.
 					double angle 	= (Math.atan2(dy, dx));
+					// find new points shifted by the precision of radial localization and use the change in angle between these two new points and the orignal ones to calculate the error in z determination.
+					short xiprime = (short) (inputResults.get(i).precision_x * Math.cos(angle+Math.PI*0.5) + inputResults.get(i).x); // shift in x along the normal to the vector connecting the two lobes.
+					short yiprime = (short) (inputResults.get(i).precision_y * Math.sin(angle+Math.PI*0.5) + inputResults.get(i).y); // shift in y along the normal to the vector connecting the two lobes.
+					short xjprime = (short) (inputResults.get(j).precision_x * Math.cos(angle-Math.PI*0.5) + inputResults.get(j).x); // shift in x along the normal to the vector connecting the two lobes.
+					short yjprime = (short) (inputResults.get(j).precision_y * Math.sin(angle-Math.PI*0.5) + inputResults.get(j).y); // shift in y along the normal to the vector connecting the two lobes.
+					
+					double angleError = angle - Math.atan2((yiprime - yjprime),(xiprime - xjprime));			// symetry allows us to calculate a single angle.This is the propagated error in angle used in depth calibration.
+					double zLow = getZ(calibration, zOffset, inputResults.get(i).channel, angle + angleError); // lower bound, angles are negative, thus reverse of sign.
+					double zHigh = getZ(calibration, zOffset, inputResults.get(i).channel, angle - angleError); // upper bound, angles are negative, thus reverse of sign.
+					
 					// translate angle to z:
 					Particle temp 	= new Particle();
 					temp.channel 	= inputResults.get(i).channel;
@@ -86,13 +96,16 @@ public class PRILMfitting {
 					temp.photons 	= inputResults.get(i).photons + inputResults.get(j).photons;
 					temp.x			= (inputResults.get(i).x + inputResults.get(j).x) / 2;
 					temp.y			= (inputResults.get(i).y + inputResults.get(j).y) / 2;
-					temp.sigma_x 	= (inputResults.get(i).sigma_x + inputResults.get(j).sigma_x) / 2; 				// fitted sigma in x direction.
-					temp.sigma_y 	= (inputResults.get(i).sigma_y + inputResults.get(j).sigma_y) / 2; 				// fitted sigma in y direction.
-					temp.precision_x= Math.min(inputResults.get(i).precision_x,inputResults.get(j).precision_x); 	// precision of fit for x coordinate.
-					temp.precision_y= Math.min(inputResults.get(i).precision_y,inputResults.get(j).precision_y); 	// precision of fit for y coordinate.
-					temp.precision_z= 600 / Math.sqrt(temp.photons); 												// precision of fit for z coordinate.
-					temp.r_square 	= Math.min(inputResults.get(i).r_square,inputResults.get(j).r_square);; 		// Goodness of fit.
-					temp.include	= 1; 																			// If this particle should be included in analysis and plotted.
+					temp.sigma_x 	= (inputResults.get(i).sigma_x + inputResults.get(j).sigma_x) / 2; 			// fitted sigma in x direction.
+					temp.sigma_y 	= (inputResults.get(i).sigma_y + inputResults.get(j).sigma_y) / 2; 			// fitted sigma in y direction.
+					temp.precision_x= 0.5*(inputResults.get(i).precision_x+inputResults.get(j).precision_x); 	// precision of fit for x coordinate.
+					temp.precision_y= 0.5*(inputResults.get(i).precision_y+inputResults.get(j).precision_y); 	// precision of fit for y coordinate.
+					temp.precision_z= 0.5*((temp.z - zLow)+(zHigh-temp.z)); 									// precision of fit for z coordinate.
+					temp.r_square 	= Math.min(inputResults.get(i).r_square,inputResults.get(j).r_square);; 	// Goodness of fit.
+					temp.include	= 1; 																		// If this particle should be included in analysis and plotted.
+					if (zLow == 1E6 || zHigh == 1E6)
+						temp.precision_z = 1000; // if outside of the calibration range, set to 1000.
+
 					if(temp.z != 1E6 && temp.channel>1)// if within ok z range. For all but first channel, move all particles by x,y,z offset for that channel to align all to first channel.
 					{
 						temp.x -= offset[0][temp.channel-1];
