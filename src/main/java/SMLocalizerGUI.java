@@ -3354,7 +3354,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		//int[] minPixelOverBkgrnd = getMinPixelOverBackground();
 		double maxSigma 		= 2; // 2D 
 		int[] signalStrength 	= getMinSignal();
-		int[] desiredPixelSize = getOutputPixelSize();
+		int[] desiredPixelSize 	= getOutputPixelSize();
 		int selectedModel 		= 5;
 
 		String modalityChoice 	= "";

@@ -20,58 +20,78 @@
  */
 
 
+import javax.swing.JOptionPane;
+
 import ij.IJ;
-import ij.WindowManager;
 import ij.plugin.PlugIn;
 
-public class Background_correction implements PlugIn {
+public class SML_Drift_Correction implements PlugIn {
 
 	public static void main(final String... args) throws Exception {
 		// create the ImageJ application context with all available services				
 		final ij.ImageJ ij = new ij.ImageJ();
 		ij.setVisible(true);
-		Class<?> clazz = SMLocalizer_.class;
+		Class<?> clazz = SML_Drift_Correction.class;
 		String url = clazz.getResource("/" + clazz.getName().replace('.', '/') + ".class").toString();
 		String pluginsDir = url.substring("file:".length(), url.length() - clazz.getName().length() - ".class".length());
 		System.setProperty("plugins.dir", pluginsDir);				
 		IJ.runPlugIn(clazz.getName(), "");
-		}
+	}
 
 
-		
-	
-	
-	
+
+
+
+
 	public void run(String arg) { // macro inptut arg should be comma separated with window length and computation mode.		
+		/*	Macro:	
+		 * arg = "2";  // GPU, 0 for CPU
+		 * run("SML Drift Correction",arg);
+		 */	
 		String args =  ij.Macro.getOptions(); // get macro input.
-		args = args.replaceAll("\\s+","");		// remove spaces, line separators
-		String[] inputParameters = args.split(",");	// split based on ","
-		if (inputParameters.length >= 2) // if we got precisely two inputs.
+		int computeModel = 0;
+		if (args == null)
 		{
-			final int[] Window = new int[10]; // pull out window length.
-			for (int i = 0; i < inputParameters.length-1; i++)
-				Window[i] = Integer.parseInt(inputParameters[i]); // pull out window length.
-			if (inputParameters.length-1 < 10) // if we did not populate all entries, add default to others.
+			//Custom button text
+			Object[] options = {"CPU",
+					"GPU",
+			"Cancel"};
+			int n = JOptionPane.showOptionDialog(null,
+					"Select processing method",
+					"Processing",
+					JOptionPane.YES_NO_CANCEL_OPTION,
+					JOptionPane.PLAIN_MESSAGE,
+					null,
+					options,			    
+					options[0]);			
+
+			switch (n)
 			{
-				for (int i = inputParameters.length-1; i < 10; i++)
-					Window[i] = 50; // default window length.
+			case 0: 	computeModel = 0; break;
+			case 1: 	computeModel = 2; break;
+			case 2: 	computeModel = 5; break;
 			}
-			int selectedModel = Integer.parseInt(inputParameters[inputParameters.length-1]);			// pull out mode selection.
-			BackgroundCorrection.medianFiltering(Window,WindowManager.getCurrentImage(),selectedModel); // correct background.		
-		}else if (inputParameters.length == 1)
-		{
-			final int[] Window = {50,50,50,50,50,50,50,50,50,50}; // pull out window length.
-			int selectedModel = 0; // CPU
-			BackgroundCorrection.medianFiltering(Window,WindowManager.getCurrentImage(),selectedModel); // correct background.
 		}else
 		{
-			final int[] Window = {50,50,50,50,50,50,50,50,50,50}; 	// default.
-			int selectedModel = 0; 				// CPU
-			BackgroundCorrection.medianFiltering(Window,WindowManager.getCurrentImage(),selectedModel); // correct background.
+			args = args.replaceAll("\\s+","");		// remove spaces, line separators
+			String[] inputParameters = args.split(",");	// split based on ","
+			computeModel 		= Integer.parseInt(inputParameters[0]);		
 		}
-				
-		
-		
+		if (computeModel != 5)
+		{
+			GetParameters parameters = new GetParameters();
+			parameters.get(); // load parameters.
+
+			try // in case no results table are available.
+			{
+				cleanParticleList.run(parameters.lb,parameters.ub,parameters.includeParameters); // clean out results table.
+				correctDrift.run(parameters.driftCorrShift, parameters.numberOfBinsDriftCorr, computeModel); // drift correct all channels.			
+			}
+			finally
+			{
+
+			}
+		}
 	}
 }
 
