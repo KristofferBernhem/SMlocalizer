@@ -9,7 +9,6 @@ import static jcuda.driver.JCudaDriver.cuModuleGetFunction;
 import static jcuda.driver.JCudaDriver.cuModuleLoadDataEx;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import ij.ImagePlus;
 import ij.plugin.filter.Analyzer;
@@ -23,12 +22,6 @@ import jcuda.driver.CUfunction;
 import jcuda.driver.CUmodule;
 import jcuda.driver.JCudaDriver;
 import jcuda.runtime.JCuda;
-
-
-import static jcuda.driver.CUdevice_attribute.*;
-import static jcuda.driver.JCudaDriver.*;
-import jcuda.driver.*;
-import jcuda.CudaException;
 
 
 /* Copyright 2016 Kristoffer Bernhem.
@@ -125,7 +118,7 @@ public class processMedianFit {
 
 //		System.out.println("Total "+total[0]/GB+" free "+free[0]/GB);
 	//	ij.IJ.log("Total "+total[0]/GB+" free "+free[0]/GB);
-		long maxMemoryGPU = (long) (0.75*free[0]); 
+		long maxMemoryGPU = (long) (0.5*free[0]); 
 		// Load the PTX that contains the kernel.
 		CUmodule moduleMedian = new CUmodule();
 		String ptxFileNameMedian = "medianFilter.ptx";
@@ -175,7 +168,7 @@ public class processMedianFit {
 			int staticMemory = (2*W[Ch-1]+1)*rows*columns*Sizeof.FLOAT;
 			long framesPerBatch = (3*GB-staticMemory)/frameSize; // 3 GB memory allocation gives this numbers of frames. 					
 			int nCenter =(( columns*rows/(gWindow*gWindow)) / 2); // ~ 80 possible particles for a 64x64 frame. Lets the program scale with frame size.
-			int nMax = (int) (maxMemoryGPU/(2*columns*rows*Sizeof.INT + 4*nCenter*Sizeof.INT)); 	// the localMaxima GPU calculations require: (x*y*frame*(Sizeof.INT ) + frame*nCenters*Sizeof.FLOAT)/gb memory. with known x and y dimensions, determine maximum size of frame for each batch.
+			int nMax = (int) (maxMemoryGPU/(4*columns*rows*Sizeof.INT + 4*nCenter*Sizeof.INT)); 	// the localMaxima GPU calculations require: (x*y*frame*(Sizeof.INT ) + frame*nCenters*Sizeof.FLOAT)/gb memory. with known x and y dimensions, determine maximum size of frame for each batch.
 			int loadedFrames = 0;
 			int startFrame = 1;					
 			int endFrame = (int)framesPerBatch;					

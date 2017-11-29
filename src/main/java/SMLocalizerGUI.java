@@ -3987,7 +3987,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		/*
 		 *   Basic input settings
 		 */
-		inputPixelSize.setText(pixelSizeChList.getItem(id).getText());
+//		inputPixelSize.setText(pixelSizeChList.getItem(id).getText());
 		totalGain.setText(totalGainChList.getItem(id).getText());
 		//		minPixelOverBackground.setText(minPixelOverBackgroundChList.getItem(id).getText());
 		minimalSignal.setText(minimalSignalChList.getItem(id).getText());
@@ -4106,7 +4106,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			if (I <= 0)
 				inputPixelSize.setText(pixelSizeChList.getItem(id).getText()); 		// Update.                    
 		} catch (NumberFormatException e) { 								// If user wrote non numerical test into the field.                
-			inputPixelSize.setText(pixelSizeChList.getItem(id).getText()); 		// Update.
+			inputPixelSize.setText(pixelSizeChList.getItem(0).getText()); 		// Update.
 		}
 		try {
 			int I = Integer.parseInt(totalGain.getText());        		
@@ -4806,7 +4806,9 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 
 	public void loadParameters(String storeName)
 	{
-
+		
+		inputPixelSize.setText((ij.Prefs.get("SMLocalizer.settings."+storeName+
+				".inputPixelSize.","")));
 		/*
 		 * non channel unique variables.
 		 */
@@ -4843,7 +4845,8 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			/*
 			 *   Basic input settings
 			 */		    		                           		   
-			
+			pixelSizeChList.getItem(Ch).setText((ij.Prefs.get("SMLocalizer.settings."+storeName+
+					".inputPixelSize.",""))); // overwrite all entries. 
 
 			// total gain
 			totalGainChList.getItem(Ch).setText( 
@@ -5093,7 +5096,11 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 		else
 			ij.Prefs.set("SMLocalizer.settings."+storeName+
 					".doChannelAlign.",0);		
-
+		
+		
+		ij.Prefs.set("SMLocalizer.settings."+storeName+
+				".inputPixelSize.",inputPixelSize.getText());
+		
 		// pixel size XY
 		ij.Prefs.set("SMLocalizer.settings."+storeName+
 				".pixelSize", 

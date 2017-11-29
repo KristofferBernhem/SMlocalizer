@@ -40,8 +40,9 @@ public class SMLocalizer_ implements PlugIn {
 	@Override
 	public void run(String arg0) {
 		String args[] = null;
+
+//		System.out.println(IJ.maxMemory()/(4*128*128*25000)); // Calculate memory usage before larger operations, split if required.
 		SMLocalizerGUI.main(args); //call GUI.
 		
 	}
-
 }

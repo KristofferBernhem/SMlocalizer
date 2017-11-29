@@ -66,13 +66,13 @@ class BackgroundCorrection {
 			nFrames = image.getNSlices();  				// some formats store frames as slices, some as frames.
 		int columns = image.getWidth();
 		int rows	= image.getHeight();		
+
 		if(selectedModel == 0) // parallel.
 		{
 			for (int Ch = 1; Ch <= nChannels; Ch++){ // Loop over all channels.
 				float[] MeanFrame = new float[nFrames]; 		// Will include frame mean value.
 				float[][] timeVector = new float[rows*columns][nFrames];
 				ImageProcessor IP = image.getProcessor();		// get image processor for the stack.´
-
 
 				for (int Frame = 1; Frame < nFrames+1; Frame++){			
 					if (image.getNFrames() == 1)
@@ -103,7 +103,6 @@ class BackgroundCorrection {
 					for (int i = 0; i < rows*columns; i++)
 					{
 						timeVector[i][Frame-1] = (float) (IP.get(i )/MeanFrame[Frame-1]); // load data. 						
-
 					}
 				} // Data loading.
 
@@ -203,7 +202,7 @@ class BackgroundCorrection {
 			{					
 //				int maxGrid = (int)(Math.log(CUDA.getGrid())/Math.log(2))+1;		
 				int maxGrid = 31;
-				long GB = 1024*1024*1024;
+//				long GB = 1024*1024*1024;
 				int frameSize = (4*columns*rows)*Sizeof.FLOAT;
 				JCudaDriver.setExceptionsEnabled(true);
 				// Initialize the driver and create a context for the first device.
@@ -236,14 +235,14 @@ class BackgroundCorrection {
 				cuModuleGetFunction(functionBpline, moduleBSpline, "filterKernel");
 				for(int Ch = 1; Ch <= nChannels; Ch++)
 				{
-					int staticMemory = (2*W[Ch-1]+1)*rows*columns*Sizeof.FLOAT;
+					int staticMemory = 2*(2*W[Ch-1]+1)*rows*columns*Sizeof.FLOAT;
 					long total[] = { 0 };
 					long free[] = { 0 };
 					JCuda.cudaMemGetInfo(free, total);
 //					System.out.println("Total "+total[0]/GB+" free "+free[0]/GB);
-					long maxMemoryGPU = (long) (0.75*free[0]); 
+					long maxMemoryGPU = (long) (0.5*free[0]); 
 					long framesPerBatch = (maxMemoryGPU-staticMemory)/frameSize; // maxMemoryGPU GB memory allocation gives this numbers of frames. 					
-					
+
 					int loadedFrames = 0;
 					int startFrame = 1;					
 					int endFrame = (int)framesPerBatch;					

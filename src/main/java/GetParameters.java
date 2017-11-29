@@ -26,7 +26,7 @@ public GetParameters()
 {	
 	this.ub= new double[7][10]; // upper bound.
 	this.lb = new double[7][10]; // lower bound.
-	this.pixelSize = 100;
+//	this.pixelSize = new int;
 	this.totalGain = new int[10];
 	this.minSignal = new int[10];
 	this.windowWidth = new int[10];;
@@ -116,7 +116,9 @@ public GetParameters()
 		ij.Prefs.set("SMLocalizer.settings."+storeName+
 				".doDriftCorrect.",1);
 
-
+		ij.Prefs.set("SMLocalizer.settings."+storeName+
+				".inputPixelSize.", 
+						"100");
 
 		ij.Prefs.set("SMLocalizer.settings."+storeName+
 				".doChannelAlign.",0);		
@@ -327,6 +329,9 @@ public GetParameters()
 			else
 				this.doChannelAlign = false;
 
+			this.pixelSize = Integer.parseInt(ij.Prefs.get("SMLocalizer.settings."+loadThis+
+					".inputPixelSize.",""));
+					
 			// pixel size XY
 			this.outputPixelSize[0] = Integer.parseInt(
 					ij.Prefs.get("SMLocalizer.settings."+loadThis+
@@ -351,7 +356,7 @@ public GetParameters()
 				 */		    		                           		   
 
 				// total gain
-				this.totalGain[Ch]=				Integer.parseInt(ij.Prefs.get("SMLocalizer.settings."+loadThis+".totaGain."+Ch,""));
+				this.totalGain[Ch]=	Integer.parseInt(ij.Prefs.get("SMLocalizer.settings."+loadThis+".totaGain."+Ch,""));
 				//this.totalGain[Ch] = Integer.getInteger(
 				//		ij.Prefs.get("SMLocalizer.settings."+loadThis+".totaGain."+Ch,""));		   
 
@@ -567,7 +572,151 @@ public GetParameters()
 
 	public void set(String[] inputParameters) // set values to a specific channel.
 	{
+		String loadThis = ij.Prefs.get("SMLocalizer.CurrentSetting", ""); // get the latest settings.
+		int Ch = 0;		
+		switch (inputParameters[0])
+		{
+		case "inputpixelsize": 
+			// "Input pixel size [nm]: 'inputpixelsize,VALUE'"
+			ij.Prefs.set("SMLocalizer.settings."+loadThis+
+					".inputPixelSize.", 
+							inputParameters[1]);
+			break;
+		case "totalgain": 
+			// "Total gain: 'totalgain,VALUE,CHANNEL(1-10)'"
+			Ch = Integer.parseInt(inputParameters[2]) - 1;
+			ij.Prefs.set("SMLocalizer.settings."+loadThis+".totaGain."+Ch, 
+					inputParameters[1]);
+			break;
+		case "minimalsignal": 					
+			// "Minimal signal: 'minimalsignal,VALUE,CHANNEL(1-10),STATUS(0 or 1)"
+			Ch = Integer.parseInt(inputParameters[2]) - 1;	// get channel number.
+			ij.Prefs.set("SMLocalizer.settings."+loadThis+
+					".minimalSignal."+Ch,inputParameters[1]);	// set value to the correct channel.
+			ij.Prefs.set("SMLocalizer.settings."+loadThis+
+					".doMinimalSignal."+Ch,inputParameters[3]);	// set boolean, on/off.
 
+			break;
+		case "filterwidth": 
+			// "Filter width: 'filterwidth,VALUE,CHANNEL(1-10),STATUS(0 or 1)"
+			Ch = Integer.parseInt(inputParameters[2]) - 1;	// get channel number.
+			ij.Prefs.set("SMLocalizer.settings."+loadThis+
+					".windowWidth."+Ch,inputParameters[1]);	// set value to the correct channel.
+			ij.Prefs.set("SMLocalizer.settings."+loadThis+
+					".doWindowWidth."+Ch,inputParameters[3]);	// set boolean, on/off.
+			break;
+		case "photoncount": 
+			// "Photon count: 'photoncount,LOW_VALUE,HIGH_VALUE,CHANNEL(1-10),STATUS(0 or 1)'"
+			Ch = Integer.parseInt(inputParameters[3]) - 1;	// get channel number.
+			ij.Prefs.set("SMLocalizer.settings."+loadThis+
+					".minPotonCount."+Ch,inputParameters[1]);	// set value to the correct channel.
+			ij.Prefs.set("SMLocalizer.settings."+loadThis+
+					".maxPotonCount."+Ch,inputParameters[2]);	// set value to the correct channel.						
+			ij.Prefs.set("SMLocalizer.settings."+loadThis+
+					".doPotonCount."+Ch,Integer.parseInt(inputParameters[4]));	// set boolean, on/off.
+			break;
+		case "sigmaxy":
+			// "Sigma xy[nm]: 'sigmaxy,LOW_VALUE,HIGH_VALUE,CHANNEL(1-10),STATUS(0 or 1)'"
+			Ch = Integer.parseInt(inputParameters[3]) - 1;	// get channel number.
+			ij.Prefs.set("SMLocalizer.settings."+loadThis+
+					".minSigmaXY."+Ch,inputParameters[1]);	// set value to the correct channel.
+			ij.Prefs.set("SMLocalizer.settings."+loadThis+
+					".maxSigmaXY."+Ch,inputParameters[2]);	// set value to the correct channel.						
+			ij.Prefs.set("SMLocalizer.settings."+loadThis+
+					".doSigmaXY."+Ch,Integer.parseInt(inputParameters[4]));	// set boolean, on/off.
+			break;
+		case "rsquare": 
+			// "R^2: 'rsquare,LOW_VALUE,HIGH_VALUE,CHANNEL(1-10),STATUS(0 or 1)'"
+			Ch = Integer.parseInt(inputParameters[3]) - 1;	// get channel number.
+			ij.Prefs.set("SMLocalizer.settings."+loadThis+
+					".minRsquare."+Ch,inputParameters[1]);	// set value to the correct channel.
+			ij.Prefs.set("SMLocalizer.settings."+loadThis+
+					".maxRsquare."+Ch,inputParameters[2]);	// set value to the correct channel.						
+			ij.Prefs.set("SMLocalizer.settings."+loadThis+
+					".doRsquare."+Ch,Integer.parseInt(inputParameters[4]));	// set boolean, on/off.
+			break;
+		case "precisionxy": 
+			// "Precision xy[nm]: 'precisionxy,LOW_VALUE,HIGH_VALUE,CHANNEL(1-10),STATUS(0 or 1)'"
+			Ch = Integer.parseInt(inputParameters[3]) - 1;	// get channel number.
+			ij.Prefs.set("SMLocalizer.settings."+loadThis+
+					".minPrecisionXY."+Ch,inputParameters[1]);	// set value to the correct channel.
+			ij.Prefs.set("SMLocalizer.settings."+loadThis+
+					".maxPrecisionXY."+Ch,inputParameters[2]);	// set value to the correct channel.						
+			ij.Prefs.set("SMLocalizer.settings."+loadThis+
+					".doPrecisionXY."+Ch,Integer.parseInt(inputParameters[4]));	// set boolean, on/off.
+			break;
+		case "precisionz": 
+			// "Precision z[nm]:	'precisionz,LOW_VALUE,HIGH_VALUE,CHANNEL(1-10),STATUS(0 or 1)'"
+			Ch = Integer.parseInt(inputParameters[3]) - 1;	// get channel number.
+			ij.Prefs.set("SMLocalizer.settings."+loadThis+
+					".minPrecisionZ."+Ch,inputParameters[1]);	// set value to the correct channel.
+			ij.Prefs.set("SMLocalizer.settings."+loadThis+
+					".maxPrecisionZ."+Ch,inputParameters[2]);	// set value to the correct channel.						
+			ij.Prefs.set("SMLocalizer.settings."+loadThis+
+					".doPrecisionZ."+Ch,Integer.parseInt(inputParameters[4]));	// set boolean, on/off.
+			break;
+		case "frame": 
+			// "Frame: 'frame,LOW_VALUE,HIGH_VALUE,CHANNEL(1-10),STATUS(0 or 1)'"
+			Ch = Integer.parseInt(inputParameters[3]) - 1;	// get channel number.
+			ij.Prefs.set("SMLocalizer.settings."+loadThis+
+					".minFrame."+Ch,inputParameters[1]);	// set value to the correct channel.
+			ij.Prefs.set("SMLocalizer.settings."+loadThis+
+					".maxFrame."+Ch,inputParameters[2]);	// set value to the correct channel.						
+			ij.Prefs.set("SMLocalizer.settings."+loadThis+
+					".doFrame."+Ch,Integer.parseInt(inputParameters[4]));	// set boolean, on/off.
+			break;
+		case "z": 
+			// "z[nm]: 'z,LOW_VALUE,HIGH_VALUE,CHANNEL(1-10),STATUS(0 or 1)'"
+			Ch = Integer.parseInt(inputParameters[3]) - 1;	// get channel number.
+			ij.Prefs.set("SMLocalizer.settings."+loadThis+
+					".minZ."+Ch,inputParameters[1]);	// set value to the correct channel.
+			ij.Prefs.set("SMLocalizer.settings."+loadThis+
+					".maxZ."+Ch,inputParameters[2]);	// set value to the correct channel.						
+			ij.Prefs.set("SMLocalizer.settings."+loadThis+
+					".doZ."+Ch,Integer.parseInt(inputParameters[4]));	// set boolean, on/off.
+			break;
+		case "driftcorrect": 
+			// "Drift Correct: 'driftcorrect,VALUE_XY,VALUE_Z,VALUE_BINS,CHANNEL(1-10),STATUS(0 or 1)'"
+			Ch = Integer.parseInt(inputParameters[4]) - 1;	// get channel number.
+			ij.Prefs.set("SMLocalizer.settings."+loadThis+
+					".driftCorrShiftXY."+Ch,inputParameters[1]);	// set value to the correct channel.
+			ij.Prefs.set("SMLocalizer.settings."+loadThis+
+					".driftCorrShiftZ."+Ch,inputParameters[2]);	// set value to the correct channel.						
+			ij.Prefs.set("SMLocalizer.settings."+loadThis+
+					".driftCorrBin."+Ch,inputParameters[3]);	// set value to the correct channel.						
+			ij.Prefs.set("SMLocalizer.settings."+loadThis+
+					".doDriftCorrect.",Integer.parseInt(inputParameters[5]));	// set boolean, on/off.
+
+			break;
+		case "channelalign": 
+			// "Channel align: 'channelalign,VALUE_XY,VALUE_Z,CHANNEL(1-10),STATUS(0 or 1)'"
+			Ch = Integer.parseInt(inputParameters[3]) - 1;	// get channel number.
+			ij.Prefs.set("SMLocalizer.settings."+loadThis+
+					".chAlignShiftXY."+Ch,inputParameters[1]);	// set value to the correct channel.
+			ij.Prefs.set("SMLocalizer.settings."+loadThis+
+					".chAlignShiftZ."+Ch,inputParameters[2]);	// set value to the correct channel.						
+
+			ij.Prefs.set("SMLocalizer.settings."+loadThis+
+					".doChannelAlign.",Integer.parseInt(inputParameters[4]));	// set boolean, on/off.
+			break;
+		case "renderimage": 
+			// "Render image: 'renderimage,VALUE_XY,VALUE_Z,GAUSSIAN_SMOOTHING(0 or 1),STATUS(0 or 1)'"
+			Ch = 0;
+			ij.Prefs.set("SMLocalizer.settings."+loadThis+
+					".pixelSize",inputParameters[1]);	// set value to the correct channel.
+			ij.Prefs.set("SMLocalizer.settings."+loadThis+
+					".pixelSizeZ",inputParameters[2]);	// set value to the correct channel.						
+			ij.Prefs.set("SMLocalizer.settings."+loadThis+
+					".doGaussianSmoothing.",Integer.parseInt(inputParameters[3]));	// set boolean, on/off.
+			while  (Ch < 10)
+				{
+					ij.Prefs.set("SMLocalizer.settings."+loadThis+
+							".doRenderImage."+Ch,Integer.parseInt(inputParameters[4]));	// set boolean, on/off.
+					Ch++;
+				}
+			break;			
+		}
+		ij.Prefs.savePreferences(); // store settings. 
 	}
 
 
