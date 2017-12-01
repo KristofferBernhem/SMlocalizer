@@ -45,7 +45,7 @@ import jcuda.driver.CUfunction;
 import jcuda.driver.CUmodule;
 import jcuda.driver.JCudaDriver;
 import jcuda.runtime.JCuda;
-
+import ij.IJ;
 import static jcuda.driver.JCudaDriver.cuModuleLoadDataEx;
 
 /* This class contains all relevant algorithms for background corrections. Handles 2D and 3D stacks with single slice per frame.
@@ -67,9 +67,357 @@ class BackgroundCorrection {
 		int columns = image.getWidth();
 		int rows	= image.getHeight();		
 
-		if(selectedModel == 0) // parallel.
+		if(selectedModel == 3) // parallel, taking X pixels per round to handle large inputs (full Z)
+		{			
+			int fMax = (int) ((IJ.maxMemory()-nChannels*columns*rows*nFrames*4 - nFrames*4)/(nFrames*4)); // number of pixels that can be entered at the same time using avaible memory.
+			for (int Ch = 1; Ch <= nChannels; Ch++){ // Loop over all channels.
+				// loop from here over nMax frame segments. 
+				float[] MeanFrame = new float[nFrames]; 		// Will include frame mean value.
+				
+				ImageProcessor IP = image.getProcessor();		// get image processor for the stack.´
+				int startPixel = 0;
+				int endPixel = fMax/2;
+				if (endPixel > columns*rows)
+					endPixel = columns*rows;
+				// calculate steplength for median filtering:
+				int stepLength = nFrames/300;
+				if (stepLength > 10)
+					stepLength = 10;
+				if(nFrames < 500)
+					stepLength = 1;
+				while (endPixel <= columns*rows)
+				{
+					float[][] timeVector = new float[endPixel-startPixel][nFrames];
+					for (int Frame = 1; Frame < nFrames+1; Frame++)
+					{			
+						if (image.getNFrames() == 1)
+						{
+							image.setPosition(							
+									Ch,			// channel.
+									Frame,			// slice.
+									1);		// frame.
+						}
+						else
+						{														
+							image.setPosition(
+									Ch,			// channel.
+									1,			// slice.
+									Frame);		// frame.
+						}
+						IP = image.getProcessor(); 			// Update processor to next slice.
+
+						if (startPixel == 0)
+						{
+							for (int i = 0; i < columns*rows; i++)
+							{
+								MeanFrame[Frame-1] += IP.get(i);
+							}
+							MeanFrame[Frame-1] /= rows*columns;
+
+							if (MeanFrame[Frame-1] < 1)
+								MeanFrame[Frame-1] = 1;
+						}
+						int j = 0;
+						for (int i = startPixel; i < endPixel; i++)
+						{							
+							timeVector[j][Frame-1] = (float) (IP.get(i )/MeanFrame[Frame-1]); // load data. 						
+							j++;
+						}
+					} // Data loading.
+						List<Callable<float[]>> tasks = new ArrayList<Callable<float[]>>();	// Preallocate.
+						if (stepLength == 1){
+							for (int i = startPixel; i < endPixel; i++)
+							{
+								final float[] timeVectorF = timeVector[i];
+
+								final int chFinal = Ch - 1;
+								Callable<float[]> c = new Callable<float[]>() {				// Computation to be done.
+									@Override
+									public float[] call() throws Exception {
+										return runningMedian(timeVectorF, W[chFinal]);						// Actual call for each parallel process.
+									}
+								};
+								tasks.add(c);
+							}
+						}else // if we're speeding up computation.
+						{
+							for (int i = startPixel; i < endPixel; i++)
+							{
+								final float[] timeVectorF = timeVector[i];
+
+								final int chFinal = Ch - 1;
+								final int steps = stepLength; 
+								Callable<float[]> c = new Callable<float[]>() {				// Computation to be done.
+									@Override
+									public float[] call() throws Exception {
+										return runningMedian(timeVectorF, W[chFinal],steps);						// Actual call for each parallel process.
+									}
+								};
+								tasks.add(c);
+							}
+						}
+						int processors 			= Runtime.getRuntime().availableProcessors();	// Number of processor cores on this system.
+						ExecutorService exec 	= Executors.newFixedThreadPool(processors);		// Set up parallel computing using all cores.
+						try {
+							List<Future<float[]>> parallelCompute = exec.invokeAll(tasks);				// Execute computation.    
+							int j = 0;
+							for (int i = startPixel; i < startPixel+parallelCompute.size(); i++){							// Loop over and transfer results.
+								try {
+									float[] data = parallelCompute.get(i).get();									
+									for (int k = 0; k < data.length; k++){	
+										timeVector[j][k] = (int)(data[k]*MeanFrame[k]);								
+										
+									}			
+								} catch (ExecutionException e) {
+									e.printStackTrace();
+								}
+								j++;
+							}
+
+						} catch (InterruptedException e) {
+
+							e.printStackTrace();
+						}
+						finally {
+							exec.shutdown();
+						}
+						int value = 0;
+						for (int Frame = 1; Frame <= nFrames; Frame++) // store data.
+						{						
+							if (image.getNFrames() == 1)
+							{
+								image.setPosition(							
+										Ch,			// channel.
+										Frame,			// slice.
+										1);		// frame.
+							}
+							else
+							{														
+								image.setPosition(
+										Ch,			// channel.
+										1,			// slice.
+										Frame);		// frame.
+							}
+							IP 	= image.getProcessor(); 			// Update processor to next slice.
+							int j = 0;
+							for (int i = startPixel; i < endPixel; i++)
+							{
+								value = (int)timeVector[j][Frame-1];											
+								IP.set(i , value);	
+								j++;
+							}
+							
+						}
+//						image.updateAndDraw();		
+						System.out.println(startPixel + " through " + endPixel);
+						
+					startPixel = endPixel;
+					endPixel += fMax/2;
+					if (endPixel > columns*rows)
+						endPixel = columns*rows;
+					if (startPixel == columns*rows)
+						endPixel += 100;
+					System.out.println(startPixel + " through " + endPixel);
+				}
+							
+				FilterKernel gs = new FilterKernel(); // generate kernel for frame filtering (b-spline)
+				for (int Frame = 1; Frame <= nFrames; Frame++) // store data.
+				{						
+					if (image.getNFrames() == 1)
+					{
+						image.setPosition(							
+								Ch,			// channel.
+								Frame,			// slice.
+								1);		// frame.
+					}
+					else
+					{														
+						image.setPosition(
+								Ch,			// channel.
+								1,			// slice.
+								Frame);		// frame.
+					}
+					IP 	= image.getProcessor(); 			// Update processor to next slice.
+					IP.setIntArray(gs.filter(IP.getIntArray())); // filter frame using gs kernel.
+				}
+				image.updateAndDraw();					
+			} // Channel loop.
+
+		}else
+			if(selectedModel == 0) // parallel, taking X frames per round to handle large input
+		{
+			int nMax = (int) ((IJ.maxMemory()-(2*nChannels*nFrames*columns*rows*4))/(columns*rows*(4)*4 + 4)); // Size of a frame (4) and the required float overhead. This assumes that no other window is open.
+			/*double imageSize = (2*nChannels*nFrames*columns*rows*4);//(1024*1024*1024);
+			System.out.println(columns*rows);
+			System.out.println(columns*rows*8);
+			System.out.println(columns*rows*8*nFrames);
+			System.out.println(columns*rows*8*nFrames*nChannels);
+			
+			int nMax2 = (int)(IJ.maxMemory()/(columns*rows*16));
+			nMax2 = nMax2 - 2*nChannels*nFrames/4;
+			System.out.println(nMax + " vs " + nMax2);*/
+			for (int Ch = 1; Ch <= nChannels; Ch++){ // Loop over all channels.
+				// loop from here over nMax frame segments. 
+				int startFrame = 1;
+				int endFrame = nMax/2;
+				if (endFrame > nFrames)
+					endFrame = nFrames;
+				while (endFrame <= nFrames)
+				{
+					int numFrames = endFrame - startFrame + 1;
+					float[] MeanFrame = new float[numFrames]; 		// Will include frame mean value.
+					float[][] timeVector = new float[rows*columns][numFrames];
+					ImageProcessor IP = image.getProcessor();		// get image processor for the stack.´
+					int indexing = 0;
+					for (int Frame = startFrame; Frame < endFrame+1; Frame++){			
+						if (image.getNFrames() == 1)
+						{
+							image.setPosition(							
+									Ch,			// channel.
+									Frame,			// slice.
+									1);		// frame.
+						}
+						else
+						{														
+							image.setPosition(
+									Ch,			// channel.
+									1,			// slice.
+									Frame);		// frame.
+						}
+						IP = image.getProcessor(); 			// Update processor to next slice.
+
+
+						for (int i = 0; i < rows*columns; i++)
+						{
+							MeanFrame[indexing] += IP.get(i);
+						}
+						MeanFrame[indexing] /= rows*columns;
+
+						if (MeanFrame[indexing] < 1)
+							MeanFrame[indexing] = 1;
+						for (int i = 0; i < rows*columns; i++)
+						{
+							timeVector[i][indexing] = (float) (IP.get(i )/MeanFrame[indexing]); // load data. 						
+						}
+						indexing++;
+					} // Data loading.
+
+					// calculate steplength for median filtering:
+					int stepLength = nFrames/300;
+					if (stepLength > 10)
+						stepLength = 10;
+					if(nFrames < 500)
+						stepLength = 1;
+
+					List<Callable<float[]>> tasks = new ArrayList<Callable<float[]>>();	// Preallocate.
+					if (stepLength == 1){
+						for (int i = 0; i < rows*columns; i++)
+						{
+							final float[] timeVectorF = timeVector[i];
+
+							final int chFinal = Ch - 1;
+							Callable<float[]> c = new Callable<float[]>() {				// Computation to be done.
+								@Override
+								public float[] call() throws Exception {
+									return runningMedian(timeVectorF, W[chFinal]);						// Actual call for each parallel process.
+								}
+							};
+							tasks.add(c);
+						}
+					}else // if we're speeding up computation.
+					{
+						for (int i = 0; i < rows*columns; i++)
+						{
+							final float[] timeVectorF = timeVector[i];
+
+							final int chFinal = Ch - 1;
+							final int steps = stepLength; 
+							Callable<float[]> c = new Callable<float[]>() {				// Computation to be done.
+								@Override
+								public float[] call() throws Exception {
+									return runningMedian(timeVectorF, W[chFinal],steps);						// Actual call for each parallel process.
+								}
+							};
+							tasks.add(c);
+						}
+					}
+					int processors 			= Runtime.getRuntime().availableProcessors();	// Number of processor cores on this system.
+					ExecutorService exec 	= Executors.newFixedThreadPool(processors);		// Set up parallel computing using all cores.
+					try {
+						List<Future<float[]>> parallelCompute = exec.invokeAll(tasks);				// Execute computation.    
+						for (int i = 0; i < parallelCompute.size(); i++){							// Loop over and transfer results.
+							try {
+								float[] data = parallelCompute.get(i).get();
+								for (int k = 0; k < data.length; k++){	
+									timeVector[i][k] = (int)(data[k]*MeanFrame[k]);								
+								}			
+							} catch (ExecutionException e) {
+								e.printStackTrace();
+							}
+						}
+
+					} catch (InterruptedException e) {
+
+						e.printStackTrace();
+					}
+					finally {
+						exec.shutdown();
+					}
+					int value = 0;
+					FilterKernel gs = new FilterKernel(); // generate kernel for frame filtering (b-spline)
+					
+					int endEdgeHandling = 0;
+					if (endFrame != nFrames)
+						endEdgeHandling = W[Ch -1];
+					int startEdgeHandling = 0;
+					if (startFrame != 1)
+						startEdgeHandling = W[Ch -1];
+					indexing = startEdgeHandling;
+					for (int Frame = startFrame+startEdgeHandling; Frame <= endFrame-endEdgeHandling; Frame++) // store data.
+					{						
+						if (image.getNFrames() == 1)
+						{
+							image.setPosition(							
+									Ch,			// channel.
+									Frame,			// slice.
+									1);		// frame.
+						}
+						else
+						{														
+							image.setPosition(
+									Ch,			// channel.
+									1,			// slice.
+									Frame);		// frame.
+						}
+						IP 	= image.getProcessor(); 			// Update processor to next slice.
+						for (int i = 0; i < rows*columns; i++)
+						{
+							value = (int)timeVector[i][indexing];											
+							IP.set(i , value);	
+						}
+						IP.setIntArray(gs.filter(IP.getIntArray())); // filter frame using gs kernel.																
+						indexing++;
+					}
+					startFrame = endFrame-2*W[Ch-1]; // include W more frames to ensure that border errors from median calculations dont occur ore often then needed.
+					if (endFrame == nFrames)
+					{
+						endFrame += 100;
+					}
+					else
+					{
+						endFrame += nMax/2;					
+						if (endFrame > nFrames)
+							endFrame = nFrames;	
+					}
+				}
+				image.updateAndDraw();					
+			} // Channel loop.
+
+		}else
+			if(selectedModel == 1) // parallel, retain old functional copy.
 		{
 			for (int Ch = 1; Ch <= nChannels; Ch++){ // Loop over all channels.
+				// loop from here over nMax frame segments. 
 				float[] MeanFrame = new float[nFrames]; 		// Will include frame mean value.
 				float[][] timeVector = new float[rows*columns][nFrames];
 				ImageProcessor IP = image.getProcessor();		// get image processor for the stack.´
@@ -242,7 +590,7 @@ class BackgroundCorrection {
 //					System.out.println("Total "+total[0]/GB+" free "+free[0]/GB);
 					long maxMemoryGPU = (long) (0.5*free[0]); 
 					long framesPerBatch = (maxMemoryGPU-staticMemory)/frameSize; // maxMemoryGPU GB memory allocation gives this numbers of frames. 					
-
+					framesPerBatch /= 2;
 					int loadedFrames = 0;
 					int startFrame = 1;					
 					int endFrame = (int)framesPerBatch;					
@@ -438,14 +786,14 @@ class BackgroundCorrection {
 							image.setProcessor(IP);
 						} // frame loop for data return.
 				
-						startFrame = endFrame-W[Ch-1]; // include W more frames to ensure that border errors from median calculations dont occur ore often then needed.
+						startFrame = endFrame-2*W[Ch-1]; // include W more frames to ensure that border errors from median calculations dont occur ore often then needed.
 						endFrame += framesPerBatch;					
 						if (endFrame > nFrames)
 							endFrame = nFrames;					
 					} // while loadedChannels < nFrames
 				} // Channel loop.				
 				image.updateAndDraw();			
-			} // end GPU.
+			} // end GPU.	
 	} // medianfiltering with image output.
 
 
