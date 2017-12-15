@@ -588,18 +588,27 @@ class BackgroundCorrection {
 					long free[] = { 0 };
 					JCuda.cudaMemGetInfo(free, total);
 //					System.out.println("Total "+total[0]/GB+" free "+free[0]/GB);
-					long maxMemoryGPU = (long) (0.5*free[0]); 
+					long maxMemoryGPU = (long) (0.9*free[0]); 
 					long framesPerBatch = (maxMemoryGPU-staticMemory)/frameSize; // maxMemoryGPU GB memory allocation gives this numbers of frames. 					
-					framesPerBatch /= 2;
+//					framesPerBatch /= 2;
 					int loadedFrames = 0;
 					int startFrame = 1;					
+
+
+					if (nFrames > framesPerBatch)
+					{
+						int ratio = 2;
+						while (ratio*framesPerBatch < nFrames)
+							ratio++;
+						framesPerBatch = (int)(1.1*nFrames/ratio);						
+					}					
+
 					int endFrame = (int)framesPerBatch;					
 					if (endFrame > nFrames)
 						endFrame = nFrames;
-
-					
 					while (loadedFrames < nFrames-1)
 					{		
+						
 						
 						float[] timeVector = new float[(endFrame-startFrame+1) * rows * columns];
 						float[] MeanFrame = new float[endFrame-startFrame+1]; 				// Will include frame mean value.
@@ -640,13 +649,19 @@ class BackgroundCorrection {
 						if(nFrames < 500)
 							stepLength = 1;					
 						int nData = rows * columns;
-						int blockSize = 256;
-						int gridSize = (nData + blockSize - 1)/blockSize;
+
+						int blockSize = 128;
+						int gridSize = (nData + blockSize - 1)/blockSize + 1;
+		
 						gridSize = (int) (Math.log(gridSize)/Math.log(2) + 2);
 						if (gridSize > maxGrid)
 							gridSize = (int)( Math.pow(2, maxGrid));
 						else
 							gridSize = (int)( Math.pow(2, gridSize));
+						
+						
+						
+												
 						CUdeviceptr device_Data 		= CUDA.copyToDevice(timeVector);
 						CUdeviceptr device_meanVector 	= CUDA.copyToDevice(MeanFrame);
 						CUdeviceptr deviceOutput 		= CUDA.allocateOnDevice((int)(timeVector.length));
@@ -654,8 +669,7 @@ class BackgroundCorrection {
 						int filterWindowLength 		= (2 * W[Ch-1] + 1) * rows * columns;
 						int dataLength 				= timeVector.length;
 						int meanVectorLength 		= MeanFrame.length;
-
-					//	ij.IJ.log(Integer.toString(W[Ch]));
+					
 						Pointer kernelParametersMedianFilter 	= Pointer.to(   
 								Pointer.to(new int[]{nData}),
 								Pointer.to(new int[]{W[Ch]}),
@@ -676,34 +690,31 @@ class BackgroundCorrection {
 								0, null,               		// Shared memory size and stream
 								kernelParametersMedianFilter, null 		// Kernel- and extra parameters
 								);
-						cuCtxSynchronize();
+						cuCtxSynchronize(); 
+						
+						
+						
 						cuMemFree(device_window);
 						cuMemFree(device_Data);  
 						cuMemFree(device_meanVector);
-					
-						// Temporary solution to error found in medianFilter.ptx, run that part on CPU:
-						
-						
-						
-						// B-spline filter image:
-
-						double[] filterKernel = { 0.0015257568383789054, 0.003661718759765626, 0.02868598630371093, 0.0036617187597656254, 0.0015257568383789054, 
-                                0.003661718759765626, 0.008787890664062511, 0.06884453115234379, 0.00878789066406251, 0.003661718759765626, 
-                                0.02868598630371093, 0.06884453115234379, 0.5393295900878906, 0.06884453115234378, 0.02868598630371093,
-                                0.0036617187597656254, 0.00878789066406251, 0.06884453115234378, 0.008787890664062508, 0.0036617187597656254, 
-                                0.0015257568383789054, 0.003661718759765626, 0.02868598630371093, 0.0036617187597656254, 0.0015257568383789054}; // 5x5 bicubic Bspline filter.
-						
+				
 						int bSplineDataLength = timeVector.length;
-						nData = timeVector.length/(columns*rows);
+						nData = bSplineDataLength/(columns*rows);
 				
+			
+						// B-spline filter image:
 						
-						CUdeviceptr deviceOutputBSpline 		= CUDA.allocateOnDevice(bSplineDataLength);
+						float[] filterKernel = { 0.0015257568383789054F, 0.003661718759765626F, 0.02868598630371093F, 0.0036617187597656254F, 0.0015257568383789054F, 
+                                0.003661718759765626F, 0.008787890664062511F, 0.06884453115234379F, 0.00878789066406251F, 0.003661718759765626F, 
+                                0.02868598630371093F, 0.06884453115234379F, 0.5393295900878906F, 0.06884453115234378F, 0.02868598630371093F,
+                                0.0036617187597656254F, 0.00878789066406251F, 0.06884453115234378F, 0.008787890664062508F, 0.0036617187597656254F, 
+                                0.0015257568383789054F, 0.003661718759765626F, 0.02868598630371093F, 0.0036617187597656254F, 0.0015257568383789054F}; // 5x5 bicubic Bspline filter.
+						CUdeviceptr deviceOutputBSpline 		= CUDA.allocateOnDevice((int)bSplineDataLength);
 						CUdeviceptr deviceFilterKernel 			= CUDA.copyToDevice(filterKernel); // filter to applied to each pixel.				
-				
 						Pointer kernelParametersBspline 		= Pointer.to(   
 								Pointer.to(new int[]{nData}),
 								Pointer.to(deviceOutput),					// input data is output from medianFilter function call.
-								Pointer.to(new int[]{bSplineDataLength}),	// length of vector
+								Pointer.to(new int[]{bSplineDataLength}),	// length 	of vector
 								Pointer.to(new int[]{(rows)}), 			// width
 								Pointer.to(new int[]{(columns)}),				// height
 								Pointer.to(deviceFilterKernel),				// Transfer filter kernel.
@@ -713,32 +724,22 @@ class BackgroundCorrection {
 								Pointer.to(new int[]{bSplineDataLength})
 								);
 
-						blockSize = 256;
-						gridSize = (nData + blockSize - 1)/blockSize;
-						gridSize = (int) (Math.log(gridSize)/Math.log(2) + 1);
+						blockSize = 128;
+						gridSize = (nData + blockSize - 1)/blockSize + 1;
+						
+						gridSize = (int) (Math.log(gridSize)/Math.log(2) + 2);
 						if (gridSize > maxGrid)
 							gridSize = (int)( Math.pow(2, maxGrid));
 						else
 							gridSize = (int)( Math.pow(2, gridSize));
-
 						cuLaunchKernel(functionBpline,
 								gridSize,  1, 1, 	// Grid dimension
 								blockSize, 1, 1,  // Block dimension
 								0, null,               		// Shared memory size and stream
 								kernelParametersBspline, null 		// Kernel- and extra parameters
 								);
-						
-					/*	gridSizeX = (int)Math.ceil(Math.sqrt(timeVector.length/(columns*rows))); 	// update.
-						gridSizeY = gridSizeX;														// update.
-						cuLaunchKernel(functionBpline,
-								gridSizeX,  gridSizeY, 1, 	// Grid dimension
-								blockSizeX, blockSizeY, 1,  // Block dimension
-								0, null,               		// Shared memory size and stream
-								kernelParametersBspline, null 		// Kernel- and extra parameters
-								);*/
 						cuCtxSynchronize();
 
-						
 						
 						int hostOutput[] = new int[timeVector.length];
 						cuMemcpyDtoH(Pointer.to(hostOutput), deviceOutputBSpline,
@@ -747,6 +748,8 @@ class BackgroundCorrection {
 						cuMemFree(deviceOutput); 
 						cuMemFree(deviceOutputBSpline);    
 						cuMemFree(deviceFilterKernel);   
+						
+						
 						int idx = 0;
 						if (endFrame == nFrames) // if we're on the last bin, include last segment.
 							endFrame += W[Ch-1];
@@ -776,7 +779,7 @@ class BackgroundCorrection {
 							while (i < rows*columns)
 							{
 								if (hostOutput[idx] > 0)
-									IP.set(i, (int)hostOutput[idx]);
+									IP.set(i, hostOutput[idx]);
 								else
 									IP.set(i, 0);
 								idx++;
@@ -786,7 +789,7 @@ class BackgroundCorrection {
 							image.setProcessor(IP);
 						} // frame loop for data return.
 				
-						startFrame = endFrame-2*W[Ch-1]; // include W more frames to ensure that border errors from median calculations dont occur ore often then needed.
+						startFrame = endFrame-2*W[Ch-1]+1; // include W more frames to ensure that border errors from median calculations dont occur ore often then needed.
 						endFrame += framesPerBatch;					
 						if (endFrame > nFrames)
 							endFrame = nFrames;					

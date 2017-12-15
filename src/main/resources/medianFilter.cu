@@ -260,18 +260,20 @@ extern "C" __global__  void medianKernel(int n, int windowWidth,  float* filterW
 		j -= nStep;
 		num5 -= nStep;
 		num6 -= num7 * nStep;
-		nStep = depth - num5;
+		nStep = depth - num5 - 1;
 		answer[(num6 + nStep * num7)] = (int)(meanVector[(depth - 1)] * (inputVector[((i + 1) * depth - 1)] - (filterWindow[(num3 + num4 / 2)] + (float)(num4 % 2) * filterWindow[(num3 + 1 + num4 / 2)]) / (float)(1 + num4 % 2)));
 		num10 = (filterWindow[(num3 + num4 / 2)] + (float)(num4 % 2) * filterWindow[(num3 + 1 + num4 / 2)]) / (float)(1 + num4 % 2) - num8;
 		num10 = 1.0f;
 		num10 /= (float)nStep;
-		for (int num18 = 1; num18 < nStep; num18++)
+		int num18 = 1;
+		while (num18 < nStep && num6 + num18 * num7 < answerLen0)
 		{
 			answer[(num6 + num18 * num7)] = (int)(meanVector[(num5 + num18)] * (inputVector[(j + num18)] - num8 - num10 * (float)num18));
 			if (answer[(num6 + num18 * num7)] < 0)
 			{
 				answer[(num6 + num18 * num7)] = 0;
 			}
+			num18++;
 		}
 	}
 }

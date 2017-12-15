@@ -263,8 +263,8 @@ public class correctDrift {
 		newPlot.addLegend("X \n Y");
 		newPlot.show();		
 	}
-	static void plot(double[] values, double[] values2, double[] values3, double[] x_axis) {
-		Plot newPlot = new Plot("Drift corrections","frame","drift [nm]");
+	static void plot(double[] values, double[] values2, double[] values3, double[] x_axis, int Ch) {
+		Plot newPlot = new Plot("Drift corrections channel: " + Ch,"frame","drift [nm]");
 		newPlot.setColor(Color.GREEN);
 		newPlot.addPoints(x_axis,values, Plot.LINE);
 		newPlot.setColor(Color.RED);

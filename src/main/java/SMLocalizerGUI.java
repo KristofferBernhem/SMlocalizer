@@ -16,6 +16,8 @@
  */
 
 
+import java.awt.event.FocusEvent;
+
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -2289,6 +2291,21 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
                 channelIdActionPerformed(evt);
             }
         });
+        channelId.addFocusListener(new java.awt.event.FocusListener() {
+  
+
+			@Override
+			public void focusGained(FocusEvent arg0) {
+				channelIdActionPerformedFocus();
+				
+			}
+
+			@Override
+			public void focusLost(FocusEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+        });
 
         javax.swing.GroupLayout BasicInpLayout = new javax.swing.GroupLayout(BasicInp);
         BasicInp.setLayout(BasicInpLayout);
@@ -3201,6 +3218,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
     }// </editor-fold>                        
 
 
+
 	private void totalGainActionPerformed(java.awt.event.ActionEvent evt) {                                          
 
 
@@ -3217,6 +3235,7 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 	private void minPtsClusterActionPerformed(java.awt.event.ActionEvent evt) {                                              
 		
 	}
+
 	private void calibrateActionPerformed(java.awt.event.ActionEvent evt) {
 
 		ImagePlus image = WindowManager.getCurrentImage();
@@ -3584,11 +3603,16 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
     private void doMinimalSignalActionPerformed(java.awt.event.ActionEvent evt) {                                                
 
     }  
-
+    
+	protected void channelIdActionPerformedFocus() {
+		int id = channelId.getSelectedIndex();		
+		updateList(id-1); // store latest variables.
+	}
 	private void channelIdActionPerformed(java.awt.event.ActionEvent evt) {                                          
 		int id = channelId.getSelectedIndex();		
+
 		if (id == 0) // if we should add a channel
-		{
+		{			
 			if (channelId.getItemCount() < 11) // if we have 10 channels already, enough is enough.
 			{
 				channelId.addItem("Channel " + Integer.toString(channelId.getItemCount()));    // add one entry.                                    
@@ -3604,13 +3628,13 @@ public class SMLocalizerGUI extends javax.swing.JFrame {
 			}
 		}else // change channel.
 		{    
-	//		updateList(id-1); // store latest variables.
+			//updateList(id-1); // store latest variables.
 			updateVisible(id-1); // update variables.
-		}          
+		}          		
 	}                                         
 
 	private void channelIdMouseClicked(java.awt.event.MouseEvent evt) {                                       
-		int id = channelId.getSelectedIndex();        			
+		int id = channelId.getSelectedIndex();       
 		updateList(id-1); // store latest variables.
 		//updateVisible(id-1);
 	}                                      

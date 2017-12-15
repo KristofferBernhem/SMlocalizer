@@ -164,13 +164,23 @@ public class processMedianFit {
 		cuModuleGetFunction(fittingFcn, moduleGFit, "gaussFitter");  //gFit.pth (gaussFitter function).
 		for(int Ch = 1; Ch <= nChannels; Ch++)
 		{
-			
+
 			int staticMemory = (2*W[Ch-1]+1)*rows*columns*Sizeof.FLOAT;
-			long framesPerBatch = (3*GB-staticMemory)/frameSize; // 3 GB memory allocation gives this numbers of frames. 					
+			long framesPerBatch = (long) (0.9*(total[0]-staticMemory)/frameSize); // 3 GB memory allocation gives this numbers of frames. 					
 			int nCenter =(( columns*rows/(gWindow*gWindow)) / 2); // ~ 80 possible particles for a 64x64 frame. Lets the program scale with frame size.
 			int nMax = (int) (maxMemoryGPU/(4*columns*rows*Sizeof.INT + 4*nCenter*Sizeof.INT)); 	// the localMaxima GPU calculations require: (x*y*frame*(Sizeof.INT ) + frame*nCenters*Sizeof.FLOAT)/gb memory. with known x and y dimensions, determine maximum size of frame for each batch.
 			int loadedFrames = 0;
-			int startFrame = 1;					
+			int startFrame = 1;		
+			
+			if (nFrames > framesPerBatch)
+			{
+				int ratio = 2;
+				while (ratio*framesPerBatch < nFrames)
+					ratio++;
+				framesPerBatch = (int)(1.1*nFrames/ratio);						
+			}					
+
+			
 			int endFrame = (int)framesPerBatch;					
 
 			if (endFrame > nFrames)
@@ -234,7 +244,7 @@ public class processMedianFit {
 				int nData = rows * columns;
 				int blockSize = 256;
 				int gridSize = (nData + blockSize - 1)/blockSize;
-				gridSize = (int) (Math.log(gridSize)/Math.log(2) + 1);
+				gridSize = (int) (Math.log(gridSize)/Math.log(2) + 2);
 				if (gridSize > maxGrid)
 					gridSize = (int)( Math.pow(2, maxGrid));
 				else
@@ -285,11 +295,11 @@ public class processMedianFit {
 
 				// B-spline filter image:
 
-				double[] filterKernel = { 0.0015257568383789054, 0.003661718759765626, 0.02868598630371093, 0.0036617187597656254, 0.0015257568383789054, 
-                        0.003661718759765626, 0.008787890664062511, 0.06884453115234379, 0.00878789066406251, 0.003661718759765626, 
-                        0.02868598630371093, 0.06884453115234379, 0.5393295900878906, 0.06884453115234378, 0.02868598630371093,
-                        0.0036617187597656254, 0.00878789066406251, 0.06884453115234378, 0.008787890664062508, 0.0036617187597656254, 
-                        0.0015257568383789054, 0.003661718759765626, 0.02868598630371093, 0.0036617187597656254, 0.0015257568383789054}; // 5x5 bicubic Bspline filter.
+				float[] filterKernel = { 0.0015257568383789054F, 0.003661718759765626F, 0.02868598630371093F, 0.0036617187597656254F, 0.0015257568383789054F, 
+                        0.003661718759765626F, 0.008787890664062511F, 0.06884453115234379F, 0.00878789066406251F, 0.003661718759765626F, 
+                        0.02868598630371093F, 0.06884453115234379F, 0.5393295900878906F, 0.06884453115234378F, 0.02868598630371093F,
+                        0.0036617187597656254F, 0.00878789066406251F, 0.06884453115234378F, 0.008787890664062508F, 0.0036617187597656254F, 
+                        0.0015257568383789054F, 0.003661718759765626F, 0.02868598630371093F, 0.0036617187597656254F, 0.0015257568383789054F}; // 5x5 bicubic Bspline filter.
 				
 				int bSplineDataLength = timeVector.length;
 				nData = timeVector.length/(columns*rows);
@@ -310,7 +320,7 @@ public class processMedianFit {
 
 				blockSize = 256;
 				gridSize = (nData + blockSize - 1)/blockSize;
-				gridSize = (int) (Math.log(gridSize)/Math.log(2) + 1);
+				gridSize = (int) (Math.log(gridSize)/Math.log(2) + 2);
 				if (gridSize > maxGrid)
 					gridSize = (int)( Math.pow(2, maxGrid));
 				else
@@ -322,24 +332,15 @@ public class processMedianFit {
 						kernelParametersBspline, null 		// Kernel- and extra parameters
 						);
 				
-				
-			/*	gridSizeX = (int)Math.ceil(Math.sqrt(timeVector.length/(columns*rows))); 	// update.
-				gridSizeY = gridSizeX;														// update.
-				cuLaunchKernel(functionBpline,
-						gridSizeX,  gridSizeY, 1, 	// Grid dimension
-						blockSizeX, blockSizeY, 1,  // Block dimension
-						0, null,               		// Shared memory size and stream
-						kernelParametersBspline, null 		// Kernel- and extra parameters
-						);
-				*/cuCtxSynchronize();
+
+				cuCtxSynchronize();
 				
 				int hostOutput[] = new int[timeVector.length];
 
 				cuMemcpyDtoH(Pointer.to(hostOutput), deviceOutputBSpline,
 						bSplineDataLength * Sizeof.INT);
 				// clean up GPU.
-										
-						
+			
 				cuMemFree(deviceOutput);  			
 				cuMemFree(deviceFilterKernel);   
 				int[] limits = findLimits.run(hostOutput, columns, rows, Ch); // get limits.				
@@ -347,7 +348,7 @@ public class processMedianFit {
 				nData = bSplineDataLength/(columns*rows);
 				blockSize = 256;
 				gridSize = (nData + blockSize - 1)/blockSize;
-				gridSize = (int) (Math.log(gridSize)/Math.log(2) + 1);
+				gridSize = (int) (Math.log(gridSize)/Math.log(2) + 2);
 				if (gridSize > maxGrid)
 					gridSize = (int)( Math.pow(2, maxGrid));
 				else
@@ -375,18 +376,7 @@ public class processMedianFit {
 						kernelParameters, null 		// Kernel- and extra parameters
 						);
 				
-		/*		blockSizeX 	= 1;
-				blockSizeY 	= 1;				   
-				gridSizeX 	= (int) Math.ceil((Math.sqrt(nMax)));
-				gridSizeY 	= gridSizeX;
-
-				cuLaunchKernel(findMaximaFcn,
-						gridSizeX,  gridSizeY, 1, 	// Grid dimension
-						blockSizeX, blockSizeY, 1,  // Block dimension
-						0, null,               		// Shared memory size and stream
-						kernelParameters, null 		// Kernel- and extra parameters
-						);
-				*/cuCtxSynchronize();
+				cuCtxSynchronize();
 
 				int hostCenter[] = new int[nMax*nCenter];
 				// Pull data from device.
@@ -524,7 +514,7 @@ public class processMedianFit {
 					nData = counter;
 					blockSize = 256;
 					gridSize = (nData + blockSize - 1)/blockSize;
-					gridSize = (int) (Math.log(gridSize)/Math.log(2) + 1);
+					gridSize = (int) (Math.log(gridSize)/Math.log(2) + 2);
 					if (gridSize > maxGrid)
 						gridSize = (int)( Math.pow(2, maxGrid));
 					else
@@ -585,7 +575,7 @@ public class processMedianFit {
 					loaded += maxLoad;
 				}
 		
-				startFrame = endFrame-W[Ch-1]; // include W more frames to ensure that border errors from median calculations dont occur ore often then needed.
+				startFrame = endFrame-2*W[Ch-1]+1; // include W more frames to ensure that border errors from median calculations dont occur ore often then needed.
 				endFrame += framesPerBatch;					
 				if (endFrame > nFrames)
 					endFrame = nFrames;

@@ -339,7 +339,7 @@ public class ImageCrossCorr3D {
 				yDrift[i] = pixelSize*optimalShift[2][i];
 				zDrift[i] = pixelSizeZ*optimalShift[3][i];
 			}
-			correctDrift.plot(xDrift, yDrift, zDrift, xAxis);
+			correctDrift.plot(xDrift, yDrift, zDrift, xAxis,ch);
 
 
 			int bin = 0;

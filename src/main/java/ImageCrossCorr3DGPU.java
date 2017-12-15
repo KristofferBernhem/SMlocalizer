@@ -33,13 +33,8 @@ import static jcuda.driver.JCudaDriver.cuMemcpyDtoH;
 import static jcuda.driver.JCudaDriver.cuModuleGetFunction;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+
 
 import jcuda.Pointer;
 import jcuda.Sizeof;
@@ -175,11 +170,7 @@ public class ImageCrossCorr3DGPU {
 				int[][] c = getOverlapCenter(inputParticles, firstBin, secondBin, dimensions, pixelSize,  pixelSizeZ, maxShift, maxShiftZ,zOffset);
 				int[] croppedDimensions = {(int)Math.ceil((c[0][1]-c[0][0])/pixelSize),(int)Math.ceil((c[1][1]-c[1][0])/pixelSize),(int)Math.ceil((c[2][1]-c[2][0])/pixelSizeZ)};
 				idx = tempIdx;	// return idx to startpoint of this loop.
-				/*			System.out.println("from" + c[0][0] + " to " + c[0][1]);
-				System.out.println("from" + c[1][0] + " to " + c[1][1]);
-				System.out.println("from" + c[2][0] + " to " + c[2][1]);
-				System.out.println("********");
-				 */
+				 
 				//	System.out.println("bin: " + currBin  + " _ "+ croppedDimensions[0] + " to " + croppedDimensions[1]); 
 				int[] referenceFrame 	= new int[croppedDimensions[0]*croppedDimensions[1]*croppedDimensions[2]]; // create the reference array.
 				int[] targetFrame 		= new int[croppedDimensions[0]*croppedDimensions[1]*croppedDimensions[2]]; 		// create the target (shifted) array.	//					
@@ -396,7 +387,7 @@ public class ImageCrossCorr3DGPU {
 				yDrift[i] = pixelSize*optimalShift[2][i];
 				zDrift[i] = pixelSizeZ*optimalShift[3][i];
 			}
-			correctDrift.plot(xDrift, yDrift, zDrift, xAxis);
+			correctDrift.plot(xDrift, yDrift, zDrift, xAxis,ch);
 
 
 			int bin = 0;
