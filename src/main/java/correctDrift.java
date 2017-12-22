@@ -151,6 +151,7 @@ public class correctDrift {
 			size[2] = 1; // 2D data.
 		try
 		{
+			selectedModel = 0; // temp workaround.
 			if (selectedModel == 0)// parallel.
 			{
 				correctedResults = ImageCrossCorr3D.run(locatedParticles, nBins, boundry, size ,pixelSize,pixelSizeZ);
@@ -209,6 +210,7 @@ public class correctDrift {
 			size[2] = 1; // 2D data.
 		try
 		{
+			selectedModel = 0; // temp workaround.
 			if (selectedModel == 0)// parallel.
 			{
 				correctedResults = ImageCrossCorr3D.runChannel(locatedParticles, boundry, size ,pixelSize,pixelSizeZ);
