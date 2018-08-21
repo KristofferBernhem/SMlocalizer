@@ -498,7 +498,7 @@ public class localizeAndFit {
 					// Initialize the driver and create a context for the first device.
 					cuInit(0);
 					CUdevice device = new CUdevice();
-					cuDeviceGet(device, 0);
+					cuDeviceGet(device, GlobalCUDAProps.CUDADeviceIndex);
 					CUcontext context = new CUcontext();
 					cuCtxCreate(context, 0, device);
 

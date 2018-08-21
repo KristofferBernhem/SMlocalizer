@@ -108,7 +108,7 @@ public class processMedianFit {
 		
       
         CUdevice device = new CUdevice();
-		cuDeviceGet(device, 0);
+		cuDeviceGet(device, GlobalCUDAProps.CUDADeviceIndex);
 		CUcontext context = new CUcontext();
 		cuCtxCreate(context, 0, device);
 				

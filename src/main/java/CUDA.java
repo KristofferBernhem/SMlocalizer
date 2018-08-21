@@ -68,14 +68,23 @@ public class CUDA {
 	@SuppressWarnings("deprecation")
 	public static void main(final String... args)
 	{
-		JCudaDriver.setExceptionsEnabled(true);
+        System.out.println(getCUDADevicesInfo());
+
+
+	}
+
+	static String getCUDADevicesInfo() {
+	    String infos ="";
+        JCudaDriver.setExceptionsEnabled(true);
         cuInit(0);
 
         // Obtain the number of devices
         int deviceCountArray[] = { 0 };
         cuDeviceGetCount(deviceCountArray);
         int deviceCount = deviceCountArray[0];
-        System.out.println("Found " + deviceCount + " devices");
+
+
+        infos+="Found " + deviceCount + " devices\n";
 
         for (int i = 0; i < deviceCount; i++)
         {
@@ -85,20 +94,20 @@ public class CUDA {
             // Obtain the device name
             byte deviceName[] = new byte[1024];
             cuDeviceGetName(
-                deviceName, deviceName.length, device);
+                    deviceName, deviceName.length, device);
             String name = createString(deviceName);
 
             // Obtain the compute capability
             int majorArray[] = { 0 };
             int minorArray[] = { 0 };
             cuDeviceComputeCapability(
-                majorArray, minorArray, device);
+                    majorArray, minorArray, device);
             int major = majorArray[0];
             int minor = minorArray[0];
 
-            System.out.println("Device " + i + ": " + name + 
-                " with Compute Capability " + major + "." + minor);
-            
+            infos+=("Device " + i + ": " + name +
+                    " with Compute Capability " + major + "." + minor);
+
             // Obtain the device attributes
             int array[] = { 0 };
             List<Integer> attributes = getAttributes();
@@ -107,13 +116,15 @@ public class CUDA {
                 String description = getAttributeDescription(attribute);
                 cuDeviceGetAttribute(array, attribute, device);
                 int value = array[0];
-                
-                System.out.printf("    %-52s : %d\n", description, value);
+
+                infos+=String.format("    %-52s : %d\n", description, value);
             }
-           
-          
         }
-	}
+
+
+	    return infos;
+    }
+
 	static int getGrid(CUdevice device)
 	{
 		int gridSize = 0;

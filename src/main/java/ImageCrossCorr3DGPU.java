@@ -57,7 +57,7 @@ public class ImageCrossCorr3DGPU {
 		JCudaDriver.setExceptionsEnabled(true);
 		cuInit(0);
 		CUdevice device = new CUdevice();
-		cuDeviceGet(device, 0);
+		cuDeviceGet(device, GlobalCUDAProps.CUDADeviceIndex);
 		CUcontext context = new CUcontext();
 		cuCtxCreate(context, 0, device);
 		// Load the PTX that contains the kernel.
